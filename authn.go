@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	gorilla "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -39,5 +40,7 @@ func main() {
 	r.HandleFunc("/stats", stubHandler).Methods("GET")
 	r.HandleFunc("/health", handlers.Health).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":8000", gorilla.RecoveryHandler()(r)))
+	app := gorilla.RecoveryHandler()(gorilla.CombinedLoggingHandler(os.Stdout, r))
+
+	log.Fatal(http.ListenAndServe(":8000", app))
 }
