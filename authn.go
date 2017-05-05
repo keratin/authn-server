@@ -5,11 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/keratin/authn/handlers"
 )
-
-func HealthHandler(w http.ResponseWriter, req *http.Request) {
-	w.Write([]byte("up"))
-}
 
 func StubHandler(w http.ResponseWriter, req *http.Request) {
 	w.Write([]byte("not implemented"))
@@ -39,7 +36,7 @@ func main() {
 	r.HandleFunc("/jwks", StubHandler).Methods("GET")
 
 	r.HandleFunc("/stats", StubHandler).Methods("GET")
-	r.HandleFunc("/health", HealthHandler).Methods("GET")
+	r.HandleFunc("/health", handlers.Health).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":8000", r))
 }
