@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	gorilla "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/keratin/authn/handlers"
 )
@@ -38,5 +39,5 @@ func main() {
 	r.HandleFunc("/stats", stubHandler).Methods("GET")
 	r.HandleFunc("/health", handlers.Health).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":8000", r))
+	log.Fatal(http.ListenAndServe(":8000", gorilla.RecoveryHandler()(r)))
 }
