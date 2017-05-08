@@ -7,6 +7,8 @@ import (
 	"testing"
 )
 
+type dict map[string]string
+
 func TestPostAccountSuccess(t *testing.T) {
 	app := App()
 
@@ -18,7 +20,7 @@ func TestPostAccountSuccess(t *testing.T) {
 	handler.ServeHTTP(res, req)
 
 	AssertCode(t, res, http.StatusCreated)
-	AssertBody(t, res, `{"result":{"id_token":"j.w.t"}}`)
+	AssertResult(t, res, dict{"id_token": "j.w.t"})
 }
 
 func TestPostAccountFailure(t *testing.T) {
@@ -32,5 +34,5 @@ func TestPostAccountFailure(t *testing.T) {
 	handler.ServeHTTP(res, req)
 
 	AssertCode(t, res, http.StatusUnprocessableEntity)
-	AssertBody(t, res, `{"errors":[{"field":"foo","message":"bar"}]}`)
+	AssertErrors(t, res, dict{"foo": "bar"})
 }

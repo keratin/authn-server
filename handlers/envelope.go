@@ -10,21 +10,21 @@ type ServiceError struct {
 	Message string `json:"message"`
 }
 
-type serviceData struct {
+type ServiceData struct {
 	Result interface{} `json:"result"`
 }
 
 func writeData(w http.ResponseWriter, d interface{}) {
-	writeJson(w, serviceData{Result: d})
+	writeJson(w, ServiceData{Result: d})
 }
 
-type serviceErrors struct {
+type ServiceErrors struct {
 	Errors []ServiceError `json:"errors"`
 }
 
 func writeErrors(w http.ResponseWriter, e []ServiceError) {
 	w.WriteHeader(http.StatusUnprocessableEntity)
-	writeJson(w, serviceErrors{Errors: e})
+	writeJson(w, ServiceErrors{Errors: e})
 }
 
 func writeJson(w http.ResponseWriter, d interface{}) {

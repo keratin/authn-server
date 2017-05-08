@@ -2,6 +2,7 @@ package handlers_test
 
 import (
 	"database/sql"
+	"encoding/json"
 	"net/http/httptest"
 	"testing"
 
@@ -31,4 +32,27 @@ func AssertBody(t *testing.T, rr *httptest.ResponseRecorder, expected string) {
 	if rr.Body.String() != expected {
 		t.Errorf("HTTP body:\n  expected: %v\n  actual:   %v", expected, rr.Body.String())
 	}
+}
+
+func AssertErrors(t *testing.T, rr *httptest.ResponseRecorder, expected dict) {
+	errors := make([]handlers.ServiceError, 0, len(expected))
+	for field, message := range expected {
+		errors = append(errors, handlers.ServiceError{field, message})
+	}
+
+	j, err := json.Marshal(handlers.ServiceErrors{Errors: errors})
+	if err != nil {
+		panic(err)
+	}
+
+	AssertBody(t, rr, string(j))
+}
+
+func AssertResult(t *testing.T, rr *httptest.ResponseRecorder, expected interface{}) {
+	j, err := json.Marshal(handlers.ServiceData{expected})
+	if err != nil {
+		panic(err)
+	}
+
+	AssertBody(t, rr, string(j))
 }
