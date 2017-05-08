@@ -10,37 +10,35 @@ import (
 	"github.com/keratin/authn/handlers"
 )
 
-func stubHandler(w http.ResponseWriter, req *http.Request) {
-	w.Write([]byte("not implemented"))
-}
-
 func main() {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/", stubHandler).Methods("GET")
+	app := handlers.App{"AuthN"}
 
-	r.HandleFunc("/accounts", stubHandler).Methods("POST")
-	r.HandleFunc("/accounts/import", stubHandler).Methods("POST")
-	r.HandleFunc("/accounts/available", stubHandler).Methods("GET")
+	r.HandleFunc("/", app.Stub).Methods("GET")
 
-	r.HandleFunc("/accounts/{account_id:[0-9]+}", stubHandler).Methods("DELETE")
-	r.HandleFunc("/accounts/{account_id:[0-9]+}/lock", stubHandler).Methods("PUT", "PATCH")
-	r.HandleFunc("/accounts/{account_id:[0-9]+}/unlock", stubHandler).Methods("PUT", "PATCH")
+	r.HandleFunc("/accounts", app.Stub).Methods("POST")
+	r.HandleFunc("/accounts/import", app.Stub).Methods("POST")
+	r.HandleFunc("/accounts/available", app.Stub).Methods("GET")
 
-	r.HandleFunc("/session", stubHandler).Methods("POST")
-	r.HandleFunc("/session", stubHandler).Methods("DELETE")
-	r.HandleFunc("/session/refresh", stubHandler).Methods("GET")
+	r.HandleFunc("/accounts/{account_id:[0-9]+}", app.Stub).Methods("DELETE")
+	r.HandleFunc("/accounts/{account_id:[0-9]+}/lock", app.Stub).Methods("PUT", "PATCH")
+	r.HandleFunc("/accounts/{account_id:[0-9]+}/unlock", app.Stub).Methods("PUT", "PATCH")
 
-	r.HandleFunc("/password", stubHandler).Methods("POST")
-	r.HandleFunc("/password/reset", stubHandler).Methods("GET")
+	r.HandleFunc("/session", app.Stub).Methods("POST")
+	r.HandleFunc("/session", app.Stub).Methods("DELETE")
+	r.HandleFunc("/session/refresh", app.Stub).Methods("GET")
 
-	r.HandleFunc("/configuration", stubHandler).Methods("GET")
-	r.HandleFunc("/jwks", stubHandler).Methods("GET")
+	r.HandleFunc("/password", app.Stub).Methods("POST")
+	r.HandleFunc("/password/reset", app.Stub).Methods("GET")
 
-	r.HandleFunc("/stats", stubHandler).Methods("GET")
-	r.HandleFunc("/health", handlers.Health).Methods("GET")
+	r.HandleFunc("/configuration", app.Stub).Methods("GET")
+	r.HandleFunc("/jwks", app.Stub).Methods("GET")
 
-	app := gorilla.RecoveryHandler()(gorilla.CombinedLoggingHandler(os.Stdout, r))
+	r.HandleFunc("/stats", app.Stub).Methods("GET")
+	r.HandleFunc("/health", app.Health).Methods("GET")
 
-	log.Fatal(http.ListenAndServe(":8000", app))
+	stack := gorilla.RecoveryHandler()(gorilla.CombinedLoggingHandler(os.Stdout, r))
+
+	log.Fatal(http.ListenAndServe(":8000", stack))
 }
