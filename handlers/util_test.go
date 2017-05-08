@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/keratin/authn/handlers"
+	"github.com/keratin/authn/services"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -35,9 +36,9 @@ func AssertBody(t *testing.T, rr *httptest.ResponseRecorder, expected string) {
 }
 
 func AssertErrors(t *testing.T, rr *httptest.ResponseRecorder, expected dict) {
-	errors := make([]handlers.ServiceError, 0, len(expected))
+	errors := make([]services.Error, 0, len(expected))
 	for field, message := range expected {
-		errors = append(errors, handlers.ServiceError{field, message})
+		errors = append(errors, services.Error{field, message})
 	}
 
 	j, err := json.Marshal(handlers.ServiceErrors{Errors: errors})

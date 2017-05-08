@@ -31,7 +31,7 @@ func TestPostAccountFailure(t *testing.T) {
 		body   string
 		errors dict
 	}{
-		{"", dict{"foo": "bar"}},
+		{"", dict{"username": "MISSING", "password": "MISSING"}},
 	}
 
 	for _, tt := range tests {

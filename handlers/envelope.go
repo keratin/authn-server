@@ -3,12 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-)
 
-type ServiceError struct {
-	Field   string `json:"field"`
-	Message string `json:"message"`
-}
+	"github.com/keratin/authn/services"
+)
 
 type ServiceData struct {
 	Result interface{} `json:"result"`
@@ -19,10 +16,10 @@ func writeData(w http.ResponseWriter, d interface{}) {
 }
 
 type ServiceErrors struct {
-	Errors []ServiceError `json:"errors"`
+	Errors []services.Error `json:"errors"`
 }
 
-func writeErrors(w http.ResponseWriter, e []ServiceError) {
+func writeErrors(w http.ResponseWriter, e []services.Error) {
 	w.WriteHeader(http.StatusUnprocessableEntity)
 	writeJson(w, ServiceErrors{Errors: e})
 }
