@@ -12,7 +12,7 @@ type health struct {
 
 func (app App) Health(w http.ResponseWriter, req *http.Request) {
 	db := true
-	_, err := app.Db.Query("SELECT 1=1")
+	err := app.Db.Ping()
 	if err != nil {
 		db = false
 	}
