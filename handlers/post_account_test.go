@@ -25,14 +25,23 @@ func TestPostAccountSuccess(t *testing.T) {
 
 func TestPostAccountFailure(t *testing.T) {
 	app := App()
-
-	res := httptest.NewRecorder()
-	req := httptest.NewRequest("POST", "/accounts", nil)
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
 	handler := http.HandlerFunc(app.PostAccount)
-	handler.ServeHTTP(res, req)
 
-	AssertCode(t, res, http.StatusUnprocessableEntity)
-	AssertErrors(t, res, dict{"foo": "bar"})
+	var tests = []struct {
+		body   string
+		errors dict
+	}{
+		{"", dict{"foo": "bar"}},
+	}
+
+	for _, tt := range tests {
+		res := httptest.NewRecorder()
+		req := httptest.NewRequest("POST", "/accounts", strings.NewReader(tt.body))
+		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+		handler.ServeHTTP(res, req)
+
+		AssertCode(t, res, http.StatusUnprocessableEntity)
+		AssertErrors(t, res, tt.errors)
+	}
 }
