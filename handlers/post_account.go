@@ -9,15 +9,35 @@ type response struct {
 }
 
 func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
-	if req.ContentLength > 0 {
-		token := "j.w.t"
+	service := AccountCreator{
+		Username: req.FormValue("username"),
+		Password: req.FormValue("password"),
+	}
 
-		w.WriteHeader(http.StatusCreated)
-		writeData(w, response{token})
+	_, errors := service.perform()
+	if errors != nil {
+		writeErrors(w, errors)
+		return
+	}
+
+	token := "j.w.t"
+
+	w.WriteHeader(http.StatusCreated)
+	writeData(w, response{token})
+}
+
+type AccountCreator struct {
+	Username string
+	Password string
+}
+
+func (s *AccountCreator) perform() (bool, []ServiceError) {
+	if s.Username != "" && s.Password != "" {
+		return true, nil
 	} else {
-		e := make([]ServiceError, 0, 1)
-		e = append(e, ServiceError{Field: "foo", Message: "bar"})
+		errors := make([]ServiceError, 0, 1)
+		errors = append(errors, ServiceError{Field: "foo", Message: "bar"})
 
-		writeErrors(w, e)
+		return false, errors
 	}
 }
