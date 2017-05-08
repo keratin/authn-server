@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 )
 
@@ -21,36 +20,4 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 
 		writeErrors(w, e)
 	}
-}
-
-type ServiceError struct {
-	Field   string `json:"field"`
-	Message string `json:"message"`
-}
-
-type ServiceErrors struct {
-	Errors []ServiceError `json:"errors"`
-}
-
-type ServiceData struct {
-	Result interface{} `json:"result"`
-}
-
-func writeData(w http.ResponseWriter, d interface{}) {
-	writeJson(w, ServiceData{Result: d})
-}
-
-func writeErrors(w http.ResponseWriter, e []ServiceError) {
-	w.WriteHeader(http.StatusUnprocessableEntity)
-	writeJson(w, ServiceErrors{Errors: e})
-}
-
-func writeJson(w http.ResponseWriter, d interface{}) {
-	j, err := json.Marshal(d)
-	if err != nil {
-		panic(err)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(j)
 }
