@@ -7,10 +7,17 @@ import (
 
 type health struct {
 	Http bool `json:"http"`
+	Db   bool `json:"db"`
 }
 
 func (app App) Health(w http.ResponseWriter, req *http.Request) {
-	h := health{true}
+	db := true
+	_, err := app.Db.Query("SELECT 1=1")
+	if err != nil {
+		db = false
+	}
+
+	h := health{true, db}
 
 	j, err := json.Marshal(h)
 	if err != nil {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"os"
@@ -8,12 +9,20 @@ import (
 	gorilla "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/keratin/authn/handlers"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	r := mux.NewRouter()
+	db, err := sql.Open("sqlite3", "./dev.db")
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
 
-	app := handlers.App{"AuthN"}
+	app := handlers.App{Db: *db}
+
+	r := mux.NewRouter()
 
 	r.HandleFunc("/", app.Stub).Methods("GET")
 

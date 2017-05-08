@@ -1,5 +1,7 @@
 package handlers
 
+import "database/sql"
+
 type App struct {
-	Name string
+	Db sql.DB
 }
