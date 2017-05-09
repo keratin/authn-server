@@ -1,24 +1,17 @@
 package handlers_test
 
 import (
-	"database/sql"
 	"encoding/json"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/keratin/authn/data"
 	"github.com/keratin/authn/handlers"
 	"github.com/keratin/authn/services"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func App() handlers.App {
-	db, err := sql.Open("sqlite3", "./test.db")
-	if err != nil {
-		panic(err)
-	}
-
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY, username TEXT, password TEXT)")
+	db, err := data.NewDB("test")
 	if err != nil {
 		panic(err)
 	}

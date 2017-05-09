@@ -1,20 +1,18 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 	"os"
 
 	gorilla "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/keratin/authn/data"
 	"github.com/keratin/authn/handlers"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	db, err := sql.Open("sqlite3", "./dev.db")
+	db, err := data.NewDB("dev")
 	if err != nil {
 		panic(err)
 	}

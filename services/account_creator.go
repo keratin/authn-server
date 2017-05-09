@@ -1,7 +1,7 @@
 package services
 
 import (
-	"database/sql"
+	"github.com/keratin/authn/data"
 )
 
 var MISSING = "MISSING"
@@ -11,13 +11,8 @@ type Error struct {
 	Message string `json:"message"`
 }
 
-type Account struct {
-	Id       int
-	Username string
-}
-
-func AccountCreator(db sql.DB, username string, password string) (*Account, []Error) {
-	errors := make([]Error, 0, 1)
+func AccountCreator(db data.DB, username string, password string) (*data.Account, []Error) {
+	errors := make([]Error, 0, 2)
 
 	if username == "" {
 		errors = append(errors, Error{Field: "username", Message: MISSING})
@@ -30,25 +25,10 @@ func AccountCreator(db sql.DB, username string, password string) (*Account, []Er
 		return nil, errors
 	}
 
-	tx, err := db.Begin()
+	acc, err := db.Create(username, password)
 	if err != nil {
 		panic(err)
 	}
 
-	result, err := db.Exec("INSERT INTO accounts (username, password) VALUES (?, ?)", username, password)
-	if err != nil {
-		tx.Rollback()
-		panic(err)
-	}
-
-	id, err := result.LastInsertId()
-	if err != nil {
-		panic(err)
-	}
-
-	account := Account{Id: int(id), Username: username}
-
-	tx.Commit()
-
-	return &account, nil
+	return acc, nil
 }

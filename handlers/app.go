@@ -1,7 +1,7 @@
 package handlers
 
-import "database/sql"
+import "github.com/keratin/authn/data"
 
 type App struct {
-	Db sql.DB
+	Db data.DB
 }
