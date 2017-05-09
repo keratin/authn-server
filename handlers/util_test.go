@@ -17,7 +17,11 @@ func App() handlers.App {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
+
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY, username TEXT, password TEXT)")
+	if err != nil {
+		panic(err)
+	}
 
 	return handlers.App{Db: *db}
 }

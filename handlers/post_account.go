@@ -17,6 +17,7 @@ type response struct {
 
 func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	_, errors := services.AccountCreator(
+		app.Db,
 		req.FormValue("username"),
 		req.FormValue("password"),
 	)

@@ -1,5 +1,9 @@
 package services
 
+import (
+	"database/sql"
+)
+
 var MISSING = "MISSING"
 
 type Error struct {
@@ -12,7 +16,7 @@ type Account struct {
 	Username string
 }
 
-func AccountCreator(username string, password string) (*Account, []Error) {
+func AccountCreator(db sql.DB, username string, password string) (*Account, []Error) {
 	errors := make([]Error, 0, 1)
 
 	if username == "" {
@@ -26,10 +30,25 @@ func AccountCreator(username string, password string) (*Account, []Error) {
 		return nil, errors
 	}
 
-	account := Account{
-		Id:       0,
-		Username: username,
+	tx, err := db.Begin()
+	if err != nil {
+		panic(err)
 	}
+
+	result, err := db.Exec("INSERT INTO accounts (username, password) VALUES (?, ?)", username, password)
+	if err != nil {
+		tx.Rollback()
+		panic(err)
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		panic(err)
+	}
+
+	account := Account{Id: int(id), Username: username}
+
+	tx.Commit()
 
 	return &account, nil
 }
