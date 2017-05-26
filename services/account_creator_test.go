@@ -8,16 +8,6 @@ import (
 	"github.com/keratin/authn/services"
 )
 
-type dict map[string]string
-
-func (dict *dict) toServiceErrors() []services.Error {
-	errs := make([]services.Error, 0, len(*dict))
-	for field, message := range *dict {
-		errs = append(errs, services.Error{field, message})
-	}
-	return errs
-}
-
 func TestAccountCreatorSuccess(t *testing.T) {
 	db, err := data.TempDB()
 	if err != nil {
@@ -51,10 +41,10 @@ func TestAccountCreatorFailure(t *testing.T) {
 	var tests = []struct {
 		username string
 		password string
-		errors   dict
+		errors   []services.Error
 	}{
-		{"", "", dict{"username": "MISSING", "password": "MISSING"}},
-		{"existing@test.com", "PASSword", dict{"username": "TAKEN"}},
+		{"", "", []services.Error{{"username", "MISSING"}, {"password", "MISSING"}}},
+		{"existing@test.com", "PASSword", []services.Error{{"username", "TAKEN"}}},
 	}
 
 	for _, tt := range tests {
@@ -62,9 +52,8 @@ func TestAccountCreatorFailure(t *testing.T) {
 		if acc != nil {
 			t.Error("unexpected account return")
 		}
-		expected := tt.errors.toServiceErrors()
-		if !reflect.DeepEqual(expected, errs) {
-			t.Errorf("\nexpected: %v\ngot: %v", expected, errs)
+		if !reflect.DeepEqual(tt.errors, errs) {
+			t.Errorf("\nexpected: %v\ngot: %v", tt.errors, errs)
 		}
 	}
 }

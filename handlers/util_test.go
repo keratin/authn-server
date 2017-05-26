@@ -32,13 +32,8 @@ func AssertBody(t *testing.T, rr *httptest.ResponseRecorder, expected string) {
 	}
 }
 
-func AssertErrors(t *testing.T, rr *httptest.ResponseRecorder, expected dict) {
-	errors := make([]services.Error, 0, len(expected))
-	for field, message := range expected {
-		errors = append(errors, services.Error{field, message})
-	}
-
-	j, err := json.Marshal(handlers.ServiceErrors{Errors: errors})
+func AssertErrors(t *testing.T, rr *httptest.ResponseRecorder, expected []services.Error) {
+	j, err := json.Marshal(handlers.ServiceErrors{Errors: expected})
 	if err != nil {
 		panic(err)
 	}

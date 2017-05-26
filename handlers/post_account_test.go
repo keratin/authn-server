@@ -5,9 +5,9 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
-)
 
-type dict map[string]string
+	"github.com/keratin/authn/services"
+)
 
 func TestPostAccountSuccess(t *testing.T) {
 	app := App()
@@ -20,7 +20,7 @@ func TestPostAccountSuccess(t *testing.T) {
 	handler.ServeHTTP(res, req)
 
 	AssertCode(t, res, http.StatusCreated)
-	AssertResult(t, res, dict{"id_token": "j.w.t"})
+	AssertResult(t, res, map[string]string{"id_token": "j.w.t"})
 }
 
 func TestPostAccountFailure(t *testing.T) {
@@ -29,9 +29,9 @@ func TestPostAccountFailure(t *testing.T) {
 
 	var tests = []struct {
 		body   string
-		errors dict
+		errors []services.Error
 	}{
-		{"", dict{"username": "MISSING", "password": "MISSING"}},
+		{"", []services.Error{{"username", "MISSING"}, {"password", "MISSING"}}},
 	}
 
 	for _, tt := range tests {
