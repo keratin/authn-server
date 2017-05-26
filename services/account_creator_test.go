@@ -14,7 +14,7 @@ func TestAccountCreatorSuccess(t *testing.T) {
 		panic(err)
 	}
 
-	acc, errs := services.AccountCreator(*db, "userNAME", "PASSword")
+	acc, errs := services.AccountCreator(db, "userNAME", "PASSword")
 	if len(errs) > 0 {
 		for _, err := range errs {
 			t.Errorf("%v: %v", err.Field, err.Message)
@@ -48,7 +48,7 @@ func TestAccountCreatorFailure(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		acc, errs := services.AccountCreator(*db, tt.username, tt.password)
+		acc, errs := services.AccountCreator(db, tt.username, tt.password)
 		if acc != nil {
 			t.Error("unexpected account return")
 		}

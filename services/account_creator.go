@@ -13,8 +13,8 @@ type Error struct {
 	Message string `json:"message"`
 }
 
-func AccountCreator(db data.DB, username string, password string) (*data.Account, []Error) {
-	errors := make([]Error, 0, 2)
+func AccountCreator(store data.AccountStore, username string, password string) (*data.Account, []Error) {
+	errors := make([]Error, 0)
 
 	if username == "" {
 		errors = append(errors, Error{Field: "username", Message: ErrMissing})
@@ -27,7 +27,7 @@ func AccountCreator(db data.DB, username string, password string) (*data.Account
 		return nil, errors
 	}
 
-	acc, err := db.Create(username, password)
+	acc, err := store.Create(username, password)
 
 	if err != nil {
 		switch i := err.(type) {
