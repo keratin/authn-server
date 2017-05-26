@@ -7,7 +7,6 @@ import (
 
 	gorilla "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/keratin/authn/data"
 	"github.com/keratin/authn/data/sqlite3"
 	"github.com/keratin/authn/handlers"
 )
@@ -18,7 +17,7 @@ func main() {
 		panic(err)
 	}
 	defer db.Close()
-	store := data.DB{db}
+	store := sqlite3.AccountStore{db}
 
 	app := handlers.App{Db: store}
 

@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/keratin/authn/data"
 	"github.com/keratin/authn/data/sqlite3"
 	"github.com/keratin/authn/services"
 )
@@ -14,7 +13,7 @@ func TestAccountCreatorSuccess(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	store := data.DB{db}
+	store := sqlite3.AccountStore{db}
 
 	acc, errs := services.AccountCreator(&store, "userNAME", "PASSword")
 	if len(errs) > 0 {
@@ -37,7 +36,7 @@ func TestAccountCreatorFailure(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	store := data.DB{db}
+	store := sqlite3.AccountStore{db}
 
 	store.Create("existing@test.com", "random")
 

@@ -5,7 +5,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/keratin/authn/data"
 	"github.com/keratin/authn/data/sqlite3"
 	"github.com/keratin/authn/handlers"
 	"github.com/keratin/authn/services"
@@ -16,7 +15,7 @@ func App() handlers.App {
 	if err != nil {
 		panic(err)
 	}
-	store := data.DB{db}
+	store := sqlite3.AccountStore{db}
 
 	return handlers.App{Db: store}
 }
