@@ -32,7 +32,7 @@ func AccountCreator(db data.DB, username string, password string) (*data.Account
 	if err != nil {
 		switch i := err.(type) {
 		case sqlite3.Error:
-			if i.Code == sqlite3.ErrConstraint {
+			if i.ExtendedCode == sqlite3.ErrConstraintUnique {
 				errors = append(errors, Error{Field: "username", Message: ErrTaken})
 				return nil, errors
 			} else {
