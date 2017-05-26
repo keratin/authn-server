@@ -19,7 +19,7 @@ func main() {
 	defer db.Close()
 	store := sqlite3.AccountStore{db}
 
-	app := handlers.App{Db: store}
+	app := handlers.App{Db: *db, AccountStore: store}
 
 	r := mux.NewRouter()
 

@@ -17,7 +17,7 @@ func App() handlers.App {
 	}
 	store := sqlite3.AccountStore{db}
 
-	return handlers.App{Db: store}
+	return handlers.App{Db: *db, AccountStore: store}
 }
 
 func AssertCode(t *testing.T, rr *httptest.ResponseRecorder, expected int) {
