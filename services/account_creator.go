@@ -2,9 +2,11 @@ package services
 
 import (
 	"github.com/keratin/authn/data"
+	sqlite3 "github.com/mattn/go-sqlite3"
 )
 
 var MISSING = "MISSING"
+var TAKEN = "TAKEN"
 
 type Error struct {
 	Field   string `json:"field"`
@@ -26,8 +28,19 @@ func AccountCreator(db data.DB, username string, password string) (*data.Account
 	}
 
 	acc, err := db.Create(username, password)
+
 	if err != nil {
-		panic(err)
+		switch i := err.(type) {
+		case sqlite3.Error:
+			if i.Code == sqlite3.ErrConstraint {
+				errors = append(errors, Error{Field: "username", Message: TAKEN})
+				return nil, errors
+			} else {
+				panic(err)
+			}
+		default:
+			panic(err)
+		}
 	}
 
 	return acc, nil

@@ -8,8 +8,18 @@ import (
 	"github.com/keratin/authn/services"
 )
 
+type dict map[string]string
+
+func (dict *dict) toServiceErrors() []services.Error {
+	errs := make([]services.Error, 0, len(*dict))
+	for field, message := range *dict {
+		errs = append(errs, services.Error{field, message})
+	}
+	return errs
+}
+
 func TestAccountCreatorSuccess(t *testing.T) {
-	db, err := data.NewDB("test")
+	db, err := data.TempDB()
 	if err != nil {
 		panic(err)
 	}
@@ -31,21 +41,30 @@ func TestAccountCreatorSuccess(t *testing.T) {
 }
 
 func TestAccountCreatorFailure(t *testing.T) {
-	db, err := data.NewDB("test")
+	db, err := data.TempDB()
 	if err != nil {
 		panic(err)
 	}
 
-	expected := make([]services.Error, 0, 2)
-	expected = append(expected, services.Error{"username", "MISSING"})
-	expected = append(expected, services.Error{"password", "MISSING"})
+	db.Create("existing@test.com", "random")
 
-	acc, errs := services.AccountCreator(*db, "", "")
-	if !reflect.DeepEqual(errs, expected) {
-		t.Errorf("\nexpected: %v\ngot: %v", expected, errs)
+	var tests = []struct {
+		username string
+		password string
+		errors   dict
+	}{
+		{"", "", dict{"username": "MISSING", "password": "MISSING"}},
+		{"existing@test.com", "PASSword", dict{"username": "TAKEN"}},
 	}
 
-	if acc != nil {
-		t.Error("unexpected account return")
+	for _, tt := range tests {
+		acc, errs := services.AccountCreator(*db, tt.username, tt.password)
+		if acc != nil {
+			t.Error("unexpected account return")
+		}
+		expected := tt.errors.toServiceErrors()
+		if !reflect.DeepEqual(expected, errs) {
+			t.Errorf("\nexpected: %v\ngot: %v", expected, errs)
+		}
 	}
 }

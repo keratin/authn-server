@@ -11,7 +11,7 @@ import (
 )
 
 func App() handlers.App {
-	db, err := data.NewDB("test")
+	db, err := data.TempDB()
 	if err != nil {
 		panic(err)
 	}

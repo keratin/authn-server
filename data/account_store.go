@@ -26,12 +26,34 @@ func NewDB(env string) (*DB, error) {
 		return nil, err
 	}
 
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY, username TEXT, password TEXT)")
+	err = MigrateDB(db)
 	if err != nil {
 		return nil, err
 	}
 
 	return &DB{db}, nil
+}
+
+func TempDB() (*DB, error) {
+	db, err := sql.Open("sqlite3", "file::memory:?mode=memory&cache=shared")
+	if err != nil {
+		panic(err)
+	}
+
+	err = MigrateDB(db)
+	if err != nil {
+		panic(err)
+	}
+
+	return &DB{db}, nil
+}
+
+func MigrateDB(db *sql.DB) error {
+	_, err := db.Exec("CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY, username TEXT CONSTRAINT uniq UNIQUE, password TEXT)")
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (db *DB) Create(u string, p string) (*Account, error) {
@@ -41,10 +63,8 @@ func (db *DB) Create(u string, p string) (*Account, error) {
 		return nil, err
 	}
 
-	// TODO: bcrypt password
 	result, err := db.Exec("INSERT INTO accounts (username, password) VALUES (?, ?)", u, p)
 	if err != nil {
-		// TODO: detect and handle uniqueness failures
 		tx.Rollback()
 		return nil, err
 	}
