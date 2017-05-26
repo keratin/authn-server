@@ -8,17 +8,19 @@ import (
 	gorilla "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/keratin/authn/data"
+	"github.com/keratin/authn/data/sqlite3"
 	"github.com/keratin/authn/handlers"
 )
 
 func main() {
-	db, err := data.NewDB("dev")
+	db, err := sqlite3.NewDB("dev")
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
+	store := data.DB{db}
 
-	app := handlers.App{Db: *db}
+	app := handlers.App{Db: store}
 
 	r := mux.NewRouter()
 

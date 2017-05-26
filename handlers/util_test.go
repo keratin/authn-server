@@ -6,17 +6,19 @@ import (
 	"testing"
 
 	"github.com/keratin/authn/data"
+	"github.com/keratin/authn/data/sqlite3"
 	"github.com/keratin/authn/handlers"
 	"github.com/keratin/authn/services"
 )
 
 func App() handlers.App {
-	db, err := data.TempDB()
+	db, err := sqlite3.TempDB()
 	if err != nil {
 		panic(err)
 	}
+	store := data.DB{db}
 
-	return handlers.App{Db: *db}
+	return handlers.App{Db: store}
 }
 
 func AssertCode(t *testing.T, rr *httptest.ResponseRecorder, expected int) {
