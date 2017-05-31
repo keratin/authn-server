@@ -10,7 +10,7 @@ type AccountStore struct {
 	*sql.DB
 }
 
-func (db *AccountStore) Create(u string, p string) (*data.Account, error) {
+func (db *AccountStore) Create(u string, p []byte) (*data.Account, error) {
 	// TODO: BeginTx with Context!
 	tx, err := db.Begin()
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	"github.com/keratin/authn/config"
 	"github.com/keratin/authn/data"
 	sqlite3 "github.com/mattn/go-sqlite3"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var ErrMissing = "MISSING"
@@ -28,7 +29,12 @@ func AccountCreator(store data.AccountStore, cfg config.Config, username string,
 		return nil, errors
 	}
 
-	acc, err := store.Create(username, password)
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), cfg.BcryptCost)
+	if err != nil {
+		panic(err)
+	}
+
+	acc, err := store.Create(username, hash)
 
 	if err != nil {
 		switch i := err.(type) {

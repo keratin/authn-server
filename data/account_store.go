@@ -6,5 +6,5 @@ type Account struct {
 }
 
 type AccountStore interface {
-	Create(u string, p string) (*Account, error)
+	Create(u string, p []byte) (*Account, error)
 }

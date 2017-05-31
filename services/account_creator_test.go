@@ -33,6 +33,8 @@ func TestAccountCreatorSuccess(t *testing.T) {
 	}
 }
 
+var pw = []byte("$2a$04$ZOBA8E3nT68/ArE6NDnzfezGWEgM6YrE17PrOtSjT5.U/ZGoxyh7e")
+
 func TestAccountCreatorFailure(t *testing.T) {
 	db, err := sqlite3.TempDB()
 	if err != nil {
@@ -41,7 +43,7 @@ func TestAccountCreatorFailure(t *testing.T) {
 	store := sqlite3.AccountStore{db}
 	cfg := config.Config{}
 
-	store.Create("existing@test.com", "random")
+	store.Create("existing@test.com", pw)
 
 	var tests = []struct {
 		username string
