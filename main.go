@@ -7,6 +7,7 @@ import (
 
 	gorilla "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/keratin/authn/config"
 	"github.com/keratin/authn/data/sqlite3"
 	"github.com/keratin/authn/handlers"
 )
@@ -19,7 +20,7 @@ func main() {
 	defer db.Close()
 	store := sqlite3.AccountStore{db}
 
-	app := handlers.App{Db: *db, AccountStore: store}
+	app := handlers.App{Db: *db, AccountStore: store, Config: config.ReadEnv()}
 
 	r := mux.NewRouter()
 

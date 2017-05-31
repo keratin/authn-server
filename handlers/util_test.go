@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/keratin/authn/config"
 	"github.com/keratin/authn/data/sqlite3"
 	"github.com/keratin/authn/handlers"
 	"github.com/keratin/authn/services"
@@ -17,7 +18,11 @@ func App() handlers.App {
 	}
 	store := sqlite3.AccountStore{db}
 
-	return handlers.App{Db: *db, AccountStore: store}
+	cfg := config.Config{
+		BcryptCost: 4,
+	}
+
+	return handlers.App{Db: *db, AccountStore: store, Config: cfg}
 }
 
 func AssertCode(t *testing.T, rr *httptest.ResponseRecorder, expected int) {

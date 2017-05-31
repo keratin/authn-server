@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/keratin/authn/config"
 	"github.com/keratin/authn/data"
 	sqlite3 "github.com/mattn/go-sqlite3"
 )
@@ -13,7 +14,7 @@ type Error struct {
 	Message string `json:"message"`
 }
 
-func AccountCreator(store data.AccountStore, username string, password string) (*data.Account, []Error) {
+func AccountCreator(store data.AccountStore, cfg config.Config, username string, password string) (*data.Account, []Error) {
 	errors := make([]Error, 0)
 
 	if username == "" {

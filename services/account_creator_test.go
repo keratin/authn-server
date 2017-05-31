@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/keratin/authn/config"
 	"github.com/keratin/authn/data/sqlite3"
 	"github.com/keratin/authn/services"
 )
@@ -14,8 +15,9 @@ func TestAccountCreatorSuccess(t *testing.T) {
 		panic(err)
 	}
 	store := sqlite3.AccountStore{db}
+	cfg := config.Config{}
 
-	acc, errs := services.AccountCreator(&store, "userNAME", "PASSword")
+	acc, errs := services.AccountCreator(&store, cfg, "userNAME", "PASSword")
 	if len(errs) > 0 {
 		for _, err := range errs {
 			t.Errorf("%v: %v", err.Field, err.Message)
@@ -37,6 +39,7 @@ func TestAccountCreatorFailure(t *testing.T) {
 		panic(err)
 	}
 	store := sqlite3.AccountStore{db}
+	cfg := config.Config{}
 
 	store.Create("existing@test.com", "random")
 
@@ -50,7 +53,7 @@ func TestAccountCreatorFailure(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		acc, errs := services.AccountCreator(&store, tt.username, tt.password)
+		acc, errs := services.AccountCreator(&store, cfg, tt.username, tt.password)
 		if acc != nil {
 			t.Error("unexpected account return")
 		}
