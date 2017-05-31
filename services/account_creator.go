@@ -15,7 +15,7 @@ type Error struct {
 	Message string `json:"message"`
 }
 
-func AccountCreator(store data.AccountStore, cfg config.Config, username string, password string) (*data.Account, []Error) {
+func AccountCreator(store data.AccountStore, cfg *config.Config, username string, password string) (*data.Account, []Error) {
 	errors := make([]Error, 0)
 
 	if username == "" {

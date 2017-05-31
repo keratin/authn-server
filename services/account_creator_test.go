@@ -17,7 +17,7 @@ func TestAccountCreatorSuccess(t *testing.T) {
 	store := sqlite3.AccountStore{db}
 	cfg := config.Config{}
 
-	acc, errs := services.AccountCreator(&store, cfg, "userNAME", "PASSword")
+	acc, errs := services.AccountCreator(&store, &cfg, "userNAME", "PASSword")
 	if len(errs) > 0 {
 		for _, err := range errs {
 			t.Errorf("%v: %v", err.Field, err.Message)
@@ -55,7 +55,7 @@ func TestAccountCreatorFailure(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		acc, errs := services.AccountCreator(&store, cfg, tt.username, tt.password)
+		acc, errs := services.AccountCreator(&store, &cfg, tt.username, tt.password)
 		if acc != nil {
 			t.Error("unexpected account return")
 		}
