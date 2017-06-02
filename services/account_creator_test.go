@@ -15,21 +15,32 @@ func TestAccountCreatorSuccess(t *testing.T) {
 		panic(err)
 	}
 	store := sqlite3.AccountStore{db}
-	cfg := config.Config{}
 
-	acc, errs := services.AccountCreator(&store, &cfg, "userNAME", "PASSword")
-	if len(errs) > 0 {
-		for _, err := range errs {
-			t.Errorf("%v: %v", err.Field, err.Message)
+	var tests = []struct {
+		config   config.Config
+		username string
+		password string
+	}{
+		{config.Config{UsernameIsEmail: false, UsernameMinLength: 6}, "userName", "PASSword"},
+		{config.Config{UsernameIsEmail: true}, "username@test.com", "PASSword"},
+		{config.Config{UsernameIsEmail: true, UsernameDomain: "rightdomain.com"}, "username@rightdomain.com", "PASSword"},
+	}
+
+	for _, tt := range tests {
+		acc, errs := services.AccountCreator(&store, &tt.config, tt.username, tt.password)
+		if len(errs) > 0 {
+			for _, err := range errs {
+				t.Errorf("%v: %v", err.Field, err.Message)
+			}
 		}
-	}
 
-	if acc.Id == 0 {
-		t.Errorf("\nexpected: %v\ngot: %v", nil, acc.Id)
-	}
+		if acc != nil && acc.Id == 0 {
+			t.Errorf("\nexpected: %v\ngot: %v", nil, acc.Id)
+		}
 
-	if acc.Username != "userNAME" {
-		t.Errorf("\nexpected: %v\ngot: %v", "userNAME", acc.Username)
+		if acc != nil && acc.Username != tt.username {
+			t.Errorf("\nexpected: %v\ngot: %v", tt.username, acc.Username)
+		}
 	}
 }
 
@@ -41,21 +52,28 @@ func TestAccountCreatorFailure(t *testing.T) {
 		panic(err)
 	}
 	store := sqlite3.AccountStore{db}
-	cfg := config.Config{}
 
 	store.Create("existing@test.com", pw)
 
 	var tests = []struct {
+		config   config.Config
 		username string
 		password string
 		errors   []services.Error
 	}{
-		{"", "", []services.Error{{"username", "MISSING"}, {"password", "MISSING"}}},
-		{"existing@test.com", "PASSword", []services.Error{{"username", "TAKEN"}}},
+		// username validations
+		{config.Config{}, "", "PASSword", []services.Error{{"username", "MISSING"}}},
+		{config.Config{}, "  ", "PASSword", []services.Error{{"username", "MISSING"}}},
+		{config.Config{}, "existing@test.com", "PASSword", []services.Error{{"username", "TAKEN"}}},
+		{config.Config{UsernameIsEmail: true}, "notanemail", "PASSword", []services.Error{{"username", "FORMAT_INVALID"}}},
+		{config.Config{UsernameIsEmail: true, UsernameDomain: "rightdomain.com"}, "email@wrongdomain.com", "PASSword", []services.Error{{"username", "FORMAT_INVALID"}}},
+		{config.Config{UsernameIsEmail: false, UsernameMinLength: 6}, "short", "PASSword", []services.Error{{"username", "FORMAT_INVALID"}}},
+		// password validations
+		{config.Config{}, "username", "", []services.Error{{"password", "MISSING"}}},
 	}
 
 	for _, tt := range tests {
-		acc, errs := services.AccountCreator(&store, &cfg, tt.username, tt.password)
+		acc, errs := services.AccountCreator(&store, &tt.config, tt.username, tt.password)
 		if acc != nil {
 			t.Error("unexpected account return")
 		}
