@@ -34,6 +34,15 @@ func hasDomain(email string, domain string) bool {
 	return domain == pieces[1]
 }
 
+func isUniquenessError(err error) bool {
+	switch i := err.(type) {
+	case sqlite3.Error:
+		return i.ExtendedCode == sqlite3.ErrConstraintUnique
+	default:
+		return false
+	}
+}
+
 func AccountCreator(store data.AccountStore, cfg *config.Config, username string, password string) (*data.Account, []Error) {
 	errors := make([]Error, 0)
 
@@ -76,15 +85,10 @@ func AccountCreator(store data.AccountStore, cfg *config.Config, username string
 	acc, err := store.Create(username, hash)
 
 	if err != nil {
-		switch i := err.(type) {
-		case sqlite3.Error:
-			if i.ExtendedCode == sqlite3.ErrConstraintUnique {
-				errors = append(errors, Error{Field: "username", Message: ErrTaken})
-				return nil, errors
-			} else {
-				panic(err)
-			}
-		default:
+		if isUniquenessError(err) {
+			errors = append(errors, Error{Field: "username", Message: ErrTaken})
+			return nil, errors
+		} else {
 			panic(err)
 		}
 	}
