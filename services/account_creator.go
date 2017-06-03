@@ -7,12 +7,14 @@ import (
 	"github.com/keratin/authn/config"
 	"github.com/keratin/authn/data"
 	sqlite3 "github.com/mattn/go-sqlite3"
+	zxcvbn "github.com/nbutton23/zxcvbn-go"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var ErrMissing = "MISSING"
 var ErrTaken = "TAKEN"
 var ErrFormatInvalid = "FORMAT_INVALID"
+var ErrInsecure = "INSECURE"
 
 type Error struct {
 	Field   string `json:"field"`
@@ -56,6 +58,10 @@ func AccountCreator(store data.AccountStore, cfg *config.Config, username string
 
 	if password == "" {
 		errors = append(errors, Error{Field: "password", Message: ErrMissing})
+	} else {
+		if zxcvbn.PasswordStrength(password, []string{username}).Score < cfg.PasswordMinComplexity {
+			errors = append(errors, Error{Field: "password", Message: ErrInsecure})
+		}
 	}
 
 	if len(errors) > 0 {

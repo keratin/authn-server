@@ -70,6 +70,7 @@ func TestAccountCreatorFailure(t *testing.T) {
 		{config.Config{UsernameIsEmail: false, UsernameMinLength: 6}, "short", "PASSword", []services.Error{{"username", "FORMAT_INVALID"}}},
 		// password validations
 		{config.Config{}, "username", "", []services.Error{{"password", "MISSING"}}},
+		{config.Config{PasswordMinComplexity: 2}, "username", "qwerty", []services.Error{{"password", "INSECURE"}}},
 	}
 
 	for _, tt := range tests {
