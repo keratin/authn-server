@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/go-redis/redis"
 	gorilla "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/keratin/authn/config"
@@ -13,14 +14,28 @@ import (
 )
 
 func main() {
+	cfg := config.ReadEnv()
+
 	db, err := sqlite3.NewDB("dev")
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
+
 	store := sqlite3.AccountStore{db}
 
-	app := handlers.App{Db: *db, AccountStore: store, Config: config.ReadEnv()}
+	opts, err := redis.ParseURL("redis://127.0.0.1:6379/11")
+	if err != nil {
+		panic(err)
+	}
+	redis := redis.NewClient(opts)
+
+	app := handlers.App{
+		Db:           *db,
+		Redis:        redis,
+		Config:       cfg,
+		AccountStore: store,
+	}
 
 	r := mux.NewRouter()
 

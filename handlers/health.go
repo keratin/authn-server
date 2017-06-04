@@ -5,18 +5,17 @@ import (
 )
 
 type health struct {
-	Http bool `json:"http"`
-	Db   bool `json:"db"`
+	Http  bool `json:"http"`
+	Db    bool `json:"db"`
+	Redis bool `json:"redis"`
 }
 
 func (app App) Health(w http.ResponseWriter, req *http.Request) {
-	db := true
-	err := app.Db.Ping()
-	if err != nil {
-		db = false
+	h := health{
+		Http:  true,
+		Redis: app.Redis.Ping().Err() == nil,
+		Db:    app.Db.Ping() == nil,
 	}
-
-	h := health{true, db}
 
 	writeJson(w, h)
 }

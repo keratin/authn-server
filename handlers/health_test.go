@@ -16,5 +16,5 @@ func TestHealth(t *testing.T) {
 	handler.ServeHTTP(res, req)
 
 	AssertCode(t, res, http.StatusOK)
-	AssertBody(t, res, `{"http":true,"db":true}`)
+	AssertBody(t, res, `{"http":true,"db":true,"redis":true}`)
 }

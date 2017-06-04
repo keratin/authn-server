@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/go-redis/redis"
 	"github.com/keratin/authn/config"
 	"github.com/keratin/authn/data/sqlite3"
 	"github.com/keratin/authn/handlers"
@@ -22,7 +23,18 @@ func App() handlers.App {
 		BcryptCost: 4,
 	}
 
-	return handlers.App{Db: *db, AccountStore: store, Config: cfg}
+	opts, err := redis.ParseURL("redis://127.0.0.1:6379/12")
+	if err != nil {
+		panic(err)
+	}
+	redis := redis.NewClient(opts)
+
+	return handlers.App{
+		Db:           *db,
+		Redis:        redis,
+		AccountStore: store,
+		Config:       cfg,
+	}
 }
 
 func AssertCode(t *testing.T, rr *httptest.ResponseRecorder, expected int) {
