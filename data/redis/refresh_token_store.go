@@ -34,7 +34,9 @@ func (s *RefreshTokenStore) Find(hexToken data.RefreshToken) (int, error) {
 		return 0, err
 	}
 	str, err := s.Client.Get(keyForToken(binToken)).Result()
-	if err != nil {
+	if err == redis.Nil {
+		return 0, nil
+	} else if err != nil {
 		return 0, err
 	}
 	return strconv.Atoi(str)

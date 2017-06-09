@@ -81,8 +81,8 @@ func TestRefreshTokenRevoke(t *testing.T) {
 	id := 123
 
 	err := store.Revoke(data.RefreshToken("a1b2c3"))
-	if err == nil {
-		t.Error("expected error, got success")
+	if err != nil {
+		t.Error(err)
 	}
 
 	token, err := store.Create(id)
@@ -113,9 +113,12 @@ func TestRefreshTokenRevoke(t *testing.T) {
 type ider func() (int, error)
 
 func expectNoId(t *testing.T, fn ider) {
-	_, err := fn()
-	if err == nil {
-		t.Error("expected error but found token")
+	id, err := fn()
+	if id != 0 {
+		t.Error("expected empty value, got %v", id)
+	}
+	if err != nil {
+		t.Error(err)
 	}
 }
 
@@ -123,10 +126,8 @@ func expectId(expected int, t *testing.T, fn ider) {
 	id, err := fn()
 	if err != nil {
 		t.Error(err)
-	} else {
-		if expected != id {
-			t.Errorf("expected: %v, got: %v", expected, id)
-		}
+	} else if expected != id {
+		t.Errorf("expected: %v, got: %v", expected, id)
 	}
 }
 
