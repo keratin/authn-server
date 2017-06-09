@@ -32,7 +32,7 @@ func App() handlers.App {
 	return handlers.App{
 		Db:           *db,
 		Redis:        redis,
-		AccountStore: store,
+		AccountStore: &store,
 		Config:       cfg,
 	}
 }

@@ -34,7 +34,7 @@ func main() {
 		Db:           *db,
 		Redis:        redis,
 		Config:       cfg,
-		AccountStore: store,
+		AccountStore: &store,
 	}
 
 	r := mux.NewRouter()
