@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	goredis "github.com/go-redis/redis"
 	"github.com/keratin/authn/data"
 	"github.com/keratin/authn/data/redis"
 )
@@ -12,8 +13,16 @@ import (
 var oneDay = time.Duration(8766) * time.Hour
 var redisUrl = "redis://127.0.0.1:6379/12"
 
+func newStore() *goredis.Client {
+	opts, err := goredis.ParseURL(redisUrl)
+	if err != nil {
+		panic(err)
+	}
+	return goredis.NewClient(opts)
+}
+
 func TestRefreshTokenFind(t *testing.T) {
-	client := redis.NewStore(redisUrl)
+	client := newStore()
 	defer client.FlushDb()
 	store := redis.RefreshTokenStore{Client: client, TTL: oneDay}
 
@@ -40,7 +49,7 @@ func TestRefreshTokenTouch(t *testing.T) {
 }
 
 func TestRefreshTokenFindAll(t *testing.T) {
-	client := redis.NewStore(redisUrl)
+	client := newStore()
 	defer client.FlushDb()
 	store := redis.RefreshTokenStore{Client: client, TTL: oneDay}
 
@@ -65,7 +74,7 @@ func TestRefreshTokenCreate(t *testing.T) {
 }
 
 func TestRefreshTokenRevoke(t *testing.T) {
-	client := redis.NewStore(redisUrl)
+	client := newStore()
 	defer client.FlushDb()
 	store := redis.RefreshTokenStore{Client: client, TTL: oneDay}
 
