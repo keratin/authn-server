@@ -25,7 +25,7 @@ func main() {
 
 	store := sqlite3.AccountStore{db}
 
-	opts, err := redis.ParseURL("redis://127.0.0.1:6379/11")
+	opts, err := redis.ParseURL(cfg.RedisURL)
 	if err != nil {
 		panic(err)
 	}
