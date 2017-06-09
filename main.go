@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/go-redis/redis"
 	gorilla "github.com/gorilla/handlers"
@@ -32,8 +31,10 @@ func main() {
 	}
 	redis := redis.NewClient(opts)
 
-	oneYear := time.Duration(8766) * time.Hour
-	tokenStore := dataRedis.RefreshTokenStore{Client: redis, TTL: oneYear}
+	tokenStore := dataRedis.RefreshTokenStore{
+		Client: redis,
+		TTL:    cfg.RefreshTokenTTL,
+	}
 
 	app := handlers.App{
 		Db:                *db,

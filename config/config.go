@@ -1,12 +1,17 @@
 package config
 
+import "time"
+
 type Config struct {
 	BcryptCost            int
 	UsernameIsEmail       bool
 	UsernameMinLength     int
 	UsernameDomain        string
 	PasswordMinComplexity int
+	RefreshTokenTTL       time.Duration
 }
+
+var oneYear = time.Duration(8766) * time.Hour
 
 func ReadEnv() Config {
 	return Config{
@@ -15,5 +20,6 @@ func ReadEnv() Config {
 		UsernameMinLength:     3,
 		UsernameDomain:        "",
 		PasswordMinComplexity: 2,
+		RefreshTokenTTL:       oneYear,
 	}
 }
