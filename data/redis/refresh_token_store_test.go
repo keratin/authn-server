@@ -46,6 +46,14 @@ func TestRefreshTokenFind(t *testing.T) {
 }
 
 func TestRefreshTokenTouch(t *testing.T) {
+	client := newStore()
+	defer client.FlushDb()
+	store := redis.RefreshTokenStore{Client: client, TTL: refreshTTL}
+
+	err := store.Touch(data.RefreshToken("a1b2c3"), 123)
+	if err != nil {
+		t.Error(err)
+	}
 }
 
 func TestRefreshTokenFindAll(t *testing.T) {

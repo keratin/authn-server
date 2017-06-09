@@ -42,7 +42,7 @@ func (s *RefreshTokenStore) Find(hexToken data.RefreshToken) (int, error) {
 	return strconv.Atoi(str)
 }
 
-func (s *RefreshTokenStore) Touch(hexToken data.RefreshToken, account_id *int) error {
+func (s *RefreshTokenStore) Touch(hexToken data.RefreshToken, account_id int) error {
 	binToken, err := hex.DecodeString(string(hexToken))
 	if err != nil {
 		return err
@@ -50,7 +50,7 @@ func (s *RefreshTokenStore) Touch(hexToken data.RefreshToken, account_id *int) e
 
 	_, err = s.Client.Pipelined(func(pipe redis.Pipeliner) error {
 		pipe.Expire(keyForToken(binToken), s.TTL)
-		pipe.Expire(keyForAccount(*account_id), s.TTL)
+		pipe.Expire(keyForAccount(account_id), s.TTL)
 		return nil
 	})
 	return err
