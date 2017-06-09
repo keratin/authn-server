@@ -71,6 +71,27 @@ func TestRefreshTokenFindAll(t *testing.T) {
 }
 
 func TestRefreshTokenCreate(t *testing.T) {
+	client := newStore()
+	defer client.FlushDb()
+	store := redis.RefreshTokenStore{Client: client, TTL: refreshTTL}
+
+	id := 123
+
+	expectNoTokens(t, func() ([]data.RefreshToken, error) {
+		return store.FindAll(id)
+	})
+
+	token, err := store.Create(id)
+	if err != nil {
+		t.Error(err)
+	}
+	if len(token) != 32 {
+		t.Errorf("expected token length %v, got %v", 32, len(token))
+	}
+
+	expectTokens([]data.RefreshToken{token}, t, func() ([]data.RefreshToken, error) {
+		return store.FindAll(id)
+	})
 }
 
 func TestRefreshTokenRevoke(t *testing.T) {
