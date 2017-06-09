@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/go-redis/redis"
 	"github.com/keratin/authn/config"
+	dataRedis "github.com/keratin/authn/data/redis"
 	"github.com/keratin/authn/data/sqlite3"
 	"github.com/keratin/authn/handlers"
 	"github.com/keratin/authn/services"
@@ -29,11 +31,14 @@ func App() handlers.App {
 	}
 	redis := redis.NewClient(opts)
 
+	tokenStore := dataRedis.RefreshTokenStore{Client: redis, TTL: time.Minute}
+
 	return handlers.App{
-		Db:           *db,
-		Redis:        redis,
-		AccountStore: &store,
-		Config:       cfg,
+		Db:                *db,
+		Redis:             redis,
+		AccountStore:      &store,
+		RefreshTokenStore: &tokenStore,
+		Config:            cfg,
 	}
 }
 

@@ -4,11 +4,13 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-redis/redis"
 	gorilla "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/keratin/authn/config"
+	dataRedis "github.com/keratin/authn/data/redis"
 	"github.com/keratin/authn/data/sqlite3"
 	"github.com/keratin/authn/handlers"
 )
@@ -30,11 +32,15 @@ func main() {
 	}
 	redis := redis.NewClient(opts)
 
+	oneYear := time.Duration(8766) * time.Hour
+	tokenStore := dataRedis.RefreshTokenStore{Client: redis, TTL: oneYear}
+
 	app := handlers.App{
-		Db:           *db,
-		Redis:        redis,
-		Config:       cfg,
-		AccountStore: &store,
+		Db:                *db,
+		Redis:             redis,
+		Config:            cfg,
+		AccountStore:      &store,
+		RefreshTokenStore: &tokenStore,
 	}
 
 	r := mux.NewRouter()

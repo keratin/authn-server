@@ -9,8 +9,9 @@ import (
 )
 
 type App struct {
-	Db           sql.DB
-	Redis        *redis.Client
-	Config       config.Config
-	AccountStore data.AccountStore
+	Db                sql.DB
+	Redis             *redis.Client
+	Config            config.Config
+	AccountStore      data.AccountStore
+	RefreshTokenStore data.RefreshTokenStore
 }
