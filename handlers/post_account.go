@@ -16,7 +16,7 @@ type response struct {
 }
 
 func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
-	_, errors := services.AccountCreator(
+	account, errors := services.AccountCreator(
 		app.AccountStore,
 		&app.Config,
 		req.FormValue("username"),
@@ -27,8 +27,12 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	token := "j.w.t"
+	_, err := app.RefreshTokenStore.Create(account.Id)
+	if err != nil {
+		panic(err)
+	}
+	accessToken := "j.w.t"
 
 	w.WriteHeader(http.StatusCreated)
-	writeData(w, response{token})
+	writeData(w, response{accessToken})
 }
