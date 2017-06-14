@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 	"time"
@@ -25,9 +26,15 @@ func testApp() handlers.App {
 	}
 	store := sqlite3.AccountStore{db}
 
+	authnUrl, err := url.Parse("https://authn.example.com")
+	if err != nil {
+		panic(err)
+	}
+
 	cfg := config.Config{
 		BcryptCost:        4,
 		SessionSigningKey: []byte("TODO"),
+		AuthNURL:          authnUrl,
 	}
 
 	opts, err := redis.ParseURL("redis://127.0.0.1:6379/12")

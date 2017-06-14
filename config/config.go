@@ -1,6 +1,9 @@
 package config
 
-import "time"
+import (
+	"net/url"
+	"time"
+)
 
 type Config struct {
 	BcryptCost            int
@@ -11,11 +14,19 @@ type Config struct {
 	RefreshTokenTTL       time.Duration
 	RedisURL              string
 	SessionSigningKey     []byte
+	AuthNURL              *url.URL
+	ForceSSL              bool
+	MountedPath           string
 }
 
 var oneYear = time.Duration(8766) * time.Hour
 
 func ReadEnv() Config {
+	authnUrl, err := url.Parse("https://example.com/authn")
+	if err != nil {
+		panic(err)
+	}
+
 	return Config{
 		BcryptCost:            11,
 		UsernameIsEmail:       true,
@@ -25,5 +36,8 @@ func ReadEnv() Config {
 		RefreshTokenTTL:       oneYear,
 		RedisURL:              "redis://127.0.0.1:6379/11",
 		SessionSigningKey:     []byte("TODO"),
+		AuthNURL:              authnUrl,
+		MountedPath:           authnUrl.Path,
+		ForceSSL:              authnUrl.Scheme == "https",
 	}
 }

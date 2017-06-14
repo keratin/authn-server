@@ -35,9 +35,9 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	}
 
 	sessionToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"iss": "",
+		"iss": app.Config.AuthNURL.String(),
 		"sub": refreshToken,
-		"aud": "",
+		"aud": app.Config.AuthNURL.String(),
 		"iat": time.Now().Unix(),
 		"azp": "",
 	})
@@ -46,10 +46,10 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 		panic(err)
 	}
 	sessionCookie := http.Cookie{
-		Value:    sessionString,
 		Name:     "authn",
-		Path:     "",
-		Secure:   true,
+		Value:    sessionString,
+		Path:     app.Config.MountedPath,
+		Secure:   app.Config.ForceSSL,
 		HttpOnly: true,
 	}
 
