@@ -7,7 +7,7 @@ import (
 )
 
 func TestHealth(t *testing.T) {
-	app := App()
+	app := testApp()
 
 	res := httptest.NewRecorder()
 	req := httptest.NewRequest("GET", "/health", nil)
@@ -15,6 +15,6 @@ func TestHealth(t *testing.T) {
 	handler := http.HandlerFunc(app.Health)
 	handler.ServeHTTP(res, req)
 
-	AssertCode(t, res, http.StatusOK)
-	AssertBody(t, res, `{"http":true,"db":true,"redis":true}`)
+	assertCode(t, res, http.StatusOK)
+	assertBody(t, res, `{"http":true,"db":true,"redis":true}`)
 }

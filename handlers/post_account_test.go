@@ -10,7 +10,7 @@ import (
 )
 
 func TestPostAccountSuccess(t *testing.T) {
-	app := App()
+	app := testApp()
 
 	res := httptest.NewRecorder()
 	req := httptest.NewRequest("POST", "/accounts", strings.NewReader("username=foo&password=bar"))
@@ -19,12 +19,12 @@ func TestPostAccountSuccess(t *testing.T) {
 	handler := http.HandlerFunc(app.PostAccount)
 	handler.ServeHTTP(res, req)
 
-	AssertCode(t, res, http.StatusCreated)
-	AssertResult(t, res, map[string]string{"id_token": "j.w.t"})
+	assertCode(t, res, http.StatusCreated)
+	assertResult(t, res, map[string]string{"id_token": "j.w.t"})
 }
 
 func TestPostAccountFailure(t *testing.T) {
-	app := App()
+	app := testApp()
 	handler := http.HandlerFunc(app.PostAccount)
 
 	var tests = []struct {
@@ -41,7 +41,7 @@ func TestPostAccountFailure(t *testing.T) {
 
 		handler.ServeHTTP(res, req)
 
-		AssertCode(t, res, http.StatusUnprocessableEntity)
-		AssertErrors(t, res, tt.errors)
+		assertCode(t, res, http.StatusUnprocessableEntity)
+		assertErrors(t, res, tt.errors)
 	}
 }
