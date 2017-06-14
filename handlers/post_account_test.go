@@ -21,6 +21,7 @@ func TestPostAccountSuccess(t *testing.T) {
 
 	assertCode(t, res, http.StatusCreated)
 	assertResult(t, res, map[string]string{"id_token": "j.w.t"})
+	assertSession(t, res)
 }
 
 func TestPostAccountFailure(t *testing.T) {

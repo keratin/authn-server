@@ -10,6 +10,7 @@ type Config struct {
 	PasswordMinComplexity int
 	RefreshTokenTTL       time.Duration
 	RedisURL              string
+	SessionSigningKey     []byte
 }
 
 var oneYear = time.Duration(8766) * time.Hour
@@ -23,5 +24,6 @@ func ReadEnv() Config {
 		PasswordMinComplexity: 2,
 		RefreshTokenTTL:       oneYear,
 		RedisURL:              "redis://127.0.0.1:6379/11",
+		SessionSigningKey:     []byte("TODO"),
 	}
 }

@@ -2,10 +2,14 @@ package handlers_test
 
 import (
 	"encoding/json"
+	"fmt"
+	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-redis/redis"
 	"github.com/keratin/authn/config"
 	dataRedis "github.com/keratin/authn/data/redis"
@@ -22,7 +26,8 @@ func testApp() handlers.App {
 	store := sqlite3.AccountStore{db}
 
 	cfg := config.Config{
-		BcryptCost: 4,
+		BcryptCost:        4,
+		SessionSigningKey: []byte("TODO"),
 	}
 
 	opts, err := redis.ParseURL("redis://127.0.0.1:6379/12")
@@ -39,6 +44,23 @@ func testApp() handlers.App {
 		AccountStore:      &store,
 		RefreshTokenStore: &tokenStore,
 		Config:            cfg,
+	}
+}
+
+// apparently you can't fully restore a Cookie from the Set-Cookie header without
+// in-depth parsing hijinx like in net/http/cookie.go's readSetCookies.
+//
+// you can't even partially restore a Cookie without going through a new Request:
+// http://jonnyreeves.co.uk/2016/testing-setting-http-cookies-in-go/
+func readSetCookieValue(name string, recorder *httptest.ResponseRecorder) (string, error) {
+	request := http.Request{
+		Header: http.Header{"Cookie": recorder.HeaderMap["Set-Cookie"]},
+	}
+	cookie, err := request.Cookie(name)
+	if err != nil {
+		return "", err
+	} else {
+		return cookie.Value, nil
 	}
 }
 
@@ -71,4 +93,26 @@ func assertResult(t *testing.T, rr *httptest.ResponseRecorder, expected interfac
 	}
 
 	assertBody(t, rr, string(j))
+}
+
+func assertSession(t *testing.T, rr *httptest.ResponseRecorder) {
+	session, err := readSetCookieValue("authn", rr)
+	if err != nil {
+		t.Error(err)
+	}
+
+	segments := strings.Split(session, ".")
+	if len(segments) != 3 {
+		t.Error("expected JWT with three segments, got: %v", session)
+	}
+
+	_, err = jwt.Parse(session, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", t.Header["alg"])
+		}
+		return []byte("TODO"), err
+	})
+	if err != nil {
+		t.Error(err)
+	}
 }
