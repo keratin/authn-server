@@ -18,6 +18,7 @@ type response struct {
 }
 
 func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
+	// Create the account
 	account, errors := services.AccountCreator(
 		app.AccountStore,
 		&app.Config,
@@ -29,6 +30,7 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// Create the session token
 	session, err := models.NewSessionJWT(
 		app.RefreshTokenStore,
 		app.Config,
@@ -38,11 +40,24 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 		panic(err)
 	}
 
-	sessionString, err := session.Sign(jwt.SigningMethodHS256, app.Config.SessionSigningKey)
+	// Create the identity token
+	identity, err := models.NewIdentityJWT(
+		app.RefreshTokenStore,
+		app.Config,
+		session,
+	)
 	if err != nil {
 		panic(err)
 	}
 
+	// Begin the response
+	w.WriteHeader(http.StatusCreated)
+
+	// Return the signed session in a cookie
+	sessionString, err := session.Sign(jwt.SigningMethodHS256, app.Config.SessionSigningKey)
+	if err != nil {
+		panic(err)
+	}
 	sessionCookie := http.Cookie{
 		Name:     "authn",
 		Value:    sessionString,
@@ -50,10 +65,12 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 		Secure:   app.Config.ForceSSL,
 		HttpOnly: true,
 	}
-
-	accessToken := "j.w.t"
-
-	w.WriteHeader(http.StatusCreated)
 	http.SetCookie(w, &sessionCookie)
-	writeData(w, response{accessToken})
+
+	// Return the identity token in the body
+	identityString, err := identity.Sign(jwt.SigningMethodHS256, app.Config.IdentitySigningKey)
+	if err != nil {
+		panic(err)
+	}
+	writeData(w, response{identityString})
 }

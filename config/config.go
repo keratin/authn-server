@@ -14,9 +14,11 @@ type Config struct {
 	RefreshTokenTTL       time.Duration
 	RedisURL              string
 	SessionSigningKey     []byte
+	IdentitySigningKey    []byte
 	AuthNURL              *url.URL
 	ForceSSL              bool
 	MountedPath           string
+	AccessTokenTTL        time.Duration
 }
 
 var oneYear = time.Duration(8766) * time.Hour
@@ -36,8 +38,10 @@ func ReadEnv() Config {
 		RefreshTokenTTL:       oneYear,
 		RedisURL:              "redis://127.0.0.1:6379/11",
 		SessionSigningKey:     []byte("TODO"),
+		IdentitySigningKey:    []byte("TODO"),
 		AuthNURL:              authnUrl,
 		MountedPath:           authnUrl.Path,
 		ForceSSL:              authnUrl.Scheme == "https",
+		AccessTokenTTL:        time.Hour,
 	}
 }

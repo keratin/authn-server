@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -32,9 +33,10 @@ func testApp() handlers.App {
 	}
 
 	cfg := config.Config{
-		BcryptCost:        4,
-		SessionSigningKey: []byte("TODO"),
-		AuthNURL:          authnUrl,
+		BcryptCost:         4,
+		SessionSigningKey:  []byte("TODO"),
+		IdentitySigningKey: []byte("TODO"),
+		AuthNURL:           authnUrl,
 	}
 
 	opts, err := redis.ParseURL("redis://127.0.0.1:6379/12")
@@ -93,15 +95,6 @@ func assertErrors(t *testing.T, rr *httptest.ResponseRecorder, expected []servic
 	assertBody(t, rr, string(j))
 }
 
-func assertResult(t *testing.T, rr *httptest.ResponseRecorder, expected interface{}) {
-	j, err := json.Marshal(handlers.ServiceData{expected})
-	if err != nil {
-		panic(err)
-	}
-
-	assertBody(t, rr, string(j))
-}
-
 func assertSession(t *testing.T, rr *httptest.ResponseRecorder) {
 	session, err := readSetCookieValue("authn", rr)
 	if err != nil {
@@ -122,4 +115,39 @@ func assertSession(t *testing.T, rr *httptest.ResponseRecorder) {
 	if err != nil {
 		t.Error(err)
 	}
+}
+
+func assertIdTokenResponse(t *testing.T, rr *httptest.ResponseRecorder, cfg config.Config) {
+	// check that the response contains the expected json
+	responseData := struct {
+		IdToken string `json:"id_token"`
+	}{}
+	err := extractResult(rr, &responseData)
+	if err != nil {
+		t.Error(err)
+	}
+
+	// check that the IdToken is JWT-ish
+	identityToken, err := jwt.Parse(responseData.IdToken, func(tkn *jwt.Token) (interface{}, error) {
+		return cfg.IdentitySigningKey, nil
+	})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// check that the JWT contains nice things
+	assertEqual(t, cfg.AuthNURL.String(), identityToken.Claims.(jwt.MapClaims)["iss"])
+}
+
+func assertEqual(t *testing.T, expected interface{}, actual interface{}) {
+	if !reflect.DeepEqual(expected, actual) {
+		t.Errorf("\nexpected: %T %v\n     got: %T %v", expected, expected, actual, actual)
+	}
+}
+
+// extracts the value from inside a successful result envelope. must be provided
+// with `inner`, an empty struct that describes the expected (desired) shape of
+// what is inside the envelope.
+func extractResult(response *httptest.ResponseRecorder, inner interface{}) error {
+	return json.Unmarshal([]byte(response.Body.String()), &handlers.ServiceData{inner})
 }
