@@ -1,6 +1,8 @@
 package handlers_test
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -32,10 +34,15 @@ func testApp() handlers.App {
 		panic(err)
 	}
 
+	weakKey, err := rsa.GenerateKey(rand.Reader, 512)
+	if err != nil {
+		panic(err)
+	}
+
 	cfg := config.Config{
 		BcryptCost:         4,
 		SessionSigningKey:  []byte("TODO"),
-		IdentitySigningKey: []byte("TODO"),
+		IdentitySigningKey: weakKey,
 		AuthNURL:           authnUrl,
 	}
 
@@ -129,7 +136,7 @@ func assertIdTokenResponse(t *testing.T, rr *httptest.ResponseRecorder, cfg conf
 
 	// check that the IdToken is JWT-ish
 	identityToken, err := jwt.Parse(responseData.IdToken, func(tkn *jwt.Token) (interface{}, error) {
-		return cfg.IdentitySigningKey, nil
+		return cfg.IdentitySigningKey.Public(), nil
 	})
 	if err != nil {
 		t.Error(err)

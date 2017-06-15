@@ -68,7 +68,7 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	http.SetCookie(w, &sessionCookie)
 
 	// Return the identity token in the body
-	identityString, err := identity.Sign(jwt.SigningMethodHS256, app.Config.IdentitySigningKey)
+	identityString, err := identity.Sign(jwt.SigningMethodRS256, app.Config.IdentitySigningKey)
 	if err != nil {
 		panic(err)
 	}

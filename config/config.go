@@ -1,6 +1,8 @@
 package config
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
 	"net/url"
 	"time"
 )
@@ -14,7 +16,7 @@ type Config struct {
 	RefreshTokenTTL       time.Duration
 	RedisURL              string
 	SessionSigningKey     []byte
-	IdentitySigningKey    []byte
+	IdentitySigningKey    *rsa.PrivateKey
 	AuthNURL              *url.URL
 	ForceSSL              bool
 	MountedPath           string
@@ -29,6 +31,11 @@ func ReadEnv() Config {
 		panic(err)
 	}
 
+	identityKey, err := rsa.GenerateKey(rand.Reader, 2056)
+	if err != nil {
+		panic(err)
+	}
+
 	return Config{
 		BcryptCost:            11,
 		UsernameIsEmail:       true,
@@ -38,7 +45,7 @@ func ReadEnv() Config {
 		RefreshTokenTTL:       oneYear,
 		RedisURL:              "redis://127.0.0.1:6379/11",
 		SessionSigningKey:     []byte("TODO"),
-		IdentitySigningKey:    []byte("TODO"),
+		IdentitySigningKey:    identityKey,
 		AuthNURL:              authnUrl,
 		MountedPath:           authnUrl.Path,
 		ForceSSL:              authnUrl.Scheme == "https",

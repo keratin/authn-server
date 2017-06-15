@@ -29,7 +29,7 @@ func (i *IdentityJWT) claims() *jwt.MapClaims {
 	}
 }
 
-func (i *IdentityJWT) Sign(method jwt.SigningMethod, key []byte) (string, error) {
+func (i *IdentityJWT) Sign(method jwt.SigningMethod, key interface{}) (string, error) {
 	return jwt.NewWithClaims(method, i.claims()).SignedString(key)
 }
 
