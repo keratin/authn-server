@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"net/http"
-	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/keratin/authn/models"
 	"github.com/keratin/authn/services"
 )
 
@@ -29,22 +29,20 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	refreshToken, err := app.RefreshTokenStore.Create(account.Id)
+	session, err := models.NewSessionJWT(
+		app.RefreshTokenStore,
+		app.Config,
+		account.Id,
+	)
 	if err != nil {
 		panic(err)
 	}
 
-	sessionToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"iss": app.Config.AuthNURL.String(),
-		"sub": refreshToken,
-		"aud": app.Config.AuthNURL.String(),
-		"iat": time.Now().Unix(),
-		"azp": "",
-	})
-	sessionString, err := sessionToken.SignedString(app.Config.SessionSigningKey)
+	sessionString, err := session.Sign(jwt.SigningMethodHS256, app.Config.SessionSigningKey)
 	if err != nil {
 		panic(err)
 	}
+
 	sessionCookie := http.Cookie{
 		Name:     "authn",
 		Value:    sessionString,
