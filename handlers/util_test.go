@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
-	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -20,6 +19,7 @@ import (
 	"github.com/keratin/authn/data/sqlite3"
 	"github.com/keratin/authn/handlers"
 	"github.com/keratin/authn/services"
+	"github.com/keratin/authn/tests"
 )
 
 func testApp() handlers.App {
@@ -143,13 +143,7 @@ func assertIdTokenResponse(t *testing.T, rr *httptest.ResponseRecorder, cfg conf
 	}
 
 	// check that the JWT contains nice things
-	assertEqual(t, cfg.AuthNURL.String(), identityToken.Claims.(jwt.MapClaims)["iss"])
-}
-
-func assertEqual(t *testing.T, expected interface{}, actual interface{}) {
-	if !reflect.DeepEqual(expected, actual) {
-		t.Errorf("\nexpected: %T %v\n     got: %T %v", expected, expected, actual, actual)
-	}
+	tests.AssertEqual(t, cfg.AuthNURL.String(), identityToken.Claims.(jwt.MapClaims)["iss"])
 }
 
 // extracts the value from inside a successful result envelope. must be provided
