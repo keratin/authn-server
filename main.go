@@ -44,9 +44,11 @@ func main() {
 
 	r := mux.NewRouter()
 
+	whenReferred := handlers.WhenReferred(cfg.ApplicationDomains)
+
 	r.HandleFunc("/", app.Stub).Methods("GET")
 
-	r.HandleFunc("/accounts", app.Stub).Methods("POST")
+	r.Handle("/accounts", whenReferred(http.HandlerFunc(app.PostAccount))).Methods("POST")
 	r.HandleFunc("/accounts/import", app.Stub).Methods("POST")
 	r.HandleFunc("/accounts/available", app.Stub).Methods("GET")
 

@@ -15,6 +15,7 @@ func derive(base []byte, salt string) []byte {
 }
 
 type Config struct {
+	ApplicationDomains    []string
 	BcryptCost            int
 	UsernameIsEmail       bool
 	UsernameMinLength     int
@@ -61,6 +62,7 @@ func ReadEnv() Config {
 	}
 
 	return Config{
+		ApplicationDomains:    []string{"example.com"},
 		BcryptCost:            11,
 		UsernameIsEmail:       true,
 		UsernameMinLength:     3,
