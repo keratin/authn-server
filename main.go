@@ -9,21 +9,19 @@ import (
 	gorilla "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/keratin/authn/config"
+	"github.com/keratin/authn/data"
 	dataRedis "github.com/keratin/authn/data/redis"
-	"github.com/keratin/authn/data/sqlite3"
 	"github.com/keratin/authn/handlers"
 )
 
 func main() {
 	cfg := config.ReadEnv()
 
-	db, err := sqlite3.NewDB("dev")
+	db, accountStore, err := data.NewDB(cfg.DatabaseURL)
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
-
-	store := sqlite3.AccountStore{db}
 
 	opts, err := redis.ParseURL(cfg.RedisURL)
 	if err != nil {
@@ -31,7 +29,7 @@ func main() {
 	}
 	redis := redis.NewClient(opts)
 
-	tokenStore := dataRedis.RefreshTokenStore{
+	tokenStore := &dataRedis.RefreshTokenStore{
 		Client: redis,
 		TTL:    cfg.RefreshTokenTTL,
 	}
@@ -40,8 +38,8 @@ func main() {
 		Db:                *db,
 		Redis:             redis,
 		Config:            cfg,
-		AccountStore:      &store,
-		RefreshTokenStore: &tokenStore,
+		AccountStore:      accountStore,
+		RefreshTokenStore: tokenStore,
 	}
 
 	r := mux.NewRouter()

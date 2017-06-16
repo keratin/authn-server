@@ -6,7 +6,6 @@ import (
 
 	"github.com/keratin/authn/config"
 	"github.com/keratin/authn/data"
-	sqlite3 "github.com/mattn/go-sqlite3"
 	"github.com/keratin/authn/models"
 	zxcvbn "github.com/nbutton23/zxcvbn-go"
 	"golang.org/x/crypto/bcrypt"
@@ -33,15 +32,6 @@ func isEmail(s string) bool {
 func hasDomain(email string, domain string) bool {
 	pieces := strings.SplitN(email, "@", 2)
 	return domain == pieces[1]
-}
-
-func isUniquenessError(err error) bool {
-	switch i := err.(type) {
-	case sqlite3.Error:
-		return i.ExtendedCode == sqlite3.ErrConstraintUnique
-	default:
-		return false
-	}
 }
 
 func AccountCreator(store data.AccountStore, cfg *config.Config, username string, password string) (*models.Account, []Error) {
@@ -86,7 +76,7 @@ func AccountCreator(store data.AccountStore, cfg *config.Config, username string
 	acc, err := store.Create(username, hash)
 
 	if err != nil {
-		if isUniquenessError(err) {
+		if data.IsUniquenessError(err) {
 			errors = append(errors, Error{Field: "username", Message: ErrTaken})
 			return nil, errors
 		} else {

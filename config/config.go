@@ -22,6 +22,7 @@ type Config struct {
 	PasswordMinComplexity int
 	RefreshTokenTTL       time.Duration
 	RedisURL              string
+	DatabaseURL           *url.URL
 	SessionSigningKey     []byte
 	IdentitySigningKey    *rsa.PrivateKey
 	AuthNURL              *url.URL
@@ -49,6 +50,11 @@ func ReadEnv() Config {
 		panic(err)
 	}
 
+	dbUrl, err := url.Parse("sqlite3://localhost/dev")
+	if err != nil {
+		panic(err)
+	}
+
 	return Config{
 		BcryptCost:            11,
 		UsernameIsEmail:       true,
@@ -63,5 +69,6 @@ func ReadEnv() Config {
 		MountedPath:           authnUrl.Path,
 		ForceSSL:              authnUrl.Scheme == "https",
 		AccessTokenTTL:        time.Hour,
+		DatabaseURL:           dbUrl,
 	}
 }
