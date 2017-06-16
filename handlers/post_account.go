@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/keratin/authn/models"
 	"github.com/keratin/authn/services"
+	"github.com/keratin/authn/tokens"
 )
 
 type request struct {
@@ -31,7 +31,7 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Create the session token
-	session, err := models.NewSessionJWT(
+	session, err := tokens.NewSessionJWT(
 		app.RefreshTokenStore,
 		app.Config,
 		account.Id,
@@ -41,7 +41,7 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Create the identity token
-	identity, err := models.NewIdentityJWT(
+	identity, err := tokens.NewIdentityJWT(
 		app.RefreshTokenStore,
 		app.Config,
 		session,
@@ -54,7 +54,7 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 
 	// Return the signed session in a cookie
-	sessionString, err := session.Sign(jwt.SigningMethodHS256, app.Config.SessionSigningKey)
+	sessionString, err := tokens.Sign(session, jwt.SigningMethodHS256, app.Config.SessionSigningKey)
 	if err != nil {
 		panic(err)
 	}
@@ -68,7 +68,7 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	http.SetCookie(w, &sessionCookie)
 
 	// Return the identity token in the body
-	identityString, err := identity.Sign(jwt.SigningMethodRS256, app.Config.IdentitySigningKey)
+	identityString, err := tokens.Sign(identity, jwt.SigningMethodRS256, app.Config.IdentitySigningKey)
 	if err != nil {
 		panic(err)
 	}

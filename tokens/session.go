@@ -1,4 +1,4 @@
-package models
+package tokens
 
 import (
 	"net/url"
@@ -25,10 +25,6 @@ func (s *SessionJWT) claims() *jwt.MapClaims {
 		"iat": s.Iat.Unix(),
 		"azp": "", // TODO: audience
 	}
-}
-
-func (s *SessionJWT) Sign(method jwt.SigningMethod, key []byte) (string, error) {
-	return jwt.NewWithClaims(method, s.claims()).SignedString(key)
 }
 
 func NewSessionJWT(store data.RefreshTokenStore, cfg config.Config, account_id int) (*SessionJWT, error) {

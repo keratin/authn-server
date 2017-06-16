@@ -1,4 +1,4 @@
-package models
+package tokens
 
 import (
 	"net/url"
@@ -27,10 +27,6 @@ func (i *IdentityJWT) claims() *jwt.MapClaims {
 		"iat":       i.Iat.Unix(),
 		"auth_time": i.AuthTime.Unix(),
 	}
-}
-
-func (i *IdentityJWT) Sign(method jwt.SigningMethod, key interface{}) (string, error) {
-	return jwt.NewWithClaims(method, i.claims()).SignedString(key)
 }
 
 func NewIdentityJWT(store data.RefreshTokenStore, cfg config.Config, session *SessionJWT) (*IdentityJWT, error) {
