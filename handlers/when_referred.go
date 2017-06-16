@@ -6,9 +6,11 @@ import (
 	"github.com/keratin/authn/services"
 )
 
-type adapter func(http.Handler) http.Handler
+// A specialized handler that looks like any other middleware adapter but is known to serve a
+// particular purpose.
+type SecurityHandler func(http.Handler) http.Handler
 
-func WhenReferred(domains []string) adapter {
+func RefererSecurity(domains []string) SecurityHandler {
 	// optimize for lookups
 	domainMap := make(map[string]bool)
 	for _, i := range domains {

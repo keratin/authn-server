@@ -44,11 +44,13 @@ func main() {
 
 	r := mux.NewRouter()
 
-	whenReferred := handlers.WhenReferred(cfg.ApplicationDomains)
-
 	r.HandleFunc("/", app.Stub).Methods("GET")
 
-	r.Handle("/accounts", whenReferred(http.HandlerFunc(app.PostAccount))).Methods("POST")
+	attach(r,
+		post("/accounts").
+			securedWith(handlers.RefererSecurity(cfg.ApplicationDomains)).
+			handle(app.PostAccount),
+	)
 	r.HandleFunc("/accounts/import", app.Stub).Methods("POST")
 	r.HandleFunc("/accounts/available", app.Stub).Methods("GET")
 
@@ -72,4 +74,38 @@ func main() {
 	stack := gorilla.RecoveryHandler()(gorilla.CombinedLoggingHandler(os.Stdout, r))
 
 	log.Fatal(http.ListenAndServe(":8000", stack))
+}
+
+type route struct {
+	verb string
+	tpl  string
+}
+
+type securedRoute struct {
+	route    *route
+	security handlers.SecurityHandler
+}
+
+type handledRoute struct {
+	route   *securedRoute
+	handler http.Handler
+}
+
+func post(tpl string) *route {
+	return &route{verb: "POST", tpl: tpl}
+}
+
+func (r *route) securedWith(fn handlers.SecurityHandler) *securedRoute {
+	return &securedRoute{route: r, security: fn}
+}
+
+func (r *securedRoute) handle(fn func(w http.ResponseWriter, r *http.Request)) *handledRoute {
+	return &handledRoute{route: r, handler: http.HandlerFunc(fn)}
+}
+
+func attach(router *mux.Router, r *handledRoute) {
+	router.
+		Methods(r.route.route.verb).
+		Path(r.route.route.tpl).
+		Handler(r.route.security(r.handler))
 }
