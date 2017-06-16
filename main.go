@@ -23,7 +23,7 @@ func main() {
 	}
 	defer db.Close()
 
-	opts, err := redis.ParseURL(cfg.RedisURL)
+	opts, err := redis.ParseURL(cfg.RedisURL.String())
 	if err != nil {
 		panic(err)
 	}

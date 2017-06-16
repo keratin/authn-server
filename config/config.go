@@ -21,7 +21,7 @@ type Config struct {
 	UsernameDomain        string
 	PasswordMinComplexity int
 	RefreshTokenTTL       time.Duration
-	RedisURL              string
+	RedisURL              *url.URL
 	DatabaseURL           *url.URL
 	SessionSigningKey     []byte
 	IdentitySigningKey    *rsa.PrivateKey
@@ -55,6 +55,11 @@ func ReadEnv() Config {
 		panic(err)
 	}
 
+	redisURL, err := url.Parse("redis://127.0.0.1:6379/11")
+	if err != nil {
+		panic(err)
+	}
+
 	return Config{
 		BcryptCost:            11,
 		UsernameIsEmail:       true,
@@ -62,7 +67,7 @@ func ReadEnv() Config {
 		UsernameDomain:        "",
 		PasswordMinComplexity: 2,
 		RefreshTokenTTL:       oneYear,
-		RedisURL:              "redis://127.0.0.1:6379/11",
+		RedisURL:              redisURL,
 		SessionSigningKey:     derive(secretBase, "session-key-salt"),
 		IdentitySigningKey:    identityKey,
 		AuthNURL:              authnUrl,
