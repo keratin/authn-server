@@ -3,9 +3,16 @@ package config
 import (
 	"crypto/rand"
 	"crypto/rsa"
+	"crypto/sha256"
 	"net/url"
 	"time"
+
+	"golang.org/x/crypto/pbkdf2"
 )
+
+func derive(base []byte, salt string) []byte {
+	return pbkdf2.Key(base, []byte(salt), 2e5, 64, sha256.New)
+}
 
 type Config struct {
 	BcryptCost            int
@@ -36,6 +43,12 @@ func ReadEnv() Config {
 		panic(err)
 	}
 
+	secretBase := make([]byte, 64)
+	_, err = rand.Read(secretBase)
+	if err != nil {
+		panic(err)
+	}
+
 	return Config{
 		BcryptCost:            11,
 		UsernameIsEmail:       true,
@@ -44,7 +57,7 @@ func ReadEnv() Config {
 		PasswordMinComplexity: 2,
 		RefreshTokenTTL:       oneYear,
 		RedisURL:              "redis://127.0.0.1:6379/11",
-		SessionSigningKey:     []byte("TODO"),
+		SessionSigningKey:     derive(secretBase, "session-key-salt"),
 		IdentitySigningKey:    identityKey,
 		AuthNURL:              authnUrl,
 		MountedPath:           authnUrl.Path,
