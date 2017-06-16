@@ -10,3 +10,9 @@ func AssertEqual(t *testing.T, expected interface{}, actual interface{}) {
 		t.Errorf("\nexpected: %T %v\n     got: %T %v", expected, expected, actual, actual)
 	}
 }
+
+func RefuteEqual(t *testing.T, unexpected interface{}, actual interface{}) {
+	if reflect.DeepEqual(unexpected, actual) {
+		t.Errorf("\nunexpected value: %T %v", unexpected, unexpected)
+	}
+}

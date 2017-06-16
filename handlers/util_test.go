@@ -81,16 +81,11 @@ func readSetCookieValue(name string, recorder *httptest.ResponseRecorder) (strin
 }
 
 func assertCode(t *testing.T, rr *httptest.ResponseRecorder, expected int) {
-	status := rr.Code
-	if status != expected {
-		t.Errorf("HTTP status:\n  expected: %v\n  actual:   %v", expected, status)
-	}
+	tests.AssertEqual(t, expected, rr.Code)
 }
 
 func assertBody(t *testing.T, rr *httptest.ResponseRecorder, expected string) {
-	if rr.Body.String() != expected {
-		t.Errorf("HTTP body:\n  expected: %v\n  actual:   %v", expected, rr.Body.String())
-	}
+	tests.AssertEqual(t, expected, rr.Body.String())
 }
 
 func assertErrors(t *testing.T, rr *httptest.ResponseRecorder, expected []services.Error) {

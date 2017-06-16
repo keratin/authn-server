@@ -1,13 +1,13 @@
 package redis_test
 
 import (
-	"reflect"
 	"testing"
 	"time"
 
 	goredis "github.com/go-redis/redis"
 	"github.com/keratin/authn/data"
 	"github.com/keratin/authn/data/redis"
+	"github.com/keratin/authn/tests"
 )
 
 var refreshTTL = time.Second
@@ -155,8 +155,8 @@ func expectId(expected int, t *testing.T, fn ider) {
 	id, err := fn()
 	if err != nil {
 		t.Error(err)
-	} else if expected != id {
-		t.Errorf("expected: %v, got: %v", expected, id)
+	} else {
+		tests.AssertEqual(t, expected, id)
 	}
 }
 
@@ -177,7 +177,5 @@ func expectTokens(expected []data.RefreshToken, t *testing.T, fn tokenser) {
 	if err != nil {
 		t.Error(err)
 	}
-	if !reflect.DeepEqual(expected, tokens) {
-		t.Errorf("expected %v, got %v", expected, tokens)
-	}
+	tests.AssertEqual(t, expected, tokens)
 }
