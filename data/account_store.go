@@ -1,10 +1,7 @@
 package data
 
-type Account struct {
-	Id       int
-	Username string
-}
+import "github.com/keratin/authn/models"
 
 type AccountStore interface {
-	Create(u string, p []byte) (*Account, error)
+	Create(u string, p []byte) (*models.Account, error)
 }

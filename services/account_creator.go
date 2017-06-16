@@ -7,6 +7,7 @@ import (
 	"github.com/keratin/authn/config"
 	"github.com/keratin/authn/data"
 	sqlite3 "github.com/mattn/go-sqlite3"
+	"github.com/keratin/authn/models"
 	zxcvbn "github.com/nbutton23/zxcvbn-go"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -43,7 +44,7 @@ func isUniquenessError(err error) bool {
 	}
 }
 
-func AccountCreator(store data.AccountStore, cfg *config.Config, username string, password string) (*data.Account, []Error) {
+func AccountCreator(store data.AccountStore, cfg *config.Config, username string, password string) (*models.Account, []Error) {
 	errors := make([]Error, 0)
 
 	username = strings.TrimSpace(username)
