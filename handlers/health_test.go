@@ -5,25 +5,14 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/go-redis/redis"
-	"github.com/keratin/authn/data/sqlite3"
+	"github.com/keratin/authn/handlers"
 )
 
 func TestHealth(t *testing.T) {
-	db, err := sqlite3.TempDB()
-	if err != nil {
-		panic(err)
+	app := handlers.App{
+		DbCheck:    func() bool { return true },
+		RedisCheck: func() bool { return true },
 	}
-
-	opts, err := redis.ParseURL("redis://127.0.0.1:6379/12")
-	if err != nil {
-		panic(err)
-	}
-	redis := redis.NewClient(opts)
-
-	app := testApp()
-	app.Db = *db
-	app.Redis = redis
 
 	res := httptest.NewRecorder()
 	req := httptest.NewRequest("GET", "/health", nil)

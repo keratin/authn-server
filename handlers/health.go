@@ -13,8 +13,8 @@ type health struct {
 func (app App) Health(w http.ResponseWriter, req *http.Request) {
 	h := health{
 		Http:  true,
-		Redis: app.Redis.Ping().Err() == nil,
-		Db:    app.Db.Ping() == nil,
+		Redis: app.RedisCheck(),
+		Db:    app.DbCheck(),
 	}
 
 	writeJson(w, http.StatusOK, h)

@@ -35,8 +35,8 @@ func main() {
 	}
 
 	app := handlers.App{
-		Db:                *db,
-		Redis:             redis,
+		DbCheck:           func() bool { return db.Ping() == nil },
+		RedisCheck:        func() bool { return redis.Ping().Err() == nil },
 		Config:            cfg,
 		AccountStore:      accountStore,
 		RefreshTokenStore: tokenStore,
