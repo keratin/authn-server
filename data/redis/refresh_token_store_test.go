@@ -5,8 +5,8 @@ import (
 	"time"
 
 	goredis "github.com/go-redis/redis"
-	"github.com/keratin/authn/data"
 	"github.com/keratin/authn/data/redis"
+	"github.com/keratin/authn/models"
 	"github.com/keratin/authn/tests"
 )
 
@@ -26,7 +26,7 @@ func TestRefreshTokenFind(t *testing.T) {
 	defer client.FlushDb()
 	store := redis.RefreshTokenStore{Client: client, TTL: refreshTTL}
 
-	token := data.RefreshToken("a1b2c3")
+	token := models.RefreshToken("a1b2c3")
 	key := "s:t.\xa1\xb2\xc3"
 	id := 123
 
@@ -50,7 +50,7 @@ func TestRefreshTokenTouch(t *testing.T) {
 	defer client.FlushDb()
 	store := redis.RefreshTokenStore{Client: client, TTL: refreshTTL}
 
-	err := store.Touch(data.RefreshToken("a1b2c3"), 123)
+	err := store.Touch(models.RefreshToken("a1b2c3"), 123)
 	if err != nil {
 		t.Error(err)
 	}
@@ -63,7 +63,7 @@ func TestRefreshTokenFindAll(t *testing.T) {
 
 	id := 123
 
-	expectNoTokens(t, func() ([]data.RefreshToken, error) {
+	expectNoTokens(t, func() ([]models.RefreshToken, error) {
 		return store.FindAll(id)
 	})
 
@@ -73,7 +73,7 @@ func TestRefreshTokenFindAll(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expectTokens([]data.RefreshToken{token}, t, func() ([]data.RefreshToken, error) {
+	expectTokens([]models.RefreshToken{token}, t, func() ([]models.RefreshToken, error) {
 		return store.FindAll(id)
 	})
 }
@@ -85,7 +85,7 @@ func TestRefreshTokenCreate(t *testing.T) {
 
 	id := 123
 
-	expectNoTokens(t, func() ([]data.RefreshToken, error) {
+	expectNoTokens(t, func() ([]models.RefreshToken, error) {
 		return store.FindAll(id)
 	})
 
@@ -97,7 +97,7 @@ func TestRefreshTokenCreate(t *testing.T) {
 		t.Errorf("expected token length %v, got %v", 32, len(token))
 	}
 
-	expectTokens([]data.RefreshToken{token}, t, func() ([]data.RefreshToken, error) {
+	expectTokens([]models.RefreshToken{token}, t, func() ([]models.RefreshToken, error) {
 		return store.FindAll(id)
 	})
 }
@@ -109,7 +109,7 @@ func TestRefreshTokenRevoke(t *testing.T) {
 
 	id := 123
 
-	err := store.Revoke(data.RefreshToken("a1b2c3"))
+	err := store.Revoke(models.RefreshToken("a1b2c3"))
 	if err != nil {
 		t.Error(err)
 	}
@@ -122,7 +122,7 @@ func TestRefreshTokenRevoke(t *testing.T) {
 	expectId(id, t, func() (int, error) {
 		return store.Find(token)
 	})
-	expectTokens([]data.RefreshToken{token}, t, func() ([]data.RefreshToken, error) {
+	expectTokens([]models.RefreshToken{token}, t, func() ([]models.RefreshToken, error) {
 		return store.FindAll(id)
 	})
 
@@ -134,7 +134,7 @@ func TestRefreshTokenRevoke(t *testing.T) {
 	expectNoId(t, func() (int, error) {
 		return store.Find(token)
 	})
-	expectNoTokens(t, func() ([]data.RefreshToken, error) {
+	expectNoTokens(t, func() ([]models.RefreshToken, error) {
 		return store.FindAll(id)
 	})
 }
@@ -160,7 +160,7 @@ func expectId(expected int, t *testing.T, fn ider) {
 	}
 }
 
-type tokenser func() ([]data.RefreshToken, error)
+type tokenser func() ([]models.RefreshToken, error)
 
 func expectNoTokens(t *testing.T, fn tokenser) {
 	tokens, err := fn()
@@ -172,7 +172,7 @@ func expectNoTokens(t *testing.T, fn tokenser) {
 	}
 }
 
-func expectTokens(expected []data.RefreshToken, t *testing.T, fn tokenser) {
+func expectTokens(expected []models.RefreshToken, t *testing.T, fn tokenser) {
 	tokens, err := fn()
 	if err != nil {
 		t.Error(err)

@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/go-redis/redis"
 	"github.com/keratin/authn/data/sqlite3"
 )
 
@@ -14,8 +15,15 @@ func TestHealth(t *testing.T) {
 		panic(err)
 	}
 
+	opts, err := redis.ParseURL("redis://127.0.0.1:6379/12")
+	if err != nil {
+		panic(err)
+	}
+	redis := redis.NewClient(opts)
+
 	app := testApp()
 	app.Db = *db
+	app.Redis = redis
 
 	res := httptest.NewRecorder()
 	req := httptest.NewRequest("GET", "/health", nil)

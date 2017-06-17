@@ -10,13 +10,10 @@ import (
 	"net/url"
 	"strings"
 	"testing"
-	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/go-redis/redis"
 	"github.com/keratin/authn/config"
 	"github.com/keratin/authn/data/mock"
-	dataRedis "github.com/keratin/authn/data/redis"
 	"github.com/keratin/authn/handlers"
 	"github.com/keratin/authn/models"
 	"github.com/keratin/authn/services"
@@ -47,16 +44,9 @@ func testApp() handlers.App {
 		AuthNURL:           authnUrl,
 	}
 
-	opts, err := redis.ParseURL("redis://127.0.0.1:6379/12")
-	if err != nil {
-		panic(err)
-	}
-	redis := redis.NewClient(opts)
-
-	tokenStore := dataRedis.RefreshTokenStore{Client: redis, TTL: time.Minute}
+	tokenStore := mock.RefreshTokenStore{}
 
 	return handlers.App{
-		Redis:             redis,
 		AccountStore:      &accountStore,
 		RefreshTokenStore: &tokenStore,
 		Config:            cfg,

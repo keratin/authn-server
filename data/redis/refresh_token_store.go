@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis"
-	"github.com/keratin/authn/data"
+	"github.com/keratin/authn/models"
 )
 
 type RefreshTokenStore struct {
@@ -28,7 +28,7 @@ func keyForAccount(id int) string {
 	return str
 }
 
-func (s *RefreshTokenStore) Find(hexToken data.RefreshToken) (int, error) {
+func (s *RefreshTokenStore) Find(hexToken models.RefreshToken) (int, error) {
 	binToken, err := hex.DecodeString(string(hexToken))
 	if err != nil {
 		return 0, err
@@ -42,7 +42,7 @@ func (s *RefreshTokenStore) Find(hexToken data.RefreshToken) (int, error) {
 	return strconv.Atoi(str)
 }
 
-func (s *RefreshTokenStore) Touch(hexToken data.RefreshToken, account_id int) error {
+func (s *RefreshTokenStore) Touch(hexToken models.RefreshToken, account_id int) error {
 	binToken, err := hex.DecodeString(string(hexToken))
 	if err != nil {
 		return err
@@ -56,21 +56,21 @@ func (s *RefreshTokenStore) Touch(hexToken data.RefreshToken, account_id int) er
 	return err
 }
 
-func (s *RefreshTokenStore) FindAll(account_id int) ([]data.RefreshToken, error) {
+func (s *RefreshTokenStore) FindAll(account_id int) ([]models.RefreshToken, error) {
 	bins, err := s.Client.SMembers(keyForAccount(account_id)).Result()
 	if err != nil {
 		return nil, err
 	}
 
-	tokens := make([]data.RefreshToken, 0)
+	tokens := make([]models.RefreshToken, 0)
 	for _, t := range bins {
-		tokens = append(tokens, data.RefreshToken(hex.EncodeToString([]byte(t))))
+		tokens = append(tokens, models.RefreshToken(hex.EncodeToString([]byte(t))))
 	}
 
 	return tokens, nil
 }
 
-func (s *RefreshTokenStore) Create(account_id int) (data.RefreshToken, error) {
+func (s *RefreshTokenStore) Create(account_id int) (models.RefreshToken, error) {
 	binToken := generateToken()
 
 	_, err := s.Client.Pipelined(func(pipe redis.Pipeliner) error {
@@ -87,10 +87,10 @@ func (s *RefreshTokenStore) Create(account_id int) (data.RefreshToken, error) {
 		return "", err
 	}
 
-	return data.RefreshToken(hex.EncodeToString(binToken)), nil
+	return models.RefreshToken(hex.EncodeToString(binToken)), nil
 }
 
-func (s *RefreshTokenStore) Revoke(hexToken data.RefreshToken) error {
+func (s *RefreshTokenStore) Revoke(hexToken models.RefreshToken) error {
 	account_id, err := s.Find(hexToken)
 	if err != nil {
 		return err

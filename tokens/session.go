@@ -7,11 +7,12 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/keratin/authn/config"
 	"github.com/keratin/authn/data"
+	"github.com/keratin/authn/models"
 )
 
 type SessionJWT struct {
 	Iss url.URL
-	Sub data.RefreshToken
+	Sub models.RefreshToken
 	Aud url.URL
 	Iat time.Time
 	Azp string
