@@ -22,8 +22,7 @@ func RefererSecurity(domains []string) SecurityHandler {
 			if domainMap[r.Header.Get("REFERER")] {
 				h.ServeHTTP(w, r)
 			} else {
-				w.WriteHeader(http.StatusForbidden)
-				writeJson(w, ServiceErrors{Errors: []services.Error{services.Error{"referer", "is not a trusted host"}}})
+				writeJson(w, http.StatusForbidden, ServiceErrors{Errors: []services.Error{services.Error{"referer", "is not a trusted host"}}})
 			}
 		})
 	}

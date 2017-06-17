@@ -89,6 +89,8 @@ func assertBody(t *testing.T, rr *httptest.ResponseRecorder, expected string) {
 }
 
 func assertErrors(t *testing.T, rr *httptest.ResponseRecorder, expected []services.Error) {
+	tests.AssertEqual(t, []string{"application/json"}, rr.HeaderMap["Content-Type"])
+
 	j, err := json.Marshal(handlers.ServiceErrors{Errors: expected})
 	if err != nil {
 		panic(err)
@@ -121,6 +123,7 @@ func assertSession(t *testing.T, rr *httptest.ResponseRecorder) {
 
 func assertIdTokenResponse(t *testing.T, rr *httptest.ResponseRecorder, cfg config.Config) {
 	// check that the response contains the expected json
+	tests.AssertEqual(t, []string{"application/json"}, rr.HeaderMap["Content-Type"])
 	responseData := struct {
 		IdToken string `json:"id_token"`
 	}{}

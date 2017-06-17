@@ -17,5 +17,5 @@ func (app App) Health(w http.ResponseWriter, req *http.Request) {
 		Db:    app.Db.Ping() == nil,
 	}
 
-	writeJson(w, h)
+	writeJson(w, http.StatusOK, h)
 }

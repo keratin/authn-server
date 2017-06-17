@@ -50,9 +50,6 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 		panic(err)
 	}
 
-	// Begin the response
-	w.WriteHeader(http.StatusCreated)
-
 	// Return the signed session in a cookie
 	sessionString, err := tokens.Sign(session, jwt.SigningMethodHS256, app.Config.SessionSigningKey)
 	if err != nil {
@@ -72,5 +69,5 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	writeData(w, response{identityString})
+	writeData(w, http.StatusCreated, response{identityString})
 }

@@ -11,8 +11,8 @@ type ServiceData struct {
 	Result interface{} `json:"result"`
 }
 
-func writeData(w http.ResponseWriter, d interface{}) {
-	writeJson(w, ServiceData{Result: d})
+func writeData(w http.ResponseWriter, httpCode int, d interface{}) {
+	writeJson(w, httpCode, ServiceData{Result: d})
 }
 
 type ServiceErrors struct {
@@ -20,16 +20,16 @@ type ServiceErrors struct {
 }
 
 func writeErrors(w http.ResponseWriter, e []services.Error) {
-	w.WriteHeader(http.StatusUnprocessableEntity)
-	writeJson(w, ServiceErrors{Errors: e})
+	writeJson(w, http.StatusUnprocessableEntity, ServiceErrors{Errors: e})
 }
 
-func writeJson(w http.ResponseWriter, d interface{}) {
+func writeJson(w http.ResponseWriter, httpCode int, d interface{}) {
 	j, err := json.Marshal(d)
 	if err != nil {
 		panic(err)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(httpCode)
 	w.Write(j)
 }
