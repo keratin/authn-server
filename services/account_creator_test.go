@@ -4,17 +4,18 @@ import (
 	"testing"
 
 	"github.com/keratin/authn/config"
-	"github.com/keratin/authn/data/sqlite3"
+	"github.com/keratin/authn/data/mock"
+	"github.com/keratin/authn/models"
 	"github.com/keratin/authn/services"
 	"github.com/keratin/authn/tests"
 )
 
 func TestAccountCreatorSuccess(t *testing.T) {
-	db, err := sqlite3.TempDB()
-	if err != nil {
-		panic(err)
+	store := mock.AccountStore{
+		OnCreate: func(u string, p []byte) (*models.Account, error) {
+			return &models.Account{Id: 12345, Username: u}, nil
+		},
 	}
-	store := sqlite3.AccountStore{db}
 
 	var testTable = []struct {
 		config   config.Config
@@ -41,13 +42,11 @@ func TestAccountCreatorSuccess(t *testing.T) {
 var pw = []byte("$2a$04$ZOBA8E3nT68/ArE6NDnzfezGWEgM6YrE17PrOtSjT5.U/ZGoxyh7e")
 
 func TestAccountCreatorFailure(t *testing.T) {
-	db, err := sqlite3.TempDB()
-	if err != nil {
-		panic(err)
+	store := mock.AccountStore{
+		OnCreate: func(u string, p []byte) (*models.Account, error) {
+			return nil, mock.Error{mock.ErrNotUnique}
+		},
 	}
-	store := sqlite3.AccountStore{db}
-
-	store.Create("existing@test.com", pw)
 
 	var testTable = []struct {
 		config   config.Config

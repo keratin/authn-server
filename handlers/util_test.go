@@ -15,19 +15,20 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-redis/redis"
 	"github.com/keratin/authn/config"
+	"github.com/keratin/authn/data/mock"
 	dataRedis "github.com/keratin/authn/data/redis"
-	"github.com/keratin/authn/data/sqlite3"
 	"github.com/keratin/authn/handlers"
+	"github.com/keratin/authn/models"
 	"github.com/keratin/authn/services"
 	"github.com/keratin/authn/tests"
 )
 
 func testApp() handlers.App {
-	db, err := sqlite3.TempDB()
-	if err != nil {
-		panic(err)
+	accountStore := mock.AccountStore{
+		OnCreate: func(u string, p []byte) (*models.Account, error) {
+			return &models.Account{Id: 12345, Username: u}, nil
+		},
 	}
-	store := sqlite3.AccountStore{db}
 
 	authnUrl, err := url.Parse("https://authn.example.com")
 	if err != nil {
@@ -55,9 +56,8 @@ func testApp() handlers.App {
 	tokenStore := dataRedis.RefreshTokenStore{Client: redis, TTL: time.Minute}
 
 	return handlers.App{
-		Db:                *db,
 		Redis:             redis,
-		AccountStore:      &store,
+		AccountStore:      &accountStore,
 		RefreshTokenStore: &tokenStore,
 		Config:            cfg,
 	}

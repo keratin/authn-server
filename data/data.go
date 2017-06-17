@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/url"
 
+	"github.com/keratin/authn/data/mock"
 	"github.com/keratin/authn/data/sqlite3"
 	sq3 "github.com/mattn/go-sqlite3"
 )
@@ -27,6 +28,8 @@ func IsUniquenessError(err error) bool {
 	switch i := err.(type) {
 	case sq3.Error:
 		return i.ExtendedCode == sq3.ErrConstraintUnique
+	case mock.Error:
+		return i.Code == mock.ErrNotUnique
 	default:
 		return false
 	}
