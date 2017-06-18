@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/keratin/authn/services"
 )
@@ -14,12 +16,17 @@ func RefererSecurity(domains []string) SecurityHandler {
 	// optimize for lookups
 	domainMap := make(map[string]bool)
 	for _, i := range domains {
-		domainMap[i] = true
+		domainMap[strings.ToLower(i)] = true
 	}
 
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if domainMap[r.Header.Get("REFERER")] {
+			url, err := url.Parse(r.Header.Get("REFERER"))
+			if err != nil {
+				panic(err)
+			}
+
+			if domainMap[url.Host] {
 				h.ServeHTTP(w, r)
 			} else {
 				writeJson(w, http.StatusForbidden, ServiceErrors{Errors: []services.Error{services.Error{"referer", "is not a trusted host"}}})
