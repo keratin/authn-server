@@ -28,7 +28,7 @@ func (s *SessionJWT) claims() *jwt.MapClaims {
 	}
 }
 
-func NewSessionJWT(store data.RefreshTokenStore, cfg config.Config, account_id int) (*SessionJWT, error) {
+func NewSessionJWT(store data.RefreshTokenStore, cfg *config.Config, account_id int) (*SessionJWT, error) {
 	refreshToken, err := store.Create(account_id)
 	if err != nil {
 		return nil, err

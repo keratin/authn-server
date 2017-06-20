@@ -29,9 +29,14 @@ func isEmail(s string) bool {
 	return len(s) < 255 && emailPattern.Match([]byte(s))
 }
 
-func hasDomain(email string, domain string) bool {
+func hasDomain(email string, domains []string) bool {
 	pieces := strings.SplitN(email, "@", 2)
-	return domain == pieces[1]
+	for _, domain := range domains {
+		if domain == pieces[1] {
+			return true
+		}
+	}
+	return false
 }
 
 func AccountCreator(store data.AccountStore, cfg *config.Config, username string, password string) (*models.Account, []Error) {
@@ -40,7 +45,7 @@ func AccountCreator(store data.AccountStore, cfg *config.Config, username string
 	username = strings.TrimSpace(username)
 	if cfg.UsernameIsEmail {
 		if isEmail(username) {
-			if len(cfg.UsernameDomain) > 0 && !hasDomain(username, cfg.UsernameDomain) {
+			if len(cfg.UsernameDomains) > 0 && !hasDomain(username, cfg.UsernameDomains) {
 				errors = append(errors, Error{Field: "username", Message: ErrFormatInvalid})
 			}
 		} else {

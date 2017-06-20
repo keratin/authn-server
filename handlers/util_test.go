@@ -49,7 +49,7 @@ func testApp() handlers.App {
 	return handlers.App{
 		AccountStore:      &accountStore,
 		RefreshTokenStore: &tokenStore,
-		Config:            cfg,
+		Config:            &cfg,
 	}
 }
 
@@ -111,7 +111,7 @@ func assertSession(t *testing.T, rr *httptest.ResponseRecorder) {
 	}
 }
 
-func assertIdTokenResponse(t *testing.T, rr *httptest.ResponseRecorder, cfg config.Config) {
+func assertIdTokenResponse(t *testing.T, rr *httptest.ResponseRecorder, cfg *config.Config) {
 	// check that the response contains the expected json
 	tests.AssertEqual(t, []string{"application/json"}, rr.HeaderMap["Content-Type"])
 	responseData := struct {

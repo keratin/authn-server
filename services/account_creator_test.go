@@ -24,7 +24,7 @@ func TestAccountCreatorSuccess(t *testing.T) {
 	}{
 		{config.Config{UsernameIsEmail: false, UsernameMinLength: 6}, "userName", "PASSword"},
 		{config.Config{UsernameIsEmail: true}, "username@test.com", "PASSword"},
-		{config.Config{UsernameIsEmail: true, UsernameDomain: "rightdomain.com"}, "username@rightdomain.com", "PASSword"},
+		{config.Config{UsernameIsEmail: true, UsernameDomains: []string{"rightdomain.com"}}, "username@rightdomain.com", "PASSword"},
 	}
 
 	for _, tt := range testTable {
@@ -59,7 +59,7 @@ func TestAccountCreatorFailure(t *testing.T) {
 		{config.Config{}, "  ", "PASSword", []services.Error{{"username", "MISSING"}}},
 		{config.Config{}, "existing@test.com", "PASSword", []services.Error{{"username", "TAKEN"}}},
 		{config.Config{UsernameIsEmail: true}, "notanemail", "PASSword", []services.Error{{"username", "FORMAT_INVALID"}}},
-		{config.Config{UsernameIsEmail: true, UsernameDomain: "rightdomain.com"}, "email@wrongdomain.com", "PASSword", []services.Error{{"username", "FORMAT_INVALID"}}},
+		{config.Config{UsernameIsEmail: true, UsernameDomains: []string{"rightdomain.com"}}, "email@wrongdomain.com", "PASSword", []services.Error{{"username", "FORMAT_INVALID"}}},
 		{config.Config{UsernameIsEmail: false, UsernameMinLength: 6}, "short", "PASSword", []services.Error{{"username", "FORMAT_INVALID"}}},
 		// password validations
 		{config.Config{}, "username", "", []services.Error{{"password", "MISSING"}}},

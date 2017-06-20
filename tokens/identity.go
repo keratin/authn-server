@@ -29,7 +29,7 @@ func (i *IdentityJWT) claims() *jwt.MapClaims {
 	}
 }
 
-func NewIdentityJWT(store data.RefreshTokenStore, cfg config.Config, session *SessionJWT) (*IdentityJWT, error) {
+func NewIdentityJWT(store data.RefreshTokenStore, cfg *config.Config, session *SessionJWT) (*IdentityJWT, error) {
 	account_id, err := store.Find(session.Sub)
 	if err != nil {
 		return nil, err

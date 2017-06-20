@@ -21,7 +21,7 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	// Create the account
 	account, errors := services.AccountCreator(
 		app.AccountStore,
-		&app.Config,
+		app.Config,
 		req.FormValue("username"),
 		req.FormValue("password"),
 	)
