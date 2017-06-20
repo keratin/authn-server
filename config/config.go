@@ -8,8 +8,6 @@ import (
 	"fmt"
 	"net/url"
 	"os"
-	"regexp"
-	"strconv"
 	"strings"
 	"time"
 
@@ -32,51 +30,6 @@ type Config struct {
 	ForceSSL              bool
 	MountedPath           string
 	AccessTokenTTL        time.Duration
-}
-
-// 20k iterations of PBKDF2 HMAC SHA-256
-func derive(base []byte, salt string) []byte {
-	return pbkdf2.Key(base, []byte(salt), 2e5, 64, sha256.New)
-}
-
-type configurer func(c *Config) error
-
-func Configure(fns []configurer) (*Config, error) {
-	var err error
-	c := Config{}
-	for _, fn := range fns {
-		err = fn(&c)
-		if err != nil {
-			return nil, err
-		}
-	}
-	return &c, nil
-}
-
-func requireEnv(name string) (string, error) {
-	if val, ok := os.LookupEnv(name); ok {
-		return val, nil
-	} else {
-		return "", errors.New(
-			fmt.Sprintf("Missing environment variable: %s. See https://github.com/keratin/authn/wiki/Server-Configuration for details.", name),
-		)
-	}
-}
-
-func lookupInt(name string, def int) (int, error) {
-	if val, ok := os.LookupEnv(name); ok {
-		return strconv.Atoi(val)
-	} else {
-		return def, nil
-	}
-}
-
-func lookupBool(name string, def bool) (bool, error) {
-	if val, ok := os.LookupEnv(name); ok {
-		return regexp.MatchString("^(?i:t|true|yes)$", val)
-	} else {
-		return def, nil
-	}
 }
 
 var configurers = []configurer{
@@ -123,6 +76,7 @@ var configurers = []configurer{
 	func(c *Config) error {
 		val, err := requireEnv("SECRET_KEY_BASE")
 		if err == nil {
+			// TODO: convert as hex??
 			c.SessionSigningKey = derive([]byte(val), "session-key-salt")
 		}
 		return err
@@ -256,7 +210,7 @@ var configurers = []configurer{
 }
 
 func ReadEnv() *Config {
-	config, err := Configure(configurers)
+	config, err := configure(configurers)
 	if err != nil {
 		panic(err)
 	}
@@ -268,4 +222,10 @@ func ReadEnv() *Config {
 	config.IdentitySigningKey = identityKey
 
 	return config
+}
+
+// 20k iterations of PBKDF2 HMAC SHA-256
+// TODO: increase length from 64 to 256?
+func derive(base []byte, salt string) []byte {
+	return pbkdf2.Key(base, []byte(salt), 2e5, 64, sha256.New)
 }
