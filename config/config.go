@@ -225,7 +225,6 @@ func ReadEnv() *Config {
 }
 
 // 20k iterations of PBKDF2 HMAC SHA-256
-// TODO: increase length from 64 to 256?
 func derive(base []byte, salt string) []byte {
-	return pbkdf2.Key(base, []byte(salt), 2e5, 64, sha256.New)
+	return pbkdf2.Key(base, []byte(salt), 2e5, 256, sha256.New)
 }
