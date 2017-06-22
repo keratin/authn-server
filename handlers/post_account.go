@@ -56,7 +56,7 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 		panic(err)
 	}
 	sessionCookie := http.Cookie{
-		Name:     "authn",
+		Name:     app.Config.SessionCookieName,
 		Value:    sessionString,
 		Path:     app.Config.MountedPath,
 		Secure:   app.Config.ForceSSL,

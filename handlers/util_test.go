@@ -42,6 +42,7 @@ func testApp() handlers.App {
 		SessionSigningKey:  []byte("TODO"),
 		IdentitySigningKey: weakKey,
 		AuthNURL:           authnUrl,
+		SessionCookieName:  "authn",
 	}
 
 	tokenStore := mock.RefreshTokenStore{}

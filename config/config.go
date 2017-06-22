@@ -25,6 +25,7 @@ type Config struct {
 	RefreshTokenTTL       time.Duration
 	RedisURL              *url.URL
 	DatabaseURL           *url.URL
+	SessionCookieName     string
 	SessionSigningKey     []byte
 	IdentitySigningKey    *rsa.PrivateKey
 	AuthNURL              *url.URL
@@ -207,6 +208,11 @@ var configurers = []configurer{
 
 	func(c *Config) error {
 		c.UsernameMinLength = 3
+		return nil
+	},
+
+	func(c *Config) error {
+		c.SessionCookieName = "authn"
 		return nil
 	},
 }
