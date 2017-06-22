@@ -10,7 +10,7 @@ import (
 )
 
 type IdentityJWT struct {
-	Iss      url.URL
+	Iss      *url.URL
 	Sub      int
 	Aud      string
 	Exp      time.Time

@@ -11,9 +11,9 @@ import (
 )
 
 type SessionJWT struct {
-	Iss url.URL
+	Iss *url.URL
 	Sub models.RefreshToken
-	Aud url.URL
+	Aud *url.URL
 	Iat time.Time
 	Azp string
 }
@@ -35,9 +35,9 @@ func NewSessionJWT(store data.RefreshTokenStore, cfg *config.Config, account_id 
 	}
 
 	session := SessionJWT{
-		Iss: *cfg.AuthNURL,
+		Iss: cfg.AuthNURL,
 		Sub: refreshToken,
-		Aud: *cfg.AuthNURL,
+		Aud: cfg.AuthNURL,
 		Iat: time.Now(),
 		Azp: "", // TODO: audience
 	}
