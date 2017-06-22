@@ -16,6 +16,7 @@ import (
 
 type Config struct {
 	ApplicationDomains    []string
+	ApplicationOrigins    []string
 	BcryptCost            int
 	UsernameIsEmail       bool
 	UsernameMinLength     int
@@ -39,6 +40,7 @@ var configurers = []configurer{
 		val, err := requireEnv("APP_DOMAINS")
 		if err == nil {
 			c.ApplicationDomains = strings.Split(",", val)
+			c.ApplicationOrigins = domainsToOrigins(c.ApplicationDomains)
 		}
 		return err
 	},
@@ -227,4 +229,13 @@ func ReadEnv() *Config {
 // 20k iterations of PBKDF2 HMAC SHA-256
 func derive(base []byte, salt string) []byte {
 	return pbkdf2.Key(base, []byte(salt), 2e5, 256, sha256.New)
+}
+
+func domainsToOrigins(domains []string) []string {
+	var origins []string
+	for _, domain := range domains {
+		origins = append(origins, fmt.Sprintf("http://%s", domain))
+		origins = append(origins, fmt.Sprintf("https://%s", domain))
+	}
+	return origins
 }

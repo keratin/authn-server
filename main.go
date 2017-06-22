@@ -71,7 +71,17 @@ func main() {
 	r.HandleFunc("/stats", app.Stub).Methods("GET")
 	r.HandleFunc("/health", app.Health).Methods("GET")
 
-	stack := gorilla.RecoveryHandler()(gorilla.CombinedLoggingHandler(os.Stdout, r))
+	corsAdapter := gorilla.CORS(
+		gorilla.AllowedOrigins(cfg.ApplicationOrigins),
+		gorilla.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE"}),
+	)
+	recoveryAdapter := gorilla.RecoveryHandler()
+
+	stack := recoveryAdapter(
+		corsAdapter(
+			gorilla.CombinedLoggingHandler(os.Stdout, r),
+		),
+	)
 
 	log.Fatal(http.ListenAndServe(":8000", stack))
 }
