@@ -45,11 +45,11 @@ func testApp() handlers.App {
 		SessionCookieName:  "authn",
 	}
 
-	tokenStore := mock.RefreshTokenStore{}
+	tokenStore := mock.NewRefreshTokenStore()
 
 	return handlers.App{
 		AccountStore:      &accountStore,
-		RefreshTokenStore: &tokenStore,
+		RefreshTokenStore: tokenStore,
 		Config:            &cfg,
 	}
 }
