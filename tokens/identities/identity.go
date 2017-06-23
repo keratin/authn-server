@@ -1,4 +1,4 @@
-package tokens
+package identities
 
 import (
 	"strconv"
@@ -11,18 +11,18 @@ import (
 	"github.com/keratin/authn/tokens/sessions"
 )
 
-type IdentityClaims struct {
+type Claims struct {
 	AuthTime int64 `json:"auth_time"`
 	jwt.StandardClaims
 }
 
-func NewIdentityJWT(store data.RefreshTokenStore, cfg *config.Config, session *sessions.Claims) (*IdentityClaims, error) {
+func New(store data.RefreshTokenStore, cfg *config.Config, session *sessions.Claims) (*Claims, error) {
 	account_id, err := store.Find(models.RefreshToken(session.Subject))
 	if err != nil {
 		return nil, err
 	}
 
-	return &IdentityClaims{
+	return &Claims{
 		AuthTime: session.IssuedAt,
 		StandardClaims: jwt.StandardClaims{
 			Issuer:    session.Issuer,

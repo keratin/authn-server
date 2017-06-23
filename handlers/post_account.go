@@ -6,7 +6,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/keratin/authn/models"
 	"github.com/keratin/authn/services"
-	"github.com/keratin/authn/tokens"
+	"github.com/keratin/authn/tokens/identities"
 	"github.com/keratin/authn/tokens/sessions"
 )
 
@@ -43,7 +43,7 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Create the identity token
-	identity, err := tokens.NewIdentityJWT(
+	identity, err := identities.New(
 		app.RefreshTokenStore,
 		app.Config,
 		session,
