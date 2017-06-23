@@ -24,6 +24,36 @@ func TestPostAccountSuccess(t *testing.T) {
 	assertIdTokenResponse(t, res, app.Config)
 }
 
+func TestPostAccountSuccessWithSession(t *testing.T) {
+	app := testApp()
+
+	account_id := 8642
+
+	res := httptest.NewRecorder()
+	req := httptest.NewRequest("POST", "/accounts", strings.NewReader("username=foo&password=bar"))
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.AddCookie(createSession(t, app.RefreshTokenStore, app.Config, account_id))
+
+	// before
+	refreshTokens, err := app.RefreshTokenStore.FindAll(account_id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	refreshToken := refreshTokens[0]
+
+	handler := http.HandlerFunc(app.PostAccount)
+	handler.ServeHTTP(res, req)
+
+	// after
+	id, err := app.RefreshTokenStore.Find(refreshToken)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if id != 0 {
+		t.Errorf("Expected token to be revoked: %v", refreshToken)
+	}
+}
+
 func TestPostAccountFailure(t *testing.T) {
 	app := testApp()
 	handler := http.HandlerFunc(app.PostAccount)

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/keratin/authn/models"
 	"github.com/keratin/authn/services"
 	"github.com/keratin/authn/tokens"
 )
@@ -63,6 +64,17 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 		HttpOnly: true,
 	}
 	http.SetCookie(w, &sessionCookie)
+
+	// Revoke any old refresh token that will be clobbered by the new session.
+	// Note that this code fails silently. I'd rather let the request complete
+	// at this point.
+	cookie, err := req.Cookie(app.Config.SessionCookieName)
+	if err == nil {
+		oldSession, err := tokens.ParseSessionJWT(cookie.Value, app.Config)
+		if err == nil {
+			app.RefreshTokenStore.Revoke(models.RefreshToken(oldSession.Subject))
+		}
+	}
 
 	// Return the identity token in the body
 	identityString, err := jwt.NewWithClaims(jwt.SigningMethodRS256, identity).SignedString(app.Config.IdentitySigningKey)
