@@ -8,6 +8,7 @@ import (
 	"github.com/keratin/authn/config"
 	"github.com/keratin/authn/data"
 	"github.com/keratin/authn/models"
+	"github.com/keratin/authn/tokens/sessions"
 )
 
 type IdentityClaims struct {
@@ -15,7 +16,7 @@ type IdentityClaims struct {
 	jwt.StandardClaims
 }
 
-func NewIdentityJWT(store data.RefreshTokenStore, cfg *config.Config, session *SessionClaims) (*IdentityClaims, error) {
+func NewIdentityJWT(store data.RefreshTokenStore, cfg *config.Config, session *sessions.Claims) (*IdentityClaims, error) {
 	account_id, err := store.Find(models.RefreshToken(session.Subject))
 	if err != nil {
 		return nil, err

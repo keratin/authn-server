@@ -19,7 +19,7 @@ import (
 	"github.com/keratin/authn/models"
 	"github.com/keratin/authn/services"
 	"github.com/keratin/authn/tests"
-	"github.com/keratin/authn/tokens"
+	"github.com/keratin/authn/tokens/sessions"
 )
 
 func testApp() handlers.App {
@@ -145,7 +145,7 @@ func extractResult(response *httptest.ResponseRecorder, inner interface{}) error
 }
 
 func createSession(t *testing.T, tokenStore data.RefreshTokenStore, cfg *config.Config, account_id int) *http.Cookie {
-	sessionToken, err := tokens.NewSessionJWT(tokenStore, cfg, account_id)
+	sessionToken, err := sessions.New(tokenStore, cfg, account_id)
 	if err != nil {
 		t.Fatal(err)
 	}

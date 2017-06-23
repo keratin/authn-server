@@ -1,4 +1,4 @@
-package tokens
+package sessions
 
 import (
 	"fmt"
@@ -9,13 +9,13 @@ import (
 	"github.com/keratin/authn/data"
 )
 
-type SessionClaims struct {
+type Claims struct {
 	Azp string `json:"azp"`
 	jwt.StandardClaims
 }
 
-func ParseSessionJWT(tokenStr string, cfg *config.Config) (*SessionClaims, error) {
-	token, err := jwt.ParseWithClaims(tokenStr, &SessionClaims{}, staticKeyFunc(cfg.SessionSigningKey))
+func Parse(tokenStr string, cfg *config.Config) (*Claims, error) {
+	token, err := jwt.ParseWithClaims(tokenStr, &Claims{}, staticKeyFunc(cfg.SessionSigningKey))
 	if err != nil {
 		return nil, err
 	}
@@ -23,9 +23,9 @@ func ParseSessionJWT(tokenStr string, cfg *config.Config) (*SessionClaims, error
 		return nil, fmt.Errorf("Could not verify JWT")
 	}
 
-	claims, ok := token.Claims.(*SessionClaims)
+	claims, ok := token.Claims.(*Claims)
 	if !ok {
-		return nil, fmt.Errorf("JWT is not a SessionClaims")
+		return nil, fmt.Errorf("JWT is not a Claims")
 	}
 
 	err = claims.StandardClaims.Valid()
@@ -42,13 +42,13 @@ func ParseSessionJWT(tokenStr string, cfg *config.Config) (*SessionClaims, error
 	return claims, nil
 }
 
-func NewSessionJWT(store data.RefreshTokenStore, cfg *config.Config, account_id int) (*SessionClaims, error) {
+func New(store data.RefreshTokenStore, cfg *config.Config, account_id int) (*Claims, error) {
 	refreshToken, err := store.Create(account_id)
 	if err != nil {
 		return nil, err
 	}
 
-	return &SessionClaims{
+	return &Claims{
 		Azp: "", // TODO: audience
 		StandardClaims: jwt.StandardClaims{
 			Issuer:   cfg.AuthNURL.String(),

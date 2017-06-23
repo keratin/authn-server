@@ -7,6 +7,7 @@ import (
 	"github.com/keratin/authn/models"
 	"github.com/keratin/authn/services"
 	"github.com/keratin/authn/tokens"
+	"github.com/keratin/authn/tokens/sessions"
 )
 
 type request struct {
@@ -32,7 +33,7 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Create the session token
-	session, err := tokens.NewSessionJWT(
+	session, err := sessions.New(
 		app.RefreshTokenStore,
 		app.Config,
 		account.Id,
@@ -70,7 +71,7 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	// at this point.
 	cookie, err := req.Cookie(app.Config.SessionCookieName)
 	if err == nil {
-		oldSession, err := tokens.ParseSessionJWT(cookie.Value, app.Config)
+		oldSession, err := sessions.Parse(cookie.Value, app.Config)
 		if err == nil {
 			app.RefreshTokenStore.Revoke(models.RefreshToken(oldSession.Subject))
 		}

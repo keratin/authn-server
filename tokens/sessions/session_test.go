@@ -1,4 +1,4 @@
-package tokens_test
+package sessions_test
 
 import (
 	"net/url"
@@ -8,32 +8,32 @@ import (
 	"github.com/keratin/authn/config"
 	"github.com/keratin/authn/data/mock"
 	"github.com/keratin/authn/tests"
-	"github.com/keratin/authn/tokens"
+	"github.com/keratin/authn/tokens/sessions"
 )
 
-func TestSessionJWT(t *testing.T) {
+func TestNewAndParse(t *testing.T) {
 	store := mock.NewRefreshTokenStore()
 	cfg := config.Config{
 		AuthNURL:          &url.URL{Scheme: "http", Host: "authn.example.com"},
 		SessionSigningKey: []byte("key-a-reno"),
 	}
 
-	session, err := tokens.NewSessionJWT(store, &cfg, 658908)
+	token, err := sessions.New(store, &cfg, 658908)
 	if err != nil {
 		t.Fatal(err)
 	}
-	tests.AssertEqual(t, "http://authn.example.com", session.Issuer)
-	tests.AssertEqual(t, "http://authn.example.com", session.Audience)
-	tests.AssertEqual(t, "RefreshToken:658908", session.Subject)
-	tests.AssertEqual(t, "", session.Azp)
-	tests.RefuteEqual(t, int64(0), session.IssuedAt)
+	tests.AssertEqual(t, "http://authn.example.com", token.Issuer)
+	tests.AssertEqual(t, "http://authn.example.com", token.Audience)
+	tests.AssertEqual(t, "RefreshToken:658908", token.Subject)
+	tests.AssertEqual(t, "", token.Azp)
+	tests.RefuteEqual(t, int64(0), token.IssuedAt)
 
-	sessionString, err := jwt.NewWithClaims(jwt.SigningMethodHS256, session).SignedString(cfg.SessionSigningKey)
+	sessionString, err := jwt.NewWithClaims(jwt.SigningMethodHS256, token).SignedString(cfg.SessionSigningKey)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	claims, err := tokens.ParseSessionJWT(sessionString, &cfg)
+	claims, err := sessions.Parse(sessionString, &cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -52,14 +52,14 @@ func TestParseInvalidSessionJWT(t *testing.T) {
 	oldKey := []byte("old key")
 
 	invalids := []string{}
-	var token *tokens.SessionClaims
+	var token *sessions.Claims
 	var tokenStr string
 	var cfg config.Config
 	var err error
 
 	// This invalid JWT was signed with an old key.
 	cfg = config.Config{AuthNURL: &authn, SessionSigningKey: oldKey}
-	token, err = tokens.NewSessionJWT(store, &cfg, 1)
+	token, err = sessions.New(store, &cfg, 1)
 	errIsFatal(t, err)
 	tokenStr, err = jwt.NewWithClaims(jwt.SigningMethodHS256, token).SignedString(cfg.SessionSigningKey)
 	errIsFatal(t, err)
@@ -67,7 +67,7 @@ func TestParseInvalidSessionJWT(t *testing.T) {
 
 	// This invalid JWT was signed for a different audience.
 	cfg = config.Config{AuthNURL: &authn, SessionSigningKey: key}
-	token, err = tokens.NewSessionJWT(store, &cfg, 2)
+	token, err = sessions.New(store, &cfg, 2)
 	errIsFatal(t, err)
 	token.Audience = app.String()
 	tokenStr, err = jwt.NewWithClaims(jwt.SigningMethodHS256, token).SignedString(cfg.SessionSigningKey)
@@ -76,7 +76,7 @@ func TestParseInvalidSessionJWT(t *testing.T) {
 
 	// This invalid JWT was signed with "none" alg
 	cfg = config.Config{AuthNURL: &authn}
-	token, err = tokens.NewSessionJWT(store, &cfg, 3)
+	token, err = sessions.New(store, &cfg, 3)
 	errIsFatal(t, err)
 	tokenStr, err = jwt.NewWithClaims(jwt.SigningMethodNone, token).SignedString(jwt.UnsafeAllowNoneSignatureType)
 	errIsFatal(t, err)
@@ -84,7 +84,7 @@ func TestParseInvalidSessionJWT(t *testing.T) {
 
 	cfg = config.Config{AuthNURL: &authn, SessionSigningKey: key}
 	for i, invalid := range invalids {
-		_, err := tokens.ParseSessionJWT(invalid, &cfg)
+		_, err := sessions.Parse(invalid, &cfg)
 		if err == nil {
 			t.Errorf("invalid token [%v] was parsed as valid", i)
 		}
