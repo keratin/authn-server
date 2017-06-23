@@ -19,7 +19,7 @@ func NewRefreshTokenStore() *RefreshTokenStore {
 }
 
 func (s *RefreshTokenStore) Create(account_id int) (models.RefreshToken, error) {
-	token := models.RefreshToken(fmt.Sprintf("Hello %v", account_id))
+	token := models.RefreshToken(fmt.Sprintf("RefreshToken:%v", account_id))
 	s.tokensByAccount[account_id] = append(s.tokensByAccount[account_id], token)
 	s.accountByToken[token] = account_id
 	return token, nil

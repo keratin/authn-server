@@ -1,6 +1,8 @@
 package tokens
 
 import (
+	"errors"
+	"fmt"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -15,6 +17,18 @@ type SessionClaims struct {
 
 func (c SessionClaims) Valid() error {
 	return nil
+}
+
+func ParseSessionJWT(tokenStr string, sessionSigningKey []byte) (*SessionClaims, error) {
+	token, err := jwt.ParseWithClaims(tokenStr, &SessionClaims{}, staticKeyFunc(sessionSigningKey))
+	if err != nil {
+		return nil, err
+	}
+	claims, ok := token.Claims.(*SessionClaims)
+	if !ok || !token.Valid {
+		return nil, errors.New("Could not verify JWT")
+	}
+	return claims, nil
 }
 
 func NewSessionJWT(store data.RefreshTokenStore, cfg *config.Config, account_id int) (*SessionClaims, error) {
@@ -32,4 +46,13 @@ func NewSessionJWT(store data.RefreshTokenStore, cfg *config.Config, account_id 
 			IssuedAt: time.Now().Unix(),
 		},
 	}, nil
+}
+
+func staticKeyFunc(key []byte) func(*jwt.Token) (interface{}, error) {
+	return func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", t.Header["alg"])
+		}
+		return key, nil
+	}
 }
