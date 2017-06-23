@@ -11,6 +11,16 @@ type AccountStore struct {
 	*sql.DB
 }
 
+// If no row is found, the error will be sql.ErrNoRows
+func (db *AccountStore) FindByUsername(u string) (*models.Account, error) {
+	account := models.Account{}
+	err := db.QueryRow("SELECT * FROM accounts WHERE username = ?", u).Scan(&account)
+	if err != nil {
+		return nil, err
+	}
+	return &account, nil
+}
+
 func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 	// TODO: BeginTx with Context!
 	tx, err := db.Begin()

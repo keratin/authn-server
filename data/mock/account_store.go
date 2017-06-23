@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/keratin/authn-server/models"
@@ -25,6 +26,15 @@ func NewAccountStore() *AccountStore {
 	return &AccountStore{
 		accountsById: make(map[int]*models.Account),
 		idByUsername: make(map[string]int),
+	}
+}
+
+func (s *AccountStore) FindByUsername(u string) (*models.Account, error) {
+	id := s.idByUsername[u]
+	if id == 0 {
+		return nil, sql.ErrNoRows
+	} else {
+		return s.accountsById[id], nil
 	}
 }
 
