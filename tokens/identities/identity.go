@@ -1,6 +1,7 @@
 package identities
 
 import (
+	"crypto/rsa"
 	"strconv"
 	"time"
 
@@ -14,6 +15,10 @@ import (
 type Claims struct {
 	AuthTime int64 `json:"auth_time"`
 	jwt.StandardClaims
+}
+
+func (c *Claims) Sign(rsa_key *rsa.PrivateKey) (string, error) {
+	return jwt.NewWithClaims(jwt.SigningMethodRS256, c).SignedString(rsa_key)
 }
 
 func New(store data.RefreshTokenStore, cfg *config.Config, session *sessions.Claims) (*Claims, error) {

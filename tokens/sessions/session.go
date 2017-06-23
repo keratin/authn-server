@@ -2,7 +2,6 @@ package sessions
 
 import (
 	"fmt"
-	"net/http"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -17,20 +16,6 @@ type Claims struct {
 
 func (c *Claims) Sign(hmac_key []byte) (string, error) {
 	return jwt.NewWithClaims(jwt.SigningMethodHS256, c).SignedString(hmac_key)
-}
-
-func (c *Claims) Cookie(cfg *config.Config) (*http.Cookie, error) {
-	val, err := c.Sign(cfg.SessionSigningKey)
-	if err != nil {
-		return nil, err
-	}
-	return &http.Cookie{
-		Name:     cfg.SessionCookieName,
-		Value:    val,
-		Path:     cfg.MountedPath,
-		Secure:   cfg.ForceSSL,
-		HttpOnly: true,
-	}, nil
 }
 
 func Parse(tokenStr string, cfg *config.Config) (*Claims, error) {
