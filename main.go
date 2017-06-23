@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -16,5 +17,6 @@ func main() {
 
 	stack := routing(app)
 
+	fmt.Println("~*~ Keratin AuthN server is ready ~*~")
 	log.Fatal(http.ListenAndServe(":8000", stack))
 }
