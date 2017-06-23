@@ -1,47 +1,38 @@
 package tokens
 
 import (
-	"net/url"
+	"strconv"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/keratin/authn/config"
 	"github.com/keratin/authn/data"
+	"github.com/keratin/authn/models"
 )
 
-type IdentityJWT struct {
-	Iss      *url.URL
-	Sub      int
-	Aud      string
-	Exp      time.Time
-	Iat      time.Time
-	AuthTime time.Time
+type IdentityClaims struct {
+	AuthTime int64 `json:"auth_time"`
+	jwt.StandardClaims
 }
 
-func (i *IdentityJWT) claims() *jwt.MapClaims {
-	return &jwt.MapClaims{
-		"iss":       i.Iss.String(),
-		"sub":       i.Sub,
-		"aud":       i.Aud,
-		"exp":       i.Exp.Unix(),
-		"iat":       i.Iat.Unix(),
-		"auth_time": i.AuthTime.Unix(),
-	}
+func (c *IdentityClaims) Valid() error {
+	return nil
 }
 
-func NewIdentityJWT(store data.RefreshTokenStore, cfg *config.Config, session *SessionJWT) (*IdentityJWT, error) {
-	account_id, err := store.Find(session.Sub)
+func NewIdentityJWT(store data.RefreshTokenStore, cfg *config.Config, session *SessionClaims) (*IdentityClaims, error) {
+	account_id, err := store.Find(models.RefreshToken(session.Subject))
 	if err != nil {
 		return nil, err
 	}
 
-	identity := IdentityJWT{
-		Iss:      session.Iss,
-		Sub:      account_id,
-		Aud:      session.Azp,
-		Exp:      time.Now().Add(cfg.AccessTokenTTL),
-		Iat:      time.Now(),
-		AuthTime: session.Iat,
-	}
-	return &identity, nil
+	return &IdentityClaims{
+		AuthTime: session.IssuedAt,
+		StandardClaims: jwt.StandardClaims{
+			Issuer:    session.Issuer,
+			Subject:   strconv.Itoa(account_id),
+			Audience:  session.Azp,
+			ExpiresAt: time.Now().Add(cfg.AccessTokenTTL).Unix(),
+			IssuedAt:  time.Now().Unix(),
+		},
+	}, nil
 }
