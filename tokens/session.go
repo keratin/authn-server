@@ -14,19 +14,31 @@ type SessionClaims struct {
 	jwt.StandardClaims
 }
 
-func (c SessionClaims) Valid() error {
-	return nil
-}
-
-func ParseSessionJWT(tokenStr string, sessionSigningKey []byte) (*SessionClaims, error) {
-	token, err := jwt.ParseWithClaims(tokenStr, &SessionClaims{}, staticKeyFunc(sessionSigningKey))
+func ParseSessionJWT(tokenStr string, cfg *config.Config) (*SessionClaims, error) {
+	token, err := jwt.ParseWithClaims(tokenStr, &SessionClaims{}, staticKeyFunc(cfg.SessionSigningKey))
 	if err != nil {
 		return nil, err
 	}
+	if !token.Valid {
+		return nil, fmt.Errorf("Could not verify JWT")
+	}
+
 	claims, ok := token.Claims.(*SessionClaims)
-	if !ok || !token.Valid {
+	if !ok {
 		return nil, fmt.Errorf("JWT is not a SessionClaims")
 	}
+
+	err = claims.StandardClaims.Valid()
+	if err != nil {
+		return nil, err
+	}
+	if !claims.VerifyAudience(cfg.AuthNURL.String(), true) {
+		return nil, fmt.Errorf("token audience not valid")
+	}
+	if !claims.VerifyIssuer(cfg.AuthNURL.String(), true) {
+		return nil, fmt.Errorf("token issuer not valid")
+	}
+
 	return claims, nil
 }
 
