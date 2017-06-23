@@ -1,7 +1,6 @@
 package tokens
 
 import (
-	"errors"
 	"fmt"
 	"time"
 
@@ -26,7 +25,7 @@ func ParseSessionJWT(tokenStr string, sessionSigningKey []byte) (*SessionClaims,
 	}
 	claims, ok := token.Claims.(*SessionClaims)
 	if !ok || !token.Valid {
-		return nil, errors.New("Could not verify JWT")
+		return nil, fmt.Errorf("JWT is not a SessionClaims")
 	}
 	return claims, nil
 }

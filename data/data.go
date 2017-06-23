@@ -2,7 +2,7 @@ package data
 
 import (
 	"database/sql"
-	"errors"
+	"fmt"
 	"net/url"
 
 	"github.com/keratin/authn/data/mock"
@@ -20,7 +20,7 @@ func NewDB(url *url.URL) (*sql.DB, AccountStore, error) {
 		store := sqlite3.AccountStore{db}
 		return db, &store, nil
 	default:
-		return nil, nil, errors.New("Unsupported database")
+		return nil, nil, fmt.Errorf("Unsupported database")
 	}
 }
 

@@ -1,7 +1,6 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"regexp"
@@ -12,9 +11,7 @@ func requireEnv(name string) (string, error) {
 	if val, ok := os.LookupEnv(name); ok {
 		return val, nil
 	} else {
-		return "", errors.New(
-			fmt.Sprintf("Missing environment variable: %s. See https://github.com/keratin/authn/wiki/Server-Configuration for details.", name),
-		)
+		return "", fmt.Errorf("Missing environment variable: %s. See https://github.com/keratin/authn/wiki/Server-Configuration for details.", name)
 	}
 }
 
