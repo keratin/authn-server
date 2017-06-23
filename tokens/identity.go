@@ -15,10 +15,6 @@ type IdentityClaims struct {
 	jwt.StandardClaims
 }
 
-func (c *IdentityClaims) Valid() error {
-	return nil
-}
-
 func NewIdentityJWT(store data.RefreshTokenStore, cfg *config.Config, session *SessionClaims) (*IdentityClaims, error) {
 	account_id, err := store.Find(models.RefreshToken(session.Subject))
 	if err != nil {
