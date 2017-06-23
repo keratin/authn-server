@@ -51,7 +51,7 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Return the signed session in a cookie
-	sessionString, err := tokens.Sign(session, jwt.SigningMethodHS256, app.Config.SessionSigningKey)
+	sessionString, err := jwt.NewWithClaims(jwt.SigningMethodHS256, session).SignedString(app.Config.SessionSigningKey)
 	if err != nil {
 		panic(err)
 	}
@@ -65,7 +65,7 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	http.SetCookie(w, &sessionCookie)
 
 	// Return the identity token in the body
-	identityString, err := tokens.Sign(identity, jwt.SigningMethodRS256, app.Config.IdentitySigningKey)
+	identityString, err := jwt.NewWithClaims(jwt.SigningMethodRS256, identity).SignedString(app.Config.IdentitySigningKey)
 	if err != nil {
 		panic(err)
 	}

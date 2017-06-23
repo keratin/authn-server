@@ -150,7 +150,7 @@ func createSession(t *testing.T, tokenStore data.RefreshTokenStore, cfg *config.
 		t.Fatal(err)
 	}
 
-	sessionString, err := tokens.Sign(sessionToken, jwt.SigningMethodHS256, cfg.SessionSigningKey)
+	sessionString, err := jwt.NewWithClaims(jwt.SigningMethodHS256, sessionToken).SignedString(cfg.SessionSigningKey)
 	if err != nil {
 		t.Fatal(err)
 	}
