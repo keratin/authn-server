@@ -5,41 +5,16 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/go-redis/redis"
 	gorilla "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/keratin/authn/config"
-	"github.com/keratin/authn/data"
-	dataRedis "github.com/keratin/authn/data/redis"
 	"github.com/keratin/authn/handlers"
 )
 
 func main() {
-	cfg := config.ReadEnv()
-
-	db, accountStore, err := data.NewDB(cfg.DatabaseURL)
+	// set up connections and configuration
+	app, err := handlers.NewApp()
 	if err != nil {
 		panic(err)
-	}
-	defer db.Close()
-
-	opts, err := redis.ParseURL(cfg.RedisURL.String())
-	if err != nil {
-		panic(err)
-	}
-	redis := redis.NewClient(opts)
-
-	tokenStore := &dataRedis.RefreshTokenStore{
-		Client: redis,
-		TTL:    cfg.RefreshTokenTTL,
-	}
-
-	app := handlers.App{
-		DbCheck:           func() bool { return db.Ping() == nil },
-		RedisCheck:        func() bool { return redis.Ping().Err() == nil },
-		Config:            cfg,
-		AccountStore:      accountStore,
-		RefreshTokenStore: tokenStore,
 	}
 
 	r := mux.NewRouter()
@@ -48,7 +23,7 @@ func main() {
 
 	attach(r,
 		post("/accounts").
-			securedWith(handlers.RefererSecurity(cfg.ApplicationDomains)).
+			securedWith(handlers.RefererSecurity(app.Config.ApplicationDomains)).
 			handle(app.PostAccount),
 	)
 	r.HandleFunc("/accounts/import", app.Stub).Methods("POST")
@@ -72,7 +47,7 @@ func main() {
 	r.HandleFunc("/health", app.Health).Methods("GET")
 
 	corsAdapter := gorilla.CORS(
-		gorilla.AllowedOrigins(cfg.ApplicationOrigins),
+		gorilla.AllowedOrigins(app.Config.ApplicationOrigins),
 		gorilla.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE"}),
 	)
 	recoveryAdapter := gorilla.RecoveryHandler()
