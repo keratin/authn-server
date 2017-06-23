@@ -95,6 +95,9 @@ func (s *RefreshTokenStore) Revoke(hexToken models.RefreshToken) error {
 	if err != nil {
 		return err
 	}
+	if account_id == 0 {
+		return nil
+	}
 
 	_, err = s.Client.Pipelined(func(pipe redis.Pipeliner) error {
 		binToken, err := hex.DecodeString(string(hexToken))
