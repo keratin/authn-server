@@ -13,11 +13,13 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/keratin/authn/config"
+	"github.com/keratin/authn/data"
 	"github.com/keratin/authn/data/mock"
 	"github.com/keratin/authn/handlers"
 	"github.com/keratin/authn/models"
 	"github.com/keratin/authn/services"
 	"github.com/keratin/authn/tests"
+	"github.com/keratin/authn/tokens"
 )
 
 func testApp() handlers.App {
@@ -140,4 +142,21 @@ func assertIdTokenResponse(t *testing.T, rr *httptest.ResponseRecorder, cfg *con
 // what is inside the envelope.
 func extractResult(response *httptest.ResponseRecorder, inner interface{}) error {
 	return json.Unmarshal([]byte(response.Body.String()), &handlers.ServiceData{inner})
+}
+
+func createSession(t *testing.T, tokenStore data.RefreshTokenStore, cfg *config.Config, account_id int) *http.Cookie {
+	sessionToken, err := tokens.NewSessionJWT(tokenStore, cfg, account_id)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	sessionString, err := tokens.Sign(sessionToken, jwt.SigningMethodHS256, cfg.SessionSigningKey)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return &http.Cookie{
+		Name:  cfg.SessionCookieName,
+		Value: sessionString,
+	}
 }
