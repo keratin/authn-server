@@ -11,7 +11,7 @@ import (
 	"github.com/keratin/authn/tokens/sessions"
 )
 
-func TestNewAndParse(t *testing.T) {
+func TestNewAndParseAndSign(t *testing.T) {
 	store := mock.NewRefreshTokenStore()
 	cfg := config.Config{
 		AuthNURL:          &url.URL{Scheme: "http", Host: "authn.example.com"},
@@ -28,7 +28,7 @@ func TestNewAndParse(t *testing.T) {
 	tests.AssertEqual(t, "", token.Azp)
 	tests.RefuteEqual(t, int64(0), token.IssuedAt)
 
-	sessionString, err := jwt.NewWithClaims(jwt.SigningMethodHS256, token).SignedString(cfg.SessionSigningKey)
+	sessionString, err := token.Sign(cfg.SessionSigningKey)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -61,7 +61,7 @@ func TestParseInvalidSessionJWT(t *testing.T) {
 	cfg = config.Config{AuthNURL: &authn, SessionSigningKey: oldKey}
 	token, err = sessions.New(store, &cfg, 1)
 	errIsFatal(t, err)
-	tokenStr, err = jwt.NewWithClaims(jwt.SigningMethodHS256, token).SignedString(cfg.SessionSigningKey)
+	tokenStr, err = token.Sign(cfg.SessionSigningKey)
 	errIsFatal(t, err)
 	invalids = append(invalids, tokenStr)
 
@@ -70,7 +70,7 @@ func TestParseInvalidSessionJWT(t *testing.T) {
 	token, err = sessions.New(store, &cfg, 2)
 	errIsFatal(t, err)
 	token.Audience = app.String()
-	tokenStr, err = jwt.NewWithClaims(jwt.SigningMethodHS256, token).SignedString(cfg.SessionSigningKey)
+	tokenStr, err = token.Sign(cfg.SessionSigningKey)
 	errIsFatal(t, err)
 	invalids = append(invalids, tokenStr)
 

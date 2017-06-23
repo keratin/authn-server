@@ -53,18 +53,11 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Return the signed session in a cookie
-	sessionString, err := jwt.NewWithClaims(jwt.SigningMethodHS256, session).SignedString(app.Config.SessionSigningKey)
+	sessionCookie, err := session.Cookie(app.Config)
 	if err != nil {
 		panic(err)
 	}
-	sessionCookie := http.Cookie{
-		Name:     app.Config.SessionCookieName,
-		Value:    sessionString,
-		Path:     app.Config.MountedPath,
-		Secure:   app.Config.ForceSSL,
-		HttpOnly: true,
-	}
-	http.SetCookie(w, &sessionCookie)
+	http.SetCookie(w, sessionCookie)
 
 	// Revoke any old refresh token that will be clobbered by the new session.
 	// Note that this code fails silently. I'd rather let the request complete
