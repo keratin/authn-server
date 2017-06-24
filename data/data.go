@@ -24,6 +24,22 @@ func NewDB(url *url.URL) (*sql.DB, AccountStore, error) {
 	}
 }
 
+func MigrateDB(url *url.URL) error {
+	switch url.Scheme {
+	case "sqlite3":
+		db, err := sqlite3.NewDB(url.Path)
+		if err != nil {
+			return err
+		}
+		defer db.Close()
+
+		sqlite3.MigrateDB(db)
+		return nil
+	default:
+		return fmt.Errorf("Unsupported database")
+	}
+}
+
 func IsUniquenessError(err error) bool {
 	switch i := err.(type) {
 	case sq3.Error:
