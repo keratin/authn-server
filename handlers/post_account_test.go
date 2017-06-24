@@ -2,8 +2,6 @@ package handlers_test
 
 import (
 	"net/http"
-	"net/http/httptest"
-	"strings"
 	"testing"
 
 	"github.com/keratin/authn-server/services"
@@ -11,13 +9,10 @@ import (
 
 func TestPostAccountSuccess(t *testing.T) {
 	app := testApp()
-
-	res := httptest.NewRecorder()
-	req := httptest.NewRequest("POST", "/accounts", strings.NewReader("username=foo&password=bar"))
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
-	handler := http.HandlerFunc(app.PostAccount)
-	handler.ServeHTTP(res, req)
+	res := post("/accounts", app.PostAccount, map[string]string{
+		"username": "foo",
+		"password": "bar",
+	})
 
 	assertCode(t, res, http.StatusCreated)
 	assertSession(t, res)
@@ -26,13 +21,8 @@ func TestPostAccountSuccess(t *testing.T) {
 
 func TestPostAccountSuccessWithSession(t *testing.T) {
 	app := testApp()
-
 	account_id := 8642
-
-	res := httptest.NewRecorder()
-	req := httptest.NewRequest("POST", "/accounts", strings.NewReader("username=foo&password=bar"))
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	req.AddCookie(createSession(t, app.RefreshTokenStore, app.Config, account_id))
+	session := createSession(app.RefreshTokenStore, app.Config, account_id)
 
 	// before
 	refreshTokens, err := app.RefreshTokenStore.FindAll(account_id)
@@ -41,8 +31,12 @@ func TestPostAccountSuccessWithSession(t *testing.T) {
 	}
 	refreshToken := refreshTokens[0]
 
-	handler := http.HandlerFunc(app.PostAccount)
-	handler.ServeHTTP(res, req)
+	post("/accounts", app.PostAccount, map[string]string{
+		"username": "foo",
+		"password": "bar",
+	},
+		func(req *http.Request) { req.AddCookie(session) },
+	)
 
 	// after
 	id, err := app.RefreshTokenStore.Find(refreshToken)
@@ -56,21 +50,20 @@ func TestPostAccountSuccessWithSession(t *testing.T) {
 
 func TestPostAccountFailure(t *testing.T) {
 	app := testApp()
-	handler := http.HandlerFunc(app.PostAccount)
 
 	var tests = []struct {
-		body   string
-		errors []services.Error
+		username string
+		password string
+		errors   []services.Error
 	}{
-		{"", []services.Error{{"username", "MISSING"}, {"password", "MISSING"}}},
+		{"", "", []services.Error{{"username", "MISSING"}, {"password", "MISSING"}}},
 	}
 
 	for _, tt := range tests {
-		res := httptest.NewRecorder()
-		req := httptest.NewRequest("POST", "/accounts", strings.NewReader(tt.body))
-		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
-		handler.ServeHTTP(res, req)
+		res := post("/accounts", app.PostAccount, map[string]string{
+			"username": tt.username,
+			"password": tt.password,
+		})
 
 		assertCode(t, res, http.StatusUnprocessableEntity)
 		assertErrors(t, res, tt.errors)

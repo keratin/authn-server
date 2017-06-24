@@ -21,6 +21,27 @@ import (
 	"github.com/keratin/authn-server/tokens/sessions"
 )
 
+type HandlerFuncable func(w http.ResponseWriter, r *http.Request)
+type ReqModder func(req *http.Request)
+
+func post(path string, h HandlerFuncable, params map[string]string, befores ...ReqModder) *httptest.ResponseRecorder {
+	buffer := make([]string, 0)
+	for k, v := range params {
+		buffer = append(buffer, strings.Join([]string{k, v}, "="))
+	}
+	paramsStr := strings.Join(buffer, "&")
+
+	res := httptest.NewRecorder()
+	req := httptest.NewRequest("POST", path, strings.NewReader(paramsStr))
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	for _, before := range befores {
+		before(req)
+	}
+
+	http.HandlerFunc(h).ServeHTTP(res, req)
+	return res
+}
+
 func testApp() handlers.App {
 	accountStore := mock.NewAccountStore()
 
@@ -126,10 +147,10 @@ func assertIdTokenResponse(t *testing.T, rr *httptest.ResponseRecorder, cfg *con
 	})
 	if err != nil {
 		t.Error(err)
+	} else {
+		// check that the JWT contains nice things
+		tests.AssertEqual(t, cfg.AuthNURL.String(), identityToken.Claims.(jwt.MapClaims)["iss"])
 	}
-
-	// check that the JWT contains nice things
-	tests.AssertEqual(t, cfg.AuthNURL.String(), identityToken.Claims.(jwt.MapClaims)["iss"])
 }
 
 // extracts the value from inside a successful result envelope. must be provided
@@ -139,15 +160,15 @@ func extractResult(response *httptest.ResponseRecorder, inner interface{}) error
 	return json.Unmarshal([]byte(response.Body.String()), &handlers.ServiceData{inner})
 }
 
-func createSession(t *testing.T, tokenStore data.RefreshTokenStore, cfg *config.Config, account_id int) *http.Cookie {
+func createSession(tokenStore data.RefreshTokenStore, cfg *config.Config, account_id int) *http.Cookie {
 	sessionToken, err := sessions.New(tokenStore, cfg, account_id)
 	if err != nil {
-		t.Fatal(err)
+		panic(err)
 	}
 
 	sessionString, err := jwt.NewWithClaims(jwt.SigningMethodHS256, sessionToken).SignedString(cfg.SessionSigningKey)
 	if err != nil {
-		t.Fatal(err)
+		panic(err)
 	}
 
 	return &http.Cookie{
