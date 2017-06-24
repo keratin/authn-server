@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	_ "github.com/joho/godotenv/autoload"
 	"golang.org/x/crypto/pbkdf2"
 )
 
