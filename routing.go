@@ -27,7 +27,11 @@ func routing(app *handlers.App) http.Handler {
 	r.HandleFunc("/accounts/{account_id:[0-9]+}/lock", app.Stub).Methods("PUT", "PATCH")
 	r.HandleFunc("/accounts/{account_id:[0-9]+}/unlock", app.Stub).Methods("PUT", "PATCH")
 
-	r.HandleFunc("/session", app.Stub).Methods("POST")
+	attach(r,
+		post("/session").
+			securedWith(handlers.RefererSecurity(app.Config.ApplicationDomains)).
+			handle(app.PostSession),
+	)
 	r.HandleFunc("/session", app.Stub).Methods("DELETE")
 	r.HandleFunc("/session/refresh", app.Stub).Methods("GET")
 
