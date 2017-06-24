@@ -21,6 +21,12 @@ func TestCreate(t *testing.T) {
 	}
 	tests.RefuteEqual(t, 0, account.Id)
 	tests.AssertEqual(t, "authn@keratin.tech", account.Username)
+	if account.CreatedAt.IsZero() {
+		t.Error("Expected created_at to be set")
+	}
+	if account.UpdatedAt.IsZero() {
+		t.Error("Expected updated_at to be set")
+	}
 
 	account, err = store.Create("authn@keratin.tech", []byte("password"))
 	if account != nil {

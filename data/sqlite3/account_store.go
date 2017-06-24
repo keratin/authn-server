@@ -18,7 +18,8 @@ func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 		return nil, err
 	}
 
-	result, err := db.Exec("INSERT INTO accounts (username, password) VALUES (?, ?)", u, p)
+	now := time.Now()
+	result, err := db.Exec("INSERT INTO accounts (username, password, created_at, updated_at) VALUES (?, ?, ?, ?)", u, p, now.Unix(), now.Unix())
 	if err != nil {
 		tx.Rollback()
 		return nil, err
@@ -30,7 +31,11 @@ func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 		return nil, err
 	}
 
-	account := models.Account{Id: int(id), Username: u}
-
-	return &account, nil
+	return &models.Account{
+		Id:        int(id),
+		Username:  u,
+		Password:  p,
+		CreatedAt: now,
+		UpdatedAt: now,
+	}, nil
 }
