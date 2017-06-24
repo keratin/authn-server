@@ -30,19 +30,26 @@ func TestCredentialsVerifierSuccess(t *testing.T) {
 }
 
 func TestCredentialsVerifierFailure(t *testing.T) {
-	username := "myname"
 	password := "mysecret"
+	bcrypted := []byte("$2a$04$lzQPXlov4RFLxps1uUGq4e4wmVjLYz3WrqQw4bSdfIiJRyo3/fk3C")
 
 	cfg := config.Config{BcryptCost: 4}
 	store := mock.NewAccountStore()
+	store.Create("known", bcrypted)
+	acc, _ := store.Create("locked", bcrypted)
+	acc.Locked = true // this is a reference to the memory store
+	acc, _ = store.Create("expired", bcrypted)
+	acc.RequireNewPassword = true
 
 	testTable := []struct {
 		username string
 		password string
 		errors   []services.Error
 	}{
-		{username, "unknown", []services.Error{{"credentials", "FAILED"}}},
+		{"known", "unknown", []services.Error{{"credentials", "FAILED"}}},
 		{"unknown", password, []services.Error{{"credentials", "FAILED"}}},
+		{"locked", password, []services.Error{{"account", "LOCKED"}}},
+		{"expired", password, []services.Error{{"credentials", "EXPIRED"}}},
 	}
 
 	for _, tt := range testTable {

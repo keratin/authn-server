@@ -35,6 +35,12 @@ func CredentialsVerifier(store data.AccountStore, cfg *config.Config, username s
 	if err != nil {
 		return nil, []Error{{"credentials", ErrFailed}}
 	}
+	if account.Locked {
+		return nil, []Error{{"account", ErrLocked}}
+	}
+	if account.RequireNewPassword {
+		return nil, []Error{{"credentials", ErrExpired}}
+	}
 
 	return account, nil
 }
