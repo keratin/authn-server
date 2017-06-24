@@ -2,6 +2,7 @@ package sqlite3
 
 import (
 	"database/sql"
+	"time"
 
 	"github.com/keratin/authn-server/models"
 )

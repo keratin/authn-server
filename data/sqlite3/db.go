@@ -36,7 +36,19 @@ func TempDB() (*sql.DB, error) {
 }
 
 func migrateDB(db *sql.DB) error {
-	_, err := db.Exec("CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY, username TEXT CONSTRAINT uniq UNIQUE, password TEXT)")
+	_, err := db.Exec(`
+        CREATE TABLE IF NOT EXISTS accounts (
+            id INTEGER PRIMARY KEY,
+            username TEXT CONSTRAINT uniq UNIQUE,
+            password TEXT,
+            locked INTEGER,
+            require_new_password INTEGER,
+            password_changed_at INTEGER,
+            created_at INTEGER,
+            updated_at INTEGER,
+            deleted_at INTEGER
+        )
+    `)
 	if err != nil {
 		return err
 	}
