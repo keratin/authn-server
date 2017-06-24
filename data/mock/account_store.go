@@ -17,9 +17,28 @@ func (err Error) Error() string {
 const ErrNotUnique = iota
 
 type AccountStore struct {
-	OnCreate func(u string, p []byte) (*models.Account, error)
+	accountsById map[int]*models.Account
+	idByUsername map[string]int
+}
+
+func NewAccountStore() *AccountStore {
+	return &AccountStore{
+		accountsById: make(map[int]*models.Account),
+		idByUsername: make(map[string]int),
+	}
 }
 
 func (s *AccountStore) Create(u string, p []byte) (*models.Account, error) {
-	return s.OnCreate(u, p)
+	if s.idByUsername[u] != 0 {
+		return nil, Error{ErrNotUnique}
+	}
+
+	acc := &models.Account{
+		Id:       len(s.accountsById) + 1,
+		Username: u,
+		Password: p,
+	}
+	s.accountsById[acc.Id] = acc
+	s.idByUsername[acc.Username] = acc.Id
+	return acc, nil
 }

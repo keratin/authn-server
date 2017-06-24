@@ -16,18 +16,13 @@ import (
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/handlers"
-	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/services"
 	"github.com/keratin/authn-server/tests"
 	"github.com/keratin/authn-server/tokens/sessions"
 )
 
 func testApp() handlers.App {
-	accountStore := mock.AccountStore{
-		OnCreate: func(u string, p []byte) (*models.Account, error) {
-			return &models.Account{Id: 12345, Username: u}, nil
-		},
-	}
+	accountStore := mock.NewAccountStore()
 
 	authnUrl, err := url.Parse("https://authn.example.com")
 	if err != nil {
@@ -50,7 +45,7 @@ func testApp() handlers.App {
 	tokenStore := mock.NewRefreshTokenStore()
 
 	return handlers.App{
-		AccountStore:      &accountStore,
+		AccountStore:      accountStore,
 		RefreshTokenStore: tokenStore,
 		Config:            &cfg,
 	}

@@ -5,17 +5,12 @@ import (
 
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data/mock"
-	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/services"
 	"github.com/keratin/authn-server/tests"
 )
 
 func TestAccountCreatorSuccess(t *testing.T) {
-	store := mock.AccountStore{
-		OnCreate: func(u string, p []byte) (*models.Account, error) {
-			return &models.Account{Id: 12345, Username: u}, nil
-		},
-	}
+	store := mock.NewAccountStore()
 
 	var testTable = []struct {
 		config   config.Config
@@ -28,7 +23,7 @@ func TestAccountCreatorSuccess(t *testing.T) {
 	}
 
 	for _, tt := range testTable {
-		acc, errs := services.AccountCreator(&store, &tt.config, tt.username, tt.password)
+		acc, errs := services.AccountCreator(store, &tt.config, tt.username, tt.password)
 		if len(errs) > 0 {
 			for _, err := range errs {
 				t.Errorf("%v: %v", err.Field, err.Message)
@@ -42,11 +37,8 @@ func TestAccountCreatorSuccess(t *testing.T) {
 var pw = []byte("$2a$04$ZOBA8E3nT68/ArE6NDnzfezGWEgM6YrE17PrOtSjT5.U/ZGoxyh7e")
 
 func TestAccountCreatorFailure(t *testing.T) {
-	store := mock.AccountStore{
-		OnCreate: func(u string, p []byte) (*models.Account, error) {
-			return nil, mock.Error{mock.ErrNotUnique}
-		},
-	}
+	store := mock.NewAccountStore()
+	store.Create("existing@test.com", pw)
 
 	var testTable = []struct {
 		config   config.Config
@@ -67,7 +59,7 @@ func TestAccountCreatorFailure(t *testing.T) {
 	}
 
 	for _, tt := range testTable {
-		acc, errs := services.AccountCreator(&store, &tt.config, tt.username, tt.password)
+		acc, errs := services.AccountCreator(store, &tt.config, tt.username, tt.password)
 		if acc != nil {
 			t.Error("unexpected account return")
 		}
