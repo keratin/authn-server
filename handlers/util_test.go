@@ -42,6 +42,14 @@ func post(path string, h HandlerFuncable, params map[string]string, befores ...R
 	return res
 }
 
+func get(path string, h HandlerFuncable, befores ...ReqModder) *httptest.ResponseRecorder {
+	res := httptest.NewRecorder()
+	req := httptest.NewRequest("GET", "/health", nil)
+
+	http.HandlerFunc(h).ServeHTTP(res, req)
+	return res
+}
+
 func testApp() handlers.App {
 	accountStore := mock.NewAccountStore()
 

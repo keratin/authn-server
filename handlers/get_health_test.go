@@ -2,7 +2,6 @@ package handlers_test
 
 import (
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/keratin/authn-server/handlers"
@@ -14,11 +13,7 @@ func TestHealth(t *testing.T) {
 		RedisCheck: func() bool { return true },
 	}
 
-	res := httptest.NewRecorder()
-	req := httptest.NewRequest("GET", "/health", nil)
-
-	handler := http.HandlerFunc(app.Health)
-	handler.ServeHTTP(res, req)
+	res := get("/health", app.Health)
 
 	assertCode(t, res, http.StatusOK)
 	assertBody(t, res, `{"http":true,"db":true,"redis":true}`)
