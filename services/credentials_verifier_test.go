@@ -46,6 +46,8 @@ func TestCredentialsVerifierFailure(t *testing.T) {
 		password string
 		errors   []services.Error
 	}{
+		{"", "", []services.Error{{"credentials", "FAILED"}}},
+		{"unknown", "unknown", []services.Error{{"credentials", "FAILED"}}},
 		{"known", "unknown", []services.Error{{"credentials", "FAILED"}}},
 		{"unknown", password, []services.Error{{"credentials", "FAILED"}}},
 		{"locked", password, []services.Error{{"account", "LOCKED"}}},

@@ -17,6 +17,10 @@ var emptyHashes = map[int]string{
 }
 
 func CredentialsVerifier(store data.AccountStore, cfg *config.Config, username string, password string) (*models.Account, []Error) {
+	if username == "" && password == "" {
+		return nil, []Error{{"credentials", ErrFailed}}
+	}
+
 	account, err := store.FindByUsername(username)
 	if err != nil && err != sql.ErrNoRows {
 		panic(err)
