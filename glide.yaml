@@ -1,0 +1,17 @@
+package: github.com/keratin/authn-server
+import:
+- package: github.com/dgrijalva/jwt-go
+  version: ^3.0.0
+- package: github.com/go-redis/redis
+  version: ^6.5.0
+- package: github.com/gorilla/handlers
+  version: ^1.2.1
+- package: github.com/gorilla/mux
+  version: ^1.4.0
+- package: github.com/mattn/go-sqlite3
+  version: ^1.2.0
+- package: github.com/nbutton23/zxcvbn-go
+- package: golang.org/x/crypto
+  subpackages:
+  - bcrypt
+  - pbkdf2

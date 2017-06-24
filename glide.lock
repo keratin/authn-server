@@ -1,0 +1,47 @@
+hash: 675050997fef27c33ee50d10f79d5090714b64ad32a6029f999741579374328e
+updated: 2017-06-23T20:00:27.911860732-07:00
+imports:
+- name: github.com/dgrijalva/jwt-go
+  version: d2709f9f1f31ebcda9651b03077758c1f3a0018c
+- name: github.com/go-redis/redis
+  version: e14976b254c5bc5f399dd0ae9314b1d02a176897
+  subpackages:
+  - internal
+  - internal/consistenthash
+  - internal/hashtag
+  - internal/pool
+  - internal/proto
+- name: github.com/gorilla/context
+  version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
+- name: github.com/gorilla/handlers
+  version: a4043c62cc2329bacda331d33fc908ab11ef0ec3
+- name: github.com/gorilla/mux
+  version: bcd8bc72b08df0f70df986b97f95590779502d31
+- name: github.com/mattn/go-sqlite3
+  version: ca5e3819723d8eeaf170ad510e7da1d6d2e94a08
+- name: github.com/nbutton23/zxcvbn-go
+  version: a22cb81b2ecdde8b68e9ffb8824731cbf88e1de4
+  subpackages:
+  - adjacency
+  - data
+  - entropy
+  - frequency
+  - match
+  - matching
+  - scoring
+  - utils/math
+- name: go4.org
+  version: 034d17a462f7b2dcd1a4a73553ec5357ff6e6c6e
+  subpackages:
+  - syncutil
+- name: golang.org/x/crypto
+  version: adbae1b6b6fb4b02448a0fc0dbbc9ba2b95b294d
+  subpackages:
+  - bcrypt
+  - blowfish
+  - pbkdf2
+- name: golang.org/x/net
+  version: 5f8847ae0d0e90b6a9dc8148e7ad616874625171
+  subpackages:
+  - context
+testImports: []
