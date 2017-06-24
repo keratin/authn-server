@@ -3,9 +3,9 @@ package sqlite3_test
 import (
 	"testing"
 
-	"github.com/keratin/authn/data"
-	"github.com/keratin/authn/data/sqlite3"
-	"github.com/keratin/authn/tests"
+	"github.com/keratin/authn-server/data"
+	"github.com/keratin/authn-server/data/sqlite3"
+	"github.com/keratin/authn-server/tests"
 )
 
 func TestCreate(t *testing.T) {

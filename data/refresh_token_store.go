@@ -1,6 +1,6 @@
 package data
 
-import "github.com/keratin/authn/models"
+import "github.com/keratin/authn-server/models"
 
 type RefreshTokenStore interface {
 	// Generates and persists a token for the given account_id.

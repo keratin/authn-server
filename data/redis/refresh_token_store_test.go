@@ -5,9 +5,9 @@ import (
 	"time"
 
 	goredis "github.com/go-redis/redis"
-	"github.com/keratin/authn/data/redis"
-	"github.com/keratin/authn/models"
-	"github.com/keratin/authn/tests"
+	"github.com/keratin/authn-server/data/redis"
+	"github.com/keratin/authn-server/models"
+	"github.com/keratin/authn-server/tests"
 )
 
 var refreshTTL = time.Second

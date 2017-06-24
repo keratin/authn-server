@@ -3,7 +3,7 @@ package sqlite3
 import (
 	"database/sql"
 
-	"github.com/keratin/authn/models"
+	"github.com/keratin/authn-server/models"
 )
 
 type AccountStore struct {

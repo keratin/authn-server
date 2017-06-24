@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/keratin/authn/data/mock"
-	"github.com/keratin/authn/data/sqlite3"
+	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/data/sqlite3"
 	sq3 "github.com/mattn/go-sqlite3"
 )
 

@@ -12,14 +12,14 @@ import (
 	"testing"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/keratin/authn/config"
-	"github.com/keratin/authn/data"
-	"github.com/keratin/authn/data/mock"
-	"github.com/keratin/authn/handlers"
-	"github.com/keratin/authn/models"
-	"github.com/keratin/authn/services"
-	"github.com/keratin/authn/tests"
-	"github.com/keratin/authn/tokens/sessions"
+	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/data"
+	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/handlers"
+	"github.com/keratin/authn-server/models"
+	"github.com/keratin/authn-server/services"
+	"github.com/keratin/authn-server/tests"
+	"github.com/keratin/authn-server/tokens/sessions"
 )
 
 func testApp() handlers.App {

@@ -5,10 +5,10 @@ import (
 	"testing"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/keratin/authn/config"
-	"github.com/keratin/authn/data/mock"
-	"github.com/keratin/authn/tests"
-	"github.com/keratin/authn/tokens/sessions"
+	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/tests"
+	"github.com/keratin/authn-server/tokens/sessions"
 )
 
 func TestNewAndParseAndSign(t *testing.T) {

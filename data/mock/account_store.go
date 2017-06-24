@@ -3,7 +3,7 @@ package mock
 import (
 	"fmt"
 
-	"github.com/keratin/authn/models"
+	"github.com/keratin/authn-server/models"
 )
 
 type Error struct {

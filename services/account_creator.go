@@ -4,9 +4,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/keratin/authn/config"
-	"github.com/keratin/authn/data"
-	"github.com/keratin/authn/models"
+	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/data"
+	"github.com/keratin/authn-server/models"
 	zxcvbn "github.com/nbutton23/zxcvbn-go"
 	"golang.org/x/crypto/bcrypt"
 )

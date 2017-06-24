@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/keratin/authn/handlers"
+	"github.com/keratin/authn-server/handlers"
 )
 
 func TestHealth(t *testing.T) {

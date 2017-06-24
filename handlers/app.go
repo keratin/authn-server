@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"github.com/go-redis/redis"
-	"github.com/keratin/authn/config"
-	"github.com/keratin/authn/data"
+	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/data"
 
-	dataRedis "github.com/keratin/authn/data/redis"
+	dataRedis "github.com/keratin/authn-server/data/redis"
 )
 
 type Pinger func() bool

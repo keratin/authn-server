@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/keratin/authn/services"
+	"github.com/keratin/authn-server/services"
 )
 
 // A specialized handler that looks like any other middleware adapter but is known to serve a

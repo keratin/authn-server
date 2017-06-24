@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis"
-	"github.com/keratin/authn/models"
+	"github.com/keratin/authn-server/models"
 )
 
 type RefreshTokenStore struct {

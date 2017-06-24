@@ -5,8 +5,8 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/keratin/authn/config"
-	"github.com/keratin/authn/data"
+	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/data"
 )
 
 type Claims struct {

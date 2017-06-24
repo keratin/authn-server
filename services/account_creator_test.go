@@ -3,11 +3,11 @@ package services_test
 import (
 	"testing"
 
-	"github.com/keratin/authn/config"
-	"github.com/keratin/authn/data/mock"
-	"github.com/keratin/authn/models"
-	"github.com/keratin/authn/services"
-	"github.com/keratin/authn/tests"
+	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/models"
+	"github.com/keratin/authn-server/services"
+	"github.com/keratin/authn-server/tests"
 )
 
 func TestAccountCreatorSuccess(t *testing.T) {

@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/keratin/authn/services"
+	"github.com/keratin/authn-server/services"
 )
 
 type request struct {

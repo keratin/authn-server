@@ -3,11 +3,11 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/keratin/authn/config"
-	"github.com/keratin/authn/data"
-	"github.com/keratin/authn/models"
-	"github.com/keratin/authn/tokens/identities"
-	"github.com/keratin/authn/tokens/sessions"
+	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/data"
+	"github.com/keratin/authn-server/models"
+	"github.com/keratin/authn-server/tokens/identities"
+	"github.com/keratin/authn-server/tokens/sessions"
 )
 
 func establishSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, account_id int) (sessionToken string, identityToken string, err error) {

@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/keratin/authn/handlers"
-	"github.com/keratin/authn/services"
+	"github.com/keratin/authn-server/handlers"
+	"github.com/keratin/authn-server/services"
 )
 
 func TestRefererSecurity(t *testing.T) {

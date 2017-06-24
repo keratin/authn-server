@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/keratin/authn/handlers"
+	"github.com/keratin/authn-server/handlers"
 )
 
 func main() {

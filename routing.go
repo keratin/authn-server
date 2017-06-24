@@ -6,7 +6,7 @@ import (
 
 	gorilla "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/keratin/authn/handlers"
+	"github.com/keratin/authn-server/handlers"
 )
 
 func routing(app *handlers.App) http.Handler {

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/keratin/authn/services"
+	"github.com/keratin/authn-server/services"
 )
 
 func TestPostAccountSuccess(t *testing.T) {
