@@ -36,6 +36,9 @@ func establishSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Conf
 
 func revokeSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, req *http.Request) (err error) {
 	cookie, err := req.Cookie(cfg.SessionCookieName)
+	if err == http.ErrNoCookie {
+		return nil
+	}
 	if err != nil {
 		return
 	}
