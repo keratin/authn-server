@@ -6,16 +6,7 @@ import (
 	"github.com/keratin/authn-server/services"
 )
 
-type request struct {
-	Username string
-	Password string
-}
-
-type response struct {
-	IdToken string `json:"id_token"`
-}
-
-func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
+func (app *App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	// Create the account
 	account, errors := services.AccountCreator(
 		app.AccountStore,
@@ -48,5 +39,9 @@ func (app App) PostAccount(w http.ResponseWriter, req *http.Request) {
 	})
 
 	// Return the signed identity token in the body
-	writeData(w, http.StatusCreated, response{identityToken})
+	writeData(w, http.StatusCreated, struct {
+		IdToken string `json:"id_token"`
+	}{
+		IdToken: identityToken,
+	})
 }
