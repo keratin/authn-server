@@ -10,43 +10,58 @@ import (
 	"github.com/keratin/authn-server/tokens/sessions"
 )
 
-func establishSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, account_id int) (sessionToken string, identityToken string, err error) {
+func establishSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, account_id int) (string, string, error) {
 	session, err := sessions.New(refreshTokenStore, cfg, account_id)
 	if err != nil {
-		return
+		return "", "", err
 	}
 
-	identity, err := identities.New(refreshTokenStore, cfg, session)
+	sessionToken, err := session.Sign(cfg.SessionSigningKey)
 	if err != nil {
-		return
+		return "", "", err
 	}
 
-	sessionToken, err = session.Sign(cfg.SessionSigningKey)
+	identityToken, err := identityForSession(refreshTokenStore, cfg, session)
 	if err != nil {
-		return
+		return "", "", err
 	}
 
-	identityToken, err = identity.Sign(cfg.IdentitySigningKey)
-	if err != nil {
-		return
-	}
-
-	return
+	return sessionToken, identityToken, err
 }
 
 func revokeSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, req *http.Request) (err error) {
+	oldSession, err := currentSession(cfg, req)
+	if err != nil {
+		return err
+	}
+	if oldSession != nil {
+		return refreshTokenStore.Revoke(models.RefreshToken(oldSession.Subject))
+	}
+	return nil
+}
+
+func currentSession(cfg *config.Config, req *http.Request) (*sessions.Claims, error) {
 	cookie, err := req.Cookie(cfg.SessionCookieName)
 	if err == http.ErrNoCookie {
-		return nil
+		return nil, nil
 	}
 	if err != nil {
-		return
+		return nil, err
 	}
 
-	oldSession, err := sessions.Parse(cookie.Value, cfg)
+	return sessions.Parse(cookie.Value, cfg)
+}
+
+func identityForSession(store data.RefreshTokenStore, cfg *config.Config, session *sessions.Claims) (string, error) {
+	identity, err := identities.New(store, cfg, session)
 	if err != nil {
-		return
+		return "", err
 	}
 
-	return refreshTokenStore.Revoke(models.RefreshToken(oldSession.Subject))
+	identityToken, err := identity.Sign(cfg.IdentitySigningKey)
+	if err != nil {
+		return "", err
+	}
+
+	return identityToken, nil
 }
