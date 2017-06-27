@@ -10,6 +10,11 @@ import (
 	"github.com/keratin/authn-server/tokens/sessions"
 )
 
+type contextKey int
+
+const SessionKey contextKey = 0
+const AccountIDKey contextKey = 1
+
 func establishSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, account_id int) (string, string, error) {
 	session, err := sessions.New(refreshTokenStore, cfg, account_id)
 	if err != nil {
