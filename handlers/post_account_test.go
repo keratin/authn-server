@@ -35,7 +35,10 @@ func TestPostAccountSuccessWithSession(t *testing.T) {
 		"username": "foo",
 		"password": "bar",
 	},
-		func(req *http.Request) { req.AddCookie(session) },
+		func(req *http.Request) *http.Request {
+			req.AddCookie(session)
+			return req
+		},
 	)
 
 	// after

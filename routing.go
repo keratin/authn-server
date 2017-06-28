@@ -33,6 +33,11 @@ func routing(app *handlers.App) http.Handler {
 			handle(app.PostSession),
 	)
 	r.HandleFunc("/session", app.Stub).Methods("DELETE")
+	attach(r,
+		post("/session/refresh").
+			securedWith(handlers.SessionSecurity(app)).
+			handle(app.GetSessionRefresh),
+	)
 	r.HandleFunc("/session/refresh", app.Stub).Methods("GET")
 
 	r.HandleFunc("/password", app.Stub).Methods("POST")

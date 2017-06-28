@@ -22,7 +22,7 @@ import (
 )
 
 type HandlerFuncable func(w http.ResponseWriter, r *http.Request)
-type ReqModder func(req *http.Request)
+type ReqModder func(req *http.Request) *http.Request
 
 func post(path string, h HandlerFuncable, params map[string]string, befores ...ReqModder) *httptest.ResponseRecorder {
 	buffer := make([]string, 0)
@@ -35,7 +35,7 @@ func post(path string, h HandlerFuncable, params map[string]string, befores ...R
 	req := httptest.NewRequest("POST", path, strings.NewReader(paramsStr))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	for _, before := range befores {
-		before(req)
+		req = before(req)
 	}
 
 	http.HandlerFunc(h).ServeHTTP(res, req)
@@ -45,6 +45,9 @@ func post(path string, h HandlerFuncable, params map[string]string, befores ...R
 func get(path string, h HandlerFuncable, befores ...ReqModder) *httptest.ResponseRecorder {
 	res := httptest.NewRecorder()
 	req := httptest.NewRequest("GET", "/health", nil)
+	for _, before := range befores {
+		req = before(req)
+	}
 
 	http.HandlerFunc(h).ServeHTTP(res, req)
 	return res
