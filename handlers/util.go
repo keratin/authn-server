@@ -26,7 +26,7 @@ func establishSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Conf
 		return "", "", err
 	}
 
-	identityToken, err := identityForSession(refreshTokenStore, cfg, session)
+	identityToken, err := identityForSession(cfg, session, account_id)
 	if err != nil {
 		return "", "", err
 	}
@@ -57,12 +57,8 @@ func currentSession(cfg *config.Config, req *http.Request) (*sessions.Claims, er
 	return sessions.Parse(cookie.Value, cfg)
 }
 
-func identityForSession(store data.RefreshTokenStore, cfg *config.Config, session *sessions.Claims) (string, error) {
-	identity, err := identities.New(store, cfg, session)
-	if err != nil {
-		return "", err
-	}
-
+func identityForSession(cfg *config.Config, session *sessions.Claims, account_id int) (string, error) {
+	identity := identities.New(cfg, session, account_id)
 	identityToken, err := identity.Sign(cfg.IdentitySigningKey)
 	if err != nil {
 		return "", err

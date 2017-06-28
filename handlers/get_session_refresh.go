@@ -16,7 +16,7 @@ func (app *App) GetSessionRefresh(w http.ResponseWriter, req *http.Request) {
 		panic(err)
 	}
 
-	identityToken, err := identityForSession(app.RefreshTokenStore, app.Config, session)
+	identityToken, err := identityForSession(app.Config, session, account_id)
 	if err != nil {
 		panic(err)
 	}

@@ -7,8 +7,6 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/keratin/authn-server/config"
-	"github.com/keratin/authn-server/data"
-	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/sessions"
 )
 
@@ -21,12 +19,7 @@ func (c *Claims) Sign(rsa_key *rsa.PrivateKey) (string, error) {
 	return jwt.NewWithClaims(jwt.SigningMethodRS256, c).SignedString(rsa_key)
 }
 
-func New(store data.RefreshTokenStore, cfg *config.Config, session *sessions.Claims) (*Claims, error) {
-	account_id, err := store.Find(models.RefreshToken(session.Subject))
-	if err != nil {
-		return nil, err
-	}
-
+func New(cfg *config.Config, session *sessions.Claims, account_id int) *Claims {
 	return &Claims{
 		AuthTime: session.IssuedAt,
 		StandardClaims: jwt.StandardClaims{
@@ -36,5 +29,5 @@ func New(store data.RefreshTokenStore, cfg *config.Config, session *sessions.Cla
 			ExpiresAt: time.Now().Add(cfg.AccessTokenTTL).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
-	}, nil
+	}
 }
