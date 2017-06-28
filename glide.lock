@@ -1,5 +1,5 @@
-hash: 64511be250ba86f3d2e4cfe186e1ad2151df7b930b15d80cc16b855513354297
-updated: 2017-06-24T14:00:07.88486333-07:00
+hash: e34d0c8442c7ebc1b64e00e2dfd34ae64348030108290b840a5a97a00f3f3af3
+updated: 2017-06-27T20:17:19.505035036-07:00
 imports:
 - name: github.com/dgrijalva/jwt-go
   version: d2709f9f1f31ebcda9651b03077758c1f3a0018c
@@ -19,6 +19,8 @@ imports:
   version: bcd8bc72b08df0f70df986b97f95590779502d31
 - name: github.com/joho/godotenv
   version: 726cc8b906e3d31c70a9671c90a13716a8d3f50d
+  subpackages:
+  - autoload
 - name: github.com/mattn/go-sqlite3
   version: ca5e3819723d8eeaf170ad510e7da1d6d2e94a08
 - name: github.com/nbutton23/zxcvbn-go
@@ -32,6 +34,8 @@ imports:
   - matching
   - scoring
   - utils/math
+- name: github.com/stretchr/testify
+  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
 - name: go4.org
   version: 034d17a462f7b2dcd1a4a73553ec5357ff6e6c6e
   subpackages:

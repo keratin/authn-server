@@ -7,8 +7,8 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data/mock"
-	"github.com/keratin/authn-server/tests"
 	"github.com/keratin/authn-server/tokens/sessions"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewAndParseAndSign(t *testing.T) {
@@ -22,11 +22,11 @@ func TestNewAndParseAndSign(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	tests.AssertEqual(t, "http://authn.example.com", token.Issuer)
-	tests.AssertEqual(t, "http://authn.example.com", token.Audience)
-	tests.AssertEqual(t, "RefreshToken:658908", token.Subject)
-	tests.AssertEqual(t, "", token.Azp)
-	tests.RefuteEqual(t, int64(0), token.IssuedAt)
+	assert.Equal(t, "http://authn.example.com", token.Issuer)
+	assert.Equal(t, "http://authn.example.com", token.Audience)
+	assert.Equal(t, "RefreshToken:658908", token.Subject)
+	assert.Equal(t, "", token.Azp)
+	assert.NotEqual(t, int64(0), token.IssuedAt)
 
 	sessionString, err := token.Sign(cfg.SessionSigningKey)
 	if err != nil {
@@ -37,11 +37,11 @@ func TestNewAndParseAndSign(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	tests.AssertEqual(t, "http://authn.example.com", claims.Issuer)
-	tests.AssertEqual(t, "http://authn.example.com", claims.Audience)
-	tests.AssertEqual(t, "RefreshToken:658908", claims.Subject)
-	tests.AssertEqual(t, "", claims.Azp)
-	tests.RefuteEqual(t, int64(0), claims.IssuedAt)
+	assert.Equal(t, "http://authn.example.com", claims.Issuer)
+	assert.Equal(t, "http://authn.example.com", claims.Audience)
+	assert.Equal(t, "RefreshToken:658908", claims.Subject)
+	assert.Equal(t, "", claims.Azp)
+	assert.NotEqual(t, int64(0), claims.IssuedAt)
 }
 
 func TestParseInvalidSessionJWT(t *testing.T) {

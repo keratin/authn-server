@@ -5,7 +5,7 @@ import (
 
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/data/sqlite3"
-	"github.com/keratin/authn-server/tests"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCreate(t *testing.T) {
@@ -19,8 +19,8 @@ func TestCreate(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	tests.RefuteEqual(t, 0, account.Id)
-	tests.AssertEqual(t, "authn@keratin.tech", account.Username)
+	assert.NotEqual(t, 0, account.Id)
+	assert.Equal(t, "authn@keratin.tech", account.Username)
 	if account.CreatedAt.IsZero() {
 		t.Error("Expected created_at to be set")
 	}
@@ -30,7 +30,7 @@ func TestCreate(t *testing.T) {
 
 	account, err = store.Create("authn@keratin.tech", []byte("password"))
 	if account != nil {
-		tests.RefuteEqual(t, nil, account)
+		assert.NotEqual(t, nil, account)
 	}
 	if !data.IsUniquenessError(err) {
 		t.Errorf("expected uniqueness error, got %T %v", err, err)

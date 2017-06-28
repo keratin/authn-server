@@ -7,7 +7,7 @@ import (
 	goredis "github.com/go-redis/redis"
 	"github.com/keratin/authn-server/data/redis"
 	"github.com/keratin/authn-server/models"
-	"github.com/keratin/authn-server/tests"
+	"github.com/stretchr/testify/assert"
 )
 
 var refreshTTL = time.Second
@@ -156,7 +156,7 @@ func expectId(expected int, t *testing.T, fn ider) {
 	if err != nil {
 		t.Error(err)
 	} else {
-		tests.AssertEqual(t, expected, id)
+		assert.Equal(t, expected, id)
 	}
 }
 
@@ -177,5 +177,5 @@ func expectTokens(expected []models.RefreshToken, t *testing.T, fn tokenser) {
 	if err != nil {
 		t.Error(err)
 	}
-	tests.AssertEqual(t, expected, tokens)
+	assert.Equal(t, expected, tokens)
 }

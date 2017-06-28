@@ -17,8 +17,8 @@ import (
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/handlers"
 	"github.com/keratin/authn-server/services"
-	"github.com/keratin/authn-server/tests"
 	"github.com/keratin/authn-server/tokens/sessions"
+	"github.com/stretchr/testify/assert"
 )
 
 type HandlerFuncable func(w http.ResponseWriter, r *http.Request)
@@ -101,15 +101,15 @@ func readSetCookieValue(name string, recorder *httptest.ResponseRecorder) (strin
 }
 
 func assertCode(t *testing.T, rr *httptest.ResponseRecorder, expected int) {
-	tests.AssertEqual(t, expected, rr.Code)
+	assert.Equal(t, expected, rr.Code)
 }
 
 func assertBody(t *testing.T, rr *httptest.ResponseRecorder, expected string) {
-	tests.AssertEqual(t, expected, rr.Body.String())
+	assert.Equal(t, expected, rr.Body.String())
 }
 
 func assertErrors(t *testing.T, rr *httptest.ResponseRecorder, expected []services.Error) {
-	tests.AssertEqual(t, []string{"application/json"}, rr.HeaderMap["Content-Type"])
+	assert.Equal(t, []string{"application/json"}, rr.HeaderMap["Content-Type"])
 
 	j, err := json.Marshal(handlers.ServiceErrors{Errors: expected})
 	if err != nil {
@@ -143,7 +143,7 @@ func assertSession(t *testing.T, rr *httptest.ResponseRecorder) {
 
 func assertIdTokenResponse(t *testing.T, rr *httptest.ResponseRecorder, cfg *config.Config) {
 	// check that the response contains the expected json
-	tests.AssertEqual(t, []string{"application/json"}, rr.HeaderMap["Content-Type"])
+	assert.Equal(t, []string{"application/json"}, rr.HeaderMap["Content-Type"])
 	responseData := struct {
 		IdToken string `json:"id_token"`
 	}{}
@@ -160,7 +160,7 @@ func assertIdTokenResponse(t *testing.T, rr *httptest.ResponseRecorder, cfg *con
 		t.Error(err)
 	} else {
 		// check that the JWT contains nice things
-		tests.AssertEqual(t, cfg.AuthNURL.String(), identityToken.Claims.(jwt.MapClaims)["iss"])
+		assert.Equal(t, cfg.AuthNURL.String(), identityToken.Claims.(jwt.MapClaims)["iss"])
 	}
 }
 

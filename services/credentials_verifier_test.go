@@ -6,7 +6,7 @@ import (
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/services"
-	"github.com/keratin/authn-server/tests"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCredentialsVerifierSuccess(t *testing.T) {
@@ -24,8 +24,8 @@ func TestCredentialsVerifierSuccess(t *testing.T) {
 			t.Errorf("%v: %v", err.Field, err.Message)
 		}
 	} else {
-		tests.RefuteEqual(t, 0, acc.Id)
-		tests.AssertEqual(t, username, acc.Username)
+		assert.NotEqual(t, 0, acc.Id)
+		assert.Equal(t, username, acc.Username)
 	}
 }
 
@@ -56,6 +56,6 @@ func TestCredentialsVerifierFailure(t *testing.T) {
 
 	for _, tt := range testTable {
 		_, errs := services.CredentialsVerifier(store, &cfg, tt.username, tt.password)
-		tests.AssertEqual(t, tt.errors, errs)
+		assert.Equal(t, tt.errors, errs)
 	}
 }

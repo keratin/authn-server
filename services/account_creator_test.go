@@ -6,7 +6,7 @@ import (
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/services"
-	"github.com/keratin/authn-server/tests"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAccountCreatorSuccess(t *testing.T) {
@@ -29,8 +29,8 @@ func TestAccountCreatorSuccess(t *testing.T) {
 				t.Errorf("%v: %v", err.Field, err.Message)
 			}
 		}
-		tests.RefuteEqual(t, 0, acc.Id)
-		tests.AssertEqual(t, tt.username, acc.Username)
+		assert.NotEqual(t, 0, acc.Id)
+		assert.Equal(t, tt.username, acc.Username)
 	}
 }
 
@@ -63,6 +63,6 @@ func TestAccountCreatorFailure(t *testing.T) {
 		if acc != nil {
 			t.Error("unexpected account return")
 		}
-		tests.AssertEqual(t, tt.errors, errs)
+		assert.Equal(t, tt.errors, errs)
 	}
 }
