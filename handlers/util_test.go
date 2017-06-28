@@ -121,14 +121,10 @@ func assertErrors(t *testing.T, rr *httptest.ResponseRecorder, expected []servic
 
 func assertSession(t *testing.T, rr *httptest.ResponseRecorder) {
 	session, err := readSetCookieValue("authn", rr)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	segments := strings.Split(session, ".")
-	if len(segments) != 3 {
-		t.Error("expected JWT with three segments, got: %v", session)
-	}
+	assert.Len(t, segments, 3)
 
 	_, err = jwt.Parse(session, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -136,9 +132,7 @@ func assertSession(t *testing.T, rr *httptest.ResponseRecorder) {
 		}
 		return []byte("TODO"), err
 	})
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 }
 
 func assertIdTokenResponse(t *testing.T, rr *httptest.ResponseRecorder, cfg *config.Config) {
@@ -148,17 +142,13 @@ func assertIdTokenResponse(t *testing.T, rr *httptest.ResponseRecorder, cfg *con
 		IdToken string `json:"id_token"`
 	}{}
 	err := extractResult(rr, &responseData)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	// check that the IdToken is JWT-ish
 	identityToken, err := jwt.Parse(responseData.IdToken, func(tkn *jwt.Token) (interface{}, error) {
 		return cfg.IdentitySigningKey.Public(), nil
 	})
-	if err != nil {
-		t.Error(err)
-	} else {
+	if assert.NoError(t, err) {
 		// check that the JWT contains nice things
 		assert.Equal(t, cfg.AuthNURL.String(), identityToken.Claims.(jwt.MapClaims)["iss"])
 	}

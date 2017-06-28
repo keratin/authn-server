@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/keratin/authn-server/services"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPostAccountSuccess(t *testing.T) {
@@ -26,9 +28,7 @@ func TestPostAccountSuccessWithSession(t *testing.T) {
 
 	// before
 	refreshTokens, err := app.RefreshTokenStore.FindAll(account_id)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	refreshToken := refreshTokens[0]
 
 	post("/accounts", app.PostAccount, map[string]string{
@@ -43,12 +43,8 @@ func TestPostAccountSuccessWithSession(t *testing.T) {
 
 	// after
 	id, err := app.RefreshTokenStore.Find(refreshToken)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if id != 0 {
-		t.Errorf("Expected token to be revoked: %v", refreshToken)
-	}
+	require.NoError(t, err)
+	assert.Empty(t, id)
 }
 
 func TestPostAccountFailure(t *testing.T) {

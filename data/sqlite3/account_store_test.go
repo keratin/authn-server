@@ -16,17 +16,11 @@ func TestCreate(t *testing.T) {
 	store := sqlite3.AccountStore{db}
 
 	account, err := store.Create("authn@keratin.tech", []byte("password"))
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 	assert.NotEqual(t, 0, account.Id)
 	assert.Equal(t, "authn@keratin.tech", account.Username)
-	if account.CreatedAt.IsZero() {
-		t.Error("Expected created_at to be set")
-	}
-	if account.UpdatedAt.IsZero() {
-		t.Error("Expected updated_at to be set")
-	}
+	assert.NotEmpty(t, account.CreatedAt)
+	assert.NotEmpty(t, account.UpdatedAt)
 
 	account, err = store.Create("authn@keratin.tech", []byte("password"))
 	if account != nil {

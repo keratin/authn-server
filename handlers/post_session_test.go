@@ -7,6 +7,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/keratin/authn-server/services"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPostSessionSuccess(t *testing.T) {
@@ -35,9 +37,7 @@ func TestPostSessionSuccessWithSession(t *testing.T) {
 
 	// before
 	refreshTokens, err := app.RefreshTokenStore.FindAll(account_id)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	refreshToken := refreshTokens[0]
 
 	post("/session", app.PostSession, map[string]string{
@@ -52,12 +52,8 @@ func TestPostSessionSuccessWithSession(t *testing.T) {
 
 	// after
 	id, err := app.RefreshTokenStore.Find(refreshToken)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if id != 0 {
-		t.Errorf("Expected token to be revoked: %v", refreshToken)
-	}
+	require.NoError(t, err)
+	assert.Empty(t, id)
 }
 
 func TestPostSessionFailure(t *testing.T) {

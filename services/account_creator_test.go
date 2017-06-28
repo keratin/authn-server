@@ -26,11 +26,12 @@ func TestAccountCreatorSuccess(t *testing.T) {
 		acc, errs := services.AccountCreator(store, &tt.config, tt.username, tt.password)
 		if len(errs) > 0 {
 			for _, err := range errs {
-				t.Errorf("%v: %v", err.Field, err.Message)
+				assert.NoError(t, err)
 			}
+		} else {
+			assert.NotEqual(t, 0, acc.Id)
+			assert.Equal(t, tt.username, acc.Username)
 		}
-		assert.NotEqual(t, 0, acc.Id)
-		assert.Equal(t, tt.username, acc.Username)
 	}
 }
 
@@ -60,9 +61,7 @@ func TestAccountCreatorFailure(t *testing.T) {
 
 	for _, tt := range testTable {
 		acc, errs := services.AccountCreator(store, &tt.config, tt.username, tt.password)
-		if acc != nil {
-			t.Error("unexpected account return")
-		}
+		assert.Empty(t, acc)
 		assert.Equal(t, tt.errors, errs)
 	}
 }

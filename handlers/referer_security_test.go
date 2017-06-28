@@ -8,6 +8,7 @@ import (
 
 	"github.com/keratin/authn-server/handlers"
 	"github.com/keratin/authn-server/services"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRefererSecurity(t *testing.T) {
@@ -37,9 +38,7 @@ func TestRefererSecurity(t *testing.T) {
 		req.Header.Add("Referer", tt.referer)
 		if tt.success {
 			adapter(expectedSuccessHandler).ServeHTTP(res, req)
-			if res.Body.String() != "success" {
-				t.Errorf("expected success with %v", tt)
-			}
+			assert.Equal(t, res.Body.String(), "success")
 		} else {
 			adapter(expectedFailureHandler).ServeHTTP(res, req)
 			assertErrors(t, res, []services.Error{{"referer", "is not a trusted host"}})

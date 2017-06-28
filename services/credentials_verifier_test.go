@@ -21,7 +21,7 @@ func TestCredentialsVerifierSuccess(t *testing.T) {
 	acc, errs := services.CredentialsVerifier(store, &cfg, username, password)
 	if len(errs) > 0 {
 		for _, err := range errs {
-			t.Errorf("%v: %v", err.Field, err.Message)
+			assert.NoError(t, err)
 		}
 	} else {
 		assert.NotEqual(t, 0, acc.Id)

@@ -8,6 +8,7 @@ import (
 	"github.com/keratin/authn-server/data/redis"
 	"github.com/keratin/authn-server/models"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var refreshTTL = time.Second
@@ -36,9 +37,7 @@ func TestRefreshTokenFind(t *testing.T) {
 
 	// insert into redis
 	err := client.Set(key, id, 0).Err()
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	expectId(id, t, func() (int, error) {
 		return store.Find(token)
@@ -51,9 +50,7 @@ func TestRefreshTokenTouch(t *testing.T) {
 	store := redis.RefreshTokenStore{Client: client, TTL: refreshTTL}
 
 	err := store.Touch(models.RefreshToken("a1b2c3"), 123)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 }
 
 func TestRefreshTokenFindAll(t *testing.T) {
@@ -69,9 +66,7 @@ func TestRefreshTokenFindAll(t *testing.T) {
 
 	// insert
 	token, err := store.Create(id)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	expectTokens([]models.RefreshToken{token}, t, func() ([]models.RefreshToken, error) {
 		return store.FindAll(id)
@@ -90,12 +85,8 @@ func TestRefreshTokenCreate(t *testing.T) {
 	})
 
 	token, err := store.Create(id)
-	if err != nil {
-		t.Error(err)
-	}
-	if len(token) != 32 {
-		t.Errorf("expected token length %v, got %v", 32, len(token))
-	}
+	assert.NoError(t, err)
+	assert.Len(t, token, 32)
 
 	expectTokens([]models.RefreshToken{token}, t, func() ([]models.RefreshToken, error) {
 		return store.FindAll(id)
@@ -110,14 +101,10 @@ func TestRefreshTokenRevoke(t *testing.T) {
 	id := 123
 
 	err := store.Revoke(models.RefreshToken("a1b2c3"))
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	token, err := store.Create(id)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	expectId(id, t, func() (int, error) {
 		return store.Find(token)
@@ -127,9 +114,7 @@ func TestRefreshTokenRevoke(t *testing.T) {
 	})
 
 	err = store.Revoke(token)
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	expectNoId(t, func() (int, error) {
 		return store.Find(token)
@@ -143,19 +128,13 @@ type ider func() (int, error)
 
 func expectNoId(t *testing.T, fn ider) {
 	id, err := fn()
-	if id != 0 {
-		t.Error("expected empty value, got %v", id)
-	}
-	if err != nil {
-		t.Error(err)
-	}
+	assert.Empty(t, id)
+	assert.NoError(t, err)
 }
 
 func expectId(expected int, t *testing.T, fn ider) {
 	id, err := fn()
-	if err != nil {
-		t.Error(err)
-	} else {
+	if assert.NoError(t, err) {
 		assert.Equal(t, expected, id)
 	}
 }
@@ -164,18 +143,12 @@ type tokenser func() ([]models.RefreshToken, error)
 
 func expectNoTokens(t *testing.T, fn tokenser) {
 	tokens, err := fn()
-	if err != nil {
-		t.Error(err)
-	}
-	if len(tokens) > 0 {
-		t.Errorf("expected no tokens, got %v", tokens)
-	}
+	assert.NoError(t, err)
+	assert.Len(t, tokens, 0)
 }
 
 func expectTokens(expected []models.RefreshToken, t *testing.T, fn tokenser) {
 	tokens, err := fn()
-	if err != nil {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 	assert.Equal(t, expected, tokens)
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/tokens/sessions"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewAndParseAndSign(t *testing.T) {
@@ -19,9 +20,7 @@ func TestNewAndParseAndSign(t *testing.T) {
 	}
 
 	token, err := sessions.New(store, &cfg, 658908)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	assert.Equal(t, "http://authn.example.com", token.Issuer)
 	assert.Equal(t, "http://authn.example.com", token.Audience)
 	assert.Equal(t, "RefreshToken:658908", token.Subject)
@@ -29,14 +28,10 @@ func TestNewAndParseAndSign(t *testing.T) {
 	assert.NotEqual(t, int64(0), token.IssuedAt)
 
 	sessionString, err := token.Sign(cfg.SessionSigningKey)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 
 	claims, err := sessions.Parse(sessionString, &cfg)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NoError(t, err)
 	assert.Equal(t, "http://authn.example.com", claims.Issuer)
 	assert.Equal(t, "http://authn.example.com", claims.Audience)
 	assert.Equal(t, "RefreshToken:658908", claims.Subject)
@@ -60,39 +55,31 @@ func TestParseInvalidSessionJWT(t *testing.T) {
 	// This invalid JWT was signed with an old key.
 	cfg = config.Config{AuthNURL: &authn, SessionSigningKey: oldKey}
 	token, err = sessions.New(store, &cfg, 1)
-	errIsFatal(t, err)
+	require.NoError(t, err)
 	tokenStr, err = token.Sign(cfg.SessionSigningKey)
-	errIsFatal(t, err)
+	require.NoError(t, err)
 	invalids = append(invalids, tokenStr)
 
 	// This invalid JWT was signed for a different audience.
 	cfg = config.Config{AuthNURL: &authn, SessionSigningKey: key}
 	token, err = sessions.New(store, &cfg, 2)
-	errIsFatal(t, err)
+	require.NoError(t, err)
 	token.Audience = app.String()
 	tokenStr, err = token.Sign(cfg.SessionSigningKey)
-	errIsFatal(t, err)
+	require.NoError(t, err)
 	invalids = append(invalids, tokenStr)
 
 	// This invalid JWT was signed with "none" alg
 	cfg = config.Config{AuthNURL: &authn}
 	token, err = sessions.New(store, &cfg, 3)
-	errIsFatal(t, err)
+	require.NoError(t, err)
 	tokenStr, err = jwt.NewWithClaims(jwt.SigningMethodNone, token).SignedString(jwt.UnsafeAllowNoneSignatureType)
-	errIsFatal(t, err)
+	require.NoError(t, err)
 	invalids = append(invalids, tokenStr)
 
 	cfg = config.Config{AuthNURL: &authn, SessionSigningKey: key}
-	for i, invalid := range invalids {
+	for _, invalid := range invalids {
 		_, err := sessions.Parse(invalid, &cfg)
-		if err == nil {
-			t.Errorf("invalid token [%v] was parsed as valid", i)
-		}
-	}
-}
-
-func errIsFatal(t *testing.T, err error) {
-	if err != nil {
-		panic(err)
+		assert.Error(t, err)
 	}
 }

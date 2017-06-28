@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -16,6 +17,10 @@ var ErrExpired = "EXPIRED"
 type Error struct {
 	Field   string `json:"field"`
 	Message string `json:"message"`
+}
+
+func (e Error) Error() string {
+	return fmt.Sprintf("%v: %v", e.Field, e.Message)
 }
 
 // worried about an imperfect regex? see: http://www.regular-expressions.info/email.html
