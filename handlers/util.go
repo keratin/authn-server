@@ -10,11 +10,6 @@ import (
 	"github.com/keratin/authn-server/tokens/sessions"
 )
 
-type contextKey int
-
-const SessionKey contextKey = 0
-const AccountIDKey contextKey = 1
-
 // A specialized handler that looks like any other middleware adapter but is known to serve a
 // particular purpose.
 type SecurityHandler func(http.Handler) http.Handler

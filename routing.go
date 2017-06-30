@@ -12,12 +12,14 @@ import (
 func routing(app *handlers.App) http.Handler {
 	r := mux.NewRouter()
 
+	refererSecurity := handlers.RefererSecurity(app.Config.ApplicationDomains)
+
 	r.HandleFunc("/", app.Stub).Methods("GET")
 
 	// TODO: MountedPath
 	attach(r,
 		post("/accounts").
-			securedWith(handlers.RefererSecurity(app.Config.ApplicationDomains)).
+			securedWith(refererSecurity).
 			handle(app.PostAccount),
 	)
 	r.HandleFunc("/accounts/import", app.Stub).Methods("POST")
@@ -29,13 +31,13 @@ func routing(app *handlers.App) http.Handler {
 
 	attach(r,
 		post("/session").
-			securedWith(handlers.RefererSecurity(app.Config.ApplicationDomains)).
+			securedWith(refererSecurity).
 			handle(app.PostSession),
 	)
 	r.HandleFunc("/session", app.Stub).Methods("DELETE")
 	attach(r,
 		get("/session/refresh").
-			securedWith(handlers.SessionSecurity(app)).
+			securedWith(refererSecurity).
 			handle(app.GetSessionRefresh),
 	)
 

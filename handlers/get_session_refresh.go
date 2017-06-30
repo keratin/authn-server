@@ -4,18 +4,37 @@ import (
 	"net/http"
 
 	"github.com/keratin/authn-server/models"
-	"github.com/keratin/authn-server/tokens/sessions"
 )
 
 func (app *App) GetSessionRefresh(w http.ResponseWriter, req *http.Request) {
-	session := req.Context().Value(SessionKey).(*sessions.Claims)
-	account_id := req.Context().Value(AccountIDKey).(int)
+	// decode the JWT
+	session, err := currentSession(app.Config, req)
+	if err != nil {
+		// If a session fails to decode, that's okay. Carry on.
+		// TODO: log the error
+	}
+	if session == nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
 
-	err := app.RefreshTokenStore.Touch(models.RefreshToken(session.Subject), account_id)
+	// check if the session has been revoked.
+	account_id, err := app.RefreshTokenStore.Find(models.RefreshToken(session.Subject))
+	if err != nil {
+		panic(err)
+	}
+	if account_id == 0 {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	// refresh the refresh token
+	err = app.RefreshTokenStore.Touch(models.RefreshToken(session.Subject), account_id)
 	if err != nil {
 		panic(err)
 	}
 
+	// generate the requested identity token
 	identityToken, err := identityForSession(app.Config, session, account_id)
 	if err != nil {
 		panic(err)
