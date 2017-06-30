@@ -177,3 +177,10 @@ func createSession(tokenStore data.RefreshTokenStore, cfg *config.Config, accoun
 		Value: sessionString,
 	}
 }
+
+func withSession(session *http.Cookie) func(req *http.Request) *http.Request {
+	return func(req *http.Request) *http.Request {
+		req.AddCookie(session)
+		return req
+	}
+}

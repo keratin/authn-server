@@ -43,12 +43,7 @@ func TestPostSessionSuccessWithSession(t *testing.T) {
 	post("/session", app.PostSession, map[string]string{
 		"username": "foo",
 		"password": "bar",
-	},
-		func(req *http.Request) *http.Request {
-			req.AddCookie(session)
-			return req
-		},
-	)
+	}, withSession(session))
 
 	// after
 	id, err := app.RefreshTokenStore.Find(refreshToken)

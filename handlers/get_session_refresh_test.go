@@ -19,12 +19,7 @@ func TestGetSessionRefreshSuccess(t *testing.T) {
 	account_id := 82594
 	existingSession := createSession(app.RefreshTokenStore, app.Config, account_id)
 
-	res := get("/session/refresh", app.GetSessionRefresh,
-		func(req *http.Request) *http.Request {
-			req.AddCookie(existingSession)
-			return req
-		},
-	)
+	res := get("/session/refresh", app.GetSessionRefresh, withSession(existingSession))
 
 	assertCode(t, res, http.StatusCreated)
 	assertIdTokenResponse(t, res, app.Config)
@@ -61,12 +56,7 @@ func TestGetSessionRefreshFailure(t *testing.T) {
 			revokeSession(app.RefreshTokenStore, app.Config, existingSession)
 		}
 
-		res := get("/session/refresh", app.GetSessionRefresh,
-			func(req *http.Request) *http.Request {
-				req.AddCookie(existingSession)
-				return req
-			},
-		)
+		res := get("/session/refresh", app.GetSessionRefresh, withSession(existingSession))
 
 		assertCode(t, res, http.StatusUnauthorized)
 	}
