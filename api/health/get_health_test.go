@@ -9,13 +9,13 @@ import (
 	"github.com/keratin/authn-server/api/test"
 )
 
-func TestHealth(t *testing.T) {
+func TestGetHealth(t *testing.T) {
 	app := api.App{
 		DbCheck:    func() bool { return true },
 		RedisCheck: func() bool { return true },
 	}
 
-	res := test.Get("/health", health.Health(&app))
+	res := test.Get("/health", health.GetHealth(&app))
 
 	test.AssertCode(t, res, http.StatusOK)
 	test.AssertBody(t, res, `{"http":true,"db":true,"redis":true}`)

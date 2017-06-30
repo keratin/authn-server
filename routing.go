@@ -50,7 +50,11 @@ func routing(app *api.App) http.Handler {
 	r.HandleFunc("/jwks", api.Stub(app)).Methods("GET")
 
 	r.HandleFunc("/stats", api.Stub(app)).Methods("GET")
-	r.HandleFunc("/health", health.Health(app)).Methods("GET")
+	api.Attach(r, app.Config.MountedPath,
+		api.Get("/health").
+			SecuredWith(api.Unsecured()).
+			Handle(health.GetHealth(app)),
+	)
 
 	corsAdapter := gorilla.CORS(
 		gorilla.AllowedOrigins(app.Config.ApplicationOrigins),
