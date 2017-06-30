@@ -34,11 +34,10 @@ func routing(app *handlers.App) http.Handler {
 	)
 	r.HandleFunc("/session", app.Stub).Methods("DELETE")
 	attach(r,
-		post("/session/refresh").
+		get("/session/refresh").
 			securedWith(handlers.SessionSecurity(app)).
 			handle(app.GetSessionRefresh),
 	)
-	r.HandleFunc("/session/refresh", app.Stub).Methods("GET")
 
 	r.HandleFunc("/password", app.Stub).Methods("POST")
 	r.HandleFunc("/password/reset", app.Stub).Methods("GET")
@@ -78,6 +77,10 @@ type handledRoute struct {
 
 func post(tpl string) *route {
 	return &route{verb: "POST", tpl: tpl}
+}
+
+func get(tpl string) *route {
+	return &route{verb: "GET", tpl: tpl}
 }
 
 func (r *route) securedWith(fn handlers.SecurityHandler) *securedRoute {
