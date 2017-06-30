@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/keratin/authn-server/handlers"
 	"github.com/keratin/authn-server/services"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -11,7 +12,7 @@ import (
 
 func TestPostAccountSuccess(t *testing.T) {
 	app := testApp()
-	res := post("/accounts", app.PostAccount, map[string]string{
+	res := post("/accounts", handlers.PostAccount(app), map[string]string{
 		"username": "foo",
 		"password": "bar",
 	})
@@ -31,7 +32,7 @@ func TestPostAccountSuccessWithSession(t *testing.T) {
 	require.NoError(t, err)
 	refreshToken := refreshTokens[0]
 
-	post("/accounts", app.PostAccount, map[string]string{
+	post("/accounts", handlers.PostAccount(app), map[string]string{
 		"username": "foo",
 		"password": "bar",
 	}, withSession(session))
@@ -54,7 +55,7 @@ func TestPostAccountFailure(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		res := post("/accounts", app.PostAccount, map[string]string{
+		res := post("/accounts", handlers.PostAccount(app), map[string]string{
 			"username": tt.username,
 			"password": tt.password,
 		})

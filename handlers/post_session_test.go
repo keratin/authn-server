@@ -6,6 +6,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/keratin/authn-server/handlers"
 	"github.com/keratin/authn-server/services"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -16,7 +17,7 @@ func TestPostSessionSuccess(t *testing.T) {
 	b, _ := bcrypt.GenerateFromPassword([]byte("bar"), 4)
 	app.AccountStore.Create("foo", b)
 
-	res := post("/session", app.PostSession, map[string]string{
+	res := post("/session", handlers.PostSession(app), map[string]string{
 		"username": "foo",
 		"password": "bar",
 	})
@@ -40,7 +41,7 @@ func TestPostSessionSuccessWithSession(t *testing.T) {
 	require.NoError(t, err)
 	refreshToken := refreshTokens[0]
 
-	post("/session", app.PostSession, map[string]string{
+	post("/session", handlers.PostSession(app), map[string]string{
 		"username": "foo",
 		"password": "bar",
 	}, withSession(session))
@@ -63,7 +64,7 @@ func TestPostSessionFailure(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		res := post("/session", app.PostSession, map[string]string{
+		res := post("/session", handlers.PostSession(app), map[string]string{
 			"username": tt.username,
 			"password": tt.password,
 		})

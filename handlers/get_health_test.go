@@ -13,7 +13,7 @@ func TestHealth(t *testing.T) {
 		RedisCheck: func() bool { return true },
 	}
 
-	res := get("/health", app.Health)
+	res := get("/health", handlers.Health(&app))
 
 	assertCode(t, res, http.StatusOK)
 	assertBody(t, res, `{"http":true,"db":true,"redis":true}`)

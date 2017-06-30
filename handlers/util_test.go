@@ -22,22 +22,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type HandlerFuncable func(w http.ResponseWriter, r *http.Request)
 type ReqModder func(req *http.Request) *http.Request
 
-func get(path string, h HandlerFuncable, befores ...ReqModder) *httptest.ResponseRecorder {
+func get(path string, h http.HandlerFunc, befores ...ReqModder) *httptest.ResponseRecorder {
 	return makeRequest("GET", path, h, nil, befores...)
 }
 
-func delete(path string, h HandlerFuncable, befores ...ReqModder) *httptest.ResponseRecorder {
+func delete(path string, h http.HandlerFunc, befores ...ReqModder) *httptest.ResponseRecorder {
 	return makeRequest("DELETE", path, h, nil, befores...)
 }
 
-func post(path string, h HandlerFuncable, params map[string]string, befores ...ReqModder) *httptest.ResponseRecorder {
+func post(path string, h http.HandlerFunc, params map[string]string, befores ...ReqModder) *httptest.ResponseRecorder {
 	return makeRequest("POST", path, h, strings.NewReader(mapToParams(params)), befores...)
 }
 
-func makeRequest(verb string, path string, h HandlerFuncable, body io.Reader, befores ...ReqModder) *httptest.ResponseRecorder {
+func makeRequest(verb string, path string, h http.HandlerFunc, body io.Reader, befores ...ReqModder) *httptest.ResponseRecorder {
 	res := httptest.NewRecorder()
 	req := httptest.NewRequest(verb, "/health", body)
 	if body != nil {
@@ -47,7 +46,7 @@ func makeRequest(verb string, path string, h HandlerFuncable, body io.Reader, be
 		req = before(req)
 	}
 
-	http.HandlerFunc(h).ServeHTTP(res, req)
+	h.ServeHTTP(res, req)
 	return res
 }
 
@@ -59,7 +58,7 @@ func mapToParams(params map[string]string) string {
 	return strings.Join(buffer, "&")
 }
 
-func testApp() handlers.App {
+func testApp() *handlers.App {
 	accountStore := mock.NewAccountStore()
 
 	authnUrl, err := url.Parse("https://authn.example.com")
@@ -82,7 +81,7 @@ func testApp() handlers.App {
 
 	tokenStore := mock.NewRefreshTokenStore()
 
-	return handlers.App{
+	return &handlers.App{
 		AccountStore:      accountStore,
 		RefreshTokenStore: tokenStore,
 		Config:            &cfg,

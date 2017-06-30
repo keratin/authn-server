@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/handlers"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/sessions"
 	"github.com/stretchr/testify/assert"
@@ -24,7 +25,7 @@ func TestDeleteSessionSuccess(t *testing.T) {
 	require.NoError(t, err)
 	assert.NotEmpty(t, id)
 
-	res := delete("/session", app.DeleteSession, withSession(session))
+	res := delete("/session", handlers.DeleteSession(app), withSession(session))
 
 	// request always succeeds
 	assertCode(t, res, http.StatusOK)
@@ -45,16 +46,16 @@ func TestDeleteSessionFailure(t *testing.T) {
 	}
 	session := createSession(app.RefreshTokenStore, bad_config, 123)
 
-	res := delete("/session", app.DeleteSession, withSession(session))
+	res := delete("/session", handlers.DeleteSession(app), withSession(session))
 	assertCode(t, res, http.StatusOK)
 
-	res = delete("/session", app.DeleteSession)
+	res = delete("/session", handlers.DeleteSession(app))
 	assertCode(t, res, http.StatusOK)
 }
 
 func TestDeleteSessionWithoutSession(t *testing.T) {
 	app := testApp()
 
-	res := delete("/session", app.DeleteSession)
+	res := delete("/session", handlers.DeleteSession(app))
 	assertCode(t, res, http.StatusOK)
 }

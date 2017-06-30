@@ -4,6 +4,8 @@ import (
 	"net/http"
 )
 
-func (app App) Stub(w http.ResponseWriter, req *http.Request) {
-	w.Write([]byte("not implemented"))
+func Stub(app *App) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		w.Write([]byte("not implemented"))
+	}
 }

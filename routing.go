@@ -14,45 +14,45 @@ func routing(app *handlers.App) http.Handler {
 
 	refererSecurity := handlers.RefererSecurity(app.Config.ApplicationDomains)
 
-	r.HandleFunc("/", app.Stub).Methods("GET")
+	r.HandleFunc("/", handlers.Stub(app)).Methods("GET")
 
 	// TODO: MountedPath
 	attach(r,
 		post("/accounts").
 			securedWith(refererSecurity).
-			handle(app.PostAccount),
+			handle(handlers.PostAccount(app)),
 	)
-	r.HandleFunc("/accounts/import", app.Stub).Methods("POST")
-	r.HandleFunc("/accounts/available", app.Stub).Methods("GET")
+	r.HandleFunc("/accounts/import", handlers.Stub(app)).Methods("POST")
+	r.HandleFunc("/accounts/available", handlers.Stub(app)).Methods("GET")
 
-	r.HandleFunc("/accounts/{account_id:[0-9]+}", app.Stub).Methods("DELETE")
-	r.HandleFunc("/accounts/{account_id:[0-9]+}/lock", app.Stub).Methods("PUT", "PATCH")
-	r.HandleFunc("/accounts/{account_id:[0-9]+}/unlock", app.Stub).Methods("PUT", "PATCH")
+	r.HandleFunc("/accounts/{account_id:[0-9]+}", handlers.Stub(app)).Methods("DELETE")
+	r.HandleFunc("/accounts/{account_id:[0-9]+}/lock", handlers.Stub(app)).Methods("PUT", "PATCH")
+	r.HandleFunc("/accounts/{account_id:[0-9]+}/unlock", handlers.Stub(app)).Methods("PUT", "PATCH")
 
 	attach(r,
 		post("/session").
 			securedWith(refererSecurity).
-			handle(app.PostSession),
+			handle(handlers.PostSession(app)),
 	)
 	attach(r,
 		delete("/session").
 			securedWith(refererSecurity).
-			handle(app.Stub),
+			handle(handlers.Stub(app)),
 	)
 	attach(r,
 		get("/session/refresh").
 			securedWith(refererSecurity).
-			handle(app.GetSessionRefresh),
+			handle(handlers.GetSessionRefresh(app)),
 	)
 
-	r.HandleFunc("/password", app.Stub).Methods("POST")
-	r.HandleFunc("/password/reset", app.Stub).Methods("GET")
+	r.HandleFunc("/password", handlers.Stub(app)).Methods("POST")
+	r.HandleFunc("/password/reset", handlers.Stub(app)).Methods("GET")
 
-	r.HandleFunc("/configuration", app.Stub).Methods("GET")
-	r.HandleFunc("/jwks", app.Stub).Methods("GET")
+	r.HandleFunc("/configuration", handlers.Stub(app)).Methods("GET")
+	r.HandleFunc("/jwks", handlers.Stub(app)).Methods("GET")
 
-	r.HandleFunc("/stats", app.Stub).Methods("GET")
-	r.HandleFunc("/health", app.Health).Methods("GET")
+	r.HandleFunc("/stats", handlers.Stub(app)).Methods("GET")
+	r.HandleFunc("/health", handlers.Health(app)).Methods("GET")
 
 	corsAdapter := gorilla.CORS(
 		gorilla.AllowedOrigins(app.Config.ApplicationOrigins),
