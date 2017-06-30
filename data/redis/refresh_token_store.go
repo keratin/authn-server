@@ -71,9 +71,12 @@ func (s *RefreshTokenStore) FindAll(account_id int) ([]models.RefreshToken, erro
 }
 
 func (s *RefreshTokenStore) Create(account_id int) (models.RefreshToken, error) {
-	binToken := generateToken()
+	binToken, err := generateToken()
+	if err != nil {
+		return "", err
+	}
 
-	_, err := s.Client.Pipelined(func(pipe redis.Pipeliner) error {
+	_, err = s.Client.Pipelined(func(pipe redis.Pipeliner) error {
 		// persist the token
 		pipe.Set(keyForToken(binToken), account_id, s.TTL)
 
@@ -115,11 +118,11 @@ func (s *RefreshTokenStore) Revoke(hexToken models.RefreshToken) error {
 
 // 128 bits of randomness is more than a UUID v4
 // cf: https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_.28random.29
-func generateToken() []byte {
+func generateToken() ([]byte, error) {
 	token := make([]byte, 16)
 	_, err := rand.Read(token)
 	if err != nil {
-		panic(err)
+		return []byte{}, nil
 	}
-	return token
+	return token, nil
 }

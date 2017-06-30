@@ -19,12 +19,12 @@ func NewDB(env string) (*sql.DB, error) {
 func TempDB() (*sql.DB, error) {
 	db, err := sql.Open("sqlite3", "file::memory:?mode=memory&cache=shared")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	err = MigrateDB(db)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	return db, nil
