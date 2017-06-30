@@ -30,13 +30,7 @@ func (app *App) PostSession(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Return the signed session in a cookie
-	http.SetCookie(w, &http.Cookie{
-		Name:     app.Config.SessionCookieName,
-		Value:    sessionToken,
-		Path:     app.Config.MountedPath,
-		Secure:   app.Config.ForceSSL,
-		HttpOnly: true,
-	})
+	setSession(app.Config, w, sessionToken)
 
 	// Return the signed identity token in the body
 	writeData(w, http.StatusCreated, struct {

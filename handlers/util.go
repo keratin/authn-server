@@ -44,6 +44,17 @@ func revokeSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config,
 	return nil
 }
 
+func setSession(cfg *config.Config, w http.ResponseWriter, val string) {
+	cookie := &http.Cookie{
+		Name:     cfg.SessionCookieName,
+		Value:    val,
+		Path:     cfg.MountedPath,
+		Secure:   cfg.ForceSSL,
+		HttpOnly: true,
+	}
+	http.SetCookie(w, cookie)
+}
+
 func currentSession(cfg *config.Config, req *http.Request) (*sessions.Claims, error) {
 	cookie, err := req.Cookie(cfg.SessionCookieName)
 	if err == http.ErrNoCookie {
