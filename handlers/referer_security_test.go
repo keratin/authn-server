@@ -12,7 +12,7 @@ import (
 )
 
 func TestRefererSecurity(t *testing.T) {
-	testTable := []struct {
+	testCases := []struct {
 		domain  string
 		referer string
 		success bool
@@ -31,12 +31,12 @@ func TestRefererSecurity(t *testing.T) {
 		w.Write([]byte("failure"))
 	})
 
-	for _, tt := range testTable {
-		adapter := handlers.RefererSecurity([]string{tt.domain})
+	for _, tc := range testCases {
+		adapter := handlers.RefererSecurity([]string{tc.domain})
 		res := httptest.NewRecorder()
 		req := httptest.NewRequest("GET", "/", strings.NewReader(""))
-		req.Header.Add("Referer", tt.referer)
-		if tt.success {
+		req.Header.Add("Referer", tc.referer)
+		if tc.success {
 			adapter(expectedSuccessHandler).ServeHTTP(res, req)
 			assert.Equal(t, res.Body.String(), "success")
 		} else {

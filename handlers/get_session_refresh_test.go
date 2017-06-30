@@ -35,7 +35,7 @@ func TestGetSessionRefreshFailure(t *testing.T) {
 		RefreshTokenStore: mock.NewRefreshTokenStore(),
 	}
 
-	testTable := []struct {
+	testCases := []struct {
 		signingKey []byte
 		liveToken  bool
 	}{
@@ -45,14 +45,14 @@ func TestGetSessionRefreshFailure(t *testing.T) {
 		{app.Config.SessionSigningKey, false},
 	}
 
-	for idx, tt := range testTable {
-		tt_cfg := &config.Config{
+	for idx, tc := range testCases {
+		tc_cfg := &config.Config{
 			AuthNURL:          app.Config.AuthNURL,
 			SessionCookieName: app.Config.SessionCookieName,
-			SessionSigningKey: tt.signingKey,
+			SessionSigningKey: tc.signingKey,
 		}
-		existingSession := createSession(app.RefreshTokenStore, tt_cfg, idx+100)
-		if !tt.liveToken {
+		existingSession := createSession(app.RefreshTokenStore, tc_cfg, idx+100)
+		if !tc.liveToken {
 			revokeSession(app.RefreshTokenStore, app.Config, existingSession)
 		}
 

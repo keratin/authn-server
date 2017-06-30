@@ -12,7 +12,7 @@ import (
 func TestAccountCreatorSuccess(t *testing.T) {
 	store := mock.NewAccountStore()
 
-	var testTable = []struct {
+	var testCases = []struct {
 		config   config.Config
 		username string
 		password string
@@ -22,15 +22,15 @@ func TestAccountCreatorSuccess(t *testing.T) {
 		{config.Config{UsernameIsEmail: true, UsernameDomains: []string{"rightdomain.com"}}, "username@rightdomain.com", "PASSword"},
 	}
 
-	for _, tt := range testTable {
-		acc, errs := services.AccountCreator(store, &tt.config, tt.username, tt.password)
+	for _, tc := range testCases {
+		acc, errs := services.AccountCreator(store, &tc.config, tc.username, tc.password)
 		if len(errs) > 0 {
 			for _, err := range errs {
 				assert.NoError(t, err)
 			}
 		} else {
 			assert.NotEqual(t, 0, acc.Id)
-			assert.Equal(t, tt.username, acc.Username)
+			assert.Equal(t, tc.username, acc.Username)
 		}
 	}
 }
@@ -41,7 +41,7 @@ func TestAccountCreatorFailure(t *testing.T) {
 	store := mock.NewAccountStore()
 	store.Create("existing@test.com", pw)
 
-	var testTable = []struct {
+	var testCases = []struct {
 		config   config.Config
 		username string
 		password string
@@ -59,9 +59,9 @@ func TestAccountCreatorFailure(t *testing.T) {
 		{config.Config{PasswordMinComplexity: 2}, "username", "qwerty", []services.Error{{"password", "INSECURE"}}},
 	}
 
-	for _, tt := range testTable {
-		acc, errs := services.AccountCreator(store, &tt.config, tt.username, tt.password)
+	for _, tc := range testCases {
+		acc, errs := services.AccountCreator(store, &tc.config, tc.username, tc.password)
 		assert.Empty(t, acc)
-		assert.Equal(t, tt.errors, errs)
+		assert.Equal(t, tc.errors, errs)
 	}
 }

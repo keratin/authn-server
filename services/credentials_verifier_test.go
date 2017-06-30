@@ -41,7 +41,7 @@ func TestCredentialsVerifierFailure(t *testing.T) {
 	acc, _ = store.Create("expired", bcrypted)
 	acc.RequireNewPassword = true
 
-	testTable := []struct {
+	testCases := []struct {
 		username string
 		password string
 		errors   []services.Error
@@ -54,8 +54,8 @@ func TestCredentialsVerifierFailure(t *testing.T) {
 		{"expired", password, []services.Error{{"credentials", "EXPIRED"}}},
 	}
 
-	for _, tt := range testTable {
-		_, errs := services.CredentialsVerifier(store, &cfg, tt.username, tt.password)
-		assert.Equal(t, tt.errors, errs)
+	for _, tc := range testCases {
+		_, errs := services.CredentialsVerifier(store, &cfg, tc.username, tc.password)
+		assert.Equal(t, tc.errors, errs)
 	}
 }
