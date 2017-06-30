@@ -1,7 +1,9 @@
-package handlers
+package health
 
 import (
 	"net/http"
+
+	"github.com/keratin/authn-server/api"
 )
 
 type health struct {
@@ -10,7 +12,7 @@ type health struct {
 	Redis bool `json:"redis"`
 }
 
-func Health(app *App) http.HandlerFunc {
+func Health(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		h := health{
 			Http:  true,
@@ -18,6 +20,6 @@ func Health(app *App) http.HandlerFunc {
 			Db:    app.DbCheck(),
 		}
 
-		writeJson(w, http.StatusOK, h)
+		api.WriteJson(w, http.StatusOK, h)
 	}
 }

@@ -7,9 +7,9 @@ import (
 	"os"
 	"path"
 
+	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
-	"github.com/keratin/authn-server/handlers"
 )
 
 func main() {
@@ -26,7 +26,7 @@ func main() {
 
 func serve() {
 	// set up connections and configuration
-	app, err := handlers.NewApp()
+	app, err := api.NewApp()
 	if err != nil {
 		panic(err)
 	}

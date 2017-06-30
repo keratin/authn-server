@@ -1,4 +1,4 @@
-package handlers
+package api
 
 import (
 	"github.com/go-redis/redis"
@@ -8,11 +8,11 @@ import (
 	dataRedis "github.com/keratin/authn-server/data/redis"
 )
 
-type Pinger func() bool
+type pinger func() bool
 
 type App struct {
-	DbCheck           Pinger
-	RedisCheck        Pinger
+	DbCheck           pinger
+	RedisCheck        pinger
 	Config            *config.Config
 	AccountStore      data.AccountStore
 	RefreshTokenStore data.RefreshTokenStore

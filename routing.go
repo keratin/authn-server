@@ -6,53 +6,56 @@ import (
 
 	gorilla "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/keratin/authn-server/handlers"
+	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/api/accounts"
+	"github.com/keratin/authn-server/api/health"
+	"github.com/keratin/authn-server/api/sessions"
 )
 
-func routing(app *handlers.App) http.Handler {
+func routing(app *api.App) http.Handler {
 	r := mux.NewRouter()
 
-	refererSecurity := handlers.RefererSecurity(app.Config.ApplicationDomains)
+	refererSecurity := api.RefererSecurity(app.Config.ApplicationDomains)
 
-	r.HandleFunc("/", handlers.Stub(app)).Methods("GET")
+	r.HandleFunc("/", api.Stub(app)).Methods("GET")
 
 	// TODO: MountedPath
 	attach(r,
 		post("/accounts").
 			securedWith(refererSecurity).
-			handle(handlers.PostAccount(app)),
+			handle(accounts.PostAccount(app)),
 	)
-	r.HandleFunc("/accounts/import", handlers.Stub(app)).Methods("POST")
-	r.HandleFunc("/accounts/available", handlers.Stub(app)).Methods("GET")
+	r.HandleFunc("/accounts/import", api.Stub(app)).Methods("POST")
+	r.HandleFunc("/accounts/available", api.Stub(app)).Methods("GET")
 
-	r.HandleFunc("/accounts/{account_id:[0-9]+}", handlers.Stub(app)).Methods("DELETE")
-	r.HandleFunc("/accounts/{account_id:[0-9]+}/lock", handlers.Stub(app)).Methods("PUT", "PATCH")
-	r.HandleFunc("/accounts/{account_id:[0-9]+}/unlock", handlers.Stub(app)).Methods("PUT", "PATCH")
+	r.HandleFunc("/accounts/{account_id:[0-9]+}", api.Stub(app)).Methods("DELETE")
+	r.HandleFunc("/accounts/{account_id:[0-9]+}/lock", api.Stub(app)).Methods("PUT", "PATCH")
+	r.HandleFunc("/accounts/{account_id:[0-9]+}/unlock", api.Stub(app)).Methods("PUT", "PATCH")
 
 	attach(r,
 		post("/session").
 			securedWith(refererSecurity).
-			handle(handlers.PostSession(app)),
+			handle(sessions.PostSession(app)),
 	)
 	attach(r,
 		delete("/session").
 			securedWith(refererSecurity).
-			handle(handlers.Stub(app)),
+			handle(sessions.DeleteSession(app)),
 	)
 	attach(r,
 		get("/session/refresh").
 			securedWith(refererSecurity).
-			handle(handlers.GetSessionRefresh(app)),
+			handle(sessions.GetSessionRefresh(app)),
 	)
 
-	r.HandleFunc("/password", handlers.Stub(app)).Methods("POST")
-	r.HandleFunc("/password/reset", handlers.Stub(app)).Methods("GET")
+	r.HandleFunc("/password", api.Stub(app)).Methods("POST")
+	r.HandleFunc("/password/reset", api.Stub(app)).Methods("GET")
 
-	r.HandleFunc("/configuration", handlers.Stub(app)).Methods("GET")
-	r.HandleFunc("/jwks", handlers.Stub(app)).Methods("GET")
+	r.HandleFunc("/configuration", api.Stub(app)).Methods("GET")
+	r.HandleFunc("/jwks", api.Stub(app)).Methods("GET")
 
-	r.HandleFunc("/stats", handlers.Stub(app)).Methods("GET")
-	r.HandleFunc("/health", handlers.Health(app)).Methods("GET")
+	r.HandleFunc("/stats", api.Stub(app)).Methods("GET")
+	r.HandleFunc("/health", health.Health(app)).Methods("GET")
 
 	corsAdapter := gorilla.CORS(
 		gorilla.AllowedOrigins(app.Config.ApplicationOrigins),
@@ -73,7 +76,7 @@ type route struct {
 
 type securedRoute struct {
 	route    *route
-	security handlers.SecurityHandler
+	security api.SecurityHandler
 }
 
 type handledRoute struct {
@@ -93,7 +96,7 @@ func delete(tpl string) *route {
 	return &route{verb: "DELETE", tpl: tpl}
 }
 
-func (r *route) securedWith(fn handlers.SecurityHandler) *securedRoute {
+func (r *route) securedWith(fn api.SecurityHandler) *securedRoute {
 	return &securedRoute{route: r, security: fn}
 }
 

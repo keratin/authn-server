@@ -1,11 +1,12 @@
-package handlers_test
+package sessions_test
 
 import (
 	"net/http"
 	"testing"
 
+	apiSessions "github.com/keratin/authn-server/api/sessions"
+	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/config"
-	"github.com/keratin/authn-server/handlers"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/sessions"
 	"github.com/stretchr/testify/assert"
@@ -13,10 +14,10 @@ import (
 )
 
 func TestDeleteSessionSuccess(t *testing.T) {
-	app := testApp()
+	app := test.App()
 	account_id := 514628
 
-	session := createSession(app.RefreshTokenStore, app.Config, account_id)
+	session := test.CreateSession(app.RefreshTokenStore, app.Config, account_id)
 
 	// token exists
 	claims, err := sessions.Parse(session.Value, app.Config)
@@ -25,10 +26,10 @@ func TestDeleteSessionSuccess(t *testing.T) {
 	require.NoError(t, err)
 	assert.NotEmpty(t, id)
 
-	res := delete("/session", handlers.DeleteSession(app), withSession(session))
+	res := test.Delete("/session", apiSessions.DeleteSession(app), test.WithSession(session))
 
 	// request always succeeds
-	assertCode(t, res, http.StatusOK)
+	test.AssertCode(t, res, http.StatusOK)
 
 	// token no longer exists
 	id, err = app.RefreshTokenStore.Find(models.RefreshToken(claims.Subject))
@@ -37,25 +38,22 @@ func TestDeleteSessionSuccess(t *testing.T) {
 }
 
 func TestDeleteSessionFailure(t *testing.T) {
-	app := testApp()
+	app := test.App()
 
 	bad_config := &config.Config{
 		AuthNURL:          app.Config.AuthNURL,
 		SessionCookieName: app.Config.SessionCookieName,
 		SessionSigningKey: []byte("wrong"),
 	}
-	session := createSession(app.RefreshTokenStore, bad_config, 123)
+	session := test.CreateSession(app.RefreshTokenStore, bad_config, 123)
 
-	res := delete("/session", handlers.DeleteSession(app), withSession(session))
-	assertCode(t, res, http.StatusOK)
-
-	res = delete("/session", handlers.DeleteSession(app))
-	assertCode(t, res, http.StatusOK)
+	res := test.Delete("/session", apiSessions.DeleteSession(app), test.WithSession(session))
+	test.AssertCode(t, res, http.StatusOK)
 }
 
 func TestDeleteSessionWithoutSession(t *testing.T) {
-	app := testApp()
+	app := test.App()
 
-	res := delete("/session", handlers.DeleteSession(app))
-	assertCode(t, res, http.StatusOK)
+	res := test.Delete("/session", apiSessions.DeleteSession(app))
+	test.AssertCode(t, res, http.StatusOK)
 }

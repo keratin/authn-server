@@ -1,4 +1,4 @@
-package handlers_test
+package sessions_test
 
 import (
 	"net/http"
@@ -6,45 +6,46 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/keratin/authn-server/handlers"
+	"github.com/keratin/authn-server/api/sessions"
+	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/services"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestPostSessionSuccess(t *testing.T) {
-	app := testApp()
+	app := test.App()
 	b, _ := bcrypt.GenerateFromPassword([]byte("bar"), 4)
 	app.AccountStore.Create("foo", b)
 
-	res := post("/session", handlers.PostSession(app), map[string]string{
+	res := test.Post("/session", sessions.PostSession(app), map[string]string{
 		"username": "foo",
 		"password": "bar",
 	})
 
-	assertCode(t, res, http.StatusCreated)
-	assertSession(t, res)
-	assertIdTokenResponse(t, res, app.Config)
+	test.AssertCode(t, res, http.StatusCreated)
+	test.AssertSession(t, res)
+	test.AssertIdTokenResponse(t, res, app.Config)
 }
 
 func TestPostSessionSuccessWithSession(t *testing.T) {
-	app := testApp()
+	app := test.App()
 
 	b, _ := bcrypt.GenerateFromPassword([]byte("bar"), 4)
 	app.AccountStore.Create("foo", b)
 
 	account_id := 8642
-	session := createSession(app.RefreshTokenStore, app.Config, account_id)
+	session := test.CreateSession(app.RefreshTokenStore, app.Config, account_id)
 
 	// before
 	refreshTokens, err := app.RefreshTokenStore.FindAll(account_id)
 	require.NoError(t, err)
 	refreshToken := refreshTokens[0]
 
-	post("/session", handlers.PostSession(app), map[string]string{
+	test.Post("/session", sessions.PostSession(app), map[string]string{
 		"username": "foo",
 		"password": "bar",
-	}, withSession(session))
+	}, test.WithSession(session))
 
 	// after
 	id, err := app.RefreshTokenStore.Find(refreshToken)
@@ -53,7 +54,7 @@ func TestPostSessionSuccessWithSession(t *testing.T) {
 }
 
 func TestPostSessionFailure(t *testing.T) {
-	app := testApp()
+	app := test.App()
 
 	var tests = []struct {
 		username string
@@ -64,12 +65,12 @@ func TestPostSessionFailure(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		res := post("/session", handlers.PostSession(app), map[string]string{
+		res := test.Post("/session", sessions.PostSession(app), map[string]string{
 			"username": tt.username,
 			"password": tt.password,
 		})
 
-		assertCode(t, res, http.StatusUnprocessableEntity)
-		assertErrors(t, res, tt.errors)
+		test.AssertCode(t, res, http.StatusUnprocessableEntity)
+		test.AssertErrors(t, res, tt.errors)
 	}
 }

@@ -1,12 +1,13 @@
-package handlers
+package sessions
 
 import (
 	"net/http"
 
+	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/services"
 )
 
-func PostSession(app *App) http.HandlerFunc {
+func PostSession(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		// Check the password
 		account, errors := services.CredentialsVerifier(
@@ -16,25 +17,25 @@ func PostSession(app *App) http.HandlerFunc {
 			req.FormValue("password"),
 		)
 		if errors != nil {
-			writeErrors(w, errors)
+			api.WriteErrors(w, errors)
 			return
 		}
 
-		err := revokeSession(app.RefreshTokenStore, app.Config, req)
+		err := api.RevokeSession(app.RefreshTokenStore, app.Config, req)
 		if err != nil {
 			// TODO: alert but continue
 		}
 
-		sessionToken, identityToken, err := establishSession(app.RefreshTokenStore, app.Config, account.Id)
+		sessionToken, identityToken, err := api.NewSession(app.RefreshTokenStore, app.Config, account.Id)
 		if err != nil {
 			panic(err)
 		}
 
 		// Return the signed session in a cookie
-		setSession(app.Config, w, sessionToken)
+		api.SetSession(app.Config, w, sessionToken)
 
 		// Return the signed identity token in the body
-		writeData(w, http.StatusCreated, struct {
+		api.WriteData(w, http.StatusCreated, struct {
 			IdToken string `json:"id_token"`
 		}{
 			IdToken: identityToken,

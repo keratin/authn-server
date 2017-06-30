@@ -1,4 +1,4 @@
-package handlers
+package api
 
 import (
 	"net/http"
@@ -10,11 +10,7 @@ import (
 	"github.com/keratin/authn-server/tokens/sessions"
 )
 
-// A specialized handler that looks like any other middleware adapter but is known to serve a
-// particular purpose.
-type SecurityHandler func(http.Handler) http.Handler
-
-func establishSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, account_id int) (string, string, error) {
+func NewSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, account_id int) (string, string, error) {
 	session, err := sessions.New(refreshTokenStore, cfg, account_id)
 	if err != nil {
 		return "", "", err
@@ -25,7 +21,7 @@ func establishSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Conf
 		return "", "", err
 	}
 
-	identityToken, err := identityForSession(cfg, session, account_id)
+	identityToken, err := IdentityForSession(cfg, session, account_id)
 	if err != nil {
 		return "", "", err
 	}
@@ -33,8 +29,8 @@ func establishSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Conf
 	return sessionToken, identityToken, err
 }
 
-func revokeSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, req *http.Request) (err error) {
-	oldSession, err := currentSession(cfg, req)
+func RevokeSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, req *http.Request) (err error) {
+	oldSession, err := CurrentSession(cfg, req)
 	if err != nil {
 		return err
 	}
@@ -44,7 +40,7 @@ func revokeSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config,
 	return nil
 }
 
-func setSession(cfg *config.Config, w http.ResponseWriter, val string) {
+func SetSession(cfg *config.Config, w http.ResponseWriter, val string) {
 	cookie := &http.Cookie{
 		Name:     cfg.SessionCookieName,
 		Value:    val,
@@ -58,7 +54,7 @@ func setSession(cfg *config.Config, w http.ResponseWriter, val string) {
 	http.SetCookie(w, cookie)
 }
 
-func currentSession(cfg *config.Config, req *http.Request) (*sessions.Claims, error) {
+func CurrentSession(cfg *config.Config, req *http.Request) (*sessions.Claims, error) {
 	cookie, err := req.Cookie(cfg.SessionCookieName)
 	if err == http.ErrNoCookie {
 		return nil, nil
@@ -70,7 +66,7 @@ func currentSession(cfg *config.Config, req *http.Request) (*sessions.Claims, er
 	return sessions.Parse(cookie.Value, cfg)
 }
 
-func identityForSession(cfg *config.Config, session *sessions.Claims, account_id int) (string, error) {
+func IdentityForSession(cfg *config.Config, session *sessions.Claims, account_id int) (string, error) {
 	identity := identities.New(cfg, session, account_id)
 	identityToken, err := identity.Sign(cfg.IdentitySigningKey)
 	if err != nil {

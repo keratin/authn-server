@@ -1,4 +1,4 @@
-package handlers_test
+package api_test
 
 import (
 	"net/http"
@@ -6,7 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/keratin/authn-server/handlers"
+	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/services"
 	"github.com/stretchr/testify/assert"
 )
@@ -32,7 +33,7 @@ func TestRefererSecurity(t *testing.T) {
 	})
 
 	for _, tc := range testCases {
-		adapter := handlers.RefererSecurity([]string{tc.domain})
+		adapter := api.RefererSecurity([]string{tc.domain})
 		res := httptest.NewRecorder()
 		req := httptest.NewRequest("GET", "/", strings.NewReader(""))
 		req.Header.Add("Referer", tc.referer)
@@ -41,7 +42,7 @@ func TestRefererSecurity(t *testing.T) {
 			assert.Equal(t, res.Body.String(), "success")
 		} else {
 			adapter(expectedFailureHandler).ServeHTTP(res, req)
-			assertErrors(t, res, []services.Error{{"referer", "is not a trusted host"}})
+			test.AssertErrors(t, res, []services.Error{{"referer", "is not a trusted host"}})
 		}
 	}
 }

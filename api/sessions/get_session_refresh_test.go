@@ -1,32 +1,34 @@
-package handlers_test
+package sessions_test
 
 import (
 	"net/http"
 	"net/url"
 	"testing"
 
+	"github.com/keratin/authn-server/api"
+	apiSessions "github.com/keratin/authn-server/api/sessions"
+	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/data/mock"
-	"github.com/keratin/authn-server/handlers"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/sessions"
 )
 
 func TestGetSessionRefreshSuccess(t *testing.T) {
-	app := testApp()
+	app := test.App()
 
 	account_id := 82594
-	existingSession := createSession(app.RefreshTokenStore, app.Config, account_id)
+	existingSession := test.CreateSession(app.RefreshTokenStore, app.Config, account_id)
 
-	res := get("/session/refresh", handlers.GetSessionRefresh(app), withSession(existingSession))
+	res := test.Get("/session/refresh", apiSessions.GetSessionRefresh(app), test.WithSession(existingSession))
 
-	assertCode(t, res, http.StatusCreated)
-	assertIdTokenResponse(t, res, app.Config)
+	test.AssertCode(t, res, http.StatusCreated)
+	test.AssertIdTokenResponse(t, res, app.Config)
 }
 
 func TestGetSessionRefreshFailure(t *testing.T) {
-	app := &handlers.App{
+	app := &api.App{
 		Config: &config.Config{
 			AuthNURL:          &url.URL{Scheme: "https", Path: "www.example.com"},
 			SessionCookieName: "authn-test",
@@ -51,14 +53,14 @@ func TestGetSessionRefreshFailure(t *testing.T) {
 			SessionCookieName: app.Config.SessionCookieName,
 			SessionSigningKey: tc.signingKey,
 		}
-		existingSession := createSession(app.RefreshTokenStore, tc_cfg, idx+100)
+		existingSession := test.CreateSession(app.RefreshTokenStore, tc_cfg, idx+100)
 		if !tc.liveToken {
 			revokeSession(app.RefreshTokenStore, app.Config, existingSession)
 		}
 
-		res := get("/session/refresh", handlers.GetSessionRefresh(app), withSession(existingSession))
+		res := test.Get("/session/refresh", apiSessions.GetSessionRefresh(app), test.WithSession(existingSession))
 
-		assertCode(t, res, http.StatusUnauthorized)
+		test.AssertCode(t, res, http.StatusUnauthorized)
 	}
 }
 

@@ -1,15 +1,16 @@
-package handlers
+package sessions
 
 import (
 	"net/http"
 
+	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/models"
 )
 
-func GetSessionRefresh(app *App) http.HandlerFunc {
+func GetSessionRefresh(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		// decode the JWT
-		session, err := currentSession(app.Config, req)
+		session, err := api.CurrentSession(app.Config, req)
 		if err != nil {
 			// If a session fails to decode, that's okay. Carry on.
 			// TODO: log the error
@@ -36,12 +37,12 @@ func GetSessionRefresh(app *App) http.HandlerFunc {
 		}
 
 		// generate the requested identity token
-		identityToken, err := identityForSession(app.Config, session, account_id)
+		identityToken, err := api.IdentityForSession(app.Config, session, account_id)
 		if err != nil {
 			panic(err)
 		}
 
-		writeData(w, http.StatusCreated, struct {
+		api.WriteData(w, http.StatusCreated, struct {
 			IdToken string `json:"id_token"`
 		}{
 			IdToken: identityToken,
