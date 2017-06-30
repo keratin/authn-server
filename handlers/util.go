@@ -52,6 +52,9 @@ func setSession(cfg *config.Config, w http.ResponseWriter, val string) {
 		Secure:   cfg.ForceSSL,
 		HttpOnly: true,
 	}
+	if val == "" {
+		cookie.MaxAge = -1
+	}
 	http.SetCookie(w, cookie)
 }
 

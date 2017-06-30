@@ -53,6 +53,17 @@ func get(path string, h HandlerFuncable, befores ...ReqModder) *httptest.Respons
 	return res
 }
 
+func delete(path string, h HandlerFuncable, befores ...ReqModder) *httptest.ResponseRecorder {
+	res := httptest.NewRecorder()
+	req := httptest.NewRequest("DELETE", "/health", nil)
+	for _, before := range befores {
+		req = before(req)
+	}
+
+	http.HandlerFunc(h).ServeHTTP(res, req)
+	return res
+}
+
 func testApp() handlers.App {
 	accountStore := mock.NewAccountStore()
 
