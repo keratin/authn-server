@@ -5,6 +5,7 @@ import (
 	"crypto/rsa"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -24,44 +25,38 @@ import (
 type HandlerFuncable func(w http.ResponseWriter, r *http.Request)
 type ReqModder func(req *http.Request) *http.Request
 
+func get(path string, h HandlerFuncable, befores ...ReqModder) *httptest.ResponseRecorder {
+	return makeRequest("GET", path, h, nil, befores...)
+}
+
+func delete(path string, h HandlerFuncable, befores ...ReqModder) *httptest.ResponseRecorder {
+	return makeRequest("DELETE", path, h, nil, befores...)
+}
+
 func post(path string, h HandlerFuncable, params map[string]string, befores ...ReqModder) *httptest.ResponseRecorder {
+	return makeRequest("POST", path, h, strings.NewReader(mapToParams(params)), befores...)
+}
+
+func makeRequest(verb string, path string, h HandlerFuncable, body io.Reader, befores ...ReqModder) *httptest.ResponseRecorder {
+	res := httptest.NewRecorder()
+	req := httptest.NewRequest(verb, "/health", body)
+	if body != nil {
+		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	}
+	for _, before := range befores {
+		req = before(req)
+	}
+
+	http.HandlerFunc(h).ServeHTTP(res, req)
+	return res
+}
+
+func mapToParams(params map[string]string) string {
 	buffer := make([]string, 0)
 	for k, v := range params {
 		buffer = append(buffer, strings.Join([]string{k, v}, "="))
 	}
-	paramsStr := strings.Join(buffer, "&")
-
-	res := httptest.NewRecorder()
-	req := httptest.NewRequest("POST", path, strings.NewReader(paramsStr))
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	for _, before := range befores {
-		req = before(req)
-	}
-
-	http.HandlerFunc(h).ServeHTTP(res, req)
-	return res
-}
-
-func get(path string, h HandlerFuncable, befores ...ReqModder) *httptest.ResponseRecorder {
-	res := httptest.NewRecorder()
-	req := httptest.NewRequest("GET", "/health", nil)
-	for _, before := range befores {
-		req = before(req)
-	}
-
-	http.HandlerFunc(h).ServeHTTP(res, req)
-	return res
-}
-
-func delete(path string, h HandlerFuncable, befores ...ReqModder) *httptest.ResponseRecorder {
-	res := httptest.NewRecorder()
-	req := httptest.NewRequest("DELETE", "/health", nil)
-	for _, before := range befores {
-		req = before(req)
-	}
-
-	http.HandlerFunc(h).ServeHTTP(res, req)
-	return res
+	return strings.Join(buffer, "&")
 }
 
 func testApp() handlers.App {
