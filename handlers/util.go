@@ -15,6 +15,10 @@ type contextKey int
 const SessionKey contextKey = 0
 const AccountIDKey contextKey = 1
 
+// A specialized handler that looks like any other middleware adapter but is known to serve a
+// particular purpose.
+type SecurityHandler func(http.Handler) http.Handler
+
 func establishSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, account_id int) (string, string, error) {
 	session, err := sessions.New(refreshTokenStore, cfg, account_id)
 	if err != nil {
