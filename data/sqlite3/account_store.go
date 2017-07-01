@@ -22,19 +22,11 @@ func (db *AccountStore) FindByUsername(u string) (*models.Account, error) {
 }
 
 func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
-	// TODO: BeginTx with Context!
-	tx, err := db.Begin()
-	if err != nil {
-		return nil, err
-	}
-
 	now := time.Now()
 	result, err := db.Exec("INSERT INTO accounts (username, password, created_at, updated_at) VALUES (?, ?, ?, ?)", u, p, now.Unix(), now.Unix())
 	if err != nil {
-		tx.Rollback()
 		return nil, err
 	}
-	defer tx.Commit()
 
 	id, err := result.LastInsertId()
 	if err != nil {
