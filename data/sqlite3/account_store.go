@@ -49,3 +49,23 @@ func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 		UpdatedAt: now,
 	}, nil
 }
+
+func (db *AccountStore) Archive(id int) error {
+	_, err := db.Exec("UPDATE accounts SET username = ?, password = ?, deleted_at = ? WHERE id = ?", nil, nil, time.Now(), id)
+	return err
+}
+
+func (db *AccountStore) Lock(id int) error {
+	_, err := db.Exec("UPDATE accounts SET locked = ?, updated_at = ? WHERE id = ?", true, time.Now(), id)
+	return err
+}
+
+func (db *AccountStore) Unlock(id int) error {
+	_, err := db.Exec("UPDATE accounts SET locked = ?, updated_at = ? WHERE id = ?", false, time.Now(), id)
+	return err
+}
+
+func (db *AccountStore) RequireNewPassword(id int) error {
+	_, err := db.Exec("UPDATE accounts SET require_new_password = ?, updated_at = ? WHERE id = ?", true, time.Now(), id)
+	return err
+}
