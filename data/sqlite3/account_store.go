@@ -1,14 +1,14 @@
 package sqlite3
 
 import (
-	"database/sql"
 	"time"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/keratin/authn-server/models"
 )
 
 type AccountStore struct {
-	*sql.DB
+	*sqlx.DB
 }
 
 // If no row is found, the error will be sql.ErrNoRows

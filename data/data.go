@@ -1,16 +1,16 @@
 package data
 
 import (
-	"database/sql"
 	"fmt"
 	"net/url"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/data/sqlite3"
 	sq3 "github.com/mattn/go-sqlite3"
 )
 
-func NewDB(url *url.URL) (*sql.DB, AccountStore, error) {
+func NewDB(url *url.URL) (*sqlx.DB, AccountStore, error) {
 	switch url.Scheme {
 	case "sqlite3":
 		db, err := sqlite3.NewDB(url.Path)

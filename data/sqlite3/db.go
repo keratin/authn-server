@@ -1,14 +1,14 @@
 package sqlite3
 
 import (
-	"database/sql"
 	"fmt"
 
+	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func NewDB(env string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", fmt.Sprintf("./%v.db", env))
+func NewDB(env string) (*sqlx.DB, error) {
+	db, err := sqlx.Open("sqlite3", fmt.Sprintf("./%v.db", env))
 	if err != nil {
 		return nil, err
 	}
@@ -16,8 +16,8 @@ func NewDB(env string) (*sql.DB, error) {
 	return db, nil
 }
 
-func TempDB() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", "file::memory:?mode=memory&cache=shared")
+func TempDB() (*sqlx.DB, error) {
+	db, err := sqlx.Open("sqlite3", "file::memory:?mode=memory&cache=shared")
 	if err != nil {
 		return nil, err
 	}

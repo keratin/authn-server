@@ -1,10 +1,14 @@
-hash: e34d0c8442c7ebc1b64e00e2dfd34ae64348030108290b840a5a97a00f3f3af3
-updated: 2017-06-27T20:17:19.505035036-07:00
+hash: 063175f71d31b4184b136fe2272e37a367988cea4d787a552619a248f5ca3954
+updated: 2017-07-01T12:50:25.075611156-07:00
 imports:
+- name: github.com/davecgh/go-spew
+  version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
+  subpackages:
+  - spew
 - name: github.com/dgrijalva/jwt-go
   version: d2709f9f1f31ebcda9651b03077758c1f3a0018c
 - name: github.com/go-redis/redis
-  version: e14976b254c5bc5f399dd0ae9314b1d02a176897
+  version: 564772f045d89bd55843d7dc8042e0a599401e09
   subpackages:
   - internal
   - internal/consistenthash
@@ -17,6 +21,8 @@ imports:
   version: a4043c62cc2329bacda331d33fc908ab11ef0ec3
 - name: github.com/gorilla/mux
   version: bcd8bc72b08df0f70df986b97f95590779502d31
+- name: github.com/jmoiron/sqlx
+  version: d9bd385d68c068f1fabb5057e3dedcbcbb039d0f
 - name: github.com/joho/godotenv
   version: 726cc8b906e3d31c70a9671c90a13716a8d3f50d
   subpackages:
@@ -34,12 +40,15 @@ imports:
   - matching
   - scoring
   - utils/math
+- name: github.com/pmezard/go-difflib
+  version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
+  subpackages:
+  - difflib
 - name: github.com/stretchr/testify
   version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
-- name: go4.org
-  version: 034d17a462f7b2dcd1a4a73553ec5357ff6e6c6e
   subpackages:
-  - syncutil
+  - assert
+  - require
 - name: golang.org/x/crypto
   version: adbae1b6b6fb4b02448a0fc0dbbc9ba2b95b294d
   subpackages:
