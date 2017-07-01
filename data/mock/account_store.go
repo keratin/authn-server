@@ -35,7 +35,7 @@ func (s *AccountStore) FindByUsername(u string) (*models.Account, error) {
 	if id == 0 {
 		return nil, sql.ErrNoRows
 	} else {
-		return s.accountsById[id], nil
+		return dupAccount(*s.accountsById[id]), nil
 	}
 }
 
@@ -45,16 +45,16 @@ func (s *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 	}
 
 	now := time.Now()
-	acc := &models.Account{
+	acc := models.Account{
 		Id:        len(s.accountsById) + 1,
 		Username:  u,
 		Password:  p,
 		CreatedAt: now,
 		UpdatedAt: now,
 	}
-	s.accountsById[acc.Id] = acc
+	s.accountsById[acc.Id] = &acc
 	s.idByUsername[acc.Username] = acc.Id
-	return acc, nil
+	return dupAccount(acc), nil
 }
 
 func (s *AccountStore) Archive(id int) error {
@@ -92,4 +92,11 @@ func (s *AccountStore) RequireNewPassword(id int) error {
 		account.UpdatedAt = time.Now()
 	}
 	return nil
+}
+
+// i think this works? i want to avoid accidentally giving callers the ability
+// to reach into the memory map and modify things or see changes without relying
+// on the store api.
+func dupAccount(acct models.Account) *models.Account {
+	return &acct
 }

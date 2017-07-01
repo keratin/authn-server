@@ -37,9 +37,9 @@ func TestCredentialsVerifierFailure(t *testing.T) {
 	store := mock.NewAccountStore()
 	store.Create("known", bcrypted)
 	acc, _ := store.Create("locked", bcrypted)
-	acc.Locked = true // this is a reference to the memory store
+	store.Lock(acc.Id)
 	acc, _ = store.Create("expired", bcrypted)
-	acc.RequireNewPassword = true
+	store.RequireNewPassword(acc.Id)
 
 	testCases := []struct {
 		username string
