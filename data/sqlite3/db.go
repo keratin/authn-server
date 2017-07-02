@@ -8,7 +8,7 @@ import (
 )
 
 func NewDB(env string) (*sqlx.DB, error) {
-	db, err := sqlx.Open("sqlite3", fmt.Sprintf("./%v.db", env))
+	db, err := sqlx.Connect("sqlite3", fmt.Sprintf("./%v.db", env))
 	if err != nil {
 		return nil, err
 	}
@@ -17,7 +17,7 @@ func NewDB(env string) (*sqlx.DB, error) {
 }
 
 func TempDB() (*sqlx.DB, error) {
-	db, err := sqlx.Open("sqlite3", "file::memory:?mode=memory&cache=shared")
+	db, err := sqlx.Connect("sqlite3", "file::memory:?mode=memory&cache=shared")
 	if err != nil {
 		return nil, err
 	}
