@@ -13,6 +13,7 @@ var ErrInsecure = "INSECURE"
 var ErrFailed = "FAILED"
 var ErrLocked = "LOCKED"
 var ErrExpired = "EXPIRED"
+var ErrNotFound = "NOT_FOUND"
 
 type Error struct {
 	Field   string `json:"field"`

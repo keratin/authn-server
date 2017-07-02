@@ -30,7 +30,11 @@ func NewAccountStore() *AccountStore {
 }
 
 func (s *AccountStore) Find(id int) (*models.Account, error) {
-	return dupAccount(*s.accountsById[id]), nil
+	if s.accountsById[id] != nil {
+		return dupAccount(*s.accountsById[id]), nil
+	} else {
+		return nil, nil
+	}
 }
 
 func (s *AccountStore) FindByUsername(u string) (*models.Account, error) {
