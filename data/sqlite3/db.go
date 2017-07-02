@@ -15,17 +15,3 @@ func NewDB(env string) (*sqlx.DB, error) {
 
 	return db, nil
 }
-
-func TempDB() (*sqlx.DB, error) {
-	db, err := sqlx.Connect("sqlite3", "file::memory:?mode=memory&cache=shared")
-	if err != nil {
-		return nil, err
-	}
-
-	err = MigrateDB(db)
-	if err != nil {
-		return nil, err
-	}
-
-	return db, nil
-}

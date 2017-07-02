@@ -10,7 +10,7 @@ import (
 )
 
 func newStore() sqlite3.AccountStore {
-	db, err := sqlite3.TempDB()
+	db, err := tempDB()
 	if err != nil {
 		panic(err)
 	}
