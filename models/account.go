@@ -7,8 +7,9 @@ type Account struct {
 	Username           string
 	Password           []byte
 	Locked             bool
-	RequireNewPassword bool
-	CreatedAt          time.Time
-	UpdatedAt          time.Time
-	DeletedAt          time.Time
+	RequireNewPassword bool       `db:"require_new_password"`
+	PasswordChangedAt  *time.Time `db:"password_changed_at"`
+	CreatedAt          time.Time  `db:"created_at"`
+	UpdatedAt          time.Time  `db:"updated_at"`
+	DeletedAt          *time.Time `db:"deleted_at"`
 }

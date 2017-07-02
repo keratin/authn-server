@@ -1,8 +1,6 @@
 package services
 
 import (
-	"database/sql"
-
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/models"
@@ -22,14 +20,14 @@ func CredentialsVerifier(store data.AccountStore, cfg *config.Config, username s
 	}
 
 	account, err := store.FindByUsername(username)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil {
 		panic(err)
 	}
 
 	// if no account is found, we continue with a fake password hash. otherwise we
 	// present a timing attack that can be used for user enumeration.
 	var passwordHash []byte
-	if err == sql.ErrNoRows {
+	if account == nil {
 		passwordHash = []byte(emptyHashes[cfg.BcryptCost])
 	} else {
 		passwordHash = []byte(account.Password)

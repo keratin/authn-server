@@ -1,6 +1,7 @@
 package sqlite3
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -11,11 +12,23 @@ type AccountStore struct {
 	*sqlx.DB
 }
 
-// If no row is found, the error will be sql.ErrNoRows
+func (db *AccountStore) Find(id int) (*models.Account, error) {
+	account := models.Account{}
+	err := db.Get(&account, "SELECT * FROM accounts WHERE id = ?", id)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+	return &account, nil
+}
+
 func (db *AccountStore) FindByUsername(u string) (*models.Account, error) {
 	account := models.Account{}
-	err := db.QueryRow("SELECT * FROM accounts WHERE username = ?", u).Scan(&account)
-	if err != nil {
+	err := db.Get(&account, "SELECT * FROM accounts WHERE username = ?", u)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	} else if err != nil {
 		return nil, err
 	}
 	return &account, nil
@@ -23,7 +36,7 @@ func (db *AccountStore) FindByUsername(u string) (*models.Account, error) {
 
 func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 	now := time.Now()
-	result, err := db.Exec("INSERT INTO accounts (username, password, created_at, updated_at) VALUES (?, ?, ?, ?)", u, p, now.Unix(), now.Unix())
+	result, err := db.Exec("INSERT INTO accounts (username, password, locked, require_new_password, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)", u, p, false, false, now.Unix(), now.Unix())
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +56,7 @@ func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 }
 
 func (db *AccountStore) Archive(id int) error {
-	_, err := db.Exec("UPDATE accounts SET username = ?, password = ?, deleted_at = ? WHERE id = ?", nil, nil, time.Now(), id)
+	_, err := db.Exec("UPDATE accounts SET username = ?, password = ?, deleted_at = ? WHERE id = ?", "", "", time.Now(), id)
 	return err
 }
 

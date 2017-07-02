@@ -1,7 +1,6 @@
 package mock
 
 import (
-	"database/sql"
 	"fmt"
 	"time"
 
@@ -30,10 +29,14 @@ func NewAccountStore() *AccountStore {
 	}
 }
 
+func (s *AccountStore) Find(id int) (*models.Account, error) {
+	return dupAccount(*s.accountsById[id]), nil
+}
+
 func (s *AccountStore) FindByUsername(u string) (*models.Account, error) {
 	id := s.idByUsername[u]
 	if id == 0 {
-		return nil, sql.ErrNoRows
+		return nil, nil
 	} else {
 		return dupAccount(*s.accountsById[id]), nil
 	}
@@ -60,9 +63,10 @@ func (s *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 func (s *AccountStore) Archive(id int) error {
 	account := s.accountsById[id]
 	if account != nil {
+		now := time.Now()
 		account.Username = ""
-		account.Password = []byte{}
-		account.DeletedAt = time.Now()
+		account.Password = []byte("")
+		account.DeletedAt = &now
 	}
 	return nil
 }

@@ -14,14 +14,14 @@ func migration1(db *sqlx.DB) error {
 	_, err := db.Exec(`
         CREATE TABLE IF NOT EXISTS accounts (
             id INTEGER PRIMARY KEY,
-            username TEXT CONSTRAINT uniq UNIQUE,
-            password TEXT,
-            locked INTEGER,
-            require_new_password INTEGER,
-            password_changed_at INTEGER,
-            created_at INTEGER,
-            updated_at INTEGER,
-            deleted_at INTEGER
+            username TEXT NOT NULL CONSTRAINT uniq UNIQUE,
+            password TEXT NOT NULL,
+            locked BOOLEAN NOT NULL,
+            require_new_password BOOLEAN NOT NULL,
+            password_changed_at DATETIME,
+            created_at DATETIME NOT NULL,
+            updated_at DATETIME NOT NULL,
+            deleted_at DATETIME
         )
     `)
 	return err
