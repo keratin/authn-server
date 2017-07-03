@@ -1,9 +1,7 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
-	"regexp"
 
 	"github.com/gorilla/mux"
 )
@@ -44,17 +42,11 @@ type handledRoute struct {
 }
 
 func Attach(router *mux.Router, pathPrefix string, routes ...*handledRoute) {
-	re := regexp.MustCompile("/{2,}")
-
 	for _, r := range routes {
-		path := re.ReplaceAllLiteralString(
-			fmt.Sprintf("/%s/%s", pathPrefix, r.route.route.tpl),
-			"/",
-		)
-
 		router.
+			PathPrefix(pathPrefix).
 			Methods(r.route.route.verb).
-			Path(path).
+			Path(r.route.route.tpl).
 			Handler(r.route.security(r.handler))
 	}
 }
