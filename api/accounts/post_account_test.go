@@ -2,6 +2,7 @@ package accounts_test
 
 import (
 	"net/http"
+	"net/url"
 	"testing"
 
 	"github.com/keratin/authn-server/api/accounts"
@@ -13,18 +14,26 @@ import (
 
 func TestPostAccountSuccess(t *testing.T) {
 	app := test.App()
-	res := test.Post("/accounts", accounts.PostAccount(app), map[string]string{
-		"username": "foo",
-		"password": "bar",
-	})
+	server := test.Server(app, accounts.Routes(app))
+	defer server.Close()
 
-	test.AssertCode(t, res, http.StatusCreated)
-	test.AssertSession(t, res)
+	client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config)}}
+	res, err := client.PostForm("/accounts", url.Values{
+		"username": []string{"foo"},
+		"password": []string{"bar"},
+	})
+	require.NoError(t, err)
+
+	assert.Equal(t, http.StatusCreated, res.StatusCode)
+	test.AssertSession(t, app.Config, res.Cookies())
 	test.AssertIdTokenResponse(t, res, app.Config)
 }
 
 func TestPostAccountSuccessWithSession(t *testing.T) {
 	app := test.App()
+	server := test.Server(app, accounts.Routes(app))
+	defer server.Close()
+
 	account_id := 8642
 	session := test.CreateSession(app.RefreshTokenStore, app.Config, account_id)
 
@@ -33,10 +42,12 @@ func TestPostAccountSuccessWithSession(t *testing.T) {
 	require.NoError(t, err)
 	refreshToken := refreshTokens[0]
 
-	test.Post("/accounts", accounts.PostAccount(app), map[string]string{
-		"username": "foo",
-		"password": "bar",
-	}, test.WithSession(session))
+	client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config), test.WithSession(session)}}
+	_, err = client.PostForm("/accounts", url.Values{
+		"username": []string{"foo"},
+		"password": []string{"bar"},
+	})
+	require.NoError(t, err)
 
 	// after
 	id, err := app.RefreshTokenStore.Find(refreshToken)
@@ -46,8 +57,10 @@ func TestPostAccountSuccessWithSession(t *testing.T) {
 
 func TestPostAccountFailure(t *testing.T) {
 	app := test.App()
+	server := test.Server(app, accounts.Routes(app))
+	defer server.Close()
 
-	var tests = []struct {
+	var testCases = []struct {
 		username string
 		password string
 		errors   []services.Error
@@ -55,13 +68,15 @@ func TestPostAccountFailure(t *testing.T) {
 		{"", "", []services.Error{{"username", "MISSING"}, {"password", "MISSING"}}},
 	}
 
-	for _, tt := range tests {
-		res := test.Post("/accounts", accounts.PostAccount(app), map[string]string{
-			"username": tt.username,
-			"password": tt.password,
+	for _, tc := range testCases {
+		client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config)}}
+		res, err := client.PostForm("/accounts", url.Values{
+			"username": []string{tc.username},
+			"password": []string{tc.password},
 		})
+		require.NoError(t, err)
 
-		test.AssertCode(t, res, http.StatusUnprocessableEntity)
-		test.AssertErrors(t, res, tt.errors)
+		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
+		test.AssertErrors(t, res, tc.errors)
 	}
 }

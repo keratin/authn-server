@@ -12,7 +12,7 @@ type health struct {
 	Redis bool `json:"redis"`
 }
 
-func GetHealth(app *api.App) http.HandlerFunc {
+func getHealth(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		h := health{
 			Http:  true,

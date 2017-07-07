@@ -10,6 +10,7 @@ import (
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/services"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestRefererSecurity(t *testing.T) {
@@ -25,23 +26,25 @@ func TestRefererSecurity(t *testing.T) {
 		{"example.com", "http://example.com:8080", false},
 	}
 
-	expectedSuccessHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("success"))
-	})
-	expectedFailureHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("failure"))
 	})
 
 	for _, tc := range testCases {
 		adapter := api.RefererSecurity([]string{tc.domain})
-		res := httptest.NewRecorder()
-		req := httptest.NewRequest("GET", "/", strings.NewReader(""))
+
+		server := httptest.NewServer(adapter(nextHandler))
+		defer server.Close()
+
+		req, err := http.NewRequest("GET", server.URL, strings.NewReader(""))
+		require.NoError(t, err)
 		req.Header.Add("Referer", tc.referer)
+		res, err := http.DefaultClient.Do(req)
+		require.NoError(t, err)
+
 		if tc.success {
-			adapter(expectedSuccessHandler).ServeHTTP(res, req)
-			assert.Equal(t, res.Body.String(), "success")
+			assert.Equal(t, string(test.ReadBody(res)), "success")
 		} else {
-			adapter(expectedFailureHandler).ServeHTTP(res, req)
 			test.AssertErrors(t, res, []services.Error{{"referer", "is not a trusted host"}})
 		}
 	}

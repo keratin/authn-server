@@ -29,6 +29,7 @@ func App() *api.App {
 		IdentitySigningKey: weakKey,
 		AuthNURL:           authnUrl,
 		SessionCookieName:  "authn",
+		ApplicationDomains: []string{"test.com"},
 	}
 
 	tokenStore := mock.NewRefreshTokenStore()

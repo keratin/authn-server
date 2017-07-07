@@ -17,7 +17,7 @@ func RefererSecurity(domains []string) SecurityHandler {
 
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			url, err := url.Parse(r.Header.Get("REFERER"))
+			url, err := url.Parse(r.Header.Get("Referer"))
 			if err != nil {
 				panic(err)
 			}

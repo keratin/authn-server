@@ -6,7 +6,7 @@ import (
 	"github.com/keratin/authn-server/api"
 )
 
-func DeleteSession(app *api.App) http.HandlerFunc {
+func deleteSession(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		err := api.RevokeSession(app.RefreshTokenStore, app.Config, req)
 		if err != nil {

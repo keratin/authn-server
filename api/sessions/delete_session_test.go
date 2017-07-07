@@ -15,8 +15,10 @@ import (
 
 func TestDeleteSessionSuccess(t *testing.T) {
 	app := test.App()
-	account_id := 514628
+	server := test.Server(app, apiSessions.Routes(app))
+	defer server.Close()
 
+	account_id := 514628
 	session := test.CreateSession(app.RefreshTokenStore, app.Config, account_id)
 
 	// token exists
@@ -26,10 +28,12 @@ func TestDeleteSessionSuccess(t *testing.T) {
 	require.NoError(t, err)
 	assert.NotEmpty(t, id)
 
-	res := test.Delete("/session", apiSessions.DeleteSession(app), test.WithSession(session))
+	client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config), test.WithSession(session)}}
+	res, err := client.Delete("/session")
+	require.NoError(t, err)
 
 	// request always succeeds
-	test.AssertCode(t, res, http.StatusOK)
+	assert.Equal(t, http.StatusOK, res.StatusCode)
 
 	// token no longer exists
 	id, err = app.RefreshTokenStore.Find(models.RefreshToken(claims.Subject))
@@ -39,6 +43,8 @@ func TestDeleteSessionSuccess(t *testing.T) {
 
 func TestDeleteSessionFailure(t *testing.T) {
 	app := test.App()
+	server := test.Server(app, apiSessions.Routes(app))
+	defer server.Close()
 
 	bad_config := &config.Config{
 		AuthNURL:          app.Config.AuthNURL,
@@ -47,13 +53,22 @@ func TestDeleteSessionFailure(t *testing.T) {
 	}
 	session := test.CreateSession(app.RefreshTokenStore, bad_config, 123)
 
-	res := test.Delete("/session", apiSessions.DeleteSession(app), test.WithSession(session))
-	test.AssertCode(t, res, http.StatusOK)
+	client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config), test.WithSession(session)}}
+	res, err := client.Delete("/session")
+	require.NoError(t, err)
+
+	// request still succeeds
+	assert.Equal(t, http.StatusOK, res.StatusCode)
 }
 
 func TestDeleteSessionWithoutSession(t *testing.T) {
 	app := test.App()
+	server := test.Server(app, apiSessions.Routes(app))
+	defer server.Close()
 
-	res := test.Delete("/session", apiSessions.DeleteSession(app))
-	test.AssertCode(t, res, http.StatusOK)
+	client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config)}}
+	res, err := client.Delete("/session")
+	require.NoError(t, err)
+
+	assert.Equal(t, http.StatusOK, res.StatusCode)
 }

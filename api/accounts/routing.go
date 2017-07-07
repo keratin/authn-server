@@ -16,6 +16,6 @@ func Routes(app *api.App) []*api.HandledRoute {
 	return []*api.HandledRoute{
 		api.Post("/accounts").
 			SecuredWith(refererSecurity).
-			Handle(PostAccount(app)),
+			Handle(postAccount(app)),
 	}
 }

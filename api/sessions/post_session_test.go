@@ -2,6 +2,7 @@ package sessions_test
 
 import (
 	"net/http"
+	"net/url"
 	"testing"
 
 	"golang.org/x/crypto/bcrypt"
@@ -15,21 +16,28 @@ import (
 
 func TestPostSessionSuccess(t *testing.T) {
 	app := test.App()
+	server := test.Server(app, sessions.Routes(app))
+	defer server.Close()
+
 	b, _ := bcrypt.GenerateFromPassword([]byte("bar"), 4)
 	app.AccountStore.Create("foo", b)
 
-	res := test.Post("/session", sessions.PostSession(app), map[string]string{
-		"username": "foo",
-		"password": "bar",
+	client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config)}}
+	res, err := client.PostForm("/session", url.Values{
+		"username": []string{"foo"},
+		"password": []string{"bar"},
 	})
+	require.NoError(t, err)
 
-	test.AssertCode(t, res, http.StatusCreated)
-	test.AssertSession(t, res)
+	assert.Equal(t, http.StatusCreated, res.StatusCode)
+	test.AssertSession(t, app.Config, res.Cookies())
 	test.AssertIdTokenResponse(t, res, app.Config)
 }
 
 func TestPostSessionSuccessWithSession(t *testing.T) {
 	app := test.App()
+	server := test.Server(app, sessions.Routes(app))
+	defer server.Close()
 
 	b, _ := bcrypt.GenerateFromPassword([]byte("bar"), 4)
 	app.AccountStore.Create("foo", b)
@@ -42,10 +50,12 @@ func TestPostSessionSuccessWithSession(t *testing.T) {
 	require.NoError(t, err)
 	refreshToken := refreshTokens[0]
 
-	test.Post("/session", sessions.PostSession(app), map[string]string{
-		"username": "foo",
-		"password": "bar",
-	}, test.WithSession(session))
+	client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config), test.WithSession(session)}}
+	_, err = client.PostForm("/session", url.Values{
+		"username": []string{"foo"},
+		"password": []string{"bar"},
+	})
+	require.NoError(t, err)
 
 	// after
 	id, err := app.RefreshTokenStore.Find(refreshToken)
@@ -55,8 +65,10 @@ func TestPostSessionSuccessWithSession(t *testing.T) {
 
 func TestPostSessionFailure(t *testing.T) {
 	app := test.App()
+	server := test.Server(app, sessions.Routes(app))
+	defer server.Close()
 
-	var tests = []struct {
+	var testCases = []struct {
 		username string
 		password string
 		errors   []services.Error
@@ -64,13 +76,15 @@ func TestPostSessionFailure(t *testing.T) {
 		{"", "", []services.Error{{"credentials", "FAILED"}}},
 	}
 
-	for _, tt := range tests {
-		res := test.Post("/session", sessions.PostSession(app), map[string]string{
-			"username": tt.username,
-			"password": tt.password,
+	for _, tc := range testCases {
+		client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config)}}
+		res, err := client.PostForm("/session", url.Values{
+			"username": []string{tc.username},
+			"password": []string{tc.password},
 		})
+		require.NoError(t, err)
 
-		test.AssertCode(t, res, http.StatusUnprocessableEntity)
-		test.AssertErrors(t, res, tt.errors)
+		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
+		test.AssertErrors(t, res, tc.errors)
 	}
 }

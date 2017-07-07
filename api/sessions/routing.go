@@ -10,14 +10,14 @@ func Routes(app *api.App) []*api.HandledRoute {
 	return []*api.HandledRoute{
 		api.Post("/session").
 			SecuredWith(refererSecurity).
-			Handle(PostSession(app)),
+			Handle(postSession(app)),
 
 		api.Delete("/session").
 			SecuredWith(refererSecurity).
-			Handle(DeleteSession(app)),
+			Handle(deleteSession(app)),
 
 		api.Get("/session/refresh").
 			SecuredWith(refererSecurity).
-			Handle(GetSessionRefresh(app)),
+			Handle(getSessionRefresh(app)),
 	}
 }

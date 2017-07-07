@@ -7,7 +7,7 @@ import (
 	"github.com/keratin/authn-server/models"
 )
 
-func GetSessionRefresh(app *api.App) http.HandlerFunc {
+func getSessionRefresh(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		// decode the JWT
 		session, err := api.CurrentSession(app.Config, req)

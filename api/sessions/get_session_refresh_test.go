@@ -13,29 +13,38 @@ import (
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/sessions"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetSessionRefreshSuccess(t *testing.T) {
 	app := test.App()
+	server := test.Server(app, apiSessions.Routes(app))
+	defer server.Close()
 
 	account_id := 82594
 	existingSession := test.CreateSession(app.RefreshTokenStore, app.Config, account_id)
 
-	res := test.Get("/session/refresh", apiSessions.GetSessionRefresh(app), test.WithSession(existingSession))
+	client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config), test.WithSession(existingSession)}}
+	res, err := client.Get("/session/refresh")
+	require.NoError(t, err)
 
-	test.AssertCode(t, res, http.StatusCreated)
+	assert.Equal(t, http.StatusCreated, res.StatusCode)
 	test.AssertIdTokenResponse(t, res, app.Config)
 }
 
 func TestGetSessionRefreshFailure(t *testing.T) {
 	app := &api.App{
 		Config: &config.Config{
-			AuthNURL:          &url.URL{Scheme: "https", Path: "www.example.com"},
-			SessionCookieName: "authn-test",
-			SessionSigningKey: []byte("good"),
+			AuthNURL:           &url.URL{Scheme: "https", Path: "www.example.com"},
+			SessionCookieName:  "authn-test",
+			SessionSigningKey:  []byte("good"),
+			ApplicationDomains: []string{"test.com"},
 		},
 		RefreshTokenStore: mock.NewRefreshTokenStore(),
 	}
+	server := test.Server(app, apiSessions.Routes(app))
+	defer server.Close()
 
 	testCases := []struct {
 		signingKey []byte
@@ -58,9 +67,11 @@ func TestGetSessionRefreshFailure(t *testing.T) {
 			revokeSession(app.RefreshTokenStore, app.Config, existingSession)
 		}
 
-		res := test.Get("/session/refresh", apiSessions.GetSessionRefresh(app), test.WithSession(existingSession))
+		client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config), test.WithSession(existingSession)}}
+		res, err := client.Get("/session/refresh")
+		require.NoError(t, err)
 
-		test.AssertCode(t, res, http.StatusUnauthorized)
+		assert.Equal(t, http.StatusUnauthorized, res.StatusCode)
 	}
 }
 
