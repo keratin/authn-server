@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -32,6 +33,8 @@ type Config struct {
 	ForceSSL              bool
 	MountedPath           string
 	AccessTokenTTL        time.Duration
+	AuthUsername          string
+	AuthPassword          string
 }
 
 var configurers = []configurer{
@@ -204,6 +207,24 @@ var configurers = []configurer{
 			c.AccessTokenTTL = time.Duration(ttl) * time.Second
 		}
 		return err
+	},
+
+	// HTTP_AUTH_USERNAME and HTTP_AUTH_PASSWORD specify the basic auth credentials
+	// that must be provided to access private endpoints.
+	//
+	// This security pattern requires communication with AuthN to use SSL.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("HTTP_AUTH_USERNAME"); ok {
+			c.AuthUsername = val
+		} else {
+			c.AuthUsername = strconv.Itoa(rand.Int(rand.Reader, 99999999))
+		}
+		if val, ok := os.LookupEnv("HTTP_AUTH_PASSWORD"); ok {
+			c.AuthPassword = val
+		} else {
+			c.AuthPassword = strconv.Itoa(rand.Int(rand.Reader, 99999999))
+		}
+		return nil
 	},
 
 	func(c *Config) error {
