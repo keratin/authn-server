@@ -32,16 +32,16 @@ type securedRoute struct {
 	security SecurityHandler
 }
 
-func (r *securedRoute) Handle(fn func(w http.ResponseWriter, r *http.Request)) *handledRoute {
-	return &handledRoute{route: r, handler: http.HandlerFunc(fn)}
+func (r *securedRoute) Handle(fn func(w http.ResponseWriter, r *http.Request)) *HandledRoute {
+	return &HandledRoute{route: r, handler: http.HandlerFunc(fn)}
 }
 
-type handledRoute struct {
+type HandledRoute struct {
 	route   *securedRoute
 	handler http.Handler
 }
 
-func Attach(router *mux.Router, pathPrefix string, routes ...*handledRoute) {
+func Attach(router *mux.Router, pathPrefix string, routes ...*HandledRoute) {
 	for _, r := range routes {
 		router.
 			PathPrefix(pathPrefix).

@@ -12,49 +12,19 @@ import (
 	"github.com/keratin/authn-server/api/sessions"
 )
 
-func routing(app *api.App) http.Handler {
+func router(app *api.App) http.Handler {
 	r := mux.NewRouter()
 
-	refererSecurity := api.RefererSecurity(app.Config.ApplicationDomains)
+	// GET  /
+	// POST /password
+	// GET  /password/reset
+	// GET  /configuration
+	// GET  /jwks
+	// GET  /stats
 
-	r.HandleFunc("/", api.Stub(app)).Methods("GET")
-
-	api.Attach(r, app.Config.MountedPath,
-		api.Post("/accounts").
-			SecuredWith(refererSecurity).
-			Handle(accounts.PostAccount(app)),
-	)
-	r.HandleFunc("/accounts/import", api.Stub(app)).Methods("POST")
-	r.HandleFunc("/accounts/available", api.Stub(app)).Methods("GET")
-
-	r.HandleFunc("/accounts/{account_id:[0-9]+}", api.Stub(app)).Methods("DELETE")
-	r.HandleFunc("/accounts/{account_id:[0-9]+}/lock", api.Stub(app)).Methods("PUT", "PATCH")
-	r.HandleFunc("/accounts/{account_id:[0-9]+}/unlock", api.Stub(app)).Methods("PUT", "PATCH")
-
-	api.Attach(r, app.Config.MountedPath,
-		api.Post("/session").
-			SecuredWith(refererSecurity).
-			Handle(sessions.PostSession(app)),
-		api.Delete("/session").
-			SecuredWith(refererSecurity).
-			Handle(sessions.DeleteSession(app)),
-		api.Get("/session/refresh").
-			SecuredWith(refererSecurity).
-			Handle(sessions.GetSessionRefresh(app)),
-	)
-
-	r.HandleFunc("/password", api.Stub(app)).Methods("POST")
-	r.HandleFunc("/password/reset", api.Stub(app)).Methods("GET")
-
-	r.HandleFunc("/configuration", api.Stub(app)).Methods("GET")
-	r.HandleFunc("/jwks", api.Stub(app)).Methods("GET")
-
-	r.HandleFunc("/stats", api.Stub(app)).Methods("GET")
-	api.Attach(r, app.Config.MountedPath,
-		api.Get("/health").
-			SecuredWith(api.Unsecured()).
-			Handle(health.GetHealth(app)),
-	)
+	api.Attach(r, app.Config.MountedPath, health.Routes(app)...)
+	api.Attach(r, app.Config.MountedPath, accounts.Routes(app)...)
+	api.Attach(r, app.Config.MountedPath, sessions.Routes(app)...)
 
 	corsAdapter := gorilla.CORS(
 		gorilla.AllowedOrigins(app.Config.ApplicationOrigins),

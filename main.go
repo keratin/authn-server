@@ -31,10 +31,8 @@ func serve() {
 		panic(err)
 	}
 
-	stack := routing(app)
-
 	fmt.Println(fmt.Sprintf("~*~ Keratin AuthN server is ready on %s ~*~", app.Config.AuthNURL))
-	log.Fatal(http.ListenAndServe(":8000", stack))
+	log.Fatal(http.ListenAndServe(":8000", router(app)))
 }
 
 func migrate() {
