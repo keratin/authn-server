@@ -28,7 +28,7 @@ func TestDeleteSessionSuccess(t *testing.T) {
 	require.NoError(t, err)
 	assert.NotEmpty(t, id)
 
-	client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config), test.WithSession(session)}}
+	client := test.NewClient(server).Referred(app.Config).WithSession(session)
 	res, err := client.Delete("/session")
 	require.NoError(t, err)
 
@@ -53,7 +53,7 @@ func TestDeleteSessionFailure(t *testing.T) {
 	}
 	session := test.CreateSession(app.RefreshTokenStore, bad_config, 123)
 
-	client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config), test.WithSession(session)}}
+	client := test.NewClient(server).Referred(app.Config).WithSession(session)
 	res, err := client.Delete("/session")
 	require.NoError(t, err)
 
@@ -66,7 +66,7 @@ func TestDeleteSessionWithoutSession(t *testing.T) {
 	server := test.Server(app, apiSessions.Routes(app))
 	defer server.Close()
 
-	client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config)}}
+	client := test.NewClient(server).Referred(app.Config)
 	res, err := client.Delete("/session")
 	require.NoError(t, err)
 

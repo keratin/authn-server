@@ -3,13 +3,37 @@ package test
 import (
 	"fmt"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"strings"
+
+	"github.com/keratin/authn-server/config"
 )
 
 type Client struct {
 	BaseURL   string
-	Modifiers []Modder
+	Modifiers []modder
+}
+
+func NewClient(server *httptest.Server) *Client {
+	return &Client{server.URL, []modder{}}
+}
+
+func (c *Client) Referred(cfg *config.Config) *Client {
+	origin := fmt.Sprintf("http://%s", cfg.ApplicationDomains[0])
+	c.Modifiers = append(c.Modifiers, func(req *http.Request) *http.Request {
+		req.Header.Add("Referer", origin)
+		return req
+	})
+	return c
+}
+
+func (c *Client) WithSession(session *http.Cookie) *Client {
+	c.Modifiers = append(c.Modifiers, func(req *http.Request) *http.Request {
+		req.AddCookie(session)
+		return req
+	})
+	return c
 }
 
 func (c *Client) PostForm(path string, form url.Values) (*http.Response, error) {
@@ -49,3 +73,5 @@ func (c *Client) Get(path string) (*http.Response, error) {
 
 	return http.DefaultClient.Do(req)
 }
+
+type modder func(req *http.Request) *http.Request

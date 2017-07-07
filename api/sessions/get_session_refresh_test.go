@@ -25,7 +25,7 @@ func TestGetSessionRefreshSuccess(t *testing.T) {
 	account_id := 82594
 	existingSession := test.CreateSession(app.RefreshTokenStore, app.Config, account_id)
 
-	client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config), test.WithSession(existingSession)}}
+	client := test.NewClient(server).Referred(app.Config).WithSession(existingSession)
 	res, err := client.Get("/session/refresh")
 	require.NoError(t, err)
 
@@ -67,7 +67,7 @@ func TestGetSessionRefreshFailure(t *testing.T) {
 			revokeSession(app.RefreshTokenStore, app.Config, existingSession)
 		}
 
-		client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config), test.WithSession(existingSession)}}
+		client := test.NewClient(server).Referred(app.Config).WithSession(existingSession)
 		res, err := client.Get("/session/refresh")
 		require.NoError(t, err)
 

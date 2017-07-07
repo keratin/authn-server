@@ -22,7 +22,7 @@ func TestPostSessionSuccess(t *testing.T) {
 	b, _ := bcrypt.GenerateFromPassword([]byte("bar"), 4)
 	app.AccountStore.Create("foo", b)
 
-	client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config)}}
+	client := test.NewClient(server).Referred(app.Config)
 	res, err := client.PostForm("/session", url.Values{
 		"username": []string{"foo"},
 		"password": []string{"bar"},
@@ -50,7 +50,7 @@ func TestPostSessionSuccessWithSession(t *testing.T) {
 	require.NoError(t, err)
 	refreshToken := refreshTokens[0]
 
-	client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config), test.WithSession(session)}}
+	client := test.NewClient(server).Referred(app.Config).WithSession(session)
 	_, err = client.PostForm("/session", url.Values{
 		"username": []string{"foo"},
 		"password": []string{"bar"},
@@ -77,7 +77,7 @@ func TestPostSessionFailure(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config)}}
+		client := test.NewClient(server).Referred(app.Config)
 		res, err := client.PostForm("/session", url.Values{
 			"username": []string{tc.username},
 			"password": []string{tc.password},

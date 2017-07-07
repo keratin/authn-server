@@ -17,7 +17,7 @@ func TestPostAccountSuccess(t *testing.T) {
 	server := test.Server(app, accounts.Routes(app))
 	defer server.Close()
 
-	client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config)}}
+	client := test.NewClient(server).Referred(app.Config)
 	res, err := client.PostForm("/accounts", url.Values{
 		"username": []string{"foo"},
 		"password": []string{"bar"},
@@ -42,7 +42,7 @@ func TestPostAccountSuccessWithSession(t *testing.T) {
 	require.NoError(t, err)
 	refreshToken := refreshTokens[0]
 
-	client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config), test.WithSession(session)}}
+	client := test.NewClient(server).Referred(app.Config).WithSession(session)
 	_, err = client.PostForm("/accounts", url.Values{
 		"username": []string{"foo"},
 		"password": []string{"bar"},
@@ -69,7 +69,7 @@ func TestPostAccountFailure(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		client := test.Client{server.URL, []test.Modder{test.ReferFrom(app.Config)}}
+		client := test.NewClient(server).Referred(app.Config)
 		res, err := client.PostForm("/accounts", url.Values{
 			"username": []string{tc.username},
 			"password": []string{tc.password},
