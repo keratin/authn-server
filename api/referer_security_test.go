@@ -3,7 +3,6 @@ package api_test
 import (
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
 	"github.com/keratin/authn-server/api"
@@ -36,7 +35,7 @@ func TestRefererSecurity(t *testing.T) {
 		server := httptest.NewServer(adapter(nextHandler))
 		defer server.Close()
 
-		req, err := http.NewRequest("GET", server.URL, strings.NewReader(""))
+		req, err := http.NewRequest("GET", server.URL, nil)
 		require.NoError(t, err)
 		req.Header.Add("Referer", tc.referer)
 		res, err := http.DefaultClient.Do(req)
