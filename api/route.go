@@ -18,6 +18,10 @@ func Delete(tpl string) *route {
 	return &route{verb: "DELETE", tpl: tpl}
 }
 
+func Patch(tpl string) *route {
+	return &route{verb: "PATCH", tpl: tpl}
+}
+
 type route struct {
 	verb string
 	tpl  string

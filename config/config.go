@@ -5,9 +5,9 @@ import (
 	"crypto/rsa"
 	"crypto/sha256"
 	"fmt"
+	"math/big"
 	"net/url"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -217,12 +217,20 @@ var configurers = []configurer{
 		if val, ok := os.LookupEnv("HTTP_AUTH_USERNAME"); ok {
 			c.AuthUsername = val
 		} else {
-			c.AuthUsername = strconv.Itoa(rand.Int(rand.Reader, 99999999))
+			i, err := rand.Int(rand.Reader, big.NewInt(99999999))
+			if err != nil {
+				return err
+			}
+			c.AuthUsername = i.String()
 		}
 		if val, ok := os.LookupEnv("HTTP_AUTH_PASSWORD"); ok {
 			c.AuthPassword = val
 		} else {
-			c.AuthPassword = strconv.Itoa(rand.Int(rand.Reader, 99999999))
+			i, err := rand.Int(rand.Reader, big.NewInt(99999999))
+			if err != nil {
+				return err
+			}
+			c.AuthPassword = i.String()
 		}
 		return nil
 	},

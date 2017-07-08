@@ -36,6 +36,14 @@ func (c *Client) WithSession(session *http.Cookie) *Client {
 	return c
 }
 
+func (c *Client) Authenticated(cfg *config.Config) *Client {
+	c.Modifiers = append(c.Modifiers, func(req *http.Request) *http.Request {
+		req.SetBasicAuth(cfg.AuthUsername, cfg.AuthPassword)
+		return req
+	})
+	return c
+}
+
 func (c *Client) PostForm(path string, form url.Values) (*http.Response, error) {
 	body := strings.NewReader(form.Encode())
 	req, err := http.NewRequest("POST", fmt.Sprintf("%s%s", c.BaseURL, path), body)
@@ -67,6 +75,20 @@ func (c *Client) Get(path string) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
+	for _, mod := range c.Modifiers {
+		req = mod(req)
+	}
+
+	return http.DefaultClient.Do(req)
+}
+
+func (c *Client) Patch(path string, form url.Values) (*http.Response, error) {
+	body := strings.NewReader(form.Encode())
+	req, err := http.NewRequest("PATCH", fmt.Sprintf("%s%s", c.BaseURL, path), body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	for _, mod := range c.Modifiers {
 		req = mod(req)
 	}
