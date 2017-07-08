@@ -9,12 +9,15 @@ func Routes(app *api.App) []*api.HandledRoute {
 	authentication := api.BasicAuthSecurity(app.Config.AuthUsername, app.Config.AuthPassword, "Private AuthN Realm")
 
 	// POST   /accounts/import
-	// GET    /accounts/available
 
 	return []*api.HandledRoute{
 		api.Post("/accounts").
 			SecuredWith(refererSecurity).
 			Handle(postAccount(app)),
+
+		api.Get("/accounts/available").
+			SecuredWith(refererSecurity).
+			Handle(getAccountsAvailable(app)),
 
 		api.Patch("/accounts/{id:[0-9]+}/lock").
 			SecuredWith(authentication).

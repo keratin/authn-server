@@ -2,7 +2,6 @@ package api
 
 import (
 	"crypto/subtle"
-	"fmt"
 	"net/http"
 )
 
@@ -27,7 +26,6 @@ func BasicAuthSecurity(username string, password string, realm string) SecurityH
 				w.Write([]byte("Unauthorized.\n"))
 				return
 			}
-			fmt.Println("match")
 
 			h.ServeHTTP(w, r)
 		})
