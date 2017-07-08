@@ -10,7 +10,6 @@ func Routes(app *api.App) []*api.HandledRoute {
 
 	// POST   /accounts/import
 	// GET    /accounts/available
-	// DELETE /accounts/{account_id:[0-9]+}
 
 	return []*api.HandledRoute{
 		api.Post("/accounts").
@@ -24,5 +23,9 @@ func Routes(app *api.App) []*api.HandledRoute {
 		api.Patch("/accounts/{id:[0-9]+}/unlock").
 			SecuredWith(authentication).
 			Handle(patchAccountUnlock(app)),
+
+		api.Delete("/accounts/{id:[0-9]+}").
+			SecuredWith(authentication).
+			Handle(deleteAccount(app)),
 	}
 }
