@@ -27,6 +27,10 @@ func Routes(app *api.App) []*api.HandledRoute {
 			SecuredWith(authentication).
 			Handle(patchAccountUnlock(app)),
 
+		api.Patch("/accounts/{id:[0-9]+}/expire_password").
+			SecuredWith(authentication).
+			Handle(patchAccountExpirePassword(app)),
+
 		api.Delete("/accounts/{id:[0-9]+}").
 			SecuredWith(authentication).
 			Handle(deleteAccount(app)),
