@@ -25,7 +25,9 @@ func postAccountsImport(app *api.App) http.HandlerFunc {
 		if errors != nil {
 			api.WriteErrors(w, errors)
 		} else {
-			api.WriteData(w, http.StatusCreated, map[string]int{"id": account.Id})
+			api.WriteData(w, http.StatusCreated, map[string]int{
+				"id": account.Id,
+			})
 		}
 	}
 }

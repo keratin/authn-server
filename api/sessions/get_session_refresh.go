@@ -42,10 +42,8 @@ func getSessionRefresh(app *api.App) http.HandlerFunc {
 			panic(err)
 		}
 
-		api.WriteData(w, http.StatusCreated, struct {
-			IdToken string `json:"id_token"`
-		}{
-			IdToken: identityToken,
+		api.WriteData(w, http.StatusCreated, map[string]string{
+			"id_token": identityToken,
 		})
 	}
 }

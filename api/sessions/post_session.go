@@ -35,10 +35,8 @@ func postSession(app *api.App) http.HandlerFunc {
 		api.SetSession(app.Config, w, sessionToken)
 
 		// Return the signed identity token in the body
-		api.WriteData(w, http.StatusCreated, struct {
-			IdToken string `json:"id_token"`
-		}{
-			IdToken: identityToken,
+		api.WriteData(w, http.StatusCreated, map[string]string{
+			"id_token": identityToken,
 		})
 	}
 }
