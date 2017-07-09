@@ -15,13 +15,19 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func AssertData(t *testing.T, res *http.Response, expected interface{}) {
+	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
+
+	j, err := json.Marshal(api.ServiceData{expected})
+	require.NoError(t, err)
+	assert.Equal(t, string(j), string(ReadBody(res)))
+}
+
 func AssertErrors(t *testing.T, res *http.Response, expected []services.Error) {
 	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
 
 	j, err := json.Marshal(api.ServiceErrors{Errors: expected})
-	if err != nil {
-		panic(err)
-	}
+	require.NoError(t, err)
 	assert.Equal(t, string(j), string(ReadBody(res)))
 }
 

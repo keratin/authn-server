@@ -8,8 +8,6 @@ func Routes(app *api.App) []*api.HandledRoute {
 	refererSecurity := api.RefererSecurity(app.Config.ApplicationDomains)
 	authentication := api.BasicAuthSecurity(app.Config.AuthUsername, app.Config.AuthPassword, "Private AuthN Realm")
 
-	// POST   /accounts/import
-
 	return []*api.HandledRoute{
 		api.Post("/accounts").
 			SecuredWith(refererSecurity).
@@ -18,6 +16,10 @@ func Routes(app *api.App) []*api.HandledRoute {
 		api.Get("/accounts/available").
 			SecuredWith(refererSecurity).
 			Handle(getAccountsAvailable(app)),
+
+		api.Post("/accounts/import").
+			SecuredWith(authentication).
+			Handle(postAccountsImport(app)),
 
 		api.Patch("/accounts/{id:[0-9]+}/lock").
 			SecuredWith(authentication).
