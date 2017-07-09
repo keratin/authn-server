@@ -112,3 +112,21 @@ func TestRequireNewPassword(t *testing.T) {
 	require.NoError(t, err)
 	assert.True(t, account.RequireNewPassword)
 }
+
+func TestSetPassword(t *testing.T) {
+	store := newStore()
+	defer store.Close()
+
+	account, err := store.Create("authn@keratin.tech", []byte("old"))
+	require.NoError(t, err)
+	err = store.RequireNewPassword(account.Id)
+	require.NoError(t, err)
+
+	err = store.SetPassword(account.Id, []byte("new"))
+	require.NoError(t, err)
+
+	account, err = store.Find(account.Id)
+	require.NoError(t, err)
+	assert.Equal(t, []byte("new"), account.Password)
+	assert.False(t, account.RequireNewPassword)
+}

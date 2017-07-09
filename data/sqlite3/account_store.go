@@ -81,3 +81,8 @@ func (db *AccountStore) RequireNewPassword(id int) error {
 	_, err := db.Exec("UPDATE accounts SET require_new_password = ?, updated_at = ? WHERE id = ?", true, time.Now(), id)
 	return err
 }
+
+func (db *AccountStore) SetPassword(id int, p []byte) error {
+	_, err := db.Exec("UPDATE accounts SET password = ?, require_new_password = ?, updated_at = ? WHERE id = ?", p, false, time.Now(), id)
+	return err
+}
