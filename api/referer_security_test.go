@@ -44,7 +44,7 @@ func TestRefererSecurity(t *testing.T) {
 		if tc.success {
 			assert.Equal(t, string(test.ReadBody(res)), "success")
 		} else {
-			test.AssertErrors(t, res, []services.Error{{"referer", "is not a trusted host"}})
+			test.AssertErrors(t, res, services.FieldErrors{{"referer", "is not a trusted host"}})
 		}
 	}
 }

@@ -12,14 +12,14 @@ type ServiceData struct {
 }
 
 type ServiceErrors struct {
-	Errors []services.Error `json:"errors"`
+	Errors services.FieldErrors `json:"errors"`
 }
 
 func WriteData(w http.ResponseWriter, httpCode int, d interface{}) {
 	WriteJson(w, httpCode, ServiceData{Result: d})
 }
 
-func WriteErrors(w http.ResponseWriter, e []services.Error) {
+func WriteErrors(w http.ResponseWriter, e services.FieldErrors) {
 	WriteJson(w, http.StatusUnprocessableEntity, ServiceErrors{Errors: e})
 }
 

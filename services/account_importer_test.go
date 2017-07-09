@@ -28,14 +28,14 @@ func TestAccountImporter(t *testing.T) {
 		username string
 		password []byte
 		locked   bool
-		errors   *[]services.Error
+		errors   *services.FieldErrors
 	}{
 		{"unlocked", bcrypted, false, nil},
 		{"locked", bcrypted, true, nil},
 		{"plaintext", []byte("secret"), false, nil},
-		{"", bcrypted, false, &[]services.Error{{"username", services.ErrMissing}}},
-		{"invalid", []byte(""), false, &[]services.Error{{"password", services.ErrMissing}}},
-		{"existing", bcrypted, false, &[]services.Error{{"username", services.ErrTaken}}},
+		{"", bcrypted, false, &services.FieldErrors{{"username", services.ErrMissing}}},
+		{"invalid", []byte(""), false, &services.FieldErrors{{"password", services.ErrMissing}}},
+		{"existing", bcrypted, false, &services.FieldErrors{{"username", services.ErrTaken}}},
 	}
 
 	for _, tc := range testCases {

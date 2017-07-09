@@ -22,9 +22,9 @@ func TestAccountUnlocker(t *testing.T) {
 
 	var testCases = []struct {
 		account_id int
-		errors     *[]services.Error
+		errors     *services.FieldErrors
 	}{
-		{123456789, &[]services.Error{{"account", services.ErrNotFound}}},
+		{123456789, &services.FieldErrors{{"account", services.ErrNotFound}}},
 		{locked_account.Id, nil},
 		{unlocked_account.Id, nil},
 	}

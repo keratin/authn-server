@@ -7,6 +7,7 @@ import (
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/services"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccountCreatorSuccess(t *testing.T) {
@@ -23,15 +24,10 @@ func TestAccountCreatorSuccess(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		acc, errs := services.AccountCreator(store, &tc.config, tc.username, tc.password)
-		if len(errs) > 0 {
-			for _, err := range errs {
-				assert.NoError(t, err)
-			}
-		} else {
-			assert.NotEqual(t, 0, acc.Id)
-			assert.Equal(t, tc.username, acc.Username)
-		}
+		acc, err := services.AccountCreator(store, &tc.config, tc.username, tc.password)
+		require.NoError(t, err)
+		assert.NotEqual(t, 0, acc.Id)
+		assert.Equal(t, tc.username, acc.Username)
 	}
 }
 
@@ -45,23 +41,23 @@ func TestAccountCreatorFailure(t *testing.T) {
 		config   config.Config
 		username string
 		password string
-		errors   []services.Error
+		errors   services.FieldErrors
 	}{
 		// username validations
-		{config.Config{}, "", "PASSword", []services.Error{{"username", "MISSING"}}},
-		{config.Config{}, "  ", "PASSword", []services.Error{{"username", "MISSING"}}},
-		{config.Config{}, "existing@test.com", "PASSword", []services.Error{{"username", "TAKEN"}}},
-		{config.Config{UsernameIsEmail: true}, "notanemail", "PASSword", []services.Error{{"username", "FORMAT_INVALID"}}},
-		{config.Config{UsernameIsEmail: true, UsernameDomains: []string{"rightdomain.com"}}, "email@wrongdomain.com", "PASSword", []services.Error{{"username", "FORMAT_INVALID"}}},
-		{config.Config{UsernameIsEmail: false, UsernameMinLength: 6}, "short", "PASSword", []services.Error{{"username", "FORMAT_INVALID"}}},
+		{config.Config{}, "", "PASSword", services.FieldErrors{{"username", "MISSING"}}},
+		{config.Config{}, "  ", "PASSword", services.FieldErrors{{"username", "MISSING"}}},
+		{config.Config{}, "existing@test.com", "PASSword", services.FieldErrors{{"username", "TAKEN"}}},
+		{config.Config{UsernameIsEmail: true}, "notanemail", "PASSword", services.FieldErrors{{"username", "FORMAT_INVALID"}}},
+		{config.Config{UsernameIsEmail: true, UsernameDomains: []string{"rightdomain.com"}}, "email@wrongdomain.com", "PASSword", services.FieldErrors{{"username", "FORMAT_INVALID"}}},
+		{config.Config{UsernameIsEmail: false, UsernameMinLength: 6}, "short", "PASSword", services.FieldErrors{{"username", "FORMAT_INVALID"}}},
 		// password validations
-		{config.Config{}, "username", "", []services.Error{{"password", "MISSING"}}},
-		{config.Config{PasswordMinComplexity: 2}, "username", "qwerty", []services.Error{{"password", "INSECURE"}}},
+		{config.Config{}, "username", "", services.FieldErrors{{"password", "MISSING"}}},
+		{config.Config{PasswordMinComplexity: 2}, "username", "qwerty", services.FieldErrors{{"password", "INSECURE"}}},
 	}
 
 	for _, tc := range testCases {
-		acc, errs := services.AccountCreator(store, &tc.config, tc.username, tc.password)
+		acc, err := services.AccountCreator(store, &tc.config, tc.username, tc.password)
 		assert.Empty(t, acc)
-		assert.Equal(t, tc.errors, errs)
+		assert.Equal(t, tc.errors, err)
 	}
 }

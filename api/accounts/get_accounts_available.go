@@ -15,7 +15,7 @@ func getAccountsAvailable(app *api.App) http.HandlerFunc {
 		}
 
 		if account == nil {
-			api.WriteErrors(w, []services.Error{{"username", services.ErrTaken}})
+			api.WriteErrors(w, services.FieldErrors{{"username", services.ErrTaken}})
 		} else {
 			api.WriteData(w, http.StatusOK, true)
 		}

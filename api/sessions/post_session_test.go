@@ -71,9 +71,9 @@ func TestPostSessionFailure(t *testing.T) {
 	var testCases = []struct {
 		username string
 		password string
-		errors   []services.Error
+		errors   services.FieldErrors
 	}{
-		{"", "", []services.Error{{"credentials", "FAILED"}}},
+		{"", "", services.FieldErrors{{"credentials", "FAILED"}}},
 	}
 
 	for _, tc := range testCases {

@@ -10,18 +10,22 @@ import (
 func postAccount(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		// Create the account
-		account, errors := services.AccountCreator(
+		account, err := services.AccountCreator(
 			app.AccountStore,
 			app.Config,
 			req.FormValue("username"),
 			req.FormValue("password"),
 		)
-		if errors != nil {
-			api.WriteErrors(w, errors)
-			return
+		if err != nil {
+			if fe, ok := err.(services.FieldErrors); ok {
+				api.WriteErrors(w, fe)
+				return
+			} else {
+				panic(err)
+			}
 		}
 
-		err := api.RevokeSession(app.RefreshTokenStore, app.Config, req)
+		err = api.RevokeSession(app.RefreshTokenStore, app.Config, req)
 		if err != nil {
 			// TODO: alert but continue
 		}

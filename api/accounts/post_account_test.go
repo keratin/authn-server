@@ -63,9 +63,9 @@ func TestPostAccountFailure(t *testing.T) {
 	var testCases = []struct {
 		username string
 		password string
-		errors   []services.Error
+		errors   services.FieldErrors
 	}{
-		{"", "", []services.Error{{"username", "MISSING"}, {"password", "MISSING"}}},
+		{"", "", services.FieldErrors{{"username", "MISSING"}, {"password", "MISSING"}}},
 	}
 
 	for _, tc := range testCases {

@@ -23,7 +23,7 @@ func AssertData(t *testing.T, res *http.Response, expected interface{}) {
 	assert.Equal(t, string(j), string(ReadBody(res)))
 }
 
-func AssertErrors(t *testing.T, res *http.Response, expected []services.Error) {
+func AssertErrors(t *testing.T, res *http.Response, expected services.FieldErrors) {
 	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
 
 	j, err := json.Marshal(api.ServiceErrors{Errors: expected})

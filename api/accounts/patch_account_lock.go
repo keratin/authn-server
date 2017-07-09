@@ -16,12 +16,16 @@ func patchAccountLock(app *api.App) http.HandlerFunc {
 			panic(err)
 		}
 
-		errors := services.AccountLocker(app.AccountStore, id)
-
-		if errors == nil {
-			w.WriteHeader(http.StatusOK)
-		} else {
-			api.WriteJson(w, http.StatusNotFound, api.ServiceErrors{errors})
+		err = services.AccountLocker(app.AccountStore, id)
+		if err != nil {
+			if fe, ok := err.(services.FieldErrors); ok {
+				api.WriteJson(w, http.StatusNotFound, api.ServiceErrors{fe})
+				return
+			} else {
+				panic(err)
+			}
 		}
+
+		w.WriteHeader(http.StatusOK)
 	}
 }

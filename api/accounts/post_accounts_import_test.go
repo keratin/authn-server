@@ -67,7 +67,7 @@ func TestPostAccountsImport(t *testing.T) {
 		})
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
-		test.AssertErrors(t, res, []services.Error{{"password", "MISSING"}})
+		test.AssertErrors(t, res, services.FieldErrors{{"password", "MISSING"}})
 	})
 
 }

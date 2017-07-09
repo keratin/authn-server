@@ -16,12 +16,16 @@ func patchAccountExpirePassword(app *api.App) http.HandlerFunc {
 			panic(err)
 		}
 
-		errors := services.PasswordExpirer(app.AccountStore, app.RefreshTokenStore, id)
-
-		if errors == nil {
-			w.WriteHeader(http.StatusOK)
-		} else {
-			api.WriteJson(w, http.StatusNotFound, api.ServiceErrors{errors})
+		err = services.PasswordExpirer(app.AccountStore, app.RefreshTokenStore, id)
+		if err != nil {
+			if fe, ok := err.(services.FieldErrors); ok {
+				api.WriteJson(w, http.StatusNotFound, api.ServiceErrors{fe})
+				return
+			} else {
+				panic(err)
+			}
 		}
+
+		w.WriteHeader(http.StatusOK)
 	}
 }

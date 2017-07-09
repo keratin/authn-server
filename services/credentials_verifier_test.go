@@ -7,6 +7,7 @@ import (
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/services"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCredentialsVerifierSuccess(t *testing.T) {
@@ -18,15 +19,10 @@ func TestCredentialsVerifierSuccess(t *testing.T) {
 	store := mock.NewAccountStore()
 	store.Create(username, bcrypted)
 
-	acc, errs := services.CredentialsVerifier(store, &cfg, username, password)
-	if len(errs) > 0 {
-		for _, err := range errs {
-			assert.NoError(t, err)
-		}
-	} else {
-		assert.NotEqual(t, 0, acc.Id)
-		assert.Equal(t, username, acc.Username)
-	}
+	acc, err := services.CredentialsVerifier(store, &cfg, username, password)
+	require.NoError(t, err)
+	assert.NotEqual(t, 0, acc.Id)
+	assert.Equal(t, username, acc.Username)
 }
 
 func TestCredentialsVerifierFailure(t *testing.T) {
@@ -44,14 +40,14 @@ func TestCredentialsVerifierFailure(t *testing.T) {
 	testCases := []struct {
 		username string
 		password string
-		errors   []services.Error
+		errors   services.FieldErrors
 	}{
-		{"", "", []services.Error{{"credentials", "FAILED"}}},
-		{"unknown", "unknown", []services.Error{{"credentials", "FAILED"}}},
-		{"known", "unknown", []services.Error{{"credentials", "FAILED"}}},
-		{"unknown", password, []services.Error{{"credentials", "FAILED"}}},
-		{"locked", password, []services.Error{{"account", "LOCKED"}}},
-		{"expired", password, []services.Error{{"credentials", "EXPIRED"}}},
+		{"", "", services.FieldErrors{{"credentials", "FAILED"}}},
+		{"unknown", "unknown", services.FieldErrors{{"credentials", "FAILED"}}},
+		{"known", "unknown", services.FieldErrors{{"credentials", "FAILED"}}},
+		{"unknown", password, services.FieldErrors{{"credentials", "FAILED"}}},
+		{"locked", password, services.FieldErrors{{"account", "LOCKED"}}},
+		{"expired", password, services.FieldErrors{{"credentials", "EXPIRED"}}},
 	}
 
 	for _, tc := range testCases {

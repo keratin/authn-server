@@ -14,14 +14,14 @@ var emptyHashes = map[int]string{
 	12: "$2a$12$w58M3IGXURRAqXQ/OAsMmuqcV4YqP3WyJ.yHvHI5ANUK1bRWxeceK",
 }
 
-func CredentialsVerifier(store data.AccountStore, cfg *config.Config, username string, password string) (*models.Account, []Error) {
+func CredentialsVerifier(store data.AccountStore, cfg *config.Config, username string, password string) (*models.Account, error) {
 	if username == "" && password == "" {
-		return nil, []Error{{"credentials", ErrFailed}}
+		return nil, FieldErrors{{"credentials", ErrFailed}}
 	}
 
 	account, err := store.FindByUsername(username)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	// if no account is found, we continue with a fake password hash. otherwise we
@@ -35,13 +35,13 @@ func CredentialsVerifier(store data.AccountStore, cfg *config.Config, username s
 
 	err = bcrypt.CompareHashAndPassword(passwordHash, []byte(password))
 	if err != nil {
-		return nil, []Error{{"credentials", ErrFailed}}
+		return nil, FieldErrors{{"credentials", ErrFailed}}
 	}
 	if account.Locked {
-		return nil, []Error{{"account", ErrLocked}}
+		return nil, FieldErrors{{"account", ErrLocked}}
 	}
 	if account.RequireNewPassword {
-		return nil, []Error{{"credentials", ErrExpired}}
+		return nil, FieldErrors{{"credentials", ErrExpired}}
 	}
 
 	return account, nil

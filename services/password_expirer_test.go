@@ -38,6 +38,6 @@ func TestPasswordExpirer(t *testing.T) {
 
 	t.Run("unknown account", func(t *testing.T) {
 		errors := services.PasswordExpirer(accountStore, refreshStore, 0)
-		assert.Equal(t, []services.Error{{"account", services.ErrNotFound}}, errors)
+		assert.Equal(t, services.FieldErrors{{"account", services.ErrNotFound}}, errors)
 	})
 }

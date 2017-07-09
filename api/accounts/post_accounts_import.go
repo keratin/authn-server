@@ -15,19 +15,24 @@ func postAccountsImport(app *api.App) http.HandlerFunc {
 			panic(err)
 		}
 
-		account, errors := services.AccountImporter(
+		account, err := services.AccountImporter(
 			app.AccountStore,
 			app.Config,
 			r.FormValue("username"),
 			r.FormValue("password"),
 			locked,
 		)
-		if errors != nil {
-			api.WriteErrors(w, errors)
-		} else {
-			api.WriteData(w, http.StatusCreated, map[string]int{
-				"id": account.Id,
-			})
+		if err != nil {
+			if fe, ok := err.(services.FieldErrors); ok {
+				api.WriteErrors(w, fe)
+				return
+			} else {
+				panic(err)
+			}
 		}
+
+		api.WriteData(w, http.StatusCreated, map[string]int{
+			"id": account.Id,
+		})
 	}
 }

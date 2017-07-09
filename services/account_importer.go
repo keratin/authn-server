@@ -12,12 +12,12 @@ import (
 
 var bcryptPattern = regexp.MustCompile(`\A\$2[ayb]\$[0-9]{2}\$[A-Za-z0-9\.\/]{53}\z`)
 
-func AccountImporter(store data.AccountStore, cfg *config.Config, username string, password string, locked bool) (*models.Account, []Error) {
+func AccountImporter(store data.AccountStore, cfg *config.Config, username string, password string, locked bool) (*models.Account, error) {
 	if username == "" {
-		return nil, []Error{{"username", ErrMissing}}
+		return nil, FieldErrors{{"username", ErrMissing}}
 	}
 	if password == "" {
-		return nil, []Error{{"password", ErrMissing}}
+		return nil, FieldErrors{{"password", ErrMissing}}
 	}
 
 	var hash []byte
@@ -27,16 +27,16 @@ func AccountImporter(store data.AccountStore, cfg *config.Config, username strin
 	} else {
 		hash, err = bcrypt.GenerateFromPassword([]byte(password), cfg.BcryptCost)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 	}
 
 	acc, err := store.Create(username, hash)
 	if err != nil {
 		if data.IsUniquenessError(err) {
-			return nil, []Error{{"username", ErrTaken}}
+			return nil, FieldErrors{{"username", ErrTaken}}
 		} else {
-			panic(err)
+			return nil, err
 		}
 	}
 
@@ -44,7 +44,7 @@ func AccountImporter(store data.AccountStore, cfg *config.Config, username strin
 		acc.Locked = true
 		err = store.Lock(acc.Id)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 	}
 
