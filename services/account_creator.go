@@ -6,38 +6,22 @@ import (
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/models"
-	zxcvbn "github.com/nbutton23/zxcvbn-go"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func AccountCreator(store data.AccountStore, cfg *config.Config, username string, password string) (*models.Account, error) {
+	username = strings.TrimSpace(username)
+
 	errors := FieldErrors{}
 
-	username = strings.TrimSpace(username)
-	if cfg.UsernameIsEmail {
-		if isEmail(username) {
-			if len(cfg.UsernameDomains) > 0 && !hasDomain(username, cfg.UsernameDomains) {
-				errors = append(errors, fieldError{"username", ErrFormatInvalid})
-			}
-		} else {
-			errors = append(errors, fieldError{"username", ErrFormatInvalid})
-		}
-	} else {
-		if username == "" {
-			errors = append(errors, fieldError{"username", ErrMissing})
-		} else {
-			if len(username) < cfg.UsernameMinLength {
-				errors = append(errors, fieldError{"username", ErrFormatInvalid})
-			}
-		}
+	fieldError := usernameValidator(cfg, username)
+	if fieldError != nil {
+		errors = append(errors, *fieldError)
 	}
 
-	if password == "" {
-		errors = append(errors, fieldError{"password", ErrMissing})
-	} else {
-		if zxcvbn.PasswordStrength(password, []string{username}).Score < cfg.PasswordMinComplexity {
-			errors = append(errors, fieldError{"password", ErrInsecure})
-		}
+	fieldError = passwordValidator(cfg, password)
+	if fieldError != nil {
+		errors = append(errors, *fieldError)
 	}
 
 	if len(errors) > 0 {
