@@ -36,7 +36,19 @@ func (db *AccountStore) FindByUsername(u string) (*models.Account, error) {
 
 func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 	now := time.Now()
-	result, err := db.Exec("INSERT INTO accounts (username, password, locked, require_new_password, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)", u, p, false, false, now.Unix(), now.Unix())
+
+	account := &models.Account{
+		Username:          u,
+		Password:          p,
+		PasswordChangedAt: &now,
+		CreatedAt:         now,
+		UpdatedAt:         now,
+	}
+
+	result, err := db.NamedExec(
+		"INSERT INTO accounts (username, password, locked, require_new_password, password_changed_at, created_at, updated_at) VALUES (:username, :password, :locked, :require_new_password, :password_changed_at, :created_at, :updated_at)",
+		account,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -45,14 +57,9 @@ func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 	if err != nil {
 		return nil, err
 	}
+	account.Id = int(id)
 
-	return &models.Account{
-		Id:        int(id),
-		Username:  u,
-		Password:  p,
-		CreatedAt: now,
-		UpdatedAt: now,
-	}, nil
+	return account, nil
 }
 
 func (db *AccountStore) Archive(id int) error {

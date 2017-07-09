@@ -53,11 +53,12 @@ func (s *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 
 	now := time.Now()
 	acc := models.Account{
-		Id:        len(s.accountsById) + 1,
-		Username:  u,
-		Password:  p,
-		CreatedAt: now,
-		UpdatedAt: now,
+		Id:                len(s.accountsById) + 1,
+		Username:          u,
+		Password:          p,
+		PasswordChangedAt: &now,
+		CreatedAt:         now,
+		UpdatedAt:         now,
 	}
 	s.accountsById[acc.Id] = &acc
 	s.idByUsername[acc.Username] = acc.Id

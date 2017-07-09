@@ -25,6 +25,7 @@ func TestCreate(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotEqual(t, 0, account.Id)
 	assert.Equal(t, "authn@keratin.tech", account.Username)
+	assert.NotEmpty(t, account.PasswordChangedAt)
 	assert.NotEmpty(t, account.CreatedAt)
 	assert.NotEmpty(t, account.UpdatedAt)
 
