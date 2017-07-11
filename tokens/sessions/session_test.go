@@ -25,7 +25,7 @@ func TestNewAndParseAndSign(t *testing.T) {
 	assert.Equal(t, "http://authn.example.com", token.Audience)
 	assert.Equal(t, "RefreshToken:658908", token.Subject)
 	assert.Equal(t, "", token.Azp)
-	assert.NotEqual(t, int64(0), token.IssuedAt)
+	assert.NotEmpty(t, token.IssuedAt)
 
 	sessionString, err := token.Sign(cfg.SessionSigningKey)
 	require.NoError(t, err)
@@ -36,7 +36,7 @@ func TestNewAndParseAndSign(t *testing.T) {
 	assert.Equal(t, "http://authn.example.com", claims.Audience)
 	assert.Equal(t, "RefreshToken:658908", claims.Subject)
 	assert.Equal(t, "", claims.Azp)
-	assert.NotEqual(t, int64(0), claims.IssuedAt)
+	assert.NotEmpty(t, claims.IssuedAt)
 }
 
 func TestParseInvalidSessionJWT(t *testing.T) {

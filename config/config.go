@@ -28,6 +28,8 @@ type Config struct {
 	DatabaseURL           *url.URL
 	SessionCookieName     string
 	SessionSigningKey     []byte
+	ResetSigningKey       []byte
+	ResetTokenTTL         time.Duration
 	IdentitySigningKey    *rsa.PrivateKey
 	AuthNURL              *url.URL
 	ForceSSL              bool
@@ -84,6 +86,7 @@ var configurers = []configurer{
 		if err == nil {
 			// TODO: convert as hex??
 			c.SessionSigningKey = derive([]byte(val), "session-key-salt")
+			c.ResetSigningKey = derive([]byte(val), "password-reset-token-key-salt")
 		}
 		return err
 	},
@@ -186,6 +189,19 @@ var configurers = []configurer{
 		ttl, err := lookupInt("REFRESH_TOKEN_TTL", 86400*365.25)
 		if err == nil {
 			c.RefreshTokenTTL = time.Duration(ttl) * time.Second
+		}
+		return err
+	},
+
+	// PASSWORD_RESET_TOKEN_TTL determines how long a password reset token (as JWT)
+	// will be valid from when it is generated. These tokens should not live much
+	// longer than it takes for an attentive user to act in a reasonably expedient
+	// manner. If a user loses control of a password reset token, they will lose
+	// control of their account.
+	func(c *Config) error {
+		ttl, err := lookupInt("PASSWORD_RESET_TOKEN_TTL", 1800)
+		if err == nil {
+			c.ResetTokenTTL = time.Duration(ttl) * time.Second
 		}
 		return err
 	},
