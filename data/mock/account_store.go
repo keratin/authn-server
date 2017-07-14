@@ -106,9 +106,11 @@ func (s *AccountStore) RequireNewPassword(id int) error {
 func (s *AccountStore) SetPassword(id int, p []byte) error {
 	account := s.accountsById[id]
 	if account != nil {
+		now := time.Now()
 		account.Password = p
 		account.RequireNewPassword = false
-		account.UpdatedAt = time.Now()
+		account.PasswordChangedAt = now
+		account.UpdatedAt = now
 	}
 	return nil
 }

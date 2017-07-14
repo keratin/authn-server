@@ -129,4 +129,5 @@ func TestSetPassword(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, []byte("new"), after.Password)
 	assert.False(t, after.RequireNewPassword)
+	assert.NotEqual(t, account.PasswordChangedAt, after.PasswordChangedAt)
 }
