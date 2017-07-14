@@ -36,6 +36,7 @@ func TestPasswordChanger(t *testing.T) {
 		account, err := accountStore.Find(expired.Id)
 		require.NoError(t, err)
 		assert.False(t, account.RequireNewPassword)
+		assert.NotEqual(t, expired.Password, account.Password)
 	})
 
 	failureCases := []struct {
