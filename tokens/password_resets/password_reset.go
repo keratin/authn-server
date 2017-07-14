@@ -21,7 +21,13 @@ func (c *Claims) Sign(hmac_key []byte) (string, error) {
 	return jwt.NewWithClaims(jwt.SigningMethodHS256, c).SignedString(hmac_key)
 }
 
-func Parse(tokenStr string, password_changed_at time.Time, cfg *config.Config) (*Claims, error) {
+func (c *Claims) LockExpired(password_changed_at *time.Time) bool {
+	locked_at := time.Unix(int64(c.Lock), 0)
+
+	return password_changed_at.After(locked_at)
+}
+
+func Parse(tokenStr string, cfg *config.Config) (*Claims, error) {
 	token, err := jwt.ParseWithClaims(tokenStr, &Claims{}, staticKeyFunc(cfg.ResetSigningKey))
 	if err != nil {
 		return nil, err
@@ -36,9 +42,6 @@ func Parse(tokenStr string, password_changed_at time.Time, cfg *config.Config) (
 	}
 	if claims.Scope != scope {
 		return nil, fmt.Errorf("token scope not valid")
-	}
-	if password_changed_at.After(time.Unix(int64(claims.Lock), 0)) {
-		return nil, fmt.Errorf("token expired")
 	}
 
 	err = claims.StandardClaims.Valid()

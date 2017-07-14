@@ -36,7 +36,7 @@ func TestPasswordResetToken(t *testing.T) {
 		tokenStr, err := token.Sign(cfg.ResetSigningKey)
 		require.NoError(t, err)
 
-		_, err = password_resets.Parse(tokenStr, then, &cfg)
+		_, err = password_resets.Parse(tokenStr, &cfg)
 		require.NoError(t, err)
 	})
 
@@ -50,25 +50,7 @@ func TestPasswordResetToken(t *testing.T) {
 		require.NoError(t, err)
 		tokenStr, err := token.Sign(oldCfg.ResetSigningKey)
 		require.NoError(t, err)
-		_, err = password_resets.Parse(tokenStr, then, &cfg)
-		assert.Error(t, err)
-	})
-
-	t.Run("parsing after a password change", func(t *testing.T) {
-		token, err := password_resets.New(&cfg, account_id, then)
-		require.NoError(t, err)
-		tokenStr, err := token.Sign(cfg.ResetSigningKey)
-		require.NoError(t, err)
-		_, err = password_resets.Parse(tokenStr, then.Add(time.Hour), &cfg)
-		assert.Error(t, err)
-	})
-
-	t.Run("parsing after expiration", func(t *testing.T) {
-		token, err := password_resets.New(&cfg, account_id, time.Unix(timestamp-999999, 0))
-		require.NoError(t, err)
-		tokenStr, err := token.Sign(cfg.ResetSigningKey)
-		require.NoError(t, err)
-		_, err = password_resets.Parse(tokenStr, then, &cfg)
+		_, err = password_resets.Parse(tokenStr, &cfg)
 		assert.Error(t, err)
 	})
 
@@ -82,7 +64,14 @@ func TestPasswordResetToken(t *testing.T) {
 		require.NoError(t, err)
 		tokenStr, err := token.Sign(oldCfg.ResetSigningKey)
 		require.NoError(t, err)
-		_, err = password_resets.Parse(tokenStr, then, &cfg)
+		_, err = password_resets.Parse(tokenStr, &cfg)
 		assert.Error(t, err)
+	})
+
+	t.Run("checking lock expiration", func(t *testing.T) {
+		claims := password_resets.Claims{Lock: timestamp}
+		assert.False(t, claims.LockExpired(&then))
+		later := then.Add(time.Hour)
+		assert.True(t, claims.LockExpired(&later))
 	})
 }
