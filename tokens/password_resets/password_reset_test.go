@@ -12,18 +12,18 @@ import (
 )
 
 func TestPasswordResetToken(t *testing.T) {
-	cfg := config.Config{
+	cfg := &config.Config{
 		AuthNURL:        &url.URL{Scheme: "https", Host: "authn.example.com"},
 		ResetSigningKey: []byte("key-a-reno"),
 		RefreshTokenTTL: 3600,
 	}
 
-	then := time.Now().Add(time.Duration(-1) * time.Second).Round(time.Second) // 1 second ago
+	then := time.Now().Add(time.Duration(-1) * time.Second).Truncate(time.Second) // 1 second ago
 	timestamp := then.Unix()
 	account_id := 52167
 
 	t.Run("creating signing and parsing", func(t *testing.T) {
-		token, err := password_resets.New(&cfg, account_id, then)
+		token, err := password_resets.New(cfg, account_id, then)
 		require.NoError(t, err)
 		assert.Equal(t, "reset", token.Scope)
 		assert.Equal(t, timestamp, token.Lock)
@@ -36,7 +36,7 @@ func TestPasswordResetToken(t *testing.T) {
 		tokenStr, err := token.Sign(cfg.ResetSigningKey)
 		require.NoError(t, err)
 
-		_, err = password_resets.Parse(tokenStr, &cfg)
+		_, err = password_resets.Parse(tokenStr, cfg)
 		require.NoError(t, err)
 	})
 
@@ -50,7 +50,7 @@ func TestPasswordResetToken(t *testing.T) {
 		require.NoError(t, err)
 		tokenStr, err := token.Sign(oldCfg.ResetSigningKey)
 		require.NoError(t, err)
-		_, err = password_resets.Parse(tokenStr, &cfg)
+		_, err = password_resets.Parse(tokenStr, cfg)
 		assert.Error(t, err)
 	})
 
@@ -64,13 +64,15 @@ func TestPasswordResetToken(t *testing.T) {
 		require.NoError(t, err)
 		tokenStr, err := token.Sign(oldCfg.ResetSigningKey)
 		require.NoError(t, err)
-		_, err = password_resets.Parse(tokenStr, &cfg)
+		_, err = password_resets.Parse(tokenStr, cfg)
 		assert.Error(t, err)
 	})
 
 	t.Run("checking lock expiration", func(t *testing.T) {
 		claims := password_resets.Claims{Lock: timestamp}
 		assert.False(t, claims.LockExpired(&then))
+		thenish := then.Add(time.Microsecond)
+		assert.False(t, claims.LockExpired(&thenish))
 		later := then.Add(time.Hour)
 		assert.True(t, claims.LockExpired(&later))
 	})

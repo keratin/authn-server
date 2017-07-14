@@ -23,8 +23,9 @@ func (c *Claims) Sign(hmac_key []byte) (string, error) {
 
 func (c *Claims) LockExpired(password_changed_at *time.Time) bool {
 	locked_at := time.Unix(int64(c.Lock), 0)
+	expired_at := password_changed_at.Truncate(time.Second)
 
-	return password_changed_at.After(locked_at)
+	return expired_at.After(locked_at)
 }
 
 func Parse(tokenStr string, cfg *config.Config) (*Claims, error) {
