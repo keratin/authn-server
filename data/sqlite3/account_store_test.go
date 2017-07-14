@@ -65,17 +65,17 @@ func TestLockAndUnlock(t *testing.T) {
 	err = store.Lock(account.Id)
 	require.NoError(t, err)
 
-	account, err = store.Find(account.Id)
+	after, err := store.Find(account.Id)
 	require.NoError(t, err)
-	assert.True(t, account.Locked)
+	assert.True(t, after.Locked)
 
 	err = store.Unlock(account.Id)
 	require.NoError(t, err)
 
-	account, err = store.Find(account.Id)
+	after2, err := store.Find(account.Id)
 	require.NoError(t, err)
-	require.NotEmpty(t, account)
-	assert.False(t, account.Locked)
+	require.NotEmpty(t, after2)
+	assert.False(t, after2.Locked)
 }
 
 func TestArchive(t *testing.T) {
@@ -89,12 +89,12 @@ func TestArchive(t *testing.T) {
 	err = store.Archive(account.Id)
 	require.NoError(t, err)
 
-	account, err = store.Find(account.Id)
+	after, err := store.Find(account.Id)
 	require.NoError(t, err)
-	require.NotEmpty(t, account)
-	assert.Empty(t, account.Username)
-	assert.Empty(t, account.Password)
-	assert.NotEmpty(t, account.DeletedAt)
+	require.NotEmpty(t, after)
+	assert.Empty(t, after.Username)
+	assert.Empty(t, after.Password)
+	assert.NotEmpty(t, after.DeletedAt)
 }
 
 func TestRequireNewPassword(t *testing.T) {
@@ -108,9 +108,9 @@ func TestRequireNewPassword(t *testing.T) {
 	err = store.RequireNewPassword(account.Id)
 	require.NoError(t, err)
 
-	account, err = store.Find(account.Id)
+	after, err := store.Find(account.Id)
 	require.NoError(t, err)
-	assert.True(t, account.RequireNewPassword)
+	assert.True(t, after.RequireNewPassword)
 }
 
 func TestSetPassword(t *testing.T) {
@@ -125,8 +125,8 @@ func TestSetPassword(t *testing.T) {
 	err = store.SetPassword(account.Id, []byte("new"))
 	require.NoError(t, err)
 
-	account, err = store.Find(account.Id)
+	after, err := store.Find(account.Id)
 	require.NoError(t, err)
-	assert.Equal(t, []byte("new"), account.Password)
-	assert.False(t, account.RequireNewPassword)
+	assert.Equal(t, []byte("new"), after.Password)
+	assert.False(t, after.RequireNewPassword)
 }

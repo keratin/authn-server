@@ -40,7 +40,7 @@ func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 	account := &models.Account{
 		Username:          u,
 		Password:          p,
-		PasswordChangedAt: &now,
+		PasswordChangedAt: now,
 		CreatedAt:         now,
 		UpdatedAt:         now,
 	}

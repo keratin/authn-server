@@ -70,10 +70,8 @@ func TestPasswordResetToken(t *testing.T) {
 
 	t.Run("checking lock expiration", func(t *testing.T) {
 		claims := password_resets.Claims{Lock: timestamp}
-		assert.False(t, claims.LockExpired(&then))
-		thenish := then.Add(time.Microsecond)
-		assert.False(t, claims.LockExpired(&thenish))
-		later := then.Add(time.Hour)
-		assert.True(t, claims.LockExpired(&later))
+		assert.False(t, claims.LockExpired(then))
+		assert.False(t, claims.LockExpired(then.Add(time.Microsecond)))
+		assert.True(t, claims.LockExpired(then.Add(time.Second)))
 	})
 }

@@ -18,7 +18,7 @@ func migration1(db *sqlx.DB) error {
             password TEXT NOT NULL,
             locked BOOLEAN NOT NULL,
             require_new_password BOOLEAN NOT NULL,
-            password_changed_at DATETIME,
+            password_changed_at DATETIME NOT NULL,
             created_at DATETIME NOT NULL,
             updated_at DATETIME NOT NULL,
             deleted_at DATETIME

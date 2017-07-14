@@ -21,7 +21,7 @@ func (c *Claims) Sign(hmac_key []byte) (string, error) {
 	return jwt.NewWithClaims(jwt.SigningMethodHS256, c).SignedString(hmac_key)
 }
 
-func (c *Claims) LockExpired(password_changed_at *time.Time) bool {
+func (c *Claims) LockExpired(password_changed_at time.Time) bool {
 	locked_at := time.Unix(int64(c.Lock), 0)
 	expired_at := password_changed_at.Truncate(time.Second)
 

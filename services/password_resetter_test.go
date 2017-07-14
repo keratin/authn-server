@@ -43,7 +43,7 @@ func TestPasswordResetter(t *testing.T) {
 		err = accountStore.RequireNewPassword(expired.Id)
 		require.NoError(t, err)
 
-		err = invoke(newToken(expired.Id, *expired.PasswordChangedAt), "0a0b0c0d0e0f")
+		err = invoke(newToken(expired.Id, expired.PasswordChangedAt), "0a0b0c0d0e0f")
 		assert.NoError(t, err)
 
 		account, err := accountStore.Find(expired.Id)
@@ -73,7 +73,7 @@ func TestPasswordResetter(t *testing.T) {
 		err = accountStore.Archive(archived.Id)
 		require.NoError(t, err)
 
-		token := newToken(archived.Id, *archived.PasswordChangedAt)
+		token := newToken(archived.Id, archived.PasswordChangedAt)
 
 		err = invoke(token, "0a0b0c0d0e0f")
 		assert.Equal(t, services.FieldErrors{{"account", "LOCKED"}}, err)
@@ -85,20 +85,20 @@ func TestPasswordResetter(t *testing.T) {
 		err = accountStore.Lock(locked.Id)
 		require.NoError(t, err)
 
-		token := newToken(locked.Id, *locked.PasswordChangedAt)
+		token := newToken(locked.Id, locked.PasswordChangedAt)
 
 		err = invoke(token, "0a0b0c0d0e0f")
 		assert.Equal(t, services.FieldErrors{{"account", "LOCKED"}}, err)
 	})
 
 	t.Run("with a missing password", func(t *testing.T) {
-		token := newToken(account.Id, *account.PasswordChangedAt)
+		token := newToken(account.Id, account.PasswordChangedAt)
 		err := invoke(token, "")
 		assert.Equal(t, services.FieldErrors{{"password", "MISSING"}}, err)
 	})
 
 	t.Run("with an insecure password", func(t *testing.T) {
-		token := newToken(account.Id, *account.PasswordChangedAt)
+		token := newToken(account.Id, account.PasswordChangedAt)
 		err := invoke(token, "abc")
 		assert.Equal(t, services.FieldErrors{{"password", "INSECURE"}}, err)
 	})

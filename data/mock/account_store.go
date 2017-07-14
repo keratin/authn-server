@@ -56,7 +56,7 @@ func (s *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 		Id:                len(s.accountsById) + 1,
 		Username:          u,
 		Password:          p,
-		PasswordChangedAt: &now,
+		PasswordChangedAt: now,
 		CreatedAt:         now,
 		UpdatedAt:         now,
 	}
