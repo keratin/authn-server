@@ -22,19 +22,30 @@ func TestPasswordResetter(t *testing.T) {
 		ResetSigningKey:       []byte("reset-a-reno"),
 	}
 
+	newToken := func(id int, lock time.Time) string {
+		claims, err := password_resets.New(cfg, id, lock)
+		require.NoError(t, err)
+		token, err := claims.Sign(cfg.ResetSigningKey)
+		require.NoError(t, err)
+		return token
+	}
+
+	invoke := func(token string, password string) error {
+		return services.PasswordResetter(accountStore, cfg, token, password)
+	}
+
+	account, err := accountStore.Create("existing@keratin.tech", []byte("old"))
+	require.NoError(t, err)
+
 	t.Run("sets new password", func(t *testing.T) {
 		expired, err := accountStore.Create("expired@keratin.tech", []byte("old"))
 		require.NoError(t, err)
 		err = accountStore.RequireNewPassword(expired.Id)
 		require.NoError(t, err)
 
-		claims, err := password_resets.New(cfg, expired.Id, *expired.PasswordChangedAt)
-		require.NoError(t, err)
-		token, err := claims.Sign(cfg.ResetSigningKey)
-		require.NoError(t, err)
-
-		err = services.PasswordResetter(accountStore, cfg, token, "0a0b0c0d0e0f")
+		err = invoke(newToken(expired.Id, *expired.PasswordChangedAt), "0a0b0c0d0e0f")
 		assert.NoError(t, err)
+
 		account, err := accountStore.Find(expired.Id)
 		require.NoError(t, err)
 		assert.NotEqual(t, expired.Password, account.Password)
@@ -44,49 +55,57 @@ func TestPasswordResetter(t *testing.T) {
 	t.Run("when token is invalid", func(t *testing.T) {
 		token := "not.valid.jwt"
 
-		err := services.PasswordResetter(accountStore, cfg, token, "0a0b0c0d0e0f")
+		err := invoke(token, "0a0b0c0d0e0f")
 		assert.Equal(t, services.FieldErrors{{"token", services.ErrInvalidOrExpired}}, err)
 	})
 
-	account, err := accountStore.Create("existing@keratin.tech", []byte("old"))
-	require.NoError(t, err)
+	t.Run("after a password change", func(t *testing.T) {
+		previous_password_change := account.PasswordChangedAt.Add(time.Duration(-1) * time.Hour)
+		token := newToken(account.Id, previous_password_change)
 
-	changed, err := accountStore.Create("changed@keratin.tech", []byte("old"))
-	require.NoError(t, err)
+		err := invoke(token, "0a0b0c0d0e0f")
+		assert.Equal(t, services.FieldErrors{{"token", "INVALID_OR_EXPIRED"}}, err)
+	})
 
-	locked, err := accountStore.Create("locked@keratin.tech", []byte("old"))
-	require.NoError(t, err)
-	err = accountStore.Lock(locked.Id)
-	require.NoError(t, err)
+	t.Run("on an archived account", func(t *testing.T) {
+		archived, err := accountStore.Create("archived@keratin.tech", []byte("old"))
+		require.NoError(t, err)
+		err = accountStore.Archive(archived.Id)
+		require.NoError(t, err)
 
-	archived, err := accountStore.Create("archived@keratin.tech", []byte("old"))
-	require.NoError(t, err)
-	err = accountStore.Archive(archived.Id)
-	require.NoError(t, err)
+		token := newToken(archived.Id, *archived.PasswordChangedAt)
 
-	failureCases := []struct {
-		account_id int
-		lock       time.Time
-		password   string
-		errors     services.FieldErrors
-	}{
-		{changed.Id, changed.PasswordChangedAt.Add(time.Duration(-1) * time.Hour), "0a0b0c0d0e0f", services.FieldErrors{{"token", "INVALID_OR_EXPIRED"}}},
-		{archived.Id, *archived.PasswordChangedAt, "0a0b0c0d0e0f", services.FieldErrors{{"account", "LOCKED"}}},
-		{locked.Id, *locked.PasswordChangedAt, "0a0b0c0d0e0f", services.FieldErrors{{"account", "LOCKED"}}},
-		{account.Id, *account.PasswordChangedAt, "abc", services.FieldErrors{{"password", "INSECURE"}}},
-		{account.Id, *account.PasswordChangedAt, "", services.FieldErrors{{"password", "MISSING"}}},
-		{0, time.Now(), "0a0b0c0d0e0f", services.FieldErrors{{"account", "NOT_FOUND"}}},
-	}
+		err = invoke(token, "0a0b0c0d0e0f")
+		assert.Equal(t, services.FieldErrors{{"account", "LOCKED"}}, err)
+	})
 
-	for _, tc := range failureCases {
-		t.Run(tc.errors.Error(), func(t *testing.T) {
-			claims, err := password_resets.New(cfg, tc.account_id, tc.lock)
-			require.NoError(t, err)
-			token, err := claims.Sign(cfg.ResetSigningKey)
-			require.NoError(t, err)
+	t.Run("on a locked account", func(t *testing.T) {
+		locked, err := accountStore.Create("locked@keratin.tech", []byte("old"))
+		require.NoError(t, err)
+		err = accountStore.Lock(locked.Id)
+		require.NoError(t, err)
 
-			err = services.PasswordResetter(accountStore, cfg, token, tc.password)
-			assert.Equal(t, tc.errors, err)
-		})
-	}
+		token := newToken(locked.Id, *locked.PasswordChangedAt)
+
+		err = invoke(token, "0a0b0c0d0e0f")
+		assert.Equal(t, services.FieldErrors{{"account", "LOCKED"}}, err)
+	})
+
+	t.Run("with a missing password", func(t *testing.T) {
+		token := newToken(account.Id, *account.PasswordChangedAt)
+		err := invoke(token, "")
+		assert.Equal(t, services.FieldErrors{{"password", "MISSING"}}, err)
+	})
+
+	t.Run("with an insecure password", func(t *testing.T) {
+		token := newToken(account.Id, *account.PasswordChangedAt)
+		err := invoke(token, "abc")
+		assert.Equal(t, services.FieldErrors{{"password", "INSECURE"}}, err)
+	})
+
+	t.Run("with an unknown account", func(t *testing.T) {
+		token := newToken(0, time.Now())
+		err := invoke(token, "0a0b0c0d0e0f")
+		assert.Equal(t, services.FieldErrors{{"account", "NOT_FOUND"}}, err)
+	})
 }
