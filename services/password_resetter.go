@@ -3,8 +3,6 @@ package services
 import (
 	"strconv"
 
-	"golang.org/x/crypto/bcrypt"
-
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/tokens/password_resets"
@@ -37,19 +35,5 @@ func PasswordResetter(store data.AccountStore, cfg *config.Config, token string,
 		return FieldErrors{{"token", ErrInvalidOrExpired}}
 	}
 
-	fieldError := passwordValidator(cfg, password)
-	if fieldError != nil {
-		return FieldErrors{*fieldError}
-	}
-
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), cfg.BcryptCost)
-	if err != nil {
-		return err
-	}
-
-	err = store.SetPassword(id, hash)
-	if err != nil {
-		return err
-	}
-	return nil
+	return PasswordSetter(store, cfg, id, password)
 }
