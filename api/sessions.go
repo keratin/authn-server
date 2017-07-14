@@ -29,8 +29,8 @@ func NewSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, ac
 	return sessionToken, identityToken, err
 }
 
-func RevokeSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, req *http.Request) (err error) {
-	oldSession, err := CurrentSession(cfg, req)
+func RevokeSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, r *http.Request) (err error) {
+	oldSession, err := CurrentSession(cfg, r)
 	if err != nil {
 		return err
 	}
@@ -54,8 +54,8 @@ func SetSession(cfg *config.Config, w http.ResponseWriter, val string) {
 	http.SetCookie(w, cookie)
 }
 
-func CurrentSession(cfg *config.Config, req *http.Request) (*sessions.Claims, error) {
-	cookie, err := req.Cookie(cfg.SessionCookieName)
+func CurrentSession(cfg *config.Config, r *http.Request) (*sessions.Claims, error) {
+	cookie, err := r.Cookie(cfg.SessionCookieName)
 	if err == http.ErrNoCookie {
 		return nil, nil
 	}

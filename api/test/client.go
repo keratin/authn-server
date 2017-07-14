@@ -96,4 +96,4 @@ func (c *Client) Patch(path string, form url.Values) (*http.Response, error) {
 	return http.DefaultClient.Do(req)
 }
 
-type modder func(req *http.Request) *http.Request
+type modder func(*http.Request) *http.Request

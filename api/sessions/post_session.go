@@ -8,13 +8,13 @@ import (
 )
 
 func postSession(app *api.App) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		// Check the password
 		account, err := services.CredentialsVerifier(
 			app.AccountStore,
 			app.Config,
-			req.FormValue("username"),
-			req.FormValue("password"),
+			r.FormValue("username"),
+			r.FormValue("password"),
 		)
 		if err != nil {
 			if fe, ok := err.(services.FieldErrors); ok {
@@ -25,7 +25,7 @@ func postSession(app *api.App) http.HandlerFunc {
 			}
 		}
 
-		err = api.RevokeSession(app.RefreshTokenStore, app.Config, req)
+		err = api.RevokeSession(app.RefreshTokenStore, app.Config, r)
 		if err != nil {
 			// TODO: alert but continue
 		}

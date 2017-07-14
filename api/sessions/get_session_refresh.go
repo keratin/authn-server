@@ -8,9 +8,9 @@ import (
 )
 
 func getSessionRefresh(app *api.App) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		// decode the JWT
-		session, err := api.CurrentSession(app.Config, req)
+		session, err := api.CurrentSession(app.Config, r)
 		if err != nil {
 			// If a session fails to decode, that's okay. Carry on.
 			// TODO: log the error

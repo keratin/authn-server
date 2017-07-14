@@ -13,7 +13,7 @@ type health struct {
 }
 
 func getHealth(app *api.App) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		h := health{
 			Http:  true,
 			Redis: app.RedisCheck(),

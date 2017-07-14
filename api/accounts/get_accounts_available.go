@@ -8,8 +8,8 @@ import (
 )
 
 func getAccountsAvailable(app *api.App) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
-		account, err := app.AccountStore.FindByUsername(req.FormValue("username"))
+	return func(w http.ResponseWriter, r *http.Request) {
+		account, err := app.AccountStore.FindByUsername(r.FormValue("username"))
 		if err != nil {
 			panic(err)
 		}

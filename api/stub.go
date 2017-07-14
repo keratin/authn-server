@@ -5,7 +5,7 @@ import (
 )
 
 func Stub(app *App) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("not implemented"))
 	}
 }
