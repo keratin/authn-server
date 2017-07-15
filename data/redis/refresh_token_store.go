@@ -12,8 +12,8 @@ import (
 )
 
 type RefreshTokenStore struct {
-	Client *redis.Client
-	TTL    time.Duration
+	*redis.Client
+	TTL time.Duration
 }
 
 // Redis key for token => accountId lookup
