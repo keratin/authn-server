@@ -10,8 +10,8 @@ import (
 	"github.com/keratin/authn-server/tokens/sessions"
 )
 
-func NewSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, account_id int) (string, string, error) {
-	session, err := sessions.New(refreshTokenStore, cfg, account_id)
+func NewSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, accountId int) (string, string, error) {
+	session, err := sessions.New(refreshTokenStore, cfg, accountId)
 	if err != nil {
 		return "", "", err
 	}
@@ -21,7 +21,7 @@ func NewSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, ac
 		return "", "", err
 	}
 
-	identityToken, err := IdentityForSession(cfg, session, account_id)
+	identityToken, err := IdentityForSession(cfg, session, accountId)
 	if err != nil {
 		return "", "", err
 	}
@@ -66,8 +66,8 @@ func CurrentSession(cfg *config.Config, r *http.Request) (*sessions.Claims, erro
 	return sessions.Parse(cookie.Value, cfg)
 }
 
-func IdentityForSession(cfg *config.Config, session *sessions.Claims, account_id int) (string, error) {
-	identity := identities.New(cfg, session, account_id)
+func IdentityForSession(cfg *config.Config, session *sessions.Claims, accountId int) (string, error) {
+	identity := identities.New(cfg, session, accountId)
 	identityToken, err := identity.Sign(cfg.IdentitySigningKey)
 	if err != nil {
 		return "", err

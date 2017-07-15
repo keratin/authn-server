@@ -12,28 +12,28 @@ import (
 func TestAccountLocker(t *testing.T) {
 	store := mock.NewAccountStore()
 
-	locked_account, err := store.Create("locked@keratin.tech", []byte("password"))
+	lockedAccount, err := store.Create("locked@keratin.tech", []byte("password"))
 	require.NoError(t, err)
-	err = store.Lock(locked_account.Id)
+	err = store.Lock(lockedAccount.Id)
 	require.NoError(t, err)
 
-	unlocked_account, err := store.Create("unlocked@keratin.tech", []byte("password"))
+	unlockedAccount, err := store.Create("unlocked@keratin.tech", []byte("password"))
 	require.NoError(t, err)
 
 	var testCases = []struct {
-		account_id int
-		errors     *services.FieldErrors
+		accountId int
+		errors    *services.FieldErrors
 	}{
 		{123456789, &services.FieldErrors{{"account", services.ErrNotFound}}},
-		{locked_account.Id, nil},
-		{unlocked_account.Id, nil},
+		{lockedAccount.Id, nil},
+		{unlockedAccount.Id, nil},
 	}
 
 	for _, tc := range testCases {
-		errs := services.AccountLocker(store, tc.account_id)
+		errs := services.AccountLocker(store, tc.accountId)
 		if tc.errors == nil {
 			assert.Empty(t, errs)
-			acct, err := store.Find(tc.account_id)
+			acct, err := store.Find(tc.accountId)
 			require.NoError(t, err)
 			assert.True(t, acct.Locked)
 		} else {

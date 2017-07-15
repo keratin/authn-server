@@ -18,8 +18,8 @@ func TestDeleteSessionSuccess(t *testing.T) {
 	server := test.Server(app, apiSessions.Routes(app))
 	defer server.Close()
 
-	account_id := 514628
-	session := test.CreateSession(app.RefreshTokenStore, app.Config, account_id)
+	accountId := 514628
+	session := test.CreateSession(app.RefreshTokenStore, app.Config, accountId)
 
 	// token exists
 	claims, err := sessions.Parse(session.Value, app.Config)
@@ -46,12 +46,12 @@ func TestDeleteSessionFailure(t *testing.T) {
 	server := test.Server(app, apiSessions.Routes(app))
 	defer server.Close()
 
-	bad_config := &config.Config{
+	badCfg := &config.Config{
 		AuthNURL:          app.Config.AuthNURL,
 		SessionCookieName: app.Config.SessionCookieName,
 		SessionSigningKey: []byte("wrong"),
 	}
-	session := test.CreateSession(app.RefreshTokenStore, bad_config, 123)
+	session := test.CreateSession(app.RefreshTokenStore, badCfg, 123)
 
 	client := test.NewClient(server).Referred(app.Config).WithSession(session)
 	res, err := client.Delete("/session")

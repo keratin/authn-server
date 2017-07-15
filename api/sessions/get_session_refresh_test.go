@@ -22,8 +22,8 @@ func TestGetSessionRefreshSuccess(t *testing.T) {
 	server := test.Server(app, apiSessions.Routes(app))
 	defer server.Close()
 
-	account_id := 82594
-	existingSession := test.CreateSession(app.RefreshTokenStore, app.Config, account_id)
+	accountId := 82594
+	existingSession := test.CreateSession(app.RefreshTokenStore, app.Config, accountId)
 
 	client := test.NewClient(server).Referred(app.Config).WithSession(existingSession)
 	res, err := client.Get("/session/refresh")
@@ -57,12 +57,12 @@ func TestGetSessionRefreshFailure(t *testing.T) {
 	}
 
 	for idx, tc := range testCases {
-		tc_cfg := &config.Config{
+		tcCfg := &config.Config{
 			AuthNURL:          app.Config.AuthNURL,
 			SessionCookieName: app.Config.SessionCookieName,
 			SessionSigningKey: tc.signingKey,
 		}
-		existingSession := test.CreateSession(app.RefreshTokenStore, tc_cfg, idx+100)
+		existingSession := test.CreateSession(app.RefreshTokenStore, tcCfg, idx+100)
 		if !tc.liveToken {
 			revokeSession(app.RefreshTokenStore, app.Config, existingSession)
 		}

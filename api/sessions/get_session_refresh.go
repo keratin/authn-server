@@ -21,23 +21,23 @@ func getSessionRefresh(app *api.App) http.HandlerFunc {
 		}
 
 		// check if the session has been revoked.
-		account_id, err := app.RefreshTokenStore.Find(models.RefreshToken(session.Subject))
+		accountId, err := app.RefreshTokenStore.Find(models.RefreshToken(session.Subject))
 		if err != nil {
 			panic(err)
 		}
-		if account_id == 0 {
+		if accountId == 0 {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
 		// refresh the refresh token
-		err = app.RefreshTokenStore.Touch(models.RefreshToken(session.Subject), account_id)
+		err = app.RefreshTokenStore.Touch(models.RefreshToken(session.Subject), accountId)
 		if err != nil {
 			panic(err)
 		}
 
 		// generate the requested identity token
-		identityToken, err := api.IdentityForSession(app.Config, session, account_id)
+		identityToken, err := api.IdentityForSession(app.Config, session, accountId)
 		if err != nil {
 			panic(err)
 		}

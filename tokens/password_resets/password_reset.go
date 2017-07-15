@@ -22,10 +22,10 @@ func (c *Claims) Sign(hmac_key []byte) (string, error) {
 }
 
 func (c *Claims) LockExpired(password_changed_at time.Time) bool {
-	locked_at := time.Unix(int64(c.Lock), 0)
-	expired_at := password_changed_at.Truncate(time.Second)
+	lockedAt := time.Unix(int64(c.Lock), 0)
+	expiredAt := password_changed_at.Truncate(time.Second)
 
-	return expired_at.After(locked_at)
+	return expiredAt.After(lockedAt)
 }
 
 func Parse(tokenStr string, cfg *config.Config) (*Claims, error) {
@@ -59,13 +59,13 @@ func Parse(tokenStr string, cfg *config.Config) (*Claims, error) {
 	return claims, nil
 }
 
-func New(cfg *config.Config, account_id int, password_changed_at time.Time) (*Claims, error) {
+func New(cfg *config.Config, accountId int, password_changed_at time.Time) (*Claims, error) {
 	return &Claims{
 		Scope: scope,
 		Lock:  password_changed_at.Unix(),
 		StandardClaims: jwt.StandardClaims{
 			Issuer:    cfg.AuthNURL.String(),
-			Subject:   strconv.Itoa(account_id),
+			Subject:   strconv.Itoa(accountId),
 			Audience:  cfg.AuthNURL.String(),
 			ExpiresAt: time.Now().Add(cfg.ResetTokenTTL).Unix(),
 			IssuedAt:  time.Now().Unix(),

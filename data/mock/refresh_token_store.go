@@ -18,10 +18,10 @@ func NewRefreshTokenStore() *RefreshTokenStore {
 	}
 }
 
-func (s *RefreshTokenStore) Create(account_id int) (models.RefreshToken, error) {
-	token := models.RefreshToken(fmt.Sprintf("RefreshToken:%v", account_id))
-	s.tokensByAccount[account_id] = append(s.tokensByAccount[account_id], token)
-	s.accountByToken[token] = account_id
+func (s *RefreshTokenStore) Create(accountId int) (models.RefreshToken, error) {
+	token := models.RefreshToken(fmt.Sprintf("RefreshToken:%v", accountId))
+	s.tokensByAccount[accountId] = append(s.tokensByAccount[accountId], token)
+	s.accountByToken[token] = accountId
 	return token, nil
 }
 
@@ -29,19 +29,19 @@ func (s *RefreshTokenStore) Find(t models.RefreshToken) (int, error) {
 	return s.accountByToken[t], nil
 }
 
-func (s *RefreshTokenStore) Touch(t models.RefreshToken, account_id int) error {
+func (s *RefreshTokenStore) Touch(t models.RefreshToken, accountId int) error {
 	return nil
 }
 
-func (s *RefreshTokenStore) FindAll(account_id int) ([]models.RefreshToken, error) {
-	return s.tokensByAccount[account_id], nil
+func (s *RefreshTokenStore) FindAll(accountId int) ([]models.RefreshToken, error) {
+	return s.tokensByAccount[accountId], nil
 }
 
 func (s *RefreshTokenStore) Revoke(t models.RefreshToken) error {
-	account_id := s.accountByToken[t]
-	if account_id != 0 {
+	accountId := s.accountByToken[t]
+	if accountId != 0 {
 		delete(s.accountByToken, t)
-		s.tokensByAccount[account_id] = without(t, s.tokensByAccount[account_id])
+		s.tokensByAccount[accountId] = without(t, s.tokensByAccount[accountId])
 	}
 	return nil
 }

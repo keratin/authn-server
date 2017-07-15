@@ -9,8 +9,8 @@ import (
 	"github.com/keratin/authn-server/tokens/sessions"
 )
 
-func CreateSession(tokenStore data.RefreshTokenStore, cfg *config.Config, account_id int) *http.Cookie {
-	sessionToken, err := sessions.New(tokenStore, cfg, account_id)
+func CreateSession(tokenStore data.RefreshTokenStore, cfg *config.Config, accountId int) *http.Cookie {
+	sessionToken, err := sessions.New(tokenStore, cfg, accountId)
 	if err != nil {
 		panic(err)
 	}

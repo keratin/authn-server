@@ -46,8 +46,8 @@ func Parse(tokenStr string, cfg *config.Config) (*Claims, error) {
 	return claims, nil
 }
 
-func New(store data.RefreshTokenStore, cfg *config.Config, account_id int) (*Claims, error) {
-	refreshToken, err := store.Create(account_id)
+func New(store data.RefreshTokenStore, cfg *config.Config, accountId int) (*Claims, error) {
+	refreshToken, err := store.Create(accountId)
 	if err != nil {
 		return nil, err
 	}

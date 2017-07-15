@@ -10,10 +10,10 @@ func BasicAuthSecurity(username string, password string, realm string) SecurityH
 	// SECURITY: ensure that both ConstantTimeCompare operations are run, so that a
 	// timing attack may not verify a correct username without a correct password.
 	match := func(u string, p string) bool {
-		username_match := subtle.ConstantTimeCompare([]byte(u), []byte(username))
-		password_match := subtle.ConstantTimeCompare([]byte(p), []byte(password))
+		usernameMatch := subtle.ConstantTimeCompare([]byte(u), []byte(username))
+		passwordMatch := subtle.ConstantTimeCompare([]byte(p), []byte(password))
 
-		return username_match == 1 && password_match == 1
+		return usernameMatch == 1 && passwordMatch == 1
 	}
 
 	return func(h http.Handler) http.Handler {

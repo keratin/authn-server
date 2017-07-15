@@ -34,11 +34,11 @@ func TestPostAccountSuccessWithSession(t *testing.T) {
 	server := test.Server(app, accounts.Routes(app))
 	defer server.Close()
 
-	account_id := 8642
-	session := test.CreateSession(app.RefreshTokenStore, app.Config, account_id)
+	accountId := 8642
+	session := test.CreateSession(app.RefreshTokenStore, app.Config, accountId)
 
 	// before
-	refreshTokens, err := app.RefreshTokenStore.FindAll(account_id)
+	refreshTokens, err := app.RefreshTokenStore.FindAll(accountId)
 	require.NoError(t, err)
 	refreshToken := refreshTokens[0]
 

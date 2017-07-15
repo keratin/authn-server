@@ -42,11 +42,11 @@ func TestPostSessionSuccessWithSession(t *testing.T) {
 	b, _ := bcrypt.GenerateFromPassword([]byte("bar"), 4)
 	app.AccountStore.Create("foo", b)
 
-	account_id := 8642
-	session := test.CreateSession(app.RefreshTokenStore, app.Config, account_id)
+	accountId := 8642
+	session := test.CreateSession(app.RefreshTokenStore, app.Config, accountId)
 
 	// before
-	refreshTokens, err := app.RefreshTokenStore.FindAll(account_id)
+	refreshTokens, err := app.RefreshTokenStore.FindAll(accountId)
 	require.NoError(t, err)
 	refreshToken := refreshTokens[0]
 

@@ -6,7 +6,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func PasswordSetter(store data.AccountStore, cfg *config.Config, account_id int, password string) error {
+func PasswordSetter(store data.AccountStore, cfg *config.Config, accountId int, password string) error {
 	fieldError := passwordValidator(cfg, password)
 	if fieldError != nil {
 		return FieldErrors{*fieldError}
@@ -17,7 +17,7 @@ func PasswordSetter(store data.AccountStore, cfg *config.Config, account_id int,
 		return err
 	}
 
-	err = store.SetPassword(account_id, hash)
+	err = store.SetPassword(accountId, hash)
 	if err != nil {
 		return err
 	}

@@ -20,10 +20,10 @@ func TestPasswordResetToken(t *testing.T) {
 
 	then := time.Now().Add(time.Duration(-1) * time.Second).Truncate(time.Second) // 1 second ago
 	timestamp := then.Unix()
-	account_id := 52167
+	accountId := 52167
 
 	t.Run("creating signing and parsing", func(t *testing.T) {
-		token, err := password_resets.New(cfg, account_id, then)
+		token, err := password_resets.New(cfg, accountId, then)
 		require.NoError(t, err)
 		assert.Equal(t, "reset", token.Scope)
 		assert.Equal(t, timestamp, token.Lock)
@@ -46,7 +46,7 @@ func TestPasswordResetToken(t *testing.T) {
 			ResetSigningKey: []byte("old-a-reno"),
 			RefreshTokenTTL: cfg.RefreshTokenTTL,
 		}
-		token, err := password_resets.New(&oldCfg, account_id, then)
+		token, err := password_resets.New(&oldCfg, accountId, then)
 		require.NoError(t, err)
 		tokenStr, err := token.Sign(oldCfg.ResetSigningKey)
 		require.NoError(t, err)
@@ -60,7 +60,7 @@ func TestPasswordResetToken(t *testing.T) {
 			ResetSigningKey: cfg.ResetSigningKey,
 			RefreshTokenTTL: cfg.RefreshTokenTTL,
 		}
-		token, err := password_resets.New(&oldCfg, account_id, then)
+		token, err := password_resets.New(&oldCfg, accountId, then)
 		require.NoError(t, err)
 		tokenStr, err := token.Sign(oldCfg.ResetSigningKey)
 		require.NoError(t, err)

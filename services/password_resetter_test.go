@@ -60,8 +60,8 @@ func TestPasswordResetter(t *testing.T) {
 	})
 
 	t.Run("after a password change", func(t *testing.T) {
-		previous_password_change := account.PasswordChangedAt.Add(time.Duration(-1) * time.Hour)
-		token := newToken(account.Id, previous_password_change)
+		previousPasswordChange := account.PasswordChangedAt.Add(time.Duration(-1) * time.Hour)
+		token := newToken(account.Id, previousPasswordChange)
 
 		err := invoke(token, "0a0b0c0d0e0f")
 		assert.Equal(t, services.FieldErrors{{"token", "INVALID_OR_EXPIRED"}}, err)

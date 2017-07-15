@@ -19,12 +19,12 @@ func (c *Claims) Sign(rsa_key *rsa.PrivateKey) (string, error) {
 	return jwt.NewWithClaims(jwt.SigningMethodRS256, c).SignedString(rsa_key)
 }
 
-func New(cfg *config.Config, session *sessions.Claims, account_id int) *Claims {
+func New(cfg *config.Config, session *sessions.Claims, accountId int) *Claims {
 	return &Claims{
 		AuthTime: session.IssuedAt,
 		StandardClaims: jwt.StandardClaims{
 			Issuer:    session.Issuer,
-			Subject:   strconv.Itoa(account_id),
+			Subject:   strconv.Itoa(accountId),
 			Audience:  session.Azp,
 			ExpiresAt: time.Now().Add(cfg.AccessTokenTTL).Unix(),
 			IssuedAt:  time.Now().Unix(),
