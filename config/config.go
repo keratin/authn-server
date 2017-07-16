@@ -104,7 +104,7 @@ var configurers = []configurer{
 		cost, err := lookupInt("BCRYPT_COST", 11)
 		if err == nil {
 			if cost < 10 {
-				return fmt.Errorf("BCRYPT_COST is too low: %i", cost)
+				return fmt.Errorf("BCRYPT_COST is too low: %v", cost)
 			}
 			c.BcryptCost = cost
 		}
