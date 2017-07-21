@@ -9,29 +9,16 @@ import (
 
 func getSessionRefresh(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// decode the JWT
-		session, err := api.CurrentSession(app.Config, r)
-		if err != nil {
-			// If a session fails to decode, that's okay. Carry on.
-			// TODO: log the error
-		}
-		if session == nil {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
-		// check if the session has been revoked.
-		accountId, err := app.RefreshTokenStore.Find(models.RefreshToken(session.Subject))
-		if err != nil {
-			panic(err)
-		}
+		// check for valid session with live token
+		accountId := api.GetSessionAccountId(r)
 		if accountId == 0 {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
 		// refresh the refresh token
-		err = app.RefreshTokenStore.Touch(models.RefreshToken(session.Subject), accountId)
+		session := api.GetSession(r)
+		err := app.RefreshTokenStore.Touch(models.RefreshToken(session.Subject), accountId)
 		if err != nil {
 			panic(err)
 		}

@@ -9,10 +9,7 @@ import (
 	apiSessions "github.com/keratin/authn-server/api/sessions"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/config"
-	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/data/mock"
-	"github.com/keratin/authn-server/models"
-	"github.com/keratin/authn-server/tokens/sessions"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -64,7 +61,7 @@ func TestGetSessionRefreshFailure(t *testing.T) {
 		}
 		existingSession := test.CreateSession(app.RefreshTokenStore, tcCfg, idx+100)
 		if !tc.liveToken {
-			revokeSession(app.RefreshTokenStore, app.Config, existingSession)
+			test.RevokeSession(app.RefreshTokenStore, app.Config, existingSession)
 		}
 
 		client := test.NewClient(server).Referred(app.Config).WithSession(existingSession)
@@ -72,16 +69,5 @@ func TestGetSessionRefreshFailure(t *testing.T) {
 		require.NoError(t, err)
 
 		assert.Equal(t, http.StatusUnauthorized, res.StatusCode)
-	}
-}
-
-func revokeSession(store data.RefreshTokenStore, cfg *config.Config, session *http.Cookie) {
-	claims, err := sessions.Parse(session.Value, cfg)
-	if err != nil {
-		panic(err)
-	}
-	err = store.Revoke(models.RefreshToken(claims.Subject))
-	if err != nil {
-		panic(err)
 	}
 }

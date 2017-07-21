@@ -31,9 +31,13 @@ func router(app *api.App) http.Handler {
 		gorilla.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE"}),
 	)
 
+	session := api.Session(app)
+
 	return gorilla.RecoveryHandler()(
 		corsAdapter(
-			gorilla.CombinedLoggingHandler(os.Stdout, r),
+			session(
+				gorilla.CombinedLoggingHandler(os.Stdout, r),
+			),
 		),
 	)
 }

@@ -10,5 +10,5 @@ import (
 func Server(app *api.App, routes []*api.HandledRoute) *httptest.Server {
 	r := mux.NewRouter()
 	api.Attach(r, app.Config.MountedPath, routes...)
-	return httptest.NewServer(r)
+	return httptest.NewServer(api.Session(app)(r))
 }

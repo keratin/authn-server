@@ -6,6 +6,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
+	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/sessions"
 )
 
@@ -23,5 +24,16 @@ func CreateSession(tokenStore data.RefreshTokenStore, cfg *config.Config, accoun
 	return &http.Cookie{
 		Name:  cfg.SessionCookieName,
 		Value: sessionString,
+	}
+}
+
+func RevokeSession(store data.RefreshTokenStore, cfg *config.Config, session *http.Cookie) {
+	claims, err := sessions.Parse(session.Value, cfg)
+	if err != nil {
+		panic(err)
+	}
+	err = store.Revoke(models.RefreshToken(claims.Subject))
+	if err != nil {
+		panic(err)
 	}
 }
