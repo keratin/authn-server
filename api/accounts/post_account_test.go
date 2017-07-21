@@ -20,7 +20,7 @@ func TestPostAccountSuccess(t *testing.T) {
 	client := test.NewClient(server).Referred(app.Config)
 	res, err := client.PostForm("/accounts", url.Values{
 		"username": []string{"foo"},
-		"password": []string{"bar"},
+		"password": []string{"0a0b0c0"},
 	})
 	require.NoError(t, err)
 
@@ -45,7 +45,7 @@ func TestPostAccountSuccessWithSession(t *testing.T) {
 	client := test.NewClient(server).Referred(app.Config).WithSession(session)
 	_, err = client.PostForm("/accounts", url.Values{
 		"username": []string{"foo"},
-		"password": []string{"bar"},
+		"password": []string{"0a0b0c0"},
 	})
 	require.NoError(t, err)
 

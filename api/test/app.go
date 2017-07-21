@@ -24,12 +24,13 @@ func App() *api.App {
 	}
 
 	cfg := config.Config{
-		BcryptCost:         4,
-		SessionSigningKey:  []byte("TODO"),
-		IdentitySigningKey: weakKey,
-		AuthNURL:           authnUrl,
-		SessionCookieName:  "authn",
-		ApplicationDomains: []string{"test.com"},
+		BcryptCost:            4,
+		SessionSigningKey:     []byte("TODO"),
+		IdentitySigningKey:    weakKey,
+		AuthNURL:              authnUrl,
+		SessionCookieName:     "authn",
+		ApplicationDomains:    []string{"test.com"},
+		PasswordMinComplexity: 2,
 	}
 
 	tokenStore := mock.NewRefreshTokenStore()
