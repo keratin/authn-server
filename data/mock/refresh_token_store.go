@@ -3,7 +3,6 @@ package mock
 import (
 	"crypto/rand"
 	"encoding/hex"
-	"fmt"
 
 	"github.com/keratin/authn-server/models"
 )

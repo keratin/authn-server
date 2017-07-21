@@ -31,7 +31,8 @@ func TestPasswordResetter(t *testing.T) {
 	}
 
 	invoke := func(token string, password string) error {
-		return services.PasswordResetter(accountStore, cfg, token, password)
+		_, err := services.PasswordResetter(accountStore, cfg, token, password)
+		return err
 	}
 
 	account, err := accountStore.Create("existing@keratin.tech", []byte("old"))

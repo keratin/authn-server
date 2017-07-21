@@ -8,32 +8,32 @@ import (
 	"github.com/keratin/authn-server/tokens/password_resets"
 )
 
-func PasswordResetter(store data.AccountStore, cfg *config.Config, token string, password string) error {
+func PasswordResetter(store data.AccountStore, cfg *config.Config, token string, password string) (int, error) {
 	claims, err := password_resets.Parse(token, cfg)
 	if err != nil {
-		return FieldErrors{{"token", ErrInvalidOrExpired}}
+		return 0, FieldErrors{{"token", ErrInvalidOrExpired}}
 	}
 
 	id, err := strconv.Atoi(claims.Subject)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	account, err := store.Find(id)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	if account == nil {
-		return FieldErrors{{"account", ErrNotFound}}
+		return 0, FieldErrors{{"account", ErrNotFound}}
 	} else if account.Locked {
-		return FieldErrors{{"account", ErrLocked}}
+		return 0, FieldErrors{{"account", ErrLocked}}
 	} else if account.Archived() {
-		return FieldErrors{{"account", ErrLocked}}
+		return 0, FieldErrors{{"account", ErrLocked}}
 	}
 
 	if claims.LockExpired(account.PasswordChangedAt) {
-		return FieldErrors{{"token", ErrInvalidOrExpired}}
+		return 0, FieldErrors{{"token", ErrInvalidOrExpired}}
 	}
 
-	return PasswordSetter(store, cfg, id, password)
+	return account.Id, PasswordSetter(store, cfg, id, password)
 }

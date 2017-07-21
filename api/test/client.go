@@ -21,27 +21,33 @@ func NewClient(server *httptest.Server) *Client {
 
 func (c *Client) Referred(cfg *config.Config) *Client {
 	origin := fmt.Sprintf("http://%s", cfg.ApplicationDomains[0])
-	c.Modifiers = append(c.Modifiers, func(req *http.Request) *http.Request {
-		req.Header.Add("Referer", origin)
-		return req
-	})
-	return c
+	return &Client{
+		c.BaseURL,
+		append(c.Modifiers, func(req *http.Request) *http.Request {
+			req.Header.Add("Referer", origin)
+			return req
+		}),
+	}
 }
 
 func (c *Client) WithSession(session *http.Cookie) *Client {
-	c.Modifiers = append(c.Modifiers, func(req *http.Request) *http.Request {
-		req.AddCookie(session)
-		return req
-	})
-	return c
+	return &Client{
+		c.BaseURL,
+		append(c.Modifiers, func(req *http.Request) *http.Request {
+			req.AddCookie(session)
+			return req
+		}),
+	}
 }
 
 func (c *Client) Authenticated(cfg *config.Config) *Client {
-	c.Modifiers = append(c.Modifiers, func(req *http.Request) *http.Request {
-		req.SetBasicAuth(cfg.AuthUsername, cfg.AuthPassword)
-		return req
-	})
-	return c
+	return &Client{
+		c.BaseURL,
+		append(c.Modifiers, func(req *http.Request) *http.Request {
+			req.SetBasicAuth(cfg.AuthUsername, cfg.AuthPassword)
+			return req
+		}),
+	}
 }
 
 func (c *Client) PostForm(path string, form url.Values) (*http.Response, error) {

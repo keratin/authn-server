@@ -9,6 +9,7 @@ import (
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/api/accounts"
 	"github.com/keratin/authn-server/api/health"
+	"github.com/keratin/authn-server/api/passwords"
 	"github.com/keratin/authn-server/api/sessions"
 )
 
@@ -16,7 +17,6 @@ func router(app *api.App) http.Handler {
 	r := mux.NewRouter()
 
 	// GET  /
-	// POST /password
 	// GET  /password/reset
 	// GET  /configuration
 	// GET  /jwks
@@ -25,6 +25,7 @@ func router(app *api.App) http.Handler {
 	api.Attach(r, app.Config.MountedPath, health.Routes(app)...)
 	api.Attach(r, app.Config.MountedPath, accounts.Routes(app)...)
 	api.Attach(r, app.Config.MountedPath, sessions.Routes(app)...)
+	api.Attach(r, app.Config.MountedPath, passwords.Routes(app)...)
 
 	corsAdapter := gorilla.CORS(
 		gorilla.AllowedOrigins(app.Config.ApplicationOrigins),
