@@ -16,6 +16,7 @@ import (
 )
 
 type Config struct {
+	AppPasswordResetURL   *url.URL
 	ApplicationDomains    []string
 	ApplicationOrigins    []string
 	BcryptCost            int
@@ -247,6 +248,23 @@ var configurers = []configurer{
 				return err
 			}
 			c.AuthPassword = i.String()
+		}
+		return nil
+	},
+
+	// APP_PASSWORD_RESET_URL is an endpoint that will be notified when an account
+	// has requested a password reset. The endpoint is expected to deliver an email
+	// with the given password reset token, then respond with a 2xx HTTP status.
+	//
+	// For security, this URL should specify https and include a basic auth
+	// username and password.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("APP_PASSWORD_RESET_URL"); ok {
+			resetUrl, err := url.Parse(val)
+			if err == nil {
+				c.AppPasswordResetURL = resetUrl
+			}
+			return err
 		}
 		return nil
 	},
