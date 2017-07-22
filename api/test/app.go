@@ -31,6 +31,7 @@ func App() *api.App {
 		SessionCookieName:     "authn",
 		ApplicationDomains:    []string{"test.com"},
 		PasswordMinComplexity: 2,
+		AppPasswordResetURL:   &url.URL{Scheme: "https", Host: "app.example.com"},
 	}
 
 	tokenStore := mock.NewRefreshTokenStore()

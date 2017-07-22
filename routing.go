@@ -17,7 +17,6 @@ func router(app *api.App) http.Handler {
 	r := mux.NewRouter()
 
 	// GET  /
-	// GET  /password/reset
 	// GET  /configuration
 	// GET  /jwks
 	// GET  /stats

@@ -15,6 +15,9 @@ func PasswordResetSender(cfg *config.Config, account *models.Account) error {
 	if cfg.AppPasswordResetURL == nil {
 		return fmt.Errorf("AppPasswordResetURL unconfigured")
 	}
+	if account == nil {
+		return FieldErrors{{"account", ErrMissing}}
+	}
 	if account.Locked {
 		return FieldErrors{{"account", ErrLocked}}
 	}

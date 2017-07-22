@@ -77,4 +77,9 @@ func TestPasswordResetSender(t *testing.T) {
 		})
 		assert.Equal(t, "Status Code: 500", err.Error())
 	})
+
+	t.Run("with no account", func(t *testing.T) {
+		err := invoke(successURL, nil)
+		assert.Equal(t, services.FieldErrors{{"account", "MISSING"}}, err)
+	})
 }
