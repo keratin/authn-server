@@ -1,4 +1,4 @@
-package health_test
+package meta_test
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/keratin/authn-server/api"
-	"github.com/keratin/authn-server/api/health"
+	"github.com/keratin/authn-server/api/meta"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/config"
 	"github.com/stretchr/testify/assert"
@@ -19,7 +19,7 @@ func TestGetHealth(t *testing.T) {
 		RedisCheck: func() bool { return true },
 		Config:     &config.Config{},
 	}
-	server := test.Server(app, health.Routes(app))
+	server := test.Server(app, meta.Routes(app))
 	defer server.Close()
 
 	res, err := http.Get(fmt.Sprintf("%s/health", server.URL))

@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/api/accounts"
-	"github.com/keratin/authn-server/api/health"
+	"github.com/keratin/authn-server/api/meta"
 	"github.com/keratin/authn-server/api/passwords"
 	"github.com/keratin/authn-server/api/sessions"
 )
@@ -21,7 +21,7 @@ func router(app *api.App) http.Handler {
 	// GET  /jwks
 	// GET  /stats
 
-	api.Attach(r, app.Config.MountedPath, health.Routes(app)...)
+	api.Attach(r, app.Config.MountedPath, meta.Routes(app)...)
 	api.Attach(r, app.Config.MountedPath, accounts.Routes(app)...)
 	api.Attach(r, app.Config.MountedPath, sessions.Routes(app)...)
 	api.Attach(r, app.Config.MountedPath, passwords.Routes(app)...)

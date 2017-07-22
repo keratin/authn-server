@@ -1,4 +1,4 @@
-package health
+package meta
 
 import "github.com/keratin/authn-server/api"
 
