@@ -17,19 +17,19 @@ func (err Error) Error() string {
 
 const ErrNotUnique = iota
 
-type AccountStore struct {
+type accountStore struct {
 	accountsById map[int]*models.Account
 	idByUsername map[string]int
 }
 
-func NewAccountStore() *AccountStore {
-	return &AccountStore{
+func NewAccountStore() *accountStore {
+	return &accountStore{
 		accountsById: make(map[int]*models.Account),
 		idByUsername: make(map[string]int),
 	}
 }
 
-func (s *AccountStore) Find(id int) (*models.Account, error) {
+func (s *accountStore) Find(id int) (*models.Account, error) {
 	if s.accountsById[id] != nil {
 		return dupAccount(*s.accountsById[id]), nil
 	} else {
@@ -37,7 +37,7 @@ func (s *AccountStore) Find(id int) (*models.Account, error) {
 	}
 }
 
-func (s *AccountStore) FindByUsername(u string) (*models.Account, error) {
+func (s *accountStore) FindByUsername(u string) (*models.Account, error) {
 	id := s.idByUsername[u]
 	if id == 0 {
 		return nil, nil
@@ -46,7 +46,7 @@ func (s *AccountStore) FindByUsername(u string) (*models.Account, error) {
 	}
 }
 
-func (s *AccountStore) Create(u string, p []byte) (*models.Account, error) {
+func (s *accountStore) Create(u string, p []byte) (*models.Account, error) {
 	if s.idByUsername[u] != 0 {
 		return nil, Error{ErrNotUnique}
 	}
@@ -65,7 +65,7 @@ func (s *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 	return dupAccount(acc), nil
 }
 
-func (s *AccountStore) Archive(id int) error {
+func (s *accountStore) Archive(id int) error {
 	account := s.accountsById[id]
 	if account != nil {
 		now := time.Now()
@@ -76,7 +76,7 @@ func (s *AccountStore) Archive(id int) error {
 	return nil
 }
 
-func (s *AccountStore) Lock(id int) error {
+func (s *accountStore) Lock(id int) error {
 	account := s.accountsById[id]
 	if account != nil {
 		account.Locked = true
@@ -85,7 +85,7 @@ func (s *AccountStore) Lock(id int) error {
 	return nil
 }
 
-func (s *AccountStore) Unlock(id int) error {
+func (s *accountStore) Unlock(id int) error {
 	account := s.accountsById[id]
 	if account != nil {
 		account.Locked = false
@@ -94,7 +94,7 @@ func (s *AccountStore) Unlock(id int) error {
 	return nil
 }
 
-func (s *AccountStore) RequireNewPassword(id int) error {
+func (s *accountStore) RequireNewPassword(id int) error {
 	account := s.accountsById[id]
 	if account != nil {
 		account.RequireNewPassword = true
@@ -103,7 +103,7 @@ func (s *AccountStore) RequireNewPassword(id int) error {
 	return nil
 }
 
-func (s *AccountStore) SetPassword(id int, p []byte) error {
+func (s *accountStore) SetPassword(id int, p []byte) error {
 	account := s.accountsById[id]
 	if account != nil {
 		now := time.Now()

@@ -7,19 +7,19 @@ import (
 	"github.com/keratin/authn-server/models"
 )
 
-type RefreshTokenStore struct {
+type refreshTokenStore struct {
 	tokensByAccount map[int][]models.RefreshToken
 	accountByToken  map[models.RefreshToken]int
 }
 
-func NewRefreshTokenStore() *RefreshTokenStore {
-	return &RefreshTokenStore{
+func NewRefreshTokenStore() *refreshTokenStore {
+	return &refreshTokenStore{
 		tokensByAccount: make(map[int][]models.RefreshToken),
 		accountByToken:  make(map[models.RefreshToken]int),
 	}
 }
 
-func (s *RefreshTokenStore) Create(accountId int) (models.RefreshToken, error) {
+func (s *refreshTokenStore) Create(accountId int) (models.RefreshToken, error) {
 	binToken, err := generateToken()
 	if err != nil {
 		return "", err
@@ -30,19 +30,19 @@ func (s *RefreshTokenStore) Create(accountId int) (models.RefreshToken, error) {
 	return token, nil
 }
 
-func (s *RefreshTokenStore) Find(t models.RefreshToken) (int, error) {
+func (s *refreshTokenStore) Find(t models.RefreshToken) (int, error) {
 	return s.accountByToken[t], nil
 }
 
-func (s *RefreshTokenStore) Touch(t models.RefreshToken, accountId int) error {
+func (s *refreshTokenStore) Touch(t models.RefreshToken, accountId int) error {
 	return nil
 }
 
-func (s *RefreshTokenStore) FindAll(accountId int) ([]models.RefreshToken, error) {
+func (s *refreshTokenStore) FindAll(accountId int) ([]models.RefreshToken, error) {
 	return s.tokensByAccount[accountId], nil
 }
 
-func (s *RefreshTokenStore) Revoke(t models.RefreshToken) error {
+func (s *refreshTokenStore) Revoke(t models.RefreshToken) error {
 	accountId := s.accountByToken[t]
 	if accountId != 0 {
 		delete(s.accountByToken, t)
