@@ -46,7 +46,7 @@ func postPassword(app *api.App) http.HandlerFunc {
 			// TODO: alert but continue
 		}
 
-		sessionToken, identityToken, err := api.NewSession(app.RefreshTokenStore, app.Config, accountId)
+		sessionToken, identityToken, err := api.NewSession(app.RefreshTokenStore, app.KeyStore, app.Config, accountId)
 		if err != nil {
 			panic(err)
 		}

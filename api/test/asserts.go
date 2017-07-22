@@ -10,6 +10,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/services"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -53,7 +54,7 @@ func AssertSession(t *testing.T, cfg *config.Config, cookies []*http.Cookie) {
 	assert.NoError(t, err)
 }
 
-func AssertIdTokenResponse(t *testing.T, res *http.Response, cfg *config.Config) {
+func AssertIdTokenResponse(t *testing.T, res *http.Response, keyStore data.KeyStore, cfg *config.Config) {
 	// check that the response contains the expected json
 	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
 	responseData := struct {
@@ -64,7 +65,7 @@ func AssertIdTokenResponse(t *testing.T, res *http.Response, cfg *config.Config)
 
 	// check that the IdToken is JWT-ish
 	identityToken, err := jwt.Parse(responseData.IdToken, func(tkn *jwt.Token) (interface{}, error) {
-		return cfg.IdentitySigningKey.Public(), nil
+		return keyStore.Key().Public(), nil
 	})
 	if assert.NoError(t, err) {
 		// check that the JWT contains nice things

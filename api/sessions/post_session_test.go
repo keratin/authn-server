@@ -31,7 +31,7 @@ func TestPostSessionSuccess(t *testing.T) {
 
 	assert.Equal(t, http.StatusCreated, res.StatusCode)
 	test.AssertSession(t, app.Config, res.Cookies())
-	test.AssertIdTokenResponse(t, res, app.Config)
+	test.AssertIdTokenResponse(t, res, app.KeyStore, app.Config)
 }
 
 func TestPostSessionSuccessWithSession(t *testing.T) {

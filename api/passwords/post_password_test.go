@@ -25,7 +25,7 @@ func TestPostPassword(t *testing.T) {
 	assertSuccess := func(t *testing.T, res *http.Response, account *models.Account) {
 		assert.Equal(t, http.StatusCreated, res.StatusCode)
 		test.AssertSession(t, app.Config, res.Cookies())
-		test.AssertIdTokenResponse(t, res, app.Config)
+		test.AssertIdTokenResponse(t, res, app.KeyStore, app.Config)
 		found, err := app.AccountStore.Find(account.Id)
 		require.NoError(t, err)
 		assert.NotEqual(t, found.Password, account.Password)

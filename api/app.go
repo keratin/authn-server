@@ -5,6 +5,7 @@ import (
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
 
+	"github.com/keratin/authn-server/data/mock"
 	dataRedis "github.com/keratin/authn-server/data/redis"
 )
 
@@ -16,6 +17,7 @@ type App struct {
 	Config            *config.Config
 	AccountStore      data.AccountStore
 	RefreshTokenStore data.RefreshTokenStore
+	KeyStore          data.KeyStore
 }
 
 func NewApp() (*App, error) {
@@ -37,11 +39,14 @@ func NewApp() (*App, error) {
 		TTL:    cfg.RefreshTokenTTL,
 	}
 
+	keyStore := mock.NewKeyStore(cfg.IdentitySigningKey)
+
 	return &App{
 		DbCheck:           func() bool { return db.Ping() == nil },
 		RedisCheck:        func() bool { return redis.Ping().Err() == nil },
 		Config:            cfg,
 		AccountStore:      accountStore,
 		RefreshTokenStore: tokenStore,
+		KeyStore:          keyStore,
 	}, nil
 }

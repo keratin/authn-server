@@ -23,10 +23,11 @@ func App() *api.App {
 		panic(err)
 	}
 
+	keyStore := mock.NewKeyStore(weakKey)
+
 	cfg := config.Config{
 		BcryptCost:            4,
 		SessionSigningKey:     []byte("TODO"),
-		IdentitySigningKey:    weakKey,
 		AuthNURL:              authnUrl,
 		SessionCookieName:     "authn",
 		ApplicationDomains:    []string{"test.com"},
@@ -37,6 +38,7 @@ func App() *api.App {
 	tokenStore := mock.NewRefreshTokenStore()
 
 	return &api.App{
+		KeyStore:          keyStore,
 		AccountStore:      accountStore,
 		RefreshTokenStore: tokenStore,
 		Config:            &cfg,
