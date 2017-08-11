@@ -4,7 +4,8 @@ import (
 	"net/url"
 	"testing"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	jwt "gopkg.in/square/go-jose.v2/jwt"
+
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/tokens/sessions"
@@ -22,7 +23,7 @@ func TestNewAndParseAndSign(t *testing.T) {
 	token, err := sessions.New(store, &cfg, 658908)
 	require.NoError(t, err)
 	assert.Equal(t, "http://authn.example.com", token.Issuer)
-	assert.Equal(t, "http://authn.example.com", token.Audience)
+	assert.True(t, token.Audience.Contains("http://authn.example.com"))
 	assert.NotEmpty(t, token.Subject)
 	assert.Equal(t, "", token.Azp)
 	assert.NotEmpty(t, token.IssuedAt)
@@ -33,7 +34,7 @@ func TestNewAndParseAndSign(t *testing.T) {
 	claims, err := sessions.Parse(sessionString, &cfg)
 	require.NoError(t, err)
 	assert.Equal(t, "http://authn.example.com", claims.Issuer)
-	assert.Equal(t, "http://authn.example.com", claims.Audience)
+	assert.True(t, token.Audience.Contains("http://authn.example.com"))
 	assert.NotEmpty(t, token.Subject)
 	assert.Equal(t, "", claims.Azp)
 	assert.NotEmpty(t, claims.IssuedAt)
@@ -44,42 +45,26 @@ func TestParseInvalidSessionJWT(t *testing.T) {
 	authn := url.URL{Scheme: "http", Host: "authn.example.com"}
 	app := url.URL{Scheme: "http", Host: "app.example.com"}
 	key := []byte("current key")
-	oldKey := []byte("old key")
+	cfg := config.Config{AuthNURL: &authn, SessionSigningKey: key}
 
-	invalids := []string{}
-	var token *sessions.Claims
-	var tokenStr string
-	var cfg config.Config
-	var err error
+	t.Run("old key", func(t *testing.T) {
+		token, err := sessions.New(store, &config.Config{AuthNURL: &authn}, 1)
+		require.NoError(t, err)
+		tokenStr, err := token.Sign([]byte("old key"))
+		require.NoError(t, err)
 
-	// This invalid JWT was signed with an old key.
-	cfg = config.Config{AuthNURL: &authn, SessionSigningKey: oldKey}
-	token, err = sessions.New(store, &cfg, 1)
-	require.NoError(t, err)
-	tokenStr, err = token.Sign(cfg.SessionSigningKey)
-	require.NoError(t, err)
-	invalids = append(invalids, tokenStr)
-
-	// This invalid JWT was signed for a different audience.
-	cfg = config.Config{AuthNURL: &authn, SessionSigningKey: key}
-	token, err = sessions.New(store, &cfg, 2)
-	require.NoError(t, err)
-	token.Audience = app.String()
-	tokenStr, err = token.Sign(cfg.SessionSigningKey)
-	require.NoError(t, err)
-	invalids = append(invalids, tokenStr)
-
-	// This invalid JWT was signed with "none" alg
-	cfg = config.Config{AuthNURL: &authn}
-	token, err = sessions.New(store, &cfg, 3)
-	require.NoError(t, err)
-	tokenStr, err = jwt.NewWithClaims(jwt.SigningMethodNone, token).SignedString(jwt.UnsafeAllowNoneSignatureType)
-	require.NoError(t, err)
-	invalids = append(invalids, tokenStr)
-
-	cfg = config.Config{AuthNURL: &authn, SessionSigningKey: key}
-	for _, invalid := range invalids {
-		_, err := sessions.Parse(invalid, &cfg)
+		_, err = sessions.Parse(tokenStr, &cfg)
 		assert.Error(t, err)
-	}
+	})
+
+	t.Run("different audience", func(t *testing.T) {
+		token, err := sessions.New(store, &config.Config{AuthNURL: &authn}, 2)
+		require.NoError(t, err)
+		token.Audience = jwt.Audience{app.String()}
+		tokenStr, err := token.Sign(key)
+		require.NoError(t, err)
+
+		_, err = sessions.Parse(tokenStr, &cfg)
+		assert.Error(t, err)
+	})
 }

@@ -1,73 +1,66 @@
 package sessions
 
 import (
-	"fmt"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
+	jose "gopkg.in/square/go-jose.v2"
+	jwt "gopkg.in/square/go-jose.v2/jwt"
 )
 
 type Claims struct {
 	Azp string `json:"azp"`
-	jwt.StandardClaims
+	jwt.Claims
 }
 
-func (c *Claims) Sign(hmac_key []byte) (string, error) {
-	return jwt.NewWithClaims(jwt.SigningMethodHS256, c).SignedString(hmac_key)
+func (c *Claims) Sign(hmacKey []byte) (string, error) {
+	signer, err := jose.NewSigner(
+		jose.SigningKey{Algorithm: jose.HS256, Key: hmacKey},
+		(&jose.SignerOptions{}).WithType("JWT"),
+	)
+	if err != nil {
+		return "", err
+	}
+	return jwt.Signed(signer).Claims(c).CompactSerialize()
 }
 
 func Parse(tokenStr string, cfg *config.Config) (*Claims, error) {
-	token, err := jwt.ParseWithClaims(tokenStr, &Claims{}, staticKeyFunc(cfg.SessionSigningKey))
+	token, err := jwt.ParseSigned(tokenStr)
 	if err != nil {
 		return nil, err
 	}
-	if !token.Valid {
-		return nil, fmt.Errorf("Could not verify JWT")
-	}
 
-	claims, ok := token.Claims.(*Claims)
-	if !ok {
-		return nil, fmt.Errorf("JWT is not a Claims")
-	}
-
-	err = claims.StandardClaims.Valid()
+	claims := Claims{}
+	err = token.Claims(cfg.SessionSigningKey, &claims)
 	if err != nil {
 		return nil, err
 	}
-	if !claims.VerifyAudience(cfg.AuthNURL.String(), true) {
-		return nil, fmt.Errorf("token audience not valid")
-	}
-	if !claims.VerifyIssuer(cfg.AuthNURL.String(), true) {
-		return nil, fmt.Errorf("token issuer not valid")
+
+	err = claims.Claims.Validate(jwt.Expected{
+		Audience: jwt.Audience{cfg.AuthNURL.String()},
+		Issuer:   cfg.AuthNURL.String(),
+	})
+	if err != nil {
+		return nil, err
 	}
 
-	return claims, nil
+	return &claims, nil
 }
 
-func New(store data.RefreshTokenStore, cfg *config.Config, accountId int) (*Claims, error) {
-	refreshToken, err := store.Create(accountId)
+func New(store data.RefreshTokenStore, cfg *config.Config, accountID int) (*Claims, error) {
+	refreshToken, err := store.Create(accountID)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Claims{
 		Azp: "", // TODO: audience
-		StandardClaims: jwt.StandardClaims{
+		Claims: jwt.Claims{
 			Issuer:   cfg.AuthNURL.String(),
 			Subject:  string(refreshToken),
-			Audience: cfg.AuthNURL.String(),
-			IssuedAt: time.Now().Unix(),
+			Audience: jwt.Audience{cfg.AuthNURL.String()},
+			IssuedAt: jwt.NewNumericDate(time.Now()),
 		},
 	}, nil
-}
-
-func staticKeyFunc(key []byte) func(*jwt.Token) (interface{}, error) {
-	return func(t *jwt.Token) (interface{}, error) {
-		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", t.Header["alg"])
-		}
-		return key, nil
-	}
 }

@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	jwt "gopkg.in/square/go-jose.v2/jwt"
+
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/tokens/password_resets"
 	"github.com/stretchr/testify/assert"
@@ -19,18 +21,17 @@ func TestPasswordResetToken(t *testing.T) {
 	}
 
 	then := time.Now().Add(time.Duration(-1) * time.Second).Truncate(time.Second) // 1 second ago
-	timestamp := then.Unix()
 	accountId := 52167
 
 	t.Run("creating signing and parsing", func(t *testing.T) {
 		token, err := password_resets.New(cfg, accountId, then)
 		require.NoError(t, err)
 		assert.Equal(t, "reset", token.Scope)
-		assert.Equal(t, timestamp, token.Lock)
+		assert.Equal(t, then, token.Lock.Time())
 		assert.Equal(t, "https://authn.example.com", token.Issuer)
 		assert.Equal(t, "52167", token.Subject)
-		assert.Equal(t, "https://authn.example.com", token.Audience)
-		assert.NotEmpty(t, token.ExpiresAt)
+		assert.True(t, token.Audience.Contains("https://authn.example.com"))
+		assert.NotEmpty(t, token.Expiry)
 		assert.NotEmpty(t, token.IssuedAt)
 
 		tokenStr, err := token.Sign(cfg.ResetSigningKey)
@@ -69,7 +70,7 @@ func TestPasswordResetToken(t *testing.T) {
 	})
 
 	t.Run("checking lock expiration", func(t *testing.T) {
-		claims := password_resets.Claims{Lock: timestamp}
+		claims := password_resets.Claims{Lock: jwt.NewNumericDate(then)}
 		assert.False(t, claims.LockExpired(then))
 		assert.False(t, claims.LockExpired(then.Add(time.Microsecond)))
 		assert.True(t, claims.LockExpired(then.Add(time.Second)))

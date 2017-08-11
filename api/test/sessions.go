@@ -3,11 +3,12 @@ package test
 import (
 	"net/http"
 
-	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/sessions"
+	jose "gopkg.in/square/go-jose.v2"
+	jwt "gopkg.in/square/go-jose.v2/jwt"
 )
 
 func CreateSession(tokenStore data.RefreshTokenStore, cfg *config.Config, accountId int) *http.Cookie {
@@ -16,7 +17,14 @@ func CreateSession(tokenStore data.RefreshTokenStore, cfg *config.Config, accoun
 		panic(err)
 	}
 
-	sessionString, err := jwt.NewWithClaims(jwt.SigningMethodHS256, sessionToken).SignedString(cfg.SessionSigningKey)
+	signer, err := jose.NewSigner(
+		jose.SigningKey{Algorithm: jose.HS256, Key: cfg.SessionSigningKey},
+		(&jose.SignerOptions{}).WithType("JWT"),
+	)
+	if err != nil {
+		panic(err)
+	}
+	sessionString, err := jwt.Signed(signer).Claims(sessionToken).CompactSerialize()
 	if err != nil {
 		panic(err)
 	}
