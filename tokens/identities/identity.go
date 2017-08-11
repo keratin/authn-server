@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/tokens/sessions"
 	jose "gopkg.in/square/go-jose.v2"
 	jwt "gopkg.in/square/go-jose.v2/jwt"
@@ -17,8 +18,13 @@ type Claims struct {
 }
 
 func (c *Claims) Sign(rsaKey *rsa.PrivateKey) (string, error) {
+	jwk := jose.JSONWebKey{
+		Key:   rsaKey,
+		KeyID: data.RSAPublicKeyID(rsaKey.Public()),
+	}
+
 	signer, err := jose.NewSigner(
-		jose.SigningKey{Algorithm: jose.RS256, Key: rsaKey},
+		jose.SigningKey{Algorithm: jose.RS256, Key: jwk},
 		(&jose.SignerOptions{}).WithType("JWT"),
 	)
 	if err != nil {
