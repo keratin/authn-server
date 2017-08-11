@@ -38,6 +38,7 @@ type Config struct {
 	AccessTokenTTL        time.Duration
 	AuthUsername          string
 	AuthPassword          string
+	EnableSignup          bool
 }
 
 var configurers = []configurer{
@@ -167,6 +168,16 @@ var configurers = []configurer{
 		isEmail, err := lookupBool("USERNAME_IS_EMAIL", false)
 		if err == nil {
 			c.UsernameIsEmail = isEmail
+		}
+		return err
+	},
+
+	// ENABLE_SIGNUP may be set to a falsy value ("f", "false", "no") to disable
+	// signup endpoints.
+	func(c *Config) error {
+		enableSignup, err := lookupBool("ENABLE_SIGNUP", true)
+		if err == nil {
+			c.EnableSignup = enableSignup
 		}
 		return err
 	},

@@ -8,15 +8,20 @@ func Routes(app *api.App) []*api.HandledRoute {
 	refererSecurity := api.RefererSecurity(app.Config.ApplicationDomains)
 	authentication := api.BasicAuthSecurity(app.Config.AuthUsername, app.Config.AuthPassword, "Private AuthN Realm")
 
-	return []*api.HandledRoute{
-		api.Post("/accounts").
-			SecuredWith(refererSecurity).
-			Handle(postAccount(app)),
+	routes := []*api.HandledRoute{}
 
-		api.Get("/accounts/available").
-			SecuredWith(refererSecurity).
-			Handle(getAccountsAvailable(app)),
+	if app.Config.EnableSignup {
+		routes = append(routes,
+			api.Post("/accounts").
+				SecuredWith(refererSecurity).
+				Handle(postAccount(app)),
+			api.Get("/accounts/available").
+				SecuredWith(refererSecurity).
+				Handle(getAccountsAvailable(app)),
+		)
+	}
 
+	routes = append(routes,
 		api.Post("/accounts/import").
 			SecuredWith(authentication).
 			Handle(postAccountsImport(app)),
@@ -36,5 +41,7 @@ func Routes(app *api.App) []*api.HandledRoute {
 		api.Delete("/accounts/{id:[0-9]+}").
 			SecuredWith(authentication).
 			Handle(deleteAccount(app)),
-	}
+	)
+
+	return routes
 }
