@@ -7,5 +7,8 @@ func Routes(app *api.App) []*api.HandledRoute {
 		api.Get("/health").
 			SecuredWith(api.Unsecured()).
 			Handle(getHealth(app)),
+		api.Get("/jwks").
+			SecuredWith(api.Unsecured()).
+			Handle(getJWKs(app)),
 	}
 }
