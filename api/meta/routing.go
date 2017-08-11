@@ -10,5 +10,8 @@ func Routes(app *api.App) []*api.HandledRoute {
 		api.Get("/jwks").
 			SecuredWith(api.Unsecured()).
 			Handle(getJWKs(app)),
+		api.Get("/configuration").
+			SecuredWith(api.Unsecured()).
+			Handle(getConfiguration(app)),
 	}
 }

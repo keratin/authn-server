@@ -8,13 +8,6 @@ import (
 	jose "github.com/square/go-jose"
 )
 
-type jwk struct {
-}
-
-type jwks struct {
-	Keys []jwk `json:"keys"`
-}
-
 func getJWKs(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		keys := []jose.JSONWebKey{}
