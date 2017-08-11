@@ -2,16 +2,17 @@ package test
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"strings"
 	"testing"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	jwt "gopkg.in/square/go-jose.v2/jwt"
+
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/services"
+	"github.com/keratin/authn-server/tokens/identities"
+	"github.com/keratin/authn-server/tokens/sessions"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -42,15 +43,7 @@ func AssertSession(t *testing.T, cfg *config.Config, cookies []*http.Cookie) {
 	}
 	require.NotEmpty(t, session)
 
-	segments := strings.Split(session, ".")
-	assert.Len(t, segments, 3)
-
-	_, err := jwt.Parse(session, func(t *jwt.Token) (interface{}, error) {
-		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", t.Header["alg"])
-		}
-		return []byte("TODO"), nil
-	})
+	_, err := sessions.Parse(session, cfg)
 	assert.NoError(t, err)
 }
 
@@ -63,13 +56,14 @@ func AssertIdTokenResponse(t *testing.T, res *http.Response, keyStore data.KeySt
 	err := extractResult(res, &responseData)
 	assert.NoError(t, err)
 
-	// check that the IdToken is JWT-ish
-	identityToken, err := jwt.Parse(responseData.IdToken, func(tkn *jwt.Token) (interface{}, error) {
-		return keyStore.Key().Public(), nil
-	})
+	tok, err := jwt.ParseSigned(responseData.IdToken)
+	assert.NoError(t, err)
+
+	claims := identities.Claims{}
+	err = tok.Claims(keyStore.Key().Public(), &claims)
 	if assert.NoError(t, err) {
 		// check that the JWT contains nice things
-		assert.Equal(t, cfg.AuthNURL.String(), identityToken.Claims.(jwt.MapClaims)["iss"])
+		assert.Equal(t, cfg.AuthNURL.String(), claims.Issuer)
 	}
 }
 

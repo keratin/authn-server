@@ -1,7 +1,5 @@
 package: github.com/keratin/authn-server
 import:
-- package: github.com/dgrijalva/jwt-go
-  version: ^3.0.0
 - package: github.com/go-redis/redis
   version: ^6.5.0
 - package: github.com/gorilla/handlers
