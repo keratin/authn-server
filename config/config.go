@@ -297,7 +297,7 @@ func ReadEnv() *Config {
 		panic(err)
 	}
 
-	identityKey, err := rsa.GenerateKey(rand.Reader, 2056)
+	identityKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		panic(err)
 	}

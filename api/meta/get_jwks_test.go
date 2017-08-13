@@ -37,7 +37,7 @@ func TestGetJWKs(t *testing.T) {
 }
 
 func BenchmarkGetJWKs(b *testing.B) {
-	rsaKey, _ := rsa.GenerateKey(rand.Reader, 2056)
+	rsaKey, _ := rsa.GenerateKey(rand.Reader, 2048)
 	app := &api.App{
 		KeyStore: mock.NewKeyStore(rsaKey),
 		Config:   &config.Config{},
