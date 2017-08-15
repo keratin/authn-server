@@ -33,6 +33,7 @@ func App() *api.App {
 		ApplicationDomains:    []string{"test.com"},
 		PasswordMinComplexity: 2,
 		AppPasswordResetURL:   &url.URL{Scheme: "https", Host: "app.example.com"},
+		EnableSignup:          true,
 	}
 
 	tokenStore := mock.NewRefreshTokenStore()
