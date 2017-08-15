@@ -37,7 +37,7 @@ func EncryptWithNonce(value []byte, secret []byte, nonce []byte) ([]byte, error)
 		return nil, err
 	}
 
-	ciphertext := aesgcm.Seal(nil, nonce, MarshalString(string(value)), nil)
+	ciphertext := aesgcm.Seal(nil, nonce, Marshal(string(value)), nil)
 	encryptedData := ciphertext[:len(ciphertext)-16]
 	authTag := ciphertext[len(ciphertext)-16:]
 
@@ -54,30 +54,30 @@ func EncryptWithNonce(value []byte, secret []byte, nonce []byte) ([]byte, error)
 // It will also attempt to unwrap the plaintext as if it were Marshal.dump'd.
 //
 // See: ActiveSupport::MessageEncryptor with GCM changes
-func Decrypt(message []byte, key []byte) ([]byte, error) {
+func Decrypt(message []byte, key []byte) (string, error) {
 	slices := strings.Split(string(message), "--")
 	encryptedData, _ := base64.StdEncoding.DecodeString(slices[0])
 	nonce, _ := base64.StdEncoding.DecodeString(slices[1])
 	authTag, _ := base64.StdEncoding.DecodeString(slices[2])
 	if authTag == nil || len(authTag) != 16 {
-		return nil, fmt.Errorf("unexpected encrypted message format")
+		return "", fmt.Errorf("unexpected encrypted message format")
 	}
 
 	ciphertext := bytes.Join([][]byte{encryptedData, authTag}, []byte(""))
 
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	plaintext, err := aesgcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	return UnmarshalString(plaintext)
