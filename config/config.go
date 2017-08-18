@@ -4,6 +4,8 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
+	"crypto/x509"
+	"encoding/pem"
 	"fmt"
 	"math/big"
 	"net/url"
@@ -30,6 +32,7 @@ type Config struct {
 	SessionCookieName     string
 	SessionSigningKey     []byte
 	ResetSigningKey       []byte
+	DBEncryptionKey       []byte
 	ResetTokenTTL         time.Duration
 	IdentitySigningKey    *rsa.PrivateKey
 	AuthNURL              *url.URL
@@ -89,6 +92,7 @@ var configurers = []configurer{
 			// TODO: convert as hex??
 			c.SessionSigningKey = derive([]byte(val), "session-key-salt")
 			c.ResetSigningKey = derive([]byte(val), "password-reset-token-key-salt")
+			c.DBEncryptionKey = derive([]byte(val), "db-encryption-key-salt")
 		}
 		return err
 	},
@@ -280,6 +284,25 @@ var configurers = []configurer{
 		return nil
 	},
 
+	// RSA_PRIVATE_KEY is a RSA private key in PEM format. If provided as a single
+	// line string, any literal \n sequences will be converted to real linebreaks.
+	// When provided, it will be used for signing identity tokens, and the public
+	// key will be published for audiences to verify. When not provided, AuthN will
+	// generate and manage keys itself, using Redis for coordination and
+	// persistence.
+	func(c *Config) error {
+		if str, ok := os.LookupEnv("RSA_PRIVATE_KEY"); ok {
+			str = strings.Replace(str, `\n`, "\n", -1)
+			block, _ := pem.Decode([]byte(str))
+			key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+			if err != nil {
+				return err
+			}
+			c.IdentitySigningKey = key
+		}
+		return nil
+	},
+
 	func(c *Config) error {
 		c.UsernameMinLength = 3
 		return nil
@@ -296,12 +319,6 @@ func ReadEnv() *Config {
 	if err != nil {
 		panic(err)
 	}
-
-	identityKey, err := rsa.GenerateKey(rand.Reader, 2048)
-	if err != nil {
-		panic(err)
-	}
-	config.IdentitySigningKey = identityKey
 
 	return config
 }

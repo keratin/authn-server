@@ -1,6 +1,8 @@
 package api
 
 import (
+	"time"
+
 	"github.com/go-redis/redis"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
@@ -39,7 +41,20 @@ func NewApp() (*App, error) {
 		TTL:    cfg.RefreshTokenTTL,
 	}
 
-	keyStore := mock.NewKeyStore(cfg.IdentitySigningKey)
+	var keyStore data.KeyStore
+	if cfg.IdentitySigningKey == nil {
+		keyStore, err = dataRedis.NewKeyStore(
+			redis,
+			cfg.AccessTokenTTL,
+			time.Duration(500)*time.Millisecond,
+			cfg.DBEncryptionKey,
+		)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		keyStore = mock.NewKeyStore(cfg.IdentitySigningKey)
+	}
 
 	return &App{
 		DbCheck:           func() bool { return db.Ping() == nil },
