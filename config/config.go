@@ -18,30 +18,33 @@ import (
 )
 
 type Config struct {
-	AppPasswordResetURL   *url.URL
-	ApplicationDomains    []string
-	ApplicationOrigins    []string
-	BcryptCost            int
-	UsernameIsEmail       bool
-	UsernameMinLength     int
-	UsernameDomains       []string
-	PasswordMinComplexity int
-	RefreshTokenTTL       time.Duration
-	RedisURL              *url.URL
-	DatabaseURL           *url.URL
-	SessionCookieName     string
-	SessionSigningKey     []byte
-	ResetSigningKey       []byte
-	DBEncryptionKey       []byte
-	ResetTokenTTL         time.Duration
-	IdentitySigningKey    *rsa.PrivateKey
-	AuthNURL              *url.URL
-	ForceSSL              bool
-	MountedPath           string
-	AccessTokenTTL        time.Duration
-	AuthUsername          string
-	AuthPassword          string
-	EnableSignup          bool
+	AppPasswordResetURL    *url.URL
+	ApplicationDomains     []string
+	ApplicationOrigins     []string
+	BcryptCost             int
+	UsernameIsEmail        bool
+	UsernameMinLength      int
+	UsernameDomains        []string
+	PasswordMinComplexity  int
+	RefreshTokenTTL        time.Duration
+	RedisURL               *url.URL
+	DatabaseURL            *url.URL
+	SessionCookieName      string
+	SessionSigningKey      []byte
+	ResetSigningKey        []byte
+	DBEncryptionKey        []byte
+	ResetTokenTTL          time.Duration
+	IdentitySigningKey     *rsa.PrivateKey
+	AuthNURL               *url.URL
+	ForceSSL               bool
+	MountedPath            string
+	AccessTokenTTL         time.Duration
+	AuthUsername           string
+	AuthPassword           string
+	EnableSignup           bool
+	StatisticsTimeZone     *time.Location
+	DailyActivesRetention  time.Duration
+	WeeklyActivesRetention time.Duration
 }
 
 var configurers = []configurer{
@@ -301,6 +304,42 @@ var configurers = []configurer{
 			c.IdentitySigningKey = key
 		}
 		return nil
+	},
+
+	// TIME_ZONE is the IANA name of a location that should be used when calculating
+	// which day it is when tracking key stats. It defaults to UTC.
+	func(c *Config) error {
+		name, ok := os.LookupEnv("TIME_ZONE")
+		if !ok {
+			name = "UTC"
+		}
+
+		tz, err := time.LoadLocation(name)
+		if err != nil {
+			return err
+		}
+		c.StatisticsTimeZone = tz
+		return nil
+	},
+
+	// DAILY_ACTIVES_RETENTION is how many daily records of the number of active accounts to keep.
+	// The default is 365 (~1 year).
+	func(c *Config) error {
+		num, err := lookupInt("DAILY_ACTIVES_RETENTION", 365)
+		if err == nil {
+			c.DailyActivesRetention = time.Duration(num*24) * time.Hour
+		}
+		return err
+	},
+
+	// WEEKLY_ACTIVES_RETENTION is how many weekly records of the number of active accounts to keep.
+	// The default is 104 (~2 years).
+	func(c *Config) error {
+		num, err := lookupInt("WEEKLY_ACTIVES_RETENTION", 104)
+		if err == nil {
+			c.WeeklyActivesRetention = time.Duration(num*24*7) * time.Hour
+		}
+		return err
 	},
 
 	func(c *Config) error {
