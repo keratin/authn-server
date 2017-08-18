@@ -16,6 +16,69 @@ import (
 var placeholder = "generating"
 
 type keyStore struct {
+	keys   []*rsa.PrivateKey
+	rwLock *sync.RWMutex
+}
+
+// NewKeyStore creates a key store that uses Redis to persist an auto-generated key and rotate it
+// regularly. The key is encrypted using SECRET_KEY_BASE, which is already the ultimate SPOF for
+// AuthN security. It's expected that very few people will be in position to improve on the security
+// tradeoffs of this provider.
+func NewKeyStore(client *redis.Client, interval time.Duration, race time.Duration, encryptionKey []byte) (*keyStore, error) {
+	ks := &keyStore{
+		keys:   []*rsa.PrivateKey{},
+		rwLock: &sync.RWMutex{},
+	}
+
+	m := &maintainer{
+		interval:      interval,
+		race:          race,
+		keyStrength:   2048,
+		client:        client,
+		encryptionKey: encryptionKey,
+	}
+	err := m.maintain(ks)
+	if err != nil {
+		return nil, err
+	}
+
+	return ks, nil
+}
+
+// Key returns the current key. It relies on the internal keys slice being sorted with the newest
+// key last.
+func (ks *keyStore) Key() *rsa.PrivateKey {
+	ks.rwLock.RLock()
+	defer ks.rwLock.RUnlock()
+
+	return ks.keys[len(ks.keys)-1]
+}
+
+// Keys will return the previous and current keys, in that order.
+func (ks *keyStore) Keys() []*rsa.PrivateKey {
+	ks.rwLock.RLock()
+	defer ks.rwLock.RUnlock()
+
+	return ks.keys
+}
+
+// rotate is responsible for adding a new key to the list. It maintains key order from oldest to
+// newest, and ensures a maximum of two entries.
+func (ks *keyStore) rotate(k *rsa.PrivateKey) {
+	keys := []*rsa.PrivateKey{}
+	if len(ks.keys) > 0 {
+		keys = append(keys, ks.keys[len(ks.keys)])
+	}
+	keys = append(keys, k)
+
+	ks.rwLock.Lock()
+	defer ks.rwLock.Unlock()
+	ks.keys = keys
+}
+
+//-- MAINTAINER
+
+type maintainer struct {
 	// the rotation interval should be slightly longer than access token expiry.
 	// this means that when a key goes inactive for some interval, we can know
 	// that it is useless and discardable by the third interval.
@@ -31,68 +94,59 @@ type keyStore struct {
 	keyStrength   int
 	encryptionKey []byte
 	client        *redis.Client
-	keys          map[int64]*rsa.PrivateKey
-	localMutex    sync.Mutex
 }
 
-// NewKeyStore creates a key store that uses Redis to persist an auto-generated key and rotate it
-// regularly. The key is encrypted using SECRET_KEY_BASE, which is already the ultimate SPOF for
-// AuthN security. It's expected that very few people will be in position to improve on the security
-// tradeoffs of this provider.
-func NewKeyStore(client *redis.Client, interval time.Duration, race time.Duration, encryptionKey []byte) *keyStore {
-	return &keyStore{
-		interval:      interval,
-		race:          race,
-		keyStrength:   2048,
-		client:        client,
-		encryptionKey: encryptionKey,
-		localMutex:    sync.Mutex{},
-		keys:          make(map[int64]*rsa.PrivateKey),
+// maintain will restore and rotate a keyStore at periodic intervals.
+func (m *maintainer) maintain(ks *keyStore) error {
+	// restore current keys, if any
+	keys, err := m.restore()
+	if err != nil {
+		return err
 	}
-}
+	for _, key := range keys {
+		ks.rotate(key)
+	}
 
-func (ks *keyStore) Key() (*rsa.PrivateKey, error) {
-	bucket := ks.currentBucket()
-
-	if ks.keys[bucket] == nil {
-		// this lock only prevents stampedes within a single server. it does
-		// not prevent stampedes across multiple servers, and it does not make
-		// the keys map safe for concurrency.
-		ks.localMutex.Lock()
-		defer ks.localMutex.Unlock()
-
-		// if we were waiting, another routine may have already done it.
-		if ks.keys[bucket] == nil {
-			key, err := ks.findOrCreate(bucket)
-			if err != nil {
-				return nil, err
-			}
-			ks.keys[bucket] = key
+	// ensure at least one key (cold start)
+	if len(keys) == 0 {
+		newKey, err := m.generate()
+		if err != nil {
+			return err
 		}
-
-		// trim out old keys, keeping only the current and previous
-		go func() {
-			for b := range ks.keys {
-				if b+1 < bucket {
-					delete(ks.keys, b)
-				}
-			}
-		}()
+		ks.rotate(newKey)
 	}
 
-	return ks.keys[bucket], nil
+	go func() {
+		// sleep until next interval change
+		elapsedSeconds := time.Now().Unix() % int64(m.interval/time.Second)
+		time.Sleep(m.interval - time.Duration(elapsedSeconds))
+		newKey, err := m.generate()
+		if err != nil {
+			// TODO: report and continue
+		}
+		ks.rotate(newKey)
+		// continue rotating at regular intervals
+		ticker := time.NewTicker(m.interval)
+		for {
+			<-ticker.C
+			newKey, err := m.generate()
+			if err != nil {
+				// TODO: report and continue
+			}
+			ks.rotate(newKey)
+		}
+	}()
+
+	return nil
 }
 
-// Keys must reliably return the keys associated with the current interval
-// and the previous interval. Intervals are not guaranteed to have a key,
-// if no signing took place in that interval. The local cache of keys is
-// also not guaranteed to exist or have the appropriate contents, since this
-// server may not have been asked to sign or report on keys since starting.
-func (ks *keyStore) Keys() ([]*rsa.PrivateKey, error) {
-	bucket := ks.currentBucket()
+// restore will query Redis for the previous and current keys. It returns keys in the proper sorting
+// order, with the newest (current) key in last position.
+func (m *maintainer) restore() ([]*rsa.PrivateKey, error) {
+	bucket := m.currentBucket()
 	keys := []*rsa.PrivateKey{}
 
-	previous, err := ks.findAndRemember(bucket - 1)
+	previous, err := m.find(bucket - 1)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +154,7 @@ func (ks *keyStore) Keys() ([]*rsa.PrivateKey, error) {
 		keys = append(keys, previous)
 	}
 
-	current, err := ks.findAndRemember(bucket)
+	current, err := m.find(bucket)
 	if err != nil {
 		return nil, err
 	}
@@ -111,9 +165,53 @@ func (ks *keyStore) Keys() ([]*rsa.PrivateKey, error) {
 	return keys, nil
 }
 
+// generate will create a new key and store it in Redis. It relies on a Redis lock to coordinate
+// with other AuthN servers.
+func (m *maintainer) generate() (*rsa.PrivateKey, error) {
+	bucket := m.currentBucket()
+	redisKey := fmt.Sprintf("rsa:%d", bucket)
+	for {
+		// check if another server has created it
+		existingKey, err := m.find(bucket)
+		if err != nil {
+			return nil, err
+		}
+		if existingKey != nil {
+			return existingKey, nil
+		}
+		// acquire Redis lock (global mutex)
+		success, err := m.client.SetNX(redisKey, placeholder, m.race).Result()
+		if err != nil {
+			return nil, err
+		}
+		if success {
+			// create a new key
+			key, err := rsa.GenerateKey(rand.Reader, m.keyStrength)
+			if err != nil {
+				return nil, err
+			}
+			// encrypt the key
+			ciphertext, err := compat.Encrypt(keyToBytes(key), m.encryptionKey)
+			if err != nil {
+				return nil, err
+			}
+			// store the key
+			err = m.client.Set(redisKey, ciphertext, m.interval*2+10*time.Second).Err()
+			if err != nil {
+				return nil, err
+			}
+			// return the key
+			return key, nil
+		}
+
+		// wait and try again
+		time.Sleep(50 * time.Millisecond)
+	}
+}
+
 // find will retrieve and deserialize/decrypt from Redis
-func (ks *keyStore) find(bucket int64) (*rsa.PrivateKey, error) {
-	blob, err := ks.client.Get(fmt.Sprintf("rsa:%d", bucket)).Result()
+func (m *maintainer) find(bucket int64) (*rsa.PrivateKey, error) {
+	blob, err := m.client.Get(fmt.Sprintf("rsa:%d", bucket)).Result()
 	if err == redis.Nil {
 		return nil, nil
 	} else if err != nil {
@@ -122,7 +220,7 @@ func (ks *keyStore) find(bucket int64) (*rsa.PrivateKey, error) {
 		return nil, nil
 	}
 
-	plaintext, err := compat.Decrypt([]byte(blob), ks.encryptionKey)
+	plaintext, err := compat.Decrypt([]byte(blob), m.encryptionKey)
 	if err != nil {
 		return nil, err
 	}
@@ -130,66 +228,11 @@ func (ks *keyStore) find(bucket int64) (*rsa.PrivateKey, error) {
 	return bytesToKey([]byte(plaintext)), nil
 }
 
-// findAndRemember will find a key from Redis and memoize the result
-func (ks *keyStore) findAndRemember(bucket int64) (*rsa.PrivateKey, error) {
-	// maybe previously remembered
-	if ks.keys[bucket] != nil {
-		return ks.keys[bucket], nil
-	}
-	// fetch
-	key, err := ks.find(bucket)
-	if err != nil || key == nil {
-		return key, err
-	}
-	// remember
-	ks.keys[bucket] = key
-	return ks.keys[bucket], nil
+func (m *maintainer) currentBucket() int64 {
+	return time.Now().Unix() / int64(m.interval/time.Second)
 }
 
-// findOrCreate will find a key from Redis or acquire a global lock before
-// creating a missing key and storing it in Redis.
-func (ks *keyStore) findOrCreate(bucket int64) (*rsa.PrivateKey, error) {
-	fmt.Println(bucket)
-	redisKey := fmt.Sprintf("rsa:%d", bucket)
-	for {
-		fmt.Println("loop")
-		// check if it exists (not a placeholder)
-		val, err := ks.find(bucket)
-		if err != nil || val != nil {
-			return val, err
-		}
-		// attempt to get redis lock (global mutex with other servers)
-		success, err := ks.client.SetNX(redisKey, placeholder, ks.race).Result()
-		if err != nil {
-			return nil, err
-		}
-		if success {
-			// create a new key
-			key, err := rsa.GenerateKey(rand.Reader, ks.keyStrength)
-			if err != nil {
-				return nil, err
-			}
-			// encrypt the key
-			ciphertext, err := compat.Encrypt(keyToBytes(key), ks.encryptionKey)
-			if err != nil {
-				return nil, err
-			}
-			// store the key
-			err = ks.client.Set(redisKey, ciphertext, ks.interval*2+10*time.Second).Err()
-			if err != nil {
-				return nil, err
-			}
-			// return the key
-			return key, nil
-		}
-
-		time.Sleep(50 * time.Millisecond)
-	}
-}
-
-func (ks *keyStore) currentBucket() int64 {
-	return time.Now().Unix() / int64(ks.interval)
-}
+//-- UTIL
 
 func keyToBytes(key *rsa.PrivateKey) []byte {
 	return pem.EncodeToMemory(&pem.Block{
