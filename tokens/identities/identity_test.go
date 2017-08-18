@@ -26,7 +26,7 @@ func TestIdentityClaims(t *testing.T) {
 	}
 	key, err := rsa.GenerateKey(rand.Reader, 512)
 	require.NoError(t, err)
-	session, err := sessions.New(store, &cfg, 1)
+	session, err := sessions.New(store, &cfg, 1, "example.com")
 	require.NoError(t, err)
 
 	t.Run("includes KID", func(t *testing.T) {

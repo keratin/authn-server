@@ -17,9 +17,10 @@ import (
 func TestSession(t *testing.T) {
 	app := &api.App{
 		Config: &config.Config{
-			SessionCookieName: "authn-test",
-			SessionSigningKey: []byte("drinkme"),
-			AuthNURL:          &url.URL{Scheme: "http", Host: "authn.example.com"},
+			SessionCookieName:  "authn-test",
+			SessionSigningKey:  []byte("drinkme"),
+			AuthNURL:           &url.URL{Scheme: "http", Host: "authn.example.com"},
+			ApplicationDomains: []string{"example.com"},
 		},
 		RefreshTokenStore: mock.NewRefreshTokenStore(),
 	}
@@ -45,9 +46,10 @@ func TestSession(t *testing.T) {
 
 	t.Run("invalid session", func(t *testing.T) {
 		oldConfig := &config.Config{
-			SessionCookieName: app.Config.SessionCookieName,
-			SessionSigningKey: []byte("previouskey"),
-			AuthNURL:          app.Config.AuthNURL,
+			SessionCookieName:  app.Config.SessionCookieName,
+			SessionSigningKey:  []byte("previouskey"),
+			AuthNURL:           app.Config.AuthNURL,
+			ApplicationDomains: app.Config.ApplicationDomains,
 		}
 		accountId := 52444
 		session := test.CreateSession(app.RefreshTokenStore, oldConfig, accountId)

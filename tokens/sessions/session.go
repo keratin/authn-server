@@ -48,14 +48,14 @@ func Parse(tokenStr string, cfg *config.Config) (*Claims, error) {
 	return &claims, nil
 }
 
-func New(store data.RefreshTokenStore, cfg *config.Config, accountID int) (*Claims, error) {
+func New(store data.RefreshTokenStore, cfg *config.Config, accountID int, authorizedAudience string) (*Claims, error) {
 	refreshToken, err := store.Create(accountID)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Claims{
-		Azp: "", // TODO: audience
+		Azp: authorizedAudience,
 		Claims: jwt.Claims{
 			Issuer:   cfg.AuthNURL.String(),
 			Subject:  string(refreshToken),

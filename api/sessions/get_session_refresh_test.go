@@ -55,9 +55,10 @@ func TestGetSessionRefreshFailure(t *testing.T) {
 
 	for idx, tc := range testCases {
 		tcCfg := &config.Config{
-			AuthNURL:          app.Config.AuthNURL,
-			SessionCookieName: app.Config.SessionCookieName,
-			SessionSigningKey: tc.signingKey,
+			AuthNURL:           app.Config.AuthNURL,
+			SessionCookieName:  app.Config.SessionCookieName,
+			SessionSigningKey:  tc.signingKey,
+			ApplicationDomains: []string{"test.com"},
 		}
 		existingSession := test.CreateSession(app.RefreshTokenStore, tcCfg, idx+100)
 		if !tc.liveToken {

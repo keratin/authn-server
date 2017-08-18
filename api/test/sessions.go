@@ -12,7 +12,7 @@ import (
 )
 
 func CreateSession(tokenStore data.RefreshTokenStore, cfg *config.Config, accountId int) *http.Cookie {
-	sessionToken, err := sessions.New(tokenStore, cfg, accountId)
+	sessionToken, err := sessions.New(tokenStore, cfg, accountId, cfg.ApplicationDomains[0])
 	if err != nil {
 		panic(err)
 	}

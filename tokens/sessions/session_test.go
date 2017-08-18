@@ -20,12 +20,12 @@ func TestNewAndParseAndSign(t *testing.T) {
 		SessionSigningKey: []byte("key-a-reno"),
 	}
 
-	token, err := sessions.New(store, &cfg, 658908)
+	token, err := sessions.New(store, &cfg, 658908, "example.com")
 	require.NoError(t, err)
 	assert.Equal(t, "http://authn.example.com", token.Issuer)
 	assert.True(t, token.Audience.Contains("http://authn.example.com"))
 	assert.NotEmpty(t, token.Subject)
-	assert.Equal(t, "", token.Azp)
+	assert.Equal(t, "example.com", token.Azp)
 	assert.NotEmpty(t, token.IssuedAt)
 
 	sessionString, err := token.Sign(cfg.SessionSigningKey)
@@ -36,7 +36,7 @@ func TestNewAndParseAndSign(t *testing.T) {
 	assert.Equal(t, "http://authn.example.com", claims.Issuer)
 	assert.True(t, token.Audience.Contains("http://authn.example.com"))
 	assert.NotEmpty(t, token.Subject)
-	assert.Equal(t, "", claims.Azp)
+	assert.Equal(t, "example.com", claims.Azp)
 	assert.NotEmpty(t, claims.IssuedAt)
 }
 
@@ -48,7 +48,7 @@ func TestParseInvalidSessionJWT(t *testing.T) {
 	cfg := config.Config{AuthNURL: &authn, SessionSigningKey: key}
 
 	t.Run("old key", func(t *testing.T) {
-		token, err := sessions.New(store, &config.Config{AuthNURL: &authn}, 1)
+		token, err := sessions.New(store, &config.Config{AuthNURL: &authn}, 1, app.Host)
 		require.NoError(t, err)
 		tokenStr, err := token.Sign([]byte("old key"))
 		require.NoError(t, err)
@@ -58,7 +58,7 @@ func TestParseInvalidSessionJWT(t *testing.T) {
 	})
 
 	t.Run("different audience", func(t *testing.T) {
-		token, err := sessions.New(store, &config.Config{AuthNURL: &authn}, 2)
+		token, err := sessions.New(store, &config.Config{AuthNURL: &authn}, 2, app.Host)
 		require.NoError(t, err)
 		token.Audience = jwt.Audience{app.String()}
 		tokenStr, err := token.Sign(key)

@@ -47,9 +47,10 @@ func TestDeleteSessionFailure(t *testing.T) {
 	defer server.Close()
 
 	badCfg := &config.Config{
-		AuthNURL:          app.Config.AuthNURL,
-		SessionCookieName: app.Config.SessionCookieName,
-		SessionSigningKey: []byte("wrong"),
+		AuthNURL:           app.Config.AuthNURL,
+		SessionCookieName:  app.Config.SessionCookieName,
+		SessionSigningKey:  []byte("wrong"),
+		ApplicationDomains: app.Config.ApplicationDomains,
 	}
 	session := test.CreateSession(app.RefreshTokenStore, badCfg, 123)
 
