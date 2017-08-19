@@ -20,6 +20,7 @@ type App struct {
 	AccountStore      data.AccountStore
 	RefreshTokenStore data.RefreshTokenStore
 	KeyStore          data.KeyStore
+	Actives           data.Actives
 }
 
 func NewApp() (*App, error) {
@@ -56,6 +57,14 @@ func NewApp() (*App, error) {
 		keyStore = mock.NewKeyStore(cfg.IdentitySigningKey)
 	}
 
+	actives := dataRedis.NewActives(
+		redis,
+		cfg.StatisticsTimeZone,
+		cfg.DailyActivesRetention,
+		cfg.WeeklyActivesRetention,
+		5*12,
+	)
+
 	return &App{
 		DbCheck:           func() bool { return db.Ping() == nil },
 		RedisCheck:        func() bool { return redis.Ping().Err() == nil },
@@ -63,5 +72,6 @@ func NewApp() (*App, error) {
 		AccountStore:      accountStore,
 		RefreshTokenStore: tokenStore,
 		KeyStore:          keyStore,
+		Actives:           actives,
 	}, nil
 }

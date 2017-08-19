@@ -24,7 +24,7 @@ func getSessionRefresh(app *api.App) http.HandlerFunc {
 		}
 
 		// generate the requested identity token
-		identityToken, err := api.IdentityForSession(app.KeyStore, app.Config, session, accountId)
+		identityToken, err := api.IdentityForSession(app.KeyStore, app.Actives, app.Config, session, accountId)
 		if err != nil {
 			panic(err)
 		}

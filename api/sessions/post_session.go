@@ -30,7 +30,7 @@ func postSession(app *api.App) http.HandlerFunc {
 			// TODO: alert but continue
 		}
 
-		sessionToken, identityToken, err := api.NewSession(app.RefreshTokenStore, app.KeyStore, app.Config, account.Id, r.Host)
+		sessionToken, identityToken, err := api.NewSession(app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, account.Id, r.Host)
 		if err != nil {
 			panic(err)
 		}

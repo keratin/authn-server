@@ -38,10 +38,13 @@ func App() *api.App {
 
 	tokenStore := mock.NewRefreshTokenStore()
 
+	actives := mock.NewActives()
+
 	return &api.App{
 		KeyStore:          keyStore,
 		AccountStore:      accountStore,
 		RefreshTokenStore: tokenStore,
 		Config:            &cfg,
+		Actives:           actives,
 	}
 }
