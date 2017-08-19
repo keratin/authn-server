@@ -15,7 +15,7 @@ import (
 
 func TestRefreshTokenStore(t *testing.T) {
 	testers := []func(*testing.T, data.RefreshTokenStore){
-		// testRefreshTokenFind,
+		testRefreshTokenFind,
 		testRefreshTokenTouch,
 		testRefreshTokenFindAll,
 		testRefreshTokenCreate,
