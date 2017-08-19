@@ -43,8 +43,8 @@ type Config struct {
 	AuthPassword           string
 	EnableSignup           bool
 	StatisticsTimeZone     *time.Location
-	DailyActivesRetention  time.Duration
-	WeeklyActivesRetention time.Duration
+	DailyActivesRetention  int
+	WeeklyActivesRetention int
 }
 
 var configurers = []configurer{
@@ -327,7 +327,7 @@ var configurers = []configurer{
 	func(c *Config) error {
 		num, err := lookupInt("DAILY_ACTIVES_RETENTION", 365)
 		if err == nil {
-			c.DailyActivesRetention = time.Duration(num*24) * time.Hour
+			c.DailyActivesRetention = num
 		}
 		return err
 	},
@@ -337,7 +337,7 @@ var configurers = []configurer{
 	func(c *Config) error {
 		num, err := lookupInt("WEEKLY_ACTIVES_RETENTION", 104)
 		if err == nil {
-			c.WeeklyActivesRetention = time.Duration(num*24*7) * time.Hour
+			c.WeeklyActivesRetention = num
 		}
 		return err
 	},
