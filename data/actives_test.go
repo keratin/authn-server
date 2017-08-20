@@ -7,6 +7,7 @@ import (
 
 	goredis "github.com/go-redis/redis"
 	"github.com/keratin/authn-server/data"
+	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/data/redis"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -20,14 +21,19 @@ func TestActives(t *testing.T) {
 		testActivesActivesByMonth,
 	}
 
+	for _, tester := range testers {
+		mStore := mock.NewActives()
+		tester(t, mStore)
+	}
+
 	client := goredis.NewClient(&goredis.Options{
 		Addr: "127.0.0.1:6379",
 		DB:   12,
 	})
-	store := redis.NewActives(client, time.UTC, 365, 52, 12)
+	rStore := redis.NewActives(client, time.UTC, 365, 52, 12)
 	for _, tester := range testers {
 		client.FlushDB()
-		tester(t, store)
+		tester(t, rStore)
 	}
 }
 
