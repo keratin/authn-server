@@ -8,10 +8,5 @@ import (
 )
 
 func NewDB(env string) (*sqlx.DB, error) {
-	db, err := sqlx.Connect("sqlite3", fmt.Sprintf("./%v.db", env))
-	if err != nil {
-		return nil, err
-	}
-
-	return db, nil
+	return sqlx.Connect("sqlite3", fmt.Sprintf("./%v.db", env))
 }

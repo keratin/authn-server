@@ -11,8 +11,6 @@ import (
 )
 
 func App() *api.App {
-	accountStore := mock.NewAccountStore()
-
 	authnUrl, err := url.Parse("https://authn.example.com")
 	if err != nil {
 		panic(err)
@@ -22,8 +20,6 @@ func App() *api.App {
 	if err != nil {
 		panic(err)
 	}
-
-	keyStore := mock.NewKeyStore(weakKey)
 
 	cfg := config.Config{
 		BcryptCost:            4,
@@ -36,15 +32,11 @@ func App() *api.App {
 		EnableSignup:          true,
 	}
 
-	tokenStore := mock.NewRefreshTokenStore()
-
-	actives := mock.NewActives()
-
 	return &api.App{
-		KeyStore:          keyStore,
-		AccountStore:      accountStore,
-		RefreshTokenStore: tokenStore,
 		Config:            &cfg,
-		Actives:           actives,
+		KeyStore:          mock.NewKeyStore(weakKey),
+		AccountStore:      mock.NewAccountStore(),
+		RefreshTokenStore: mock.NewRefreshTokenStore(),
+		Actives:           mock.NewActives(),
 	}
 }
