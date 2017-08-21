@@ -52,7 +52,7 @@ func testActivesActivesByDay(t *testing.T, actives data.Actives) {
 	report, err := actives.ActivesByDay()
 	require.NoError(t, err)
 	if assert.Len(t, report, 1) {
-		assert.Equal(t, map[string]int{time.Now().Format("2006-01-02"): 1}, report)
+		assert.Equal(t, map[string]int{time.Now().In(time.UTC).Format("2006-01-02"): 1}, report)
 	}
 }
 
@@ -62,7 +62,7 @@ func testActivesActivesByWeek(t *testing.T, actives data.Actives) {
 	report, err := actives.ActivesByWeek()
 	require.NoError(t, err)
 	if assert.Len(t, report, 1) {
-		y, w := time.Now().ISOWeek()
+		y, w := time.Now().In(time.UTC).ISOWeek()
 		label := strconv.Itoa(y) + "-W" + strconv.Itoa(w)
 		assert.Equal(t, map[string]int{label: 1}, report)
 	}
@@ -74,7 +74,7 @@ func testActivesActivesByMonth(t *testing.T, actives data.Actives) {
 	report, err := actives.ActivesByMonth()
 	require.NoError(t, err)
 	if assert.Len(t, report, 1) {
-		assert.Equal(t, map[string]int{time.Now().Format("2006-01"): 1}, report)
+		assert.Equal(t, map[string]int{time.Now().In(time.UTC).Format("2006-01"): 1}, report)
 	}
 }
 
