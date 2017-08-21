@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	goredis "github.com/go-redis/redis"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/data/redis"
@@ -27,10 +26,8 @@ func TestRefreshTokenStore(t *testing.T) {
 		tester(t, store)
 	}
 
-	client := goredis.NewClient(&goredis.Options{
-		Addr: "127.0.0.1:6379",
-		DB:   12,
-	})
+	client, err := redis.TestDB()
+	require.NoError(t, err)
 	store := &redis.RefreshTokenStore{Client: client, TTL: time.Second}
 	for _, tester := range testers {
 		tester(t, store)

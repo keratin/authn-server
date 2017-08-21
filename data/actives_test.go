@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	goredis "github.com/go-redis/redis"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/data/redis"
@@ -26,10 +25,8 @@ func TestActives(t *testing.T) {
 		tester(t, mStore)
 	}
 
-	client := goredis.NewClient(&goredis.Options{
-		Addr: "127.0.0.1:6379",
-		DB:   12,
-	})
+	client, err := redis.TestDB()
+	require.NoError(t, err)
 	rStore := redis.NewActives(client, time.UTC, 365, 52, 12)
 	for _, tester := range testers {
 		client.FlushDB()

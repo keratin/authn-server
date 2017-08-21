@@ -4,17 +4,14 @@ import (
 	"testing"
 	"time"
 
-	goredis "github.com/go-redis/redis"
 	"github.com/keratin/authn-server/data/redis"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestKeyStore(t *testing.T) {
-	client := goredis.NewClient(&goredis.Options{
-		Addr: "127.0.0.1:6379",
-		DB:   12,
-	})
+	client, err := redis.TestDB()
+	require.NoError(t, err)
 	secret := []byte("32bigbytesofsuperultimatesecrecy")
 
 	t.Run("empty remote storage", func(t *testing.T) {
