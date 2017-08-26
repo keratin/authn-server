@@ -3,7 +3,6 @@ package data_test
 import (
 	"testing"
 
-	"github.com/jmoiron/sqlx"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/data/sqlite3"
@@ -30,7 +29,7 @@ func TestAccountStore(t *testing.T) {
 
 	t.Run("Sqlite3", func(t *testing.T) {
 		for _, tester := range testers {
-			db, err := tempSqliteDB()
+			db, err := sqlite3.TestDB()
 			if err != nil {
 				panic(err)
 			}
@@ -39,20 +38,6 @@ func TestAccountStore(t *testing.T) {
 			store.Close()
 		}
 	})
-}
-
-func tempSqliteDB() (*sqlx.DB, error) {
-	db, err := sqlx.Connect("sqlite3", "file::memory:?mode=memory&cache=shared")
-	if err != nil {
-		return nil, err
-	}
-
-	err = sqlite3.MigrateDB(db)
-	if err != nil {
-		return nil, err
-	}
-
-	return db, nil
 }
 
 func testCreate(t *testing.T, store data.AccountStore) {
