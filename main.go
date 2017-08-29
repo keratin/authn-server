@@ -19,9 +19,16 @@ func main() {
 	flag.Parse()
 	args := flag.Args()
 
+	var cmd string
 	if len(args) == 0 {
+		cmd = "server"
+	} else {
+		cmd = args[0]
+	}
+
+	if cmd == "server" {
 		serve(port)
-	} else if len(args) == 1 && args[0] == "migrate" {
+	} else if cmd == "migrate" {
 		migrate()
 	} else {
 		os.Stderr.WriteString(fmt.Sprintf("unexpected invocation\n"))
@@ -63,7 +70,7 @@ func usage() {
 	exe := path.Base(os.Args[0])
 	fmt.Println(fmt.Sprintf(`
 Usage:
-%s         - run the server
+%s server  - run the server (default)
 %s migrate - run migrations
 `, exe, exe))
 }
