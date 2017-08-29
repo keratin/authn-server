@@ -53,7 +53,7 @@ var configurers = []configurer{
 	func(c *Config) error {
 		val, err := requireEnv("APP_DOMAINS")
 		if err == nil {
-			c.ApplicationDomains = strings.Split(",", val)
+			c.ApplicationDomains = strings.Split(val, ",")
 			c.ApplicationOrigins = domainsToOrigins(c.ApplicationDomains)
 		}
 		return err
@@ -196,7 +196,7 @@ var configurers = []configurer{
 	// This setting only has effect if USERNAME_IS_EMAIL has been set.
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("EMAIL_USERNAME_DOMAINS"); ok {
-			c.UsernameDomains = strings.Split(",", val)
+			c.UsernameDomains = strings.Split(val, ",")
 		}
 		return nil
 	},
