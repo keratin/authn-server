@@ -19,10 +19,9 @@ func TestRefererSecurity(t *testing.T) {
 		success bool
 	}{
 		{"example.com", "http://example.com", true},
+		{"example.com", "http://example.com:8080", true},
 		{"www.example.com", "http://www.example.com", true},
-		{"example.com:8080", "http://example.com:8080", true},
 		{"www.example.com", "http://example.com", false},
-		{"example.com", "http://example.com:8080", false},
 	}
 
 	nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

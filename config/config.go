@@ -48,8 +48,8 @@ type Config struct {
 }
 
 var configurers = []configurer{
-	// The APP_DOMAINS are a list of domains (host & optional port) that may refer
-	// traffic and be valid JWT audiences.
+	// The APP_DOMAINS are a list of domains (hostname, no port) that may refer traffic and be valid
+	// JWT audiences.
 	func(c *Config) error {
 		val, err := requireEnv("APP_DOMAINS")
 		if err == nil {
