@@ -95,7 +95,7 @@ var configurers = []configurer{
 			// TODO: convert as hex??
 			c.SessionSigningKey = derive([]byte(val), "session-key-salt")
 			c.ResetSigningKey = derive([]byte(val), "password-reset-token-key-salt")
-			c.DBEncryptionKey = derive([]byte(val), "db-encryption-key-salt")
+			c.DBEncryptionKey = derive([]byte(val), "db-encryption-key-salt")[:32]
 		}
 		return err
 	},
