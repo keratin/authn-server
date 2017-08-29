@@ -1,11 +1,13 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"path"
+	"strconv"
 
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/config"
@@ -13,9 +15,13 @@ import (
 )
 
 func main() {
-	if len(os.Args) == 1 {
-		serve()
-	} else if len(os.Args) == 2 && os.Args[1] == "migrate" {
+	port := flag.Int("port", 0, "Optional port for server. Default value is from AUTHN_URL.")
+	flag.Parse()
+	args := flag.Args()
+
+	if len(args) == 0 {
+		serve(port)
+	} else if len(args) == 1 && args[0] == "migrate" {
 		migrate()
 	} else {
 		os.Stderr.WriteString(fmt.Sprintf("unexpected invocation\n"))
@@ -24,15 +30,22 @@ func main() {
 	}
 }
 
-func serve() {
+func serve(port *int) {
 	// set up connections and configuration
 	app, err := api.NewApp()
 	if err != nil {
 		panic(err)
 	}
 
+	var listen string
+	if port != nil {
+		listen = strconv.Itoa(*port)
+	} else {
+		listen = app.Config.AuthNURL.Port()
+	}
+
 	fmt.Println(fmt.Sprintf("~*~ Keratin AuthN server is ready on %s ~*~", app.Config.AuthNURL))
-	log.Fatal(http.ListenAndServe(":8000", router(app)))
+	log.Fatal(http.ListenAndServe(":"+listen, router(app)))
 }
 
 func migrate() {
