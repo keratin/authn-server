@@ -12,6 +12,10 @@ build: vendor
 	mkdir -p dist
 	CGO_ENABLED=1 go build -o dist/authn
 
+.PHONY: docker
+docker: build
+	docker build --tag keratin/authn:latest-go .
+
 # Fetch dependencies
 vendor:
 	glide install
