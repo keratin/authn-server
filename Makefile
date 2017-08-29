@@ -10,7 +10,7 @@ clean:
 .PHONY: build
 build: vendor
 	mkdir -p dist
-	go build -o dist/authn
+	CGO_ENABLED=1 go build -o dist/authn
 
 # Fetch dependencies
 vendor:
