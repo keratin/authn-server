@@ -38,7 +38,7 @@ func serve(port *int) {
 	}
 
 	var listen string
-	if port != nil {
+	if port != nil && *port > 0 {
 		listen = strconv.Itoa(*port)
 	} else {
 		listen = app.Config.AuthNURL.Port()
