@@ -42,7 +42,7 @@ func router(app *api.App) http.Handler {
 
 	session := api.Session(app)
 
-	return gorilla.RecoveryHandler()(
+	return gorilla.RecoveryHandler(gorilla.PrintRecoveryStack(true))(
 		corsAdapter(
 			session(
 				gorilla.CombinedLoggingHandler(os.Stdout, r),
