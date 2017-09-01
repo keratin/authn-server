@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"io"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 // Encrypt performs AES-256-GCM encryption in a Rails-compatible manner by
@@ -67,17 +69,17 @@ func Decrypt(message []byte, key []byte) (string, error) {
 
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "NewCipher")
 	}
 
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "NewGCM")
 	}
 
 	plaintext, err := aesgcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "Open")
 	}
 
 	return UnmarshalString(plaintext)

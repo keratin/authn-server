@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-redis/redis"
 	"github.com/keratin/authn-server/compat"
+	"github.com/pkg/errors"
 )
 
 var placeholder = "generating"
@@ -39,7 +40,7 @@ func NewKeyStore(client *redis.Client, interval time.Duration, race time.Duratio
 	}
 	err := m.maintain(ks)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "maintain")
 	}
 
 	return ks, nil
@@ -101,7 +102,7 @@ func (m *maintainer) maintain(ks *keyStore) error {
 	// restore current keys, if any
 	keys, err := m.restore()
 	if err != nil {
-		return err
+		return errors.Wrap(err, "restore")
 	}
 	for _, key := range keys {
 		ks.Rotate(key)
@@ -111,7 +112,7 @@ func (m *maintainer) maintain(ks *keyStore) error {
 	if len(keys) == 0 {
 		newKey, err := m.generate()
 		if err != nil {
-			return err
+			return errors.Wrap(err, "generate")
 		}
 		ks.Rotate(newKey)
 	}
@@ -217,14 +218,14 @@ func (m *maintainer) find(bucket int64) (*rsa.PrivateKey, error) {
 	if err == redis.Nil {
 		return nil, nil
 	} else if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Redis Get")
 	} else if blob == placeholder {
 		return nil, nil
 	}
 
 	plaintext, err := compat.Decrypt([]byte(blob), m.encryptionKey)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "compat.Decrypt")
 	}
 
 	return bytesToKey([]byte(plaintext)), nil

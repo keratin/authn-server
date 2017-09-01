@@ -1,12 +1,12 @@
-hash: 73e36a9215a8adfc1cac8868a42b5bbd425ddd198f83a9f316468251765b0f05
-updated: 2017-08-20T07:54:55.278270127-07:00
+hash: d6240e17deac9c6af046884043ca351a7b10cc4fe3ba1c956b133f376d813c37
+updated: 2017-09-01T13:35:21.096893381-07:00
 imports:
 - name: github.com/davecgh/go-spew
   version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
   subpackages:
   - spew
 - name: github.com/go-redis/redis
-  version: 19c1c2272e00c1aaa903cf574c746cd449f9cd3c
+  version: 74d5147d860804ea34633071d0c91a7f4b0b5c3a
   subpackages:
   - internal
   - internal/consistenthash
@@ -42,6 +42,8 @@ imports:
   - matching
   - scoring
   - utils/math
+- name: github.com/pkg/errors
+  version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/pmezard/go-difflib
   version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
   subpackages:
