@@ -120,24 +120,24 @@ func (m *maintainer) maintain(ks *keyStore) error {
 		// sleep until next interval change
 		elapsedSeconds := time.Now().Unix() % int64(m.interval/time.Second)
 		time.Sleep(m.interval - time.Duration(elapsedSeconds))
-		newKey, err := m.generate()
-		if err != nil {
-			// TODO: report and continue
-		}
-		ks.Rotate(newKey)
+		m.rotate(ks)
 		// continue rotating at regular intervals
 		ticker := time.NewTicker(m.interval)
 		for {
 			<-ticker.C
-			newKey, err := m.generate()
-			if err != nil {
-				// TODO: report and continue
-			}
-			ks.Rotate(newKey)
+			m.rotate(ks)
 		}
 	}()
 
 	return nil
+}
+
+func (m *maintainer) rotate(ks *keyStore) {
+	newKey, err := m.generate()
+	if err != nil {
+		// TODO: report and continue
+	}
+	ks.Rotate(newKey)
 }
 
 // restore will query Redis for the previous and current keys. It returns keys in the proper sorting
