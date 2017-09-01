@@ -10,8 +10,8 @@ import (
 	"github.com/keratin/authn-server/tokens/sessions"
 )
 
-func NewSession(refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore, actives data.Actives, cfg *config.Config, accountId int, authorizedAudience string) (string, string, error) {
-	session, err := sessions.New(refreshTokenStore, cfg, accountId, authorizedAudience)
+func NewSession(refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore, actives data.Actives, cfg *config.Config, accountId int, authorizedAudience *config.Domain) (string, string, error) {
+	session, err := sessions.New(refreshTokenStore, cfg, accountId, authorizedAudience.String())
 	if err != nil {
 		return "", "", err
 	}
