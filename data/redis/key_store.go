@@ -62,12 +62,12 @@ func (ks *keyStore) Keys() []*rsa.PrivateKey {
 	return ks.keys
 }
 
-// rotate is responsible for adding a new key to the list. It maintains key order from oldest to
+// Rotate is responsible for adding a new key to the list. It maintains key order from oldest to
 // newest, and ensures a maximum of two entries.
-func (ks *keyStore) rotate(k *rsa.PrivateKey) {
+func (ks *keyStore) Rotate(k *rsa.PrivateKey) {
 	keys := []*rsa.PrivateKey{}
 	if len(ks.keys) > 0 {
-		keys = append(keys, ks.keys[len(ks.keys)])
+		keys = append(keys, ks.keys[len(ks.keys)-1])
 	}
 	keys = append(keys, k)
 
@@ -104,7 +104,7 @@ func (m *maintainer) maintain(ks *keyStore) error {
 		return err
 	}
 	for _, key := range keys {
-		ks.rotate(key)
+		ks.Rotate(key)
 	}
 
 	// ensure at least one key (cold start)
@@ -113,7 +113,7 @@ func (m *maintainer) maintain(ks *keyStore) error {
 		if err != nil {
 			return err
 		}
-		ks.rotate(newKey)
+		ks.Rotate(newKey)
 	}
 
 	go func() {
@@ -124,7 +124,7 @@ func (m *maintainer) maintain(ks *keyStore) error {
 		if err != nil {
 			// TODO: report and continue
 		}
-		ks.rotate(newKey)
+		ks.Rotate(newKey)
 		// continue rotating at regular intervals
 		ticker := time.NewTicker(m.interval)
 		for {
@@ -133,7 +133,7 @@ func (m *maintainer) maintain(ks *keyStore) error {
 			if err != nil {
 				// TODO: report and continue
 			}
-			ks.rotate(newKey)
+			ks.Rotate(newKey)
 		}
 	}()
 
