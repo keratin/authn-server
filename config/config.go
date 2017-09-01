@@ -94,7 +94,6 @@ var configurers = []configurer{
 	func(c *Config) error {
 		val, err := requireEnv("SECRET_KEY_BASE")
 		if err == nil {
-			// TODO: convert as hex??
 			c.SessionSigningKey = derive([]byte(val), "session-key-salt")
 			c.ResetSigningKey = derive([]byte(val), "password-reset-token-key-salt")
 			c.DBEncryptionKey = derive([]byte(val), "db-encryption-key-salt")[:32]
@@ -366,5 +365,5 @@ func ReadEnv() *Config {
 
 // 20k iterations of PBKDF2 HMAC SHA-256
 func derive(base []byte, salt string) []byte {
-	return pbkdf2.Key(base, []byte(salt), 2e5, 256, sha256.New)
+	return pbkdf2.Key(base, []byte(salt), 2e4, 64, sha256.New)
 }
