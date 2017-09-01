@@ -33,18 +33,21 @@ type maintainer struct {
 
 // maintain will restore and rotate a keyStore at periodic intervals.
 func (m *maintainer) maintain(ks *keyStore) error {
-	// restore current keys, if any
+	// fetch current keys
 	keys, err := m.restore()
 	if err != nil {
 		return errors.Wrap(err, "restore")
 	}
-	for _, key := range keys {
-		ks.Rotate(key)
+
+	// rotate in the previous key
+	if keys[0] != nil {
+		ks.Rotate(keys[0])
 	}
 
-	// ensure at least one key (cold start)
-	// BUG: when the *previous* key exists but the *current* key does not, we still need to generate
-	if len(keys) == 0 {
+	// ensure and rotate in the current key
+	if keys[1] != nil {
+		ks.Rotate(keys[1])
+	} else {
 		newKey, err := m.generate()
 		if err != nil {
 			return errors.Wrap(err, "generate")
@@ -79,26 +82,23 @@ func (m *maintainer) rotate(ks *keyStore) {
 }
 
 // restore will query Redis for the previous and current keys. It returns keys in the proper sorting
-// order, with the newest (current) key in last position.
+// order, with the newest (current) key in last position. missing keys will leave a blank slot, so
+// that the caller may choose what to do.
 func (m *maintainer) restore() ([]*rsa.PrivateKey, error) {
 	bucket := m.currentBucket()
-	keys := []*rsa.PrivateKey{}
+	keys := make([]*rsa.PrivateKey, 2)
 
 	previous, err := m.find(bucket - 1)
 	if err != nil {
 		return nil, err
 	}
-	if previous != nil {
-		keys = append(keys, previous)
-	}
+	keys[0] = previous
 
 	current, err := m.find(bucket)
 	if err != nil {
 		return nil, err
 	}
-	if current != nil {
-		keys = append(keys, current)
-	}
+	keys[1] = current
 
 	return keys, nil
 }
