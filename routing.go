@@ -29,6 +29,7 @@ func router(app *api.App) http.Handler {
 	corsAdapter := gorilla.CORS(
 		gorilla.AllowedOrigins(app.Config.ApplicationOrigins),
 		gorilla.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE"}),
+		gorilla.AllowCredentials(),
 	)
 
 	session := api.Session(app)
