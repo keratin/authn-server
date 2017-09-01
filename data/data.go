@@ -21,7 +21,8 @@ func NewDB(url *url.URL) (*sqlx.DB, AccountStore, error) {
 		}
 		store := sqlite3.AccountStore{db}
 		return db, &store, nil
-	case "mysql":
+	case "mysql", "mysql2":
+		// mysql2 is compatibility with the ruby version, where it is the name of a popular driver
 		db, err := mysql.NewDB(url)
 		if err != nil {
 			return nil, nil, err
