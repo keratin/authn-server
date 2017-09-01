@@ -7,6 +7,7 @@ import (
 
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/api/test"
+	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/services"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -19,9 +20,17 @@ func TestRefererSecurity(t *testing.T) {
 		success bool
 	}{
 		{"example.com", "http://example.com", true},
-		{"example.com", "http://example.com:8080", true},
+		{"example.com", "http://example.com:3000", true},
 		{"www.example.com", "http://www.example.com", true},
 		{"www.example.com", "http://example.com", false},
+		{"example.com:3000", "http://example.com:3000", true},
+		{"example.com:3000", "http://example.com:8080", false},
+		{"example.com:80", "http://example.com", true},
+		{"example.com:80", "https://example.com", false},
+		{"example.com:80", "http://example.com:3000", false},
+		{"example.com:443", "https://example.com", true},
+		{"example.com:443", "http://example.com", false},
+		{"example.com:443", "https://example.com:3000", false},
 	}
 
 	nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -29,21 +38,23 @@ func TestRefererSecurity(t *testing.T) {
 	})
 
 	for _, tc := range testCases {
-		adapter := api.RefererSecurity([]string{tc.domain})
+		t.Run(tc.domain, func(t *testing.T) {
+			adapter := api.RefererSecurity([]config.Domain{config.ParseDomain(tc.domain)})
 
-		server := httptest.NewServer(adapter(nextHandler))
-		defer server.Close()
+			server := httptest.NewServer(adapter(nextHandler))
+			defer server.Close()
 
-		req, err := http.NewRequest("GET", server.URL, nil)
-		require.NoError(t, err)
-		req.Header.Add("Referer", tc.referer)
-		res, err := http.DefaultClient.Do(req)
-		require.NoError(t, err)
+			req, err := http.NewRequest("GET", server.URL, nil)
+			require.NoError(t, err)
+			req.Header.Add("Referer", tc.referer)
+			res, err := http.DefaultClient.Do(req)
+			require.NoError(t, err)
 
-		if tc.success {
-			assert.Equal(t, string(test.ReadBody(res)), "success")
-		} else {
-			test.AssertErrors(t, res, services.FieldErrors{{"referer", "is not a trusted host"}})
-		}
+			if tc.success {
+				assert.Equal(t, string(test.ReadBody(res)), "success")
+			} else {
+				test.AssertErrors(t, res, services.FieldErrors{{"referer", "is not a trusted host"}})
+			}
+		})
 	}
 }

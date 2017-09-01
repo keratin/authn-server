@@ -20,7 +20,7 @@ func TestSession(t *testing.T) {
 			SessionCookieName:  "authn-test",
 			SessionSigningKey:  []byte("drinkme"),
 			AuthNURL:           &url.URL{Scheme: "http", Host: "authn.example.com"},
-			ApplicationDomains: []string{"example.com"},
+			ApplicationDomains: []config.Domain{{Hostname: "example.com"}},
 		},
 		RefreshTokenStore: mock.NewRefreshTokenStore(),
 	}

@@ -36,7 +36,7 @@ func TestGetSessionRefreshFailure(t *testing.T) {
 			AuthNURL:           &url.URL{Scheme: "https", Path: "www.example.com"},
 			SessionCookieName:  "authn-test",
 			SessionSigningKey:  []byte("good"),
-			ApplicationDomains: []string{"test.com"},
+			ApplicationDomains: []config.Domain{{Hostname: "test.com"}},
 		},
 		RefreshTokenStore: mock.NewRefreshTokenStore(),
 	}
@@ -58,7 +58,7 @@ func TestGetSessionRefreshFailure(t *testing.T) {
 			AuthNURL:           app.Config.AuthNURL,
 			SessionCookieName:  app.Config.SessionCookieName,
 			SessionSigningKey:  tc.signingKey,
-			ApplicationDomains: []string{"test.com"},
+			ApplicationDomains: []config.Domain{{Hostname: "test.com"}},
 		}
 		existingSession := test.CreateSession(app.RefreshTokenStore, tcCfg, idx+100)
 		if !tc.liveToken {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"net/url"
 	"os"
 
 	gorilla "github.com/gorilla/handlers"
@@ -16,20 +17,27 @@ import (
 func router(app *api.App) http.Handler {
 	r := mux.NewRouter()
 
-	// GET  /
-	// GET  /configuration
-	// GET  /jwks
-	// GET  /stats
-
 	api.Attach(r, app.Config.MountedPath, meta.Routes(app)...)
 	api.Attach(r, app.Config.MountedPath, accounts.Routes(app)...)
 	api.Attach(r, app.Config.MountedPath, sessions.Routes(app)...)
 	api.Attach(r, app.Config.MountedPath, passwords.Routes(app)...)
 
 	corsAdapter := gorilla.CORS(
-		gorilla.AllowedOrigins(app.Config.ApplicationOrigins),
 		gorilla.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE"}),
 		gorilla.AllowCredentials(),
+		gorilla.AllowedOriginValidator(func(origin string) bool {
+			originURL, err := url.Parse(origin)
+			if err != nil {
+				return false
+			}
+
+			for _, appDomain := range app.Config.ApplicationDomains {
+				if appDomain.Matches(originURL) {
+					return true
+				}
+			}
+			return false
+		}),
 	)
 
 	session := api.Session(app)

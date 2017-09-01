@@ -26,7 +26,7 @@ func App() *api.App {
 		SessionSigningKey:     []byte("TODO"),
 		AuthNURL:              authnUrl,
 		SessionCookieName:     "authn",
-		ApplicationDomains:    []string{"test.com"},
+		ApplicationDomains:    []config.Domain{{Hostname: "test.com"}},
 		PasswordMinComplexity: 2,
 		AppPasswordResetURL:   &url.URL{Scheme: "https", Host: "app.example.com"},
 		EnableSignup:          true,

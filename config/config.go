@@ -19,8 +19,7 @@ import (
 
 type Config struct {
 	AppPasswordResetURL    *url.URL
-	ApplicationDomains     []string
-	ApplicationOrigins     []string
+	ApplicationDomains     []Domain
 	BcryptCost             int
 	UsernameIsEmail        bool
 	UsernameMinLength      int
@@ -48,13 +47,16 @@ type Config struct {
 }
 
 var configurers = []configurer{
-	// The APP_DOMAINS are a list of domains (hostname, no port) that may refer traffic and be valid
-	// JWT audiences.
+	// The APP_DOMAINS are a list of domains that may refer traffic and be valid JWT audiences. If
+	// the domain includes a port, it must match referred traffic. If the domain does not include a
+	// port, it will match any referred traffic port. Ports 80 and 443 are matched against schemes.
 	func(c *Config) error {
 		val, err := requireEnv("APP_DOMAINS")
 		if err == nil {
-			c.ApplicationDomains = strings.Split(val, ",")
-			c.ApplicationOrigins = domainsToOrigins(c.ApplicationDomains)
+			c.ApplicationDomains = make([]Domain, 0)
+			for _, domain := range strings.Split(val, ",") {
+				c.ApplicationDomains = append(c.ApplicationDomains, ParseDomain(domain))
+			}
 		}
 		return err
 	},
@@ -365,13 +367,4 @@ func ReadEnv() *Config {
 // 20k iterations of PBKDF2 HMAC SHA-256
 func derive(base []byte, salt string) []byte {
 	return pbkdf2.Key(base, []byte(salt), 2e5, 256, sha256.New)
-}
-
-func domainsToOrigins(domains []string) []string {
-	var origins []string
-	for _, domain := range domains {
-		origins = append(origins, fmt.Sprintf("http://%s", domain))
-		origins = append(origins, fmt.Sprintf("https://%s", domain))
-	}
-	return origins
 }

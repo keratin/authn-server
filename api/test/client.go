@@ -20,7 +20,7 @@ func NewClient(server *httptest.Server) *Client {
 }
 
 func (c *Client) Referred(cfg *config.Config) *Client {
-	origin := fmt.Sprintf("http://%s", cfg.ApplicationDomains[0])
+	origin := fmt.Sprintf("http://%s", cfg.ApplicationDomains[0].String())
 	return &Client{
 		c.BaseURL,
 		append(c.Modifiers, func(req *http.Request) *http.Request {
