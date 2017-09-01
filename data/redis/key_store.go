@@ -136,7 +136,8 @@ func (m *maintainer) maintain(ks *keyStore) error {
 func (m *maintainer) rotate(ks *keyStore) {
 	newKey, err := m.generate()
 	if err != nil {
-		// TODO: report and continue
+		// TODO: report
+		return
 	}
 	ks.Rotate(newKey)
 }
