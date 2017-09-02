@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/keratin/authn-server/data"
+	"github.com/keratin/authn-server/compat"
 
 	jose "gopkg.in/square/go-jose.v2"
 
@@ -36,6 +36,6 @@ func TestIdentityClaims(t *testing.T) {
 
 		parsed, err := jose.ParseSigned(identityStr)
 		require.NoError(t, err)
-		assert.Equal(t, data.RSAPublicKeyID(key.Public()), parsed.Signatures[0].Header.KeyID)
+		assert.Equal(t, compat.KeyID(key.Public()), parsed.Signatures[0].Header.KeyID)
 	})
 }

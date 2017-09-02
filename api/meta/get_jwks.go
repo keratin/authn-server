@@ -3,8 +3,9 @@ package meta
 import (
 	"net/http"
 
+	"github.com/keratin/authn-server/compat"
+
 	"github.com/keratin/authn-server/api"
-	"github.com/keratin/authn-server/data"
 	jose "github.com/square/go-jose"
 )
 
@@ -16,7 +17,7 @@ func getJWKs(app *api.App) http.HandlerFunc {
 				Key:       key.Public(),
 				Use:       "sig",
 				Algorithm: "RS256",
-				KeyID:     data.RSAPublicKeyID(key.Public()),
+				KeyID:     compat.KeyID(key.Public()),
 			})
 		}
 
