@@ -56,15 +56,8 @@ func (m *maintainer) maintain(ks *keyStore) error {
 	}
 
 	go func() {
-		// sleep until next interval change
-		elapsedSeconds := time.Now().Unix() % int64(m.interval/time.Second)
-		time.Sleep(m.interval - time.Duration(elapsedSeconds)*time.Second)
-
-		// rotate at regular intervals
-		ticker := time.NewTicker(m.interval)
-		m.rotate(ks)
-		for {
-			<-ticker.C
+		ticker := NewEpochIntervalTicker(m.interval)
+		for range ticker {
 			m.rotate(ks)
 		}
 	}()
