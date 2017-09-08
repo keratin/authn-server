@@ -9,7 +9,6 @@ import (
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"github.com/joho/godotenv"
 	_ "github.com/joho/godotenv/autoload"
 )
 
@@ -19,13 +18,6 @@ func NewDB(url *url.URL) (*sqlx.DB, error) {
 }
 
 func TestDB() (*sqlx.DB, error) {
-	if _, err := os.Stat("../.env"); !os.IsNotExist(err) {
-		godotenv.Load("../.env")
-	}
-	if _, err := os.Stat("../../.env"); !os.IsNotExist(err) {
-		godotenv.Load("../../.env")
-	}
-
 	str, ok := os.LookupEnv("TEST_MYSQL_URL")
 	if !ok {
 		return nil, fmt.Errorf("set TEST_MYSQL_URL for MySQL tests")
