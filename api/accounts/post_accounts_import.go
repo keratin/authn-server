@@ -26,9 +26,9 @@ func postAccountsImport(app *api.App) http.HandlerFunc {
 			if fe, ok := err.(services.FieldErrors); ok {
 				api.WriteErrors(w, fe)
 				return
-			} else {
-				panic(err)
 			}
+
+			panic(err)
 		}
 
 		api.WriteData(w, http.StatusCreated, map[string]int{

@@ -21,9 +21,9 @@ func deleteAccount(app *api.App) http.HandlerFunc {
 			if fe, ok := err.(services.FieldErrors); ok {
 				api.WriteJson(w, http.StatusNotFound, api.ServiceErrors{fe})
 				return
-			} else {
-				panic(err)
 			}
+
+			panic(err)
 		}
 
 		w.WriteHeader(http.StatusOK)

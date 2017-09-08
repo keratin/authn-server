@@ -36,9 +36,9 @@ func postPassword(app *api.App) http.HandlerFunc {
 			if fe, ok := err.(services.FieldErrors); ok {
 				api.WriteErrors(w, fe)
 				return
-			} else {
-				panic(err)
 			}
+
+			panic(err)
 		}
 
 		err = api.RevokeSession(app.RefreshTokenStore, app.Config, r)

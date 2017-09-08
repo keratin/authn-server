@@ -32,18 +32,18 @@ func NewAccountStore() *accountStore {
 func (s *accountStore) Find(id int) (*models.Account, error) {
 	if s.accountsById[id] != nil {
 		return dupAccount(*s.accountsById[id]), nil
-	} else {
-		return nil, nil
 	}
+
+	return nil, nil
 }
 
 func (s *accountStore) FindByUsername(u string) (*models.Account, error) {
 	id := s.idByUsername[u]
 	if id == 0 {
 		return nil, nil
-	} else {
-		return dupAccount(*s.accountsById[id]), nil
 	}
+
+	return dupAccount(*s.accountsById[id]), nil
 }
 
 func (s *accountStore) Create(u string, p []byte) (*models.Account, error) {

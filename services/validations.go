@@ -40,31 +40,30 @@ func (es FieldErrors) Error() string {
 func passwordValidator(cfg *config.Config, password string) *fieldError {
 	if password == "" {
 		return &fieldError{"password", ErrMissing}
-	} else {
-		// TODO: ensure that a super long password doesn't DOS the endpoint
-		if zxcvbn.PasswordStrength(password, []string{}).Score < cfg.PasswordMinComplexity {
-			return &fieldError{"password", ErrInsecure}
-		}
 	}
+
+	// TODO: ensure that a super long password doesn't DOS the endpoint
+	if zxcvbn.PasswordStrength(password, []string{}).Score < cfg.PasswordMinComplexity {
+		return &fieldError{"password", ErrInsecure}
+	}
+
 	return nil
 }
 
 func usernameValidator(cfg *config.Config, username string) *fieldError {
 	if cfg.UsernameIsEmail {
-		if isEmail(username) {
-			if len(cfg.UsernameDomains) > 0 && !hasDomain(username, cfg.UsernameDomains) {
-				return &fieldError{"username", ErrFormatInvalid}
-			}
-		} else {
+		if !isEmail(username) {
+			return &fieldError{"username", ErrFormatInvalid}
+		}
+		if len(cfg.UsernameDomains) > 0 && !hasDomain(username, cfg.UsernameDomains) {
 			return &fieldError{"username", ErrFormatInvalid}
 		}
 	} else {
 		if username == "" {
 			return &fieldError{"username", ErrMissing}
-		} else {
-			if len(username) < cfg.UsernameMinLength {
-				return &fieldError{"username", ErrFormatInvalid}
-			}
+		}
+		if len(username) < cfg.UsernameMinLength {
+			return &fieldError{"username", ErrFormatInvalid}
 		}
 	}
 	return nil

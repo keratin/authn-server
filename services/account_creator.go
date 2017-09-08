@@ -38,9 +38,9 @@ func AccountCreator(store data.AccountStore, cfg *config.Config, username string
 	if err != nil {
 		if data.IsUniquenessError(err) {
 			return nil, FieldErrors{{"username", ErrTaken}}
-		} else {
-			return nil, err
 		}
+
+		return nil, err
 	}
 
 	return acc, nil
