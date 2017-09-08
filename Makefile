@@ -6,6 +6,11 @@ clean:
 	rm -rf dist
 	rm -f authn
 
+# Fetch dependencies
+vendor:
+	glide install
+	go install
+
 # Build the project
 .PHONY: build
 build: vendor
@@ -21,11 +26,6 @@ docker:
 		bash -c 'apk add --no-cache gcc musl-dev; make clean build'
 	docker build --tag keratin/authn:latest-go .
 
-# Fetch dependencies
-vendor:
-	glide install
-	go install
-
 # Run the server
 .PHONY: server
 server:
@@ -36,7 +36,7 @@ server:
 test:
 	docker-compose up -d
 	TEST_REDIS_URL=redis://127.0.0.1:8701/12 \
-	  TEST_MYSQL_URL=mysql://root@localhost:8702/authnservertest \
+	  TEST_MYSQL_URL=mysql://root@127.0.0.1:8702/authnservertest \
 	  go test $(PKGS)
 
 # Run migrations
