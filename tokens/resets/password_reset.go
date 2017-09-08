@@ -1,4 +1,4 @@
-package password_resets
+package resets
 
 import (
 	"fmt"

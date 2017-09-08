@@ -1,4 +1,4 @@
-package password_resets_test
+package resets_test
 
 import (
 	"net/url"
@@ -8,7 +8,7 @@ import (
 	jwt "gopkg.in/square/go-jose.v2/jwt"
 
 	"github.com/keratin/authn-server/config"
-	"github.com/keratin/authn-server/tokens/password_resets"
+	"github.com/keratin/authn-server/tokens/resets"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -24,7 +24,7 @@ func TestPasswordResetToken(t *testing.T) {
 	accountID := 52167
 
 	t.Run("creating signing and parsing", func(t *testing.T) {
-		token, err := password_resets.New(cfg, accountID, then)
+		token, err := resets.New(cfg, accountID, then)
 		require.NoError(t, err)
 		assert.Equal(t, "reset", token.Scope)
 		assert.Equal(t, then, token.Lock.Time())
@@ -37,7 +37,7 @@ func TestPasswordResetToken(t *testing.T) {
 		tokenStr, err := token.Sign(cfg.ResetSigningKey)
 		require.NoError(t, err)
 
-		_, err = password_resets.Parse(tokenStr, cfg)
+		_, err = resets.Parse(tokenStr, cfg)
 		require.NoError(t, err)
 	})
 
@@ -47,11 +47,11 @@ func TestPasswordResetToken(t *testing.T) {
 			ResetSigningKey: []byte("old-a-reno"),
 			RefreshTokenTTL: cfg.RefreshTokenTTL,
 		}
-		token, err := password_resets.New(&oldCfg, accountID, then)
+		token, err := resets.New(&oldCfg, accountID, then)
 		require.NoError(t, err)
 		tokenStr, err := token.Sign(oldCfg.ResetSigningKey)
 		require.NoError(t, err)
-		_, err = password_resets.Parse(tokenStr, cfg)
+		_, err = resets.Parse(tokenStr, cfg)
 		assert.Error(t, err)
 	})
 
@@ -61,16 +61,16 @@ func TestPasswordResetToken(t *testing.T) {
 			ResetSigningKey: cfg.ResetSigningKey,
 			RefreshTokenTTL: cfg.RefreshTokenTTL,
 		}
-		token, err := password_resets.New(&oldCfg, accountID, then)
+		token, err := resets.New(&oldCfg, accountID, then)
 		require.NoError(t, err)
 		tokenStr, err := token.Sign(oldCfg.ResetSigningKey)
 		require.NoError(t, err)
-		_, err = password_resets.Parse(tokenStr, cfg)
+		_, err = resets.Parse(tokenStr, cfg)
 		assert.Error(t, err)
 	})
 
 	t.Run("checking lock expiration", func(t *testing.T) {
-		claims := password_resets.Claims{Lock: jwt.NewNumericDate(then)}
+		claims := resets.Claims{Lock: jwt.NewNumericDate(then)}
 		assert.False(t, claims.LockExpired(then))
 		assert.False(t, claims.LockExpired(then.Add(time.Microsecond)))
 		assert.True(t, claims.LockExpired(then.Add(time.Second)))

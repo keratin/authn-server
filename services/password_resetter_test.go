@@ -8,7 +8,7 @@ import (
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/services"
-	"github.com/keratin/authn-server/tokens/password_resets"
+	"github.com/keratin/authn-server/tokens/resets"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -23,7 +23,7 @@ func TestPasswordResetter(t *testing.T) {
 	}
 
 	newToken := func(id int, lock time.Time) string {
-		claims, err := password_resets.New(cfg, id, lock)
+		claims, err := resets.New(cfg, id, lock)
 		require.NoError(t, err)
 		token, err := claims.Sign(cfg.ResetSigningKey)
 		require.NoError(t, err)

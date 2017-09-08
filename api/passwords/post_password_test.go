@@ -9,7 +9,7 @@ import (
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/services"
-	"github.com/keratin/authn-server/tokens/password_resets"
+	"github.com/keratin/authn-server/tokens/resets"
 	"github.com/keratin/authn-server/tokens/sessions"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -37,7 +37,7 @@ func TestPostPassword(t *testing.T) {
 		require.NoError(t, err)
 
 		// given a reset token
-		token, err := password_resets.New(app.Config, account.ID, account.PasswordChangedAt)
+		token, err := resets.New(app.Config, account.ID, account.PasswordChangedAt)
 		require.NoError(t, err)
 		tokenStr, err := token.Sign(app.Config.ResetSigningKey)
 		require.NoError(t, err)
@@ -128,7 +128,7 @@ func TestPostPassword(t *testing.T) {
 		tokenAccount, err := app.AccountStore.Create("token@authn.tech", []byte("oldpwd"))
 		require.NoError(t, err)
 		// with a reset token
-		token, err := password_resets.New(app.Config, tokenAccount.ID, tokenAccount.PasswordChangedAt)
+		token, err := resets.New(app.Config, tokenAccount.ID, tokenAccount.PasswordChangedAt)
 		require.NoError(t, err)
 		tokenStr, err := token.Sign(app.Config.ResetSigningKey)
 		require.NoError(t, err)

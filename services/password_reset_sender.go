@@ -8,7 +8,7 @@ import (
 
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/models"
-	"github.com/keratin/authn-server/tokens/password_resets"
+	"github.com/keratin/authn-server/tokens/resets"
 )
 
 func PasswordResetSender(cfg *config.Config, account *models.Account) error {
@@ -22,7 +22,7 @@ func PasswordResetSender(cfg *config.Config, account *models.Account) error {
 		return FieldErrors{{"account", ErrLocked}}
 	}
 
-	reset, err := password_resets.New(cfg, account.ID, account.PasswordChangedAt)
+	reset, err := resets.New(cfg, account.ID, account.PasswordChangedAt)
 	if err != nil {
 		return err
 	}
