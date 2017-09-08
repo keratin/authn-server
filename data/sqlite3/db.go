@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
+	// load sqlite3 library with side effects
 	_ "github.com/mattn/go-sqlite3"
 )
 

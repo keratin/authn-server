@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	// a .env file is extremely useful during development
 	_ "github.com/joho/godotenv/autoload"
 	"golang.org/x/crypto/pbkdf2"
 )
