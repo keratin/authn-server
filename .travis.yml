@@ -15,7 +15,7 @@ script: make test-ci
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
-      make docker
+      make docker;
       docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
       docker push keratin/authn-server:latest;
     fi
