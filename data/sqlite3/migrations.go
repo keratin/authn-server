@@ -2,7 +2,7 @@ package sqlite3
 
 import "github.com/jmoiron/sqlx"
 
-// This function is committed to doing the work necessary to converge the database
+// MigrateDB is committed to doing the work necessary to converge the database
 // in a safe, production-grade fashion. This will mean conditional logic as it
 // determines which steps have run and which steps must still be run. Given the
 // expected final complexity of this project, this is acceptable.

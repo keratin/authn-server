@@ -4,6 +4,5 @@ import (
 	"net/http"
 )
 
-// A specialized handler that looks like any other middleware adapter but is known to serve a
-// particular purpose.
+// SecurityHandler is a kind of middleware that satisfies the security criteria of AuthN's routing
 type SecurityHandler func(http.Handler) http.Handler
