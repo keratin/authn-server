@@ -28,11 +28,11 @@ func TestDeleteAccount(t *testing.T) {
 		account, err := app.AccountStore.Create("unlocked@test.com", []byte("bar"))
 		require.NoError(t, err)
 
-		res, err := client.Delete(fmt.Sprintf("/accounts/%v", account.Id))
+		res, err := client.Delete(fmt.Sprintf("/accounts/%v", account.ID))
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.StatusCode)
 
-		account, err = app.AccountStore.Find(account.Id)
+		account, err = app.AccountStore.Find(account.ID)
 		require.NoError(t, err)
 		assert.NotEmpty(t, account.DeletedAt)
 	})
@@ -40,13 +40,13 @@ func TestDeleteAccount(t *testing.T) {
 	t.Run("archived account", func(t *testing.T) {
 		account, err := app.AccountStore.Create("locked@test.com", []byte("bar"))
 		require.NoError(t, err)
-		app.AccountStore.Archive(account.Id)
+		app.AccountStore.Archive(account.ID)
 
-		res, err := client.Delete(fmt.Sprintf("/accounts/%v", account.Id))
+		res, err := client.Delete(fmt.Sprintf("/accounts/%v", account.ID))
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.StatusCode)
 
-		account, err = app.AccountStore.Find(account.Id)
+		account, err = app.AccountStore.Find(account.ID)
 		require.NoError(t, err)
 		assert.NotEmpty(t, account.DeletedAt)
 	})

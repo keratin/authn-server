@@ -35,5 +35,5 @@ func PasswordResetter(store data.AccountStore, cfg *config.Config, token string,
 		return 0, FieldErrors{{"token", ErrInvalidOrExpired}}
 	}
 
-	return account.Id, PasswordSetter(store, cfg, id, password)
+	return account.ID, PasswordSetter(store, cfg, id, password)
 }

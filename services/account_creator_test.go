@@ -26,7 +26,7 @@ func TestAccountCreatorSuccess(t *testing.T) {
 	for _, tc := range testCases {
 		acc, err := services.AccountCreator(store, &tc.config, tc.username, tc.password)
 		require.NoError(t, err)
-		assert.NotEqual(t, 0, acc.Id)
+		assert.NotEqual(t, 0, acc.ID)
 		assert.Equal(t, tc.username, acc.Username)
 	}
 }

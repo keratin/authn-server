@@ -71,11 +71,11 @@ var configurers = []configurer{
 	func(c *Config) error {
 		val, err := requireEnv("AUTHN_URL")
 		if err == nil {
-			authnUrl, err := url.Parse(val)
+			authnURL, err := url.Parse(val)
 			if err == nil {
-				c.AuthNURL = authnUrl
-				c.MountedPath = authnUrl.Path
-				c.ForceSSL = authnUrl.Scheme == "https"
+				c.AuthNURL = authnURL
+				c.MountedPath = authnURL.Path
+				c.ForceSSL = authnURL.Scheme == "https"
 			}
 		}
 		return err
@@ -144,9 +144,9 @@ var configurers = []configurer{
 	//
 	// Example: sqlite3://localhost/authn-go
 	func(c *Config) error {
-		dbUrl, err := requireEnv("DATABASE_URL")
+		dbURL, err := requireEnv("DATABASE_URL")
 		if err == nil {
-			url, err := url.Parse(dbUrl)
+			url, err := url.Parse(dbURL)
 			if err == nil {
 				c.DatabaseURL = url
 			}
@@ -159,9 +159,9 @@ var configurers = []configurer{
 	//
 	// Example: redis://127.0.0.1:6379/11
 	func(c *Config) error {
-		redisUrl, err := requireEnv("REDIS_URL")
+		redisURL, err := requireEnv("REDIS_URL")
 		if err == nil {
-			url, err := url.Parse(redisUrl)
+			url, err := url.Parse(redisURL)
 			if err == nil {
 				c.RedisURL = url
 			}
@@ -279,9 +279,9 @@ var configurers = []configurer{
 	// username and password.
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("APP_PASSWORD_RESET_URL"); ok {
-			resetUrl, err := url.Parse(val)
+			resetURL, err := url.Parse(val)
 			if err == nil {
-				c.AppPasswordResetURL = resetUrl
+				c.AppPasswordResetURL = resetURL
 			}
 			return err
 		}

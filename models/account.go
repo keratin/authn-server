@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Account struct {
-	Id                 int
+	ID                 int
 	Username           string
 	Password           []byte
 	Locked             bool

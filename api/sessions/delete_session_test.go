@@ -18,8 +18,8 @@ func TestDeleteSessionSuccess(t *testing.T) {
 	server := test.Server(app, apiSessions.Routes(app))
 	defer server.Close()
 
-	accountId := 514628
-	session := test.CreateSession(app.RefreshTokenStore, app.Config, accountId)
+	accountID := 514628
+	session := test.CreateSession(app.RefreshTokenStore, app.Config, accountID)
 
 	// token exists
 	claims, err := sessions.Parse(session.Value, app.Config)

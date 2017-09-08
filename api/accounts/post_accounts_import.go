@@ -32,7 +32,7 @@ func postAccountsImport(app *api.App) http.HandlerFunc {
 		}
 
 		api.WriteData(w, http.StatusCreated, map[string]int{
-			"id": account.Id,
+			"id": account.ID,
 		})
 	}
 }

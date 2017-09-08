@@ -27,13 +27,13 @@ func TestPasswordChanger(t *testing.T) {
 	t.Run("it resets RequireNoPassword", func(t *testing.T) {
 		expired, err := accountStore.Create("expired@keratin.tech", []byte("old"))
 		require.NoError(t, err)
-		err = accountStore.RequireNewPassword(expired.Id)
+		err = accountStore.RequireNewPassword(expired.ID)
 		require.NoError(t, err)
 
-		err = invoke(expired.Id, "0a0b0c0d0e0f")
+		err = invoke(expired.ID, "0a0b0c0d0e0f")
 		assert.NoError(t, err)
 
-		account, err := accountStore.Find(expired.Id)
+		account, err := accountStore.Find(expired.ID)
 		require.NoError(t, err)
 		assert.False(t, account.RequireNewPassword)
 		assert.NotEqual(t, expired.Password, account.Password)
@@ -47,20 +47,20 @@ func TestPasswordChanger(t *testing.T) {
 	t.Run("with a locked account", func(t *testing.T) {
 		lockedAccount, err := accountStore.Create("locked@keratin.tech", []byte("old"))
 		require.NoError(t, err)
-		err = accountStore.Lock(lockedAccount.Id)
+		err = accountStore.Lock(lockedAccount.ID)
 		require.NoError(t, err)
 
-		err = invoke(lockedAccount.Id, "0ab0c0d0e0f")
+		err = invoke(lockedAccount.ID, "0ab0c0d0e0f")
 		assert.Equal(t, services.FieldErrors{{"account", "LOCKED"}}, err)
 	})
 
 	t.Run("with an insecure password", func(t *testing.T) {
-		err := invoke(account.Id, "abc")
+		err := invoke(account.ID, "abc")
 		assert.Equal(t, services.FieldErrors{{"password", "INSECURE"}}, err)
 	})
 
 	t.Run("with a missing password", func(t *testing.T) {
-		err := invoke(account.Id, "")
+		err := invoke(account.ID, "")
 		assert.Equal(t, services.FieldErrors{{"password", "MISSING"}}, err)
 	})
 }

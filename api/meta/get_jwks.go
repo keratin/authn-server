@@ -21,6 +21,6 @@ func getJWKs(app *api.App) http.HandlerFunc {
 			})
 		}
 
-		api.WriteJson(w, http.StatusOK, jose.JSONWebKeySet{Keys: keys})
+		api.WriteJSON(w, http.StatusOK, jose.JSONWebKeySet{Keys: keys})
 	}
 }

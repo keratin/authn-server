@@ -19,7 +19,7 @@ func patchAccountLock(app *api.App) http.HandlerFunc {
 		err = services.AccountLocker(app.AccountStore, id)
 		if err != nil {
 			if fe, ok := err.(services.FieldErrors); ok {
-				api.WriteJson(w, http.StatusNotFound, api.ServiceErrors{fe})
+				api.WriteJSON(w, http.StatusNotFound, api.ServiceErrors{fe})
 				return
 			}
 

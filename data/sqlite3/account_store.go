@@ -57,7 +57,7 @@ func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 	if err != nil {
 		return nil, err
 	}
-	account.Id = int(id)
+	account.ID = int(id)
 
 	return account, nil
 }

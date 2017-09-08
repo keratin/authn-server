@@ -10,8 +10,8 @@ import (
 	"github.com/keratin/authn-server/tokens/sessions"
 )
 
-func NewSession(refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore, actives data.Actives, cfg *config.Config, accountId int, authorizedAudience *config.Domain) (string, string, error) {
-	session, err := sessions.New(refreshTokenStore, cfg, accountId, authorizedAudience.String())
+func NewSession(refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore, actives data.Actives, cfg *config.Config, accountID int, authorizedAudience *config.Domain) (string, string, error) {
+	session, err := sessions.New(refreshTokenStore, cfg, accountID, authorizedAudience.String())
 	if err != nil {
 		return "", "", err
 	}
@@ -21,7 +21,7 @@ func NewSession(refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore
 		return "", "", err
 	}
 
-	identityToken, err := IdentityForSession(keyStore, actives, cfg, session, accountId)
+	identityToken, err := IdentityForSession(keyStore, actives, cfg, session, accountID)
 	if err != nil {
 		return "", "", err
 	}
@@ -51,9 +51,9 @@ func SetSession(cfg *config.Config, w http.ResponseWriter, val string) {
 	http.SetCookie(w, cookie)
 }
 
-func IdentityForSession(keyStore data.KeyStore, actives data.Actives, cfg *config.Config, session *sessions.Claims, accountId int) (string, error) {
-	actives.Track(accountId)
-	identity := identities.New(cfg, session, accountId)
+func IdentityForSession(keyStore data.KeyStore, actives data.Actives, cfg *config.Config, session *sessions.Claims, accountID int) (string, error) {
+	actives.Track(accountID)
+	identity := identities.New(cfg, session, accountID)
 	identityToken, err := identity.Sign(keyStore.Key())
 	if err != nil {
 		return "", err

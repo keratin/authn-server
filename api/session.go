@@ -10,7 +10,7 @@ import (
 )
 
 type sessionKey int
-type accountIdKey int
+type accountIDKey int
 
 func Session(app *App) func(http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
@@ -36,7 +36,7 @@ func Session(app *App) func(http.Handler) http.Handler {
 				return session
 			}
 
-			var accountId int
+			var accountID int
 			var lookupOnce sync.Once
 			lookup := func() int {
 				lookupOnce.Do(func() {
@@ -46,18 +46,18 @@ func Session(app *App) func(http.Handler) http.Handler {
 						return
 					}
 
-					accountId, err = app.RefreshTokenStore.Find(models.RefreshToken(session.Subject))
+					accountID, err = app.RefreshTokenStore.Find(models.RefreshToken(session.Subject))
 					if err != nil {
 						// TODO: record and continue
 					}
 				})
 
-				return accountId
+				return accountID
 			}
 
 			ctx := r.Context()
 			ctx = context.WithValue(ctx, sessionKey(0), parse)
-			ctx = context.WithValue(ctx, accountIdKey(0), lookup)
+			ctx = context.WithValue(ctx, accountIDKey(0), lookup)
 
 			h.ServeHTTP(w, r.WithContext(ctx))
 		})
@@ -72,8 +72,8 @@ func GetSession(r *http.Request) *sessions.Claims {
 	return nil
 }
 
-func GetSessionAccountId(r *http.Request) int {
-	fn, ok := r.Context().Value(accountIdKey(0)).(func() int)
+func GetSessionAccountID(r *http.Request) int {
+	fn, ok := r.Context().Value(accountIDKey(0)).(func() int)
 	if ok {
 		return fn()
 	}

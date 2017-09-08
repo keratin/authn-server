@@ -14,26 +14,26 @@ func TestAccountLocker(t *testing.T) {
 
 	lockedAccount, err := store.Create("locked@keratin.tech", []byte("password"))
 	require.NoError(t, err)
-	err = store.Lock(lockedAccount.Id)
+	err = store.Lock(lockedAccount.ID)
 	require.NoError(t, err)
 
 	unlockedAccount, err := store.Create("unlocked@keratin.tech", []byte("password"))
 	require.NoError(t, err)
 
 	var testCases = []struct {
-		accountId int
+		accountID int
 		errors    *services.FieldErrors
 	}{
 		{123456789, &services.FieldErrors{{"account", services.ErrNotFound}}},
-		{lockedAccount.Id, nil},
-		{unlockedAccount.Id, nil},
+		{lockedAccount.ID, nil},
+		{unlockedAccount.ID, nil},
 	}
 
 	for _, tc := range testCases {
-		errs := services.AccountLocker(store, tc.accountId)
+		errs := services.AccountLocker(store, tc.accountID)
 		if tc.errors == nil {
 			assert.Empty(t, errs)
-			acct, err := store.Find(tc.accountId)
+			acct, err := store.Find(tc.accountID)
 			require.NoError(t, err)
 			assert.True(t, acct.Locked)
 		} else {

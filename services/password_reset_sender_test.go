@@ -47,7 +47,7 @@ func TestPasswordResetSender(t *testing.T) {
 
 	t.Run("posting to remote app", func(t *testing.T) {
 		err := invoke(successURL, &models.Account{
-			Id:                1234,
+			ID:                1234,
 			PasswordChangedAt: time.Now(),
 		})
 		assert.NoError(t, err)
@@ -55,7 +55,7 @@ func TestPasswordResetSender(t *testing.T) {
 
 	t.Run("without configured url", func(t *testing.T) {
 		err := invoke(nil, &models.Account{
-			Id:                1234,
+			ID:                1234,
 			PasswordChangedAt: time.Now(),
 		})
 		assert.Equal(t, "AppPasswordResetURL unconfigured", err.Error())
@@ -63,7 +63,7 @@ func TestPasswordResetSender(t *testing.T) {
 
 	t.Run("with locked account", func(t *testing.T) {
 		err := invoke(successURL, &models.Account{
-			Id:                1234,
+			ID:                1234,
 			PasswordChangedAt: time.Now(),
 			Locked:            true,
 		})
@@ -72,7 +72,7 @@ func TestPasswordResetSender(t *testing.T) {
 
 	t.Run("with remote app failure", func(t *testing.T) {
 		err := invoke(failureURL, &models.Account{
-			Id:                1234,
+			ID:                1234,
 			PasswordChangedAt: time.Now(),
 		})
 		assert.Equal(t, "Status Code: 500", err.Error())

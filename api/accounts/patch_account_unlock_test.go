@@ -29,11 +29,11 @@ func TestPatchAccountUnlock(t *testing.T) {
 		account, err := app.AccountStore.Create("unlocked@test.com", []byte("bar"))
 		require.NoError(t, err)
 
-		res, err := client.Patch(fmt.Sprintf("/accounts/%v/unlock", account.Id), url.Values{})
+		res, err := client.Patch(fmt.Sprintf("/accounts/%v/unlock", account.ID), url.Values{})
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.StatusCode)
 
-		account, err = app.AccountStore.Find(account.Id)
+		account, err = app.AccountStore.Find(account.ID)
 		require.NoError(t, err)
 		assert.False(t, account.Locked)
 	})
@@ -41,13 +41,13 @@ func TestPatchAccountUnlock(t *testing.T) {
 	t.Run("locked account", func(t *testing.T) {
 		account, err := app.AccountStore.Create("locked@test.com", []byte("bar"))
 		require.NoError(t, err)
-		app.AccountStore.Lock(account.Id)
+		app.AccountStore.Lock(account.ID)
 
-		res, err := client.Patch(fmt.Sprintf("/accounts/%v/unlock", account.Id), url.Values{})
+		res, err := client.Patch(fmt.Sprintf("/accounts/%v/unlock", account.ID), url.Values{})
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.StatusCode)
 
-		account, err = app.AccountStore.Find(account.Id)
+		account, err = app.AccountStore.Find(account.ID)
 		require.NoError(t, err)
 		assert.False(t, account.Locked)
 	})

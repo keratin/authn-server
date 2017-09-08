@@ -2,8 +2,8 @@ package services
 
 import "github.com/keratin/authn-server/data"
 
-func AccountUnlocker(store data.AccountStore, accountId int) error {
-	account, err := store.Find(accountId)
+func AccountUnlocker(store data.AccountStore, accountID int) error {
+	account, err := store.Find(accountID)
 	if err != nil {
 		return err
 	}
@@ -11,7 +11,7 @@ func AccountUnlocker(store data.AccountStore, accountId int) error {
 		return FieldErrors{{"account", ErrNotFound}}
 	}
 
-	store.Unlock(account.Id)
+	store.Unlock(account.ID)
 
 	return nil
 }

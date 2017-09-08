@@ -16,13 +16,13 @@ type RefreshTokenStore struct {
 	TTL time.Duration
 }
 
-// Redis key for token => accountId lookup
+// Redis key for token => accountID lookup
 func keyForToken(t []byte) string {
 	str := fmt.Sprintf("s:t.%s", t)
 	return str
 }
 
-// Redis key for accountId => tokens lookup
+// Redis key for accountID => tokens lookup
 func keyForAccount(id int) string {
 	str := fmt.Sprintf("s:a.%d", id)
 	return str
@@ -42,7 +42,7 @@ func (s *RefreshTokenStore) Find(hexToken models.RefreshToken) (int, error) {
 	return strconv.Atoi(str)
 }
 
-func (s *RefreshTokenStore) Touch(hexToken models.RefreshToken, accountId int) error {
+func (s *RefreshTokenStore) Touch(hexToken models.RefreshToken, accountID int) error {
 	binToken, err := hex.DecodeString(string(hexToken))
 	if err != nil {
 		return err
@@ -50,14 +50,14 @@ func (s *RefreshTokenStore) Touch(hexToken models.RefreshToken, accountId int) e
 
 	_, err = s.Client.Pipelined(func(pipe redis.Pipeliner) error {
 		pipe.Expire(keyForToken(binToken), s.TTL)
-		pipe.Expire(keyForAccount(accountId), s.TTL)
+		pipe.Expire(keyForAccount(accountID), s.TTL)
 		return nil
 	})
 	return err
 }
 
-func (s *RefreshTokenStore) FindAll(accountId int) ([]models.RefreshToken, error) {
-	bins, err := s.Client.SMembers(keyForAccount(accountId)).Result()
+func (s *RefreshTokenStore) FindAll(accountID int) ([]models.RefreshToken, error) {
+	bins, err := s.Client.SMembers(keyForAccount(accountID)).Result()
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func (s *RefreshTokenStore) FindAll(accountId int) ([]models.RefreshToken, error
 	return tokens, nil
 }
 
-func (s *RefreshTokenStore) Create(accountId int) (models.RefreshToken, error) {
+func (s *RefreshTokenStore) Create(accountID int) (models.RefreshToken, error) {
 	binToken, err := generateToken()
 	if err != nil {
 		return "", err
@@ -78,11 +78,11 @@ func (s *RefreshTokenStore) Create(accountId int) (models.RefreshToken, error) {
 
 	_, err = s.Client.Pipelined(func(pipe redis.Pipeliner) error {
 		// persist the token
-		pipe.Set(keyForToken(binToken), accountId, s.TTL)
+		pipe.Set(keyForToken(binToken), accountID, s.TTL)
 
-		// maintain a list of tokens per accountId
-		pipe.SAdd(keyForAccount(accountId), binToken)
-		pipe.Expire(keyForAccount(accountId), s.TTL)
+		// maintain a list of tokens per accountID
+		pipe.SAdd(keyForAccount(accountID), binToken)
+		pipe.Expire(keyForAccount(accountID), s.TTL)
 
 		return nil
 	})
@@ -94,11 +94,11 @@ func (s *RefreshTokenStore) Create(accountId int) (models.RefreshToken, error) {
 }
 
 func (s *RefreshTokenStore) Revoke(hexToken models.RefreshToken) error {
-	accountId, err := s.Find(hexToken)
+	accountID, err := s.Find(hexToken)
 	if err != nil {
 		return err
 	}
-	if accountId == 0 {
+	if accountID == 0 {
 		return nil
 	}
 
@@ -109,7 +109,7 @@ func (s *RefreshTokenStore) Revoke(hexToken models.RefreshToken) error {
 		}
 
 		pipe.Del(keyForToken(binToken))
-		pipe.SRem(keyForAccount(accountId), binToken)
+		pipe.SRem(keyForAccount(accountID), binToken)
 
 		return nil
 	})

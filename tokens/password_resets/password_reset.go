@@ -63,13 +63,13 @@ func Parse(tokenStr string, cfg *config.Config) (*Claims, error) {
 	return &claims, nil
 }
 
-func New(cfg *config.Config, accountId int, password_changed_at time.Time) (*Claims, error) {
+func New(cfg *config.Config, accountID int, passwordChangedAt time.Time) (*Claims, error) {
 	return &Claims{
 		Scope: scope,
-		Lock:  jwt.NewNumericDate(password_changed_at),
+		Lock:  jwt.NewNumericDate(passwordChangedAt),
 		Claims: jwt.Claims{
 			Issuer:   cfg.AuthNURL.String(),
-			Subject:  strconv.Itoa(accountId),
+			Subject:  strconv.Itoa(accountID),
 			Audience: jwt.Audience{cfg.AuthNURL.String()},
 			Expiry:   jwt.NewNumericDate(time.Now().Add(cfg.ResetTokenTTL)),
 			IssuedAt: jwt.NewNumericDate(time.Now()),

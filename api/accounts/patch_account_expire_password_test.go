@@ -29,11 +29,11 @@ func TestPatchAccountExpirePassword(t *testing.T) {
 		account, err := app.AccountStore.Create("active@test.com", []byte("bar"))
 		require.NoError(t, err)
 
-		res, err := client.Patch(fmt.Sprintf("/accounts/%v/expire_password", account.Id), url.Values{})
+		res, err := client.Patch(fmt.Sprintf("/accounts/%v/expire_password", account.ID), url.Values{})
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.StatusCode)
 
-		account, err = app.AccountStore.Find(account.Id)
+		account, err = app.AccountStore.Find(account.ID)
 		require.NoError(t, err)
 		assert.True(t, account.RequireNewPassword)
 	})

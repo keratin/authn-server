@@ -22,7 +22,7 @@ func PasswordResetSender(cfg *config.Config, account *models.Account) error {
 		return FieldErrors{{"account", ErrLocked}}
 	}
 
-	reset, err := password_resets.New(cfg, account.Id, account.PasswordChangedAt)
+	reset, err := password_resets.New(cfg, account.ID, account.PasswordChangedAt)
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func PasswordResetSender(cfg *config.Config, account *models.Account) error {
 	}
 
 	res, err := http.PostForm(cfg.AppPasswordResetURL.String(), url.Values{
-		"account_id": []string{strconv.Itoa(account.Id)},
+		"account_id": []string{strconv.Itoa(account.ID)},
 		"token":      []string{resetStr},
 	})
 	if err != nil {

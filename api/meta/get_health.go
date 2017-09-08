@@ -7,7 +7,7 @@ import (
 )
 
 type health struct {
-	Http  bool `json:"http"`
+	HTTP  bool `json:"http"`
 	Db    bool `json:"db"`
 	Redis bool `json:"redis"`
 }
@@ -15,11 +15,11 @@ type health struct {
 func getHealth(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		h := health{
-			Http:  true,
+			HTTP:  true,
 			Redis: app.RedisCheck(),
 			Db:    app.DbCheck(),
 		}
 
-		api.WriteJson(w, http.StatusOK, h)
+		api.WriteJSON(w, http.StatusOK, h)
 	}
 }

@@ -25,25 +25,25 @@ func TestPasswordSetter(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("sets password", func(t *testing.T) {
-		err = accountStore.RequireNewPassword(account.Id)
+		err = accountStore.RequireNewPassword(account.ID)
 		require.NoError(t, err)
 
-		err := invoke(account.Id, "0a0b0c0d0e0f0")
+		err := invoke(account.ID, "0a0b0c0d0e0f0")
 		assert.NoError(t, err)
 
-		after, err := accountStore.Find(account.Id)
+		after, err := accountStore.Find(account.ID)
 		require.NoError(t, err)
 		assert.NotEqual(t, account.Password, after.Password)
 		assert.False(t, account.RequireNewPassword)
 	})
 
 	t.Run("missing password", func(t *testing.T) {
-		err := invoke(account.Id, "")
+		err := invoke(account.ID, "")
 		assert.Equal(t, services.FieldErrors{{"password", "MISSING"}}, err)
 	})
 
 	t.Run("insecure password", func(t *testing.T) {
-		err := invoke(account.Id, "abc")
+		err := invoke(account.ID, "abc")
 		assert.Equal(t, services.FieldErrors{{"password", "INSECURE"}}, err)
 	})
 }

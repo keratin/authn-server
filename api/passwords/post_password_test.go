@@ -25,8 +25,8 @@ func TestPostPassword(t *testing.T) {
 	assertSuccess := func(t *testing.T, res *http.Response, account *models.Account) {
 		assert.Equal(t, http.StatusCreated, res.StatusCode)
 		test.AssertSession(t, app.Config, res.Cookies())
-		test.AssertIdTokenResponse(t, res, app.KeyStore, app.Config)
-		found, err := app.AccountStore.Find(account.Id)
+		test.AssertIDTokenResponse(t, res, app.KeyStore, app.Config)
+		found, err := app.AccountStore.Find(account.ID)
 		require.NoError(t, err)
 		assert.NotEqual(t, found.Password, account.Password)
 	}
@@ -37,7 +37,7 @@ func TestPostPassword(t *testing.T) {
 		require.NoError(t, err)
 
 		// given a reset token
-		token, err := password_resets.New(app.Config, account.Id, account.PasswordChangedAt)
+		token, err := password_resets.New(app.Config, account.ID, account.PasswordChangedAt)
 		require.NoError(t, err)
 		tokenStr, err := token.Sign(app.Config.ResetSigningKey)
 		require.NoError(t, err)
@@ -72,7 +72,7 @@ func TestPostPassword(t *testing.T) {
 		require.NoError(t, err)
 
 		// given a session
-		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.Id)
+		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 
 		// invoking the endpoint
 		res, err := client.WithSession(session).PostForm("/password", url.Values{
@@ -97,7 +97,7 @@ func TestPostPassword(t *testing.T) {
 		require.NoError(t, err)
 
 		// given a session
-		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.Id)
+		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 
 		// invoking the endpoint
 		res, err := client.WithSession(session).PostForm("/password", url.Values{
@@ -128,7 +128,7 @@ func TestPostPassword(t *testing.T) {
 		tokenAccount, err := app.AccountStore.Create("token@authn.tech", []byte("oldpwd"))
 		require.NoError(t, err)
 		// with a reset token
-		token, err := password_resets.New(app.Config, tokenAccount.Id, tokenAccount.PasswordChangedAt)
+		token, err := password_resets.New(app.Config, tokenAccount.ID, tokenAccount.PasswordChangedAt)
 		require.NoError(t, err)
 		tokenStr, err := token.Sign(app.Config.ResetSigningKey)
 		require.NoError(t, err)
@@ -137,7 +137,7 @@ func TestPostPassword(t *testing.T) {
 		sessionAccount, err := app.AccountStore.Create("session@authn.tech", []byte("oldpwd"))
 		require.NoError(t, err)
 		// with a session
-		session := test.CreateSession(app.RefreshTokenStore, app.Config, sessionAccount.Id)
+		session := test.CreateSession(app.RefreshTokenStore, app.Config, sessionAccount.ID)
 
 		// invoking the endpoint
 		res, err := client.WithSession(session).PostForm("/password", url.Values{

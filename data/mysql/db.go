@@ -14,7 +14,7 @@ import (
 )
 
 func NewDB(url *url.URL) (*sqlx.DB, error) {
-	cfg := cfgFromUrl(url)
+	cfg := cfgFromURL(url)
 	return sqlx.Connect("mysql", cfg.FormatDSN())
 }
 
@@ -25,7 +25,7 @@ func TestDB() (*sqlx.DB, error) {
 	}
 	url, err := url.Parse(str)
 
-	err = ensureDB(cfgFromUrl(url))
+	err = ensureDB(cfgFromURL(url))
 	if err != nil {
 		return nil, errors.Wrap(err, "ensureDB")
 	}
@@ -43,7 +43,7 @@ func TestDB() (*sqlx.DB, error) {
 	return db, nil
 }
 
-func cfgFromUrl(url *url.URL) *mysql.Config {
+func cfgFromURL(url *url.URL) *mysql.Config {
 	cfg := mysql.Config{
 		Addr:   url.Host,
 		DBName: strings.Replace(url.Path, "/", "", 1),

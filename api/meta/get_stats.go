@@ -23,7 +23,7 @@ func getStats(app *api.App) http.HandlerFunc {
 			panic(err)
 		}
 
-		api.WriteJson(w, http.StatusOK, struct {
+		api.WriteJSON(w, http.StatusOK, struct {
 			Daily   map[string]int `json:"daily"`
 			Weekly  map[string]int `json:"weekly"`
 			Monthly map[string]int `json:"monthly"`

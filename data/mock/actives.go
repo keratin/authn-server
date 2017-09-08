@@ -19,11 +19,11 @@ func NewActives() *actives {
 	}
 }
 
-func (a *actives) Track(accountId int) error {
+func (a *actives) Track(accountID int) error {
 	t := time.Now().In(time.UTC)
-	a.byDay = appendUniq(a.byDay, dayKey(t), accountId)
-	a.byWeek = appendUniq(a.byWeek, weekKey(t), accountId)
-	a.byMonth = appendUniq(a.byMonth, monthKey(t), accountId)
+	a.byDay = appendUniq(a.byDay, dayKey(t), accountID)
+	a.byWeek = appendUniq(a.byWeek, weekKey(t), accountID)
+	a.byMonth = appendUniq(a.byMonth, monthKey(t), accountID)
 
 	return nil
 }

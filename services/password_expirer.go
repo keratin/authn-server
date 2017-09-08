@@ -2,8 +2,8 @@ package services
 
 import "github.com/keratin/authn-server/data"
 
-func PasswordExpirer(store data.AccountStore, tokenStore data.RefreshTokenStore, accountId int) error {
-	account, err := store.Find(accountId)
+func PasswordExpirer(store data.AccountStore, tokenStore data.RefreshTokenStore, accountID int) error {
+	account, err := store.Find(accountID)
 	if err != nil {
 		return err
 	}
@@ -11,12 +11,12 @@ func PasswordExpirer(store data.AccountStore, tokenStore data.RefreshTokenStore,
 		return FieldErrors{{"account", ErrNotFound}}
 	}
 
-	err = store.RequireNewPassword(accountId)
+	err = store.RequireNewPassword(accountID)
 	if err != nil {
 		return err
 	}
 
-	tokens, err := tokenStore.FindAll(accountId)
+	tokens, err := tokenStore.FindAll(accountID)
 	if err != nil {
 		return err
 	}

@@ -11,8 +11,8 @@ import (
 	jwt "gopkg.in/square/go-jose.v2/jwt"
 )
 
-func CreateSession(tokenStore data.RefreshTokenStore, cfg *config.Config, accountId int) *http.Cookie {
-	sessionToken, err := sessions.New(tokenStore, cfg, accountId, cfg.ApplicationDomains[0].String())
+func CreateSession(tokenStore data.RefreshTokenStore, cfg *config.Config, accountID int) *http.Cookie {
+	sessionToken, err := sessions.New(tokenStore, cfg, accountID, cfg.ApplicationDomains[0].String())
 	if err != nil {
 		panic(err)
 	}

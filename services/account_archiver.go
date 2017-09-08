@@ -2,8 +2,8 @@ package services
 
 import "github.com/keratin/authn-server/data"
 
-func AccountArchiver(store data.AccountStore, accountId int) error {
-	account, err := store.Find(accountId)
+func AccountArchiver(store data.AccountStore, accountID int) error {
+	account, err := store.Find(accountID)
 	if err != nil {
 		return err
 	}
@@ -11,7 +11,7 @@ func AccountArchiver(store data.AccountStore, accountId int) error {
 		return FieldErrors{{"account", ErrNotFound}}
 	}
 
-	store.Archive(account.Id)
+	store.Archive(account.ID)
 
 	return nil
 }

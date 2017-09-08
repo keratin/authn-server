@@ -16,14 +16,14 @@ type ServiceErrors struct {
 }
 
 func WriteData(w http.ResponseWriter, httpCode int, d interface{}) {
-	WriteJson(w, httpCode, ServiceData{Result: d})
+	WriteJSON(w, httpCode, ServiceData{Result: d})
 }
 
 func WriteErrors(w http.ResponseWriter, e services.FieldErrors) {
-	WriteJson(w, http.StatusUnprocessableEntity, ServiceErrors{Errors: e})
+	WriteJSON(w, http.StatusUnprocessableEntity, ServiceErrors{Errors: e})
 }
 
-func WriteJson(w http.ResponseWriter, httpCode int, d interface{}) {
+func WriteJSON(w http.ResponseWriter, httpCode int, d interface{}) {
 	j, err := json.Marshal(d)
 	if err != nil {
 		panic(err)

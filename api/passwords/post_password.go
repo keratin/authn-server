@@ -10,24 +10,24 @@ import (
 func postPassword(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
-		var accountId int
+		var accountID int
 		if r.FormValue("token") != "" {
-			accountId, err = services.PasswordResetter(
+			accountID, err = services.PasswordResetter(
 				app.AccountStore,
 				app.Config,
 				r.FormValue("token"),
 				r.FormValue("password"),
 			)
 		} else {
-			accountId = api.GetSessionAccountId(r)
-			if accountId == 0 {
+			accountID = api.GetSessionAccountID(r)
+			if accountID == 0 {
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
 			err = services.PasswordChanger(
 				app.AccountStore,
 				app.Config,
-				accountId,
+				accountID,
 				r.FormValue("password"),
 			)
 		}
@@ -46,7 +46,7 @@ func postPassword(app *api.App) http.HandlerFunc {
 			// TODO: alert but continue
 		}
 
-		sessionToken, identityToken, err := api.NewSession(app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, accountId, api.MatchedDomain(r))
+		sessionToken, identityToken, err := api.NewSession(app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, accountID, api.MatchedDomain(r))
 		if err != nil {
 			panic(err)
 		}

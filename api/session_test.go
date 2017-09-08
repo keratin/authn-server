@@ -26,12 +26,12 @@ func TestSession(t *testing.T) {
 	}
 
 	t.Run("valid session", func(t *testing.T) {
-		accountId := 60090
-		session := test.CreateSession(app.RefreshTokenStore, app.Config, accountId)
+		accountID := 60090
+		session := test.CreateSession(app.RefreshTokenStore, app.Config, accountID)
 
 		handler := func(w http.ResponseWriter, r *http.Request) {
 			assert.NotEmpty(t, api.GetSession(r))
-			assert.Equal(t, accountId, api.GetSessionAccountId(r))
+			assert.Equal(t, accountID, api.GetSessionAccountID(r))
 
 			w.WriteHeader(http.StatusOK)
 		}
@@ -51,12 +51,12 @@ func TestSession(t *testing.T) {
 			AuthNURL:           app.Config.AuthNURL,
 			ApplicationDomains: app.Config.ApplicationDomains,
 		}
-		accountId := 52444
-		session := test.CreateSession(app.RefreshTokenStore, oldConfig, accountId)
+		accountID := 52444
+		session := test.CreateSession(app.RefreshTokenStore, oldConfig, accountID)
 
 		handler := func(w http.ResponseWriter, r *http.Request) {
 			assert.Empty(t, api.GetSession(r))
-			assert.Empty(t, api.GetSessionAccountId(r))
+			assert.Empty(t, api.GetSessionAccountID(r))
 
 			w.WriteHeader(http.StatusOK)
 		}
@@ -70,13 +70,13 @@ func TestSession(t *testing.T) {
 	})
 
 	t.Run("revoked session", func(t *testing.T) {
-		accountId := 10001
-		session := test.CreateSession(app.RefreshTokenStore, app.Config, accountId)
+		accountID := 10001
+		session := test.CreateSession(app.RefreshTokenStore, app.Config, accountID)
 		test.RevokeSession(app.RefreshTokenStore, app.Config, session)
 
 		handler := func(w http.ResponseWriter, r *http.Request) {
 			assert.NotEmpty(t, api.GetSession(r))
-			assert.Empty(t, api.GetSessionAccountId(r))
+			assert.Empty(t, api.GetSessionAccountID(r))
 
 			w.WriteHeader(http.StatusOK)
 		}
@@ -92,7 +92,7 @@ func TestSession(t *testing.T) {
 	t.Run("missing session", func(t *testing.T) {
 		handler := func(w http.ResponseWriter, r *http.Request) {
 			assert.Empty(t, api.GetSession(r))
-			assert.Empty(t, api.GetSessionAccountId(r))
+			assert.Empty(t, api.GetSessionAccountID(r))
 
 			w.WriteHeader(http.StatusOK)
 		}

@@ -19,15 +19,15 @@ func TestGetSessionRefreshSuccess(t *testing.T) {
 	server := test.Server(app, apiSessions.Routes(app))
 	defer server.Close()
 
-	accountId := 82594
-	existingSession := test.CreateSession(app.RefreshTokenStore, app.Config, accountId)
+	accountID := 82594
+	existingSession := test.CreateSession(app.RefreshTokenStore, app.Config, accountID)
 
 	client := test.NewClient(server).Referred(app.Config).WithSession(existingSession)
 	res, err := client.Get("/session/refresh")
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusCreated, res.StatusCode)
-	test.AssertIdTokenResponse(t, res, app.KeyStore, app.Config)
+	test.AssertIDTokenResponse(t, res, app.KeyStore, app.Config)
 }
 
 func TestGetSessionRefreshFailure(t *testing.T) {

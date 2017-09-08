@@ -19,7 +19,7 @@ func patchAccountExpirePassword(app *api.App) http.HandlerFunc {
 		err = services.PasswordExpirer(app.AccountStore, app.RefreshTokenStore, id)
 		if err != nil {
 			if fe, ok := err.(services.FieldErrors); ok {
-				api.WriteJson(w, http.StatusNotFound, api.ServiceErrors{fe})
+				api.WriteJSON(w, http.StatusNotFound, api.ServiceErrors{fe})
 				return
 			}
 

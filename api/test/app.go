@@ -11,7 +11,7 @@ import (
 )
 
 func App() *api.App {
-	authnUrl, err := url.Parse("https://authn.example.com")
+	authnURL, err := url.Parse("https://authn.example.com")
 	if err != nil {
 		panic(err)
 	}
@@ -24,7 +24,7 @@ func App() *api.App {
 	cfg := config.Config{
 		BcryptCost:            4,
 		SessionSigningKey:     []byte("TODO"),
-		AuthNURL:              authnUrl,
+		AuthNURL:              authnURL,
 		SessionCookieName:     "authn",
 		ApplicationDomains:    []config.Domain{{Hostname: "test.com"}},
 		PasswordMinComplexity: 2,

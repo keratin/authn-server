@@ -10,21 +10,21 @@ import (
 func getSessionRefresh(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// check for valid session with live token
-		accountId := api.GetSessionAccountId(r)
-		if accountId == 0 {
+		accountID := api.GetSessionAccountID(r)
+		if accountID == 0 {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
 		// refresh the refresh token
 		session := api.GetSession(r)
-		err := app.RefreshTokenStore.Touch(models.RefreshToken(session.Subject), accountId)
+		err := app.RefreshTokenStore.Touch(models.RefreshToken(session.Subject), accountID)
 		if err != nil {
 			panic(err)
 		}
 
 		// generate the requested identity token
-		identityToken, err := api.IdentityForSession(app.KeyStore, app.Actives, app.Config, session, accountId)
+		identityToken, err := api.IdentityForSession(app.KeyStore, app.Actives, app.Config, session, accountID)
 		if err != nil {
 			panic(err)
 		}

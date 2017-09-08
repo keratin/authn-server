@@ -26,7 +26,7 @@ func TestPostAccountSuccess(t *testing.T) {
 
 	assert.Equal(t, http.StatusCreated, res.StatusCode)
 	test.AssertSession(t, app.Config, res.Cookies())
-	test.AssertIdTokenResponse(t, res, app.KeyStore, app.Config)
+	test.AssertIDTokenResponse(t, res, app.KeyStore, app.Config)
 }
 
 func TestPostAccountSuccessWithSession(t *testing.T) {
@@ -34,11 +34,11 @@ func TestPostAccountSuccessWithSession(t *testing.T) {
 	server := test.Server(app, accounts.Routes(app))
 	defer server.Close()
 
-	accountId := 8642
-	session := test.CreateSession(app.RefreshTokenStore, app.Config, accountId)
+	accountID := 8642
+	session := test.CreateSession(app.RefreshTokenStore, app.Config, accountID)
 
 	// before
-	refreshTokens, err := app.RefreshTokenStore.FindAll(accountId)
+	refreshTokens, err := app.RefreshTokenStore.FindAll(accountID)
 	require.NoError(t, err)
 	refreshToken := refreshTokens[0]
 

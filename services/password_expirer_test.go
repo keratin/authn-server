@@ -16,15 +16,15 @@ func TestPasswordExpirer(t *testing.T) {
 	t.Run("active account", func(t *testing.T) {
 		account, err := accountStore.Create("active", []byte("secret"))
 		require.NoError(t, err)
-		token1, err := refreshStore.Create(account.Id)
+		token1, err := refreshStore.Create(account.ID)
 		require.NoError(t, err)
-		token2, err := refreshStore.Create(account.Id)
+		token2, err := refreshStore.Create(account.ID)
 		require.NoError(t, err)
 
-		errors := services.PasswordExpirer(accountStore, refreshStore, account.Id)
+		errors := services.PasswordExpirer(accountStore, refreshStore, account.ID)
 		assert.Empty(t, errors)
 
-		account, err = accountStore.Find(account.Id)
+		account, err = accountStore.Find(account.ID)
 		require.NoError(t, err)
 		assert.NotEmpty(t, account.RequireNewPassword)
 

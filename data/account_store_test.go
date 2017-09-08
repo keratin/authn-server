@@ -52,7 +52,7 @@ func TestAccountStore(t *testing.T) {
 func testCreate(t *testing.T, store data.AccountStore) {
 	account, err := store.Create("authn@keratin.tech", []byte("password"))
 	assert.NoError(t, err)
-	assert.NotEqual(t, 0, account.Id)
+	assert.NotEqual(t, 0, account.ID)
 	assert.Equal(t, "authn@keratin.tech", account.Username)
 	assert.NotEmpty(t, account.PasswordChangedAt)
 	assert.NotEmpty(t, account.CreatedAt)
@@ -85,17 +85,17 @@ func testLockAndUnlock(t *testing.T, store data.AccountStore) {
 	require.NoError(t, err)
 	require.False(t, account.Locked)
 
-	err = store.Lock(account.Id)
+	err = store.Lock(account.ID)
 	require.NoError(t, err)
 
-	after, err := store.Find(account.Id)
+	after, err := store.Find(account.ID)
 	require.NoError(t, err)
 	assert.True(t, after.Locked)
 
-	err = store.Unlock(account.Id)
+	err = store.Unlock(account.ID)
 	require.NoError(t, err)
 
-	after2, err := store.Find(account.Id)
+	after2, err := store.Find(account.ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, after2)
 	assert.False(t, after2.Locked)
@@ -106,10 +106,10 @@ func testArchive(t *testing.T, store data.AccountStore) {
 	require.NoError(t, err)
 	require.Empty(t, account.DeletedAt)
 
-	err = store.Archive(account.Id)
+	err = store.Archive(account.ID)
 	require.NoError(t, err)
 
-	after, err := store.Find(account.Id)
+	after, err := store.Find(account.ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, after)
 	assert.Empty(t, after.Username)
@@ -122,10 +122,10 @@ func testRequireNewPassword(t *testing.T, store data.AccountStore) {
 	require.NoError(t, err)
 	require.False(t, account.RequireNewPassword)
 
-	err = store.RequireNewPassword(account.Id)
+	err = store.RequireNewPassword(account.ID)
 	require.NoError(t, err)
 
-	after, err := store.Find(account.Id)
+	after, err := store.Find(account.ID)
 	require.NoError(t, err)
 	assert.True(t, after.RequireNewPassword)
 }
@@ -133,13 +133,13 @@ func testRequireNewPassword(t *testing.T, store data.AccountStore) {
 func testSetPassword(t *testing.T, store data.AccountStore) {
 	account, err := store.Create("authn@keratin.tech", []byte("old"))
 	require.NoError(t, err)
-	err = store.RequireNewPassword(account.Id)
+	err = store.RequireNewPassword(account.ID)
 	require.NoError(t, err)
 
-	err = store.SetPassword(account.Id, []byte("new"))
+	err = store.SetPassword(account.ID, []byte("new"))
 	require.NoError(t, err)
 
-	after, err := store.Find(account.Id)
+	after, err := store.Find(account.ID)
 	require.NoError(t, err)
 	assert.Equal(t, []byte("new"), after.Password)
 	assert.False(t, after.RequireNewPassword)

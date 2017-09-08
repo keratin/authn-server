@@ -47,16 +47,16 @@ func AssertSession(t *testing.T, cfg *config.Config, cookies []*http.Cookie) {
 	assert.NoError(t, err)
 }
 
-func AssertIdTokenResponse(t *testing.T, res *http.Response, keyStore data.KeyStore, cfg *config.Config) {
+func AssertIDTokenResponse(t *testing.T, res *http.Response, keyStore data.KeyStore, cfg *config.Config) {
 	// check that the response contains the expected json
 	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
 	responseData := struct {
-		IdToken string `json:"id_token"`
+		IDToken string `json:"id_token"`
 	}{}
 	err := extractResult(res, &responseData)
 	assert.NoError(t, err)
 
-	tok, err := jwt.ParseSigned(responseData.IdToken)
+	tok, err := jwt.ParseSigned(responseData.IDToken)
 	assert.NoError(t, err)
 
 	claims := identities.Claims{}

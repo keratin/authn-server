@@ -28,7 +28,7 @@ func RefererSecurity(domains []config.Domain) SecurityHandler {
 					return
 				}
 			}
-			WriteJson(w, http.StatusForbidden, ServiceErrors{Errors: services.FieldErrors{{"referer", "is not a trusted host"}}})
+			WriteJSON(w, http.StatusForbidden, ServiceErrors{Errors: services.FieldErrors{{"referer", "is not a trusted host"}}})
 		})
 	}
 }

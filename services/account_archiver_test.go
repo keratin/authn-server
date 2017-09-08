@@ -16,18 +16,18 @@ func TestAccountArchiver(t *testing.T) {
 	require.NoError(t, err)
 
 	var testCases = []struct {
-		accountId int
+		accountID int
 		errors    *services.FieldErrors
 	}{
 		{123456789, &services.FieldErrors{{"account", services.ErrNotFound}}},
-		{account.Id, nil},
+		{account.ID, nil},
 	}
 
 	for _, tc := range testCases {
-		errs := services.AccountArchiver(store, tc.accountId)
+		errs := services.AccountArchiver(store, tc.accountID)
 		if tc.errors == nil {
 			assert.Empty(t, errs)
-			acct, err := store.Find(tc.accountId)
+			acct, err := store.Find(tc.accountID)
 			require.NoError(t, err)
 			assert.Empty(t, acct.Username)
 			assert.Empty(t, acct.Password)
