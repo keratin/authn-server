@@ -48,6 +48,9 @@ func TestAccountCreatorFailure(t *testing.T) {
 		{config.Config{}, "  ", "PASSword", services.FieldErrors{{"username", "MISSING"}}},
 		{config.Config{}, "existing@test.com", "PASSword", services.FieldErrors{{"username", "TAKEN"}}},
 		{config.Config{UsernameIsEmail: true}, "notanemail", "PASSword", services.FieldErrors{{"username", "FORMAT_INVALID"}}},
+		{config.Config{UsernameIsEmail: true}, "@wrong.com", "PASSword", services.FieldErrors{{"username", "FORMAT_INVALID"}}},
+		{config.Config{UsernameIsEmail: true}, "wrong@wrong", "PASSword", services.FieldErrors{{"username", "FORMAT_INVALID"}}},
+		{config.Config{UsernameIsEmail: true}, "wrong@wrong.", "PASSword", services.FieldErrors{{"username", "FORMAT_INVALID"}}},
 		{config.Config{UsernameIsEmail: true, UsernameDomains: []string{"rightdomain.com"}}, "email@wrongdomain.com", "PASSword", services.FieldErrors{{"username", "FORMAT_INVALID"}}},
 		{config.Config{UsernameIsEmail: false, UsernameMinLength: 6}, "short", "PASSword", services.FieldErrors{{"username", "FORMAT_INVALID"}}},
 		// password validations
@@ -56,8 +59,11 @@ func TestAccountCreatorFailure(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		acc, err := services.AccountCreator(store, &tc.config, tc.username, tc.password)
-		assert.Empty(t, acc)
-		assert.Equal(t, tc.errors, err)
+		t.Run(tc.username, func(t *testing.T) {
+			acc, err := services.AccountCreator(store, &tc.config, tc.username, tc.password)
+			if assert.Equal(t, tc.errors, err) {
+				assert.Empty(t, acc)
+			}
+		})
 	}
 }
