@@ -34,7 +34,10 @@ server:
 # Run tests
 .PHONY: test
 test:
-	go test $(PKGS)
+	docker-compose up -d
+	TEST_REDIS_URL=redis://127.0.0.1:8701/12 \
+	  TEST_MYSQL_URL=mysql://root@localhost:8702/authnservertest \
+	  go test $(PKGS)
 
 # Run migrations
 .PHONY: migrate
