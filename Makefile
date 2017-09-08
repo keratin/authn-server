@@ -24,7 +24,7 @@ docker:
 		-w /go/src/github.com/keratin/authn-server \
 		billyteves/alpine-golang-glide:1.2.0 \
 		bash -c 'apk add --no-cache gcc musl-dev; make clean build'
-	docker build --tag keratin/authn:latest-go .
+	docker build --tag keratin/authn-server:latest .
 
 # Run the server
 .PHONY: server
