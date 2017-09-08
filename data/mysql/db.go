@@ -10,6 +10,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/pkg/errors"
 )
 
 func NewDB(url *url.URL) (*sqlx.DB, error) {
@@ -26,17 +27,17 @@ func TestDB() (*sqlx.DB, error) {
 
 	err = ensureDB(cfgFromUrl(url))
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "ensureDB")
 	}
 
 	db, err := NewDB(url)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "NewDB")
 	}
 
 	err = MigrateDB(db)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "MigrateDB")
 	}
 
 	return db, nil
@@ -65,13 +66,13 @@ func ensureDB(cfg *mysql.Config) error {
 
 	db, err := sqlx.Connect("mysql", cfg.FormatDSN())
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Connect")
 	}
 	defer db.Close()
 
 	_, err = db.Exec("CREATE DATABASE IF NOT EXISTS " + dbName)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "CREATE DATABASE")
 	}
 
 	return nil
