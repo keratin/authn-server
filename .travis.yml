@@ -4,6 +4,7 @@ go:
 services:
   - mysql
   - redis-server
+
 before_install:
   - sudo add-apt-repository ppa:masterminds/glide -y
   - sudo apt-get update -q
@@ -11,3 +12,9 @@ before_install:
 install:
   - make vendor
 script: make test-ci
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+      docker push keratin/authn-server;
+    fi
