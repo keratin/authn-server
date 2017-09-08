@@ -17,7 +17,7 @@ func TestAccountArchiver(t *testing.T) {
 
 	var testCases = []struct {
 		accountId int
-		errors     *services.FieldErrors
+		errors    *services.FieldErrors
 	}{
 		{123456789, &services.FieldErrors{{"account", services.ErrNotFound}}},
 		{account.Id, nil},
