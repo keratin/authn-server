@@ -58,20 +58,23 @@ func (m *maintainer) maintain(ks *keyStore) error {
 	go func() {
 		ticker := NewEpochIntervalTicker(m.interval)
 		for range ticker {
-			m.rotate(ks)
+			err = m.rotate(ks)
+			if err != nil {
+				// TODO: report
+			}
 		}
 	}()
 
 	return nil
 }
 
-func (m *maintainer) rotate(ks *keyStore) {
+func (m *maintainer) rotate(ks *keyStore) error {
 	newKey, err := m.generate()
 	if err != nil {
-		// TODO: report
-		return
+		return errors.Wrap(err, "generate")
 	}
 	ks.Rotate(newKey)
+	return nil
 }
 
 // restore will query Redis for the previous and current keys. It returns keys in the proper sorting
@@ -146,14 +149,14 @@ func (m *maintainer) find(bucket int64) (*rsa.PrivateKey, error) {
 	if err == redis.Nil {
 		return nil, nil
 	} else if err != nil {
-		return nil, errors.Wrap(err, "Redis Get")
+		return nil, errors.Wrap(err, "Get")
 	} else if blob == placeholder {
 		return nil, nil
 	}
 
 	plaintext, err := compat.Decrypt([]byte(blob), m.encryptionKey)
 	if err != nil {
-		return nil, errors.Wrap(err, "compat.Decrypt")
+		return nil, errors.Wrap(err, "Decrypt")
 	}
 
 	return bytesToKey([]byte(plaintext)), nil
