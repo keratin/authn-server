@@ -50,7 +50,7 @@ Your application must then host a form that embeds the token, requests a new pas
 
 ## Configuration
 
-All configuration is through environment variables. Please see [docs](https://github.com/keratin/authn/blob/master/docs/config.md) for details.
+All configuration is through environment variables. Please see [docs](https://github.com/keratin/authn-server/blob/master/docs/config.md) for details.
 
 ## Deployment
 
