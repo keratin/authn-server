@@ -9,6 +9,7 @@ import (
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/resets"
+	"github.com/pkg/errors"
 )
 
 func PasswordResetSender(cfg *config.Config, account *models.Account) error {
@@ -24,11 +25,11 @@ func PasswordResetSender(cfg *config.Config, account *models.Account) error {
 
 	reset, err := resets.New(cfg, account.ID, account.PasswordChangedAt)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "New Reset")
 	}
 	resetStr, err := reset.Sign(cfg.ResetSigningKey)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Sign")
 	}
 
 	res, err := http.PostForm(cfg.AppPasswordResetURL.String(), url.Values{
@@ -36,7 +37,7 @@ func PasswordResetSender(cfg *config.Config, account *models.Account) error {
 		"token":      []string{resetStr},
 	})
 	if err != nil {
-		return err
+		return errors.Wrap(err, "PostForm")
 	}
 	if res.StatusCode > 299 {
 		return fmt.Errorf("Status Code: %v", res.StatusCode)

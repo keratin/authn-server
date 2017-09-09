@@ -4,6 +4,7 @@ import (
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/models"
+	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -21,7 +22,7 @@ func CredentialsVerifier(store data.AccountStore, cfg *config.Config, username s
 
 	account, err := store.FindByUsername(username)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "FindByUsername")
 	}
 
 	// if no account is found, we continue with a fake password hash. otherwise we

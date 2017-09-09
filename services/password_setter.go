@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
+	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -14,12 +15,12 @@ func PasswordSetter(store data.AccountStore, cfg *config.Config, accountID int, 
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), cfg.BcryptCost)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "GenerateFromPassword")
 	}
 
 	err = store.SetPassword(accountID, hash)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "SetPassword")
 	}
 	return nil
 }

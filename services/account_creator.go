@@ -6,31 +6,32 @@ import (
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/models"
+	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func AccountCreator(store data.AccountStore, cfg *config.Config, username string, password string) (*models.Account, error) {
 	username = strings.TrimSpace(username)
 
-	errors := FieldErrors{}
+	errs := FieldErrors{}
 
 	fieldError := usernameValidator(cfg, username)
 	if fieldError != nil {
-		errors = append(errors, *fieldError)
+		errs = append(errs, *fieldError)
 	}
 
 	fieldError = passwordValidator(cfg, password)
 	if fieldError != nil {
-		errors = append(errors, *fieldError)
+		errs = append(errs, *fieldError)
 	}
 
-	if len(errors) > 0 {
-		return nil, errors
+	if len(errs) > 0 {
+		return nil, errs
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), cfg.BcryptCost)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "bcrypt")
 	}
 
 	acc, err := store.Create(username, hash)
@@ -40,7 +41,7 @@ func AccountCreator(store data.AccountStore, cfg *config.Config, username string
 			return nil, FieldErrors{{"username", ErrTaken}}
 		}
 
-		return nil, err
+		return nil, errors.Wrap(err, "Create")
 	}
 
 	return acc, nil
