@@ -45,7 +45,11 @@ func passwordValidator(cfg *config.Config, password string) *fieldError {
 	// SECURITY: only score the first 100 characters of a password. cheap benchmarks on my current
 	//           laptop show that latency for 1e3 characters approaches 180ms, and 1e4 characters
 	//           consume 54s.
-	if zxcvbn.PasswordStrength(password[:100], []string{}).Score < cfg.PasswordMinComplexity {
+	if len(password) > 100 {
+		password = password[:100]
+	}
+
+	if zxcvbn.PasswordStrength(password, []string{}).Score < cfg.PasswordMinComplexity {
 		return &fieldError{"password", ErrInsecure}
 	}
 
