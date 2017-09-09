@@ -2,11 +2,9 @@ Keratin AuthN is an authentication service that keeps you in control of the expe
 
 Read more at [keratin.tech](https://keratin.tech).
 
-[![Build Status](https://travis-ci.org/keratin/authn-server.svg?branch=master)](https://travis-ci.org/keratin/authn-server) • [![Go Report](https://goreportcard.com/badge/github.com/keratin/authn-server)](https://goreportcard.com/report/github.com/keratin/authn-server)
+[![Build Status](https://travis-ci.org/keratin/authn-server.svg?branch=master)](https://travis-ci.org/keratin/authn-server)[![Go Report](https://goreportcard.com/badge/github.com/keratin/authn-server)](https://goreportcard.com/report/github.com/keratin/authn-server)
 
-*Project Status: Actively Maintained*
-
-# Integration
+## Integration
 
 This repository builds a backend Go service that provides secured endpoints related to accounts and passwords. You must integrate it with your application's frontend(s) and backend(s).
 
@@ -17,7 +15,7 @@ Client libraries are currently available for:
 
 If you are missing a client library, please [submit a request](https://github.com/keratin/authn/issues).
 
-## Example: Signup
+### Example: Signup
 
 You will render a signup form as usual, but rely on a provided client library to register the username and password with AuthN in exchange for an ID Token (aka JWT session) that is submitted to your user signup endpoint instead.
 
@@ -33,7 +31,7 @@ You will render a signup form as usual, but rely on a provided client library to
     Email &
     ID Token     ----------------> user signup
 
-## Example: Password Reset
+### Example: Password Reset
 
 You will render a reset form as usual, but then submit the username to AuthN. If that username exists, AuthN will communicate a secret token to your application through a secure back channel. Your application is responsible for delivering the token to the user, probably by email.
 
@@ -50,11 +48,11 @@ Your application must then host a form that embeds the token, requests a new pas
     Password &
     Token        ----> update
 
-# Configuration
+## Configuration
 
 All configuration is through environment variables. Please see [docs](https://github.com/keratin/authn/blob/master/docs/config.md) for details.
 
-# Deployment
+## Deployment
 
 AuthN may be deployed according to your needs. Here's what it requires:
 
@@ -71,11 +69,11 @@ In broad strokes, you want to:
 4. Run migrations
 5. Send traffic!
 
-## Maximum Security
+### Maximum Security
 
 For maximum security, give AuthN its own dedicated SQL and Redis databases and be sure that all database backups are strongly encrypted at rest. The credentials and accounts data encapsulated by AuthN should not be necessary for data warehousing or business intelligence, so try to minimize their exposure.
 
-# Developing
+## Developing
 
 1. Install [Glide](https://github.com/Masterminds/glide#install).
 2. Run `make vendor` to set up the vendor/ directory using Glide
@@ -97,7 +95,7 @@ To build a Docker image for integration testing:
 1. Run `make docker`
 2. Start the `keratin/authn-server:latest` image with appropriate ENV variables
 
-# COPYRIGHT & LICENSE
+## COPYRIGHT & LICENSE
 
 Copyright (c) 2016 Lance Ivy
 
