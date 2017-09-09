@@ -22,7 +22,7 @@ import (
 func Encrypt(value []byte, secret []byte) ([]byte, error) {
 	nonce := make([]byte, 12)
 	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "ReadFull")
 	}
 	return EncryptWithNonce(value, secret, nonce)
 }
@@ -31,12 +31,12 @@ func Encrypt(value []byte, secret []byte) ([]byte, error) {
 func EncryptWithNonce(value []byte, secret []byte, nonce []byte) ([]byte, error) {
 	block, err := aes.NewCipher(secret)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "NewCipher")
 	}
 
 	aesgcm, err := cipher.NewGCM(block)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "NewGCM")
 	}
 
 	ciphertext := aesgcm.Seal(nil, nonce, Marshal(string(value)), nil)

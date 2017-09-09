@@ -8,6 +8,7 @@ import (
 	"github.com/keratin/authn-server/compat"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/tokens/sessions"
+	"github.com/pkg/errors"
 	jose "gopkg.in/square/go-jose.v2"
 	jwt "gopkg.in/square/go-jose.v2/jwt"
 )
@@ -28,7 +29,7 @@ func (c *Claims) Sign(rsaKey *rsa.PrivateKey) (string, error) {
 		(&jose.SignerOptions{}).WithType("JWT"),
 	)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "NewSigner")
 	}
 	return jwt.Signed(signer).Claims(c).CompactSerialize()
 }

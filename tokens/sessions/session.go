@@ -5,6 +5,7 @@ import (
 
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
+	"github.com/pkg/errors"
 	jose "gopkg.in/square/go-jose.v2"
 	jwt "gopkg.in/square/go-jose.v2/jwt"
 )
@@ -20,7 +21,7 @@ func (c *Claims) Sign(hmacKey []byte) (string, error) {
 		(&jose.SignerOptions{}).WithType("JWT"),
 	)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "NewSigner")
 	}
 	return jwt.Signed(signer).Claims(c).CompactSerialize()
 }
@@ -28,13 +29,13 @@ func (c *Claims) Sign(hmacKey []byte) (string, error) {
 func Parse(tokenStr string, cfg *config.Config) (*Claims, error) {
 	token, err := jwt.ParseSigned(tokenStr)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "ParseSigned")
 	}
 
 	claims := Claims{}
 	err = token.Claims(cfg.SessionSigningKey, &claims)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Claims")
 	}
 
 	err = claims.Claims.Validate(jwt.Expected{
@@ -42,7 +43,7 @@ func Parse(tokenStr string, cfg *config.Config) (*Claims, error) {
 		Issuer:   cfg.AuthNURL.String(),
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Validate")
 	}
 
 	return &claims, nil
@@ -51,7 +52,7 @@ func Parse(tokenStr string, cfg *config.Config) (*Claims, error) {
 func New(store data.RefreshTokenStore, cfg *config.Config, accountID int, authorizedAudience string) (*Claims, error) {
 	refreshToken, err := store.Create(accountID)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Create")
 	}
 
 	return &Claims{

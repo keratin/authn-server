@@ -8,25 +8,26 @@ import (
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/identities"
 	"github.com/keratin/authn-server/tokens/sessions"
+	"github.com/pkg/errors"
 )
 
 func NewSession(refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore, actives data.Actives, cfg *config.Config, accountID int, authorizedAudience *config.Domain) (string, string, error) {
 	session, err := sessions.New(refreshTokenStore, cfg, accountID, authorizedAudience.String())
 	if err != nil {
-		return "", "", err
+		return "", "", errors.Wrap(err, "New")
 	}
 
 	sessionToken, err := session.Sign(cfg.SessionSigningKey)
 	if err != nil {
-		return "", "", err
+		return "", "", errors.Wrap(err, "Sign")
 	}
 
 	identityToken, err := IdentityForSession(keyStore, actives, cfg, session, accountID)
 	if err != nil {
-		return "", "", err
+		return "", "", errors.Wrap(err, "IdentityForSession")
 	}
 
-	return sessionToken, identityToken, err
+	return sessionToken, identityToken, nil
 }
 
 func RevokeSession(refreshTokenStore data.RefreshTokenStore, cfg *config.Config, r *http.Request) (err error) {
@@ -56,7 +57,7 @@ func IdentityForSession(keyStore data.KeyStore, actives data.Actives, cfg *confi
 	identity := identities.New(cfg, session, accountID)
 	identityToken, err := identity.Sign(keyStore.Key())
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "Track")
 	}
 
 	return identityToken, nil

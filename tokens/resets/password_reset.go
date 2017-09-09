@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/keratin/authn-server/config"
+	"github.com/pkg/errors"
 	jose "gopkg.in/square/go-jose.v2"
 	jwt "gopkg.in/square/go-jose.v2/jwt"
 )
@@ -24,7 +25,7 @@ func (c *Claims) Sign(hmacKey []byte) (string, error) {
 		(&jose.SignerOptions{}).WithType("JWT"),
 	)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, "NewSigner")
 	}
 	return jwt.Signed(signer).Claims(c).CompactSerialize()
 }
@@ -39,13 +40,13 @@ func (c *Claims) LockExpired(passwordChangedAt time.Time) bool {
 func Parse(tokenStr string, cfg *config.Config) (*Claims, error) {
 	token, err := jwt.ParseSigned(tokenStr)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "ParseSigned")
 	}
 
 	claims := Claims{}
 	err = token.Claims(cfg.ResetSigningKey, &claims)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Claims")
 	}
 
 	err = claims.Claims.Validate(jwt.Expected{
@@ -54,7 +55,7 @@ func Parse(tokenStr string, cfg *config.Config) (*Claims, error) {
 		Time:     time.Now(),
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Validate")
 	}
 	if claims.Scope != scope {
 		return nil, fmt.Errorf("token scope not valid")

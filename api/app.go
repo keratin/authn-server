@@ -6,6 +6,7 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
+	"github.com/pkg/errors"
 
 	"github.com/keratin/authn-server/data/mock"
 	dataRedis "github.com/keratin/authn-server/data/redis"
@@ -28,12 +29,12 @@ func NewApp() (*App, error) {
 
 	db, accountStore, err := data.NewDB(cfg.DatabaseURL)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "NewDB")
 	}
 
 	opts, err := redis.ParseURL(cfg.RedisURL.String())
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "ParseURL")
 	}
 	redis := redis.NewClient(opts)
 
@@ -51,7 +52,7 @@ func NewApp() (*App, error) {
 			cfg.DBEncryptionKey,
 		)
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "NewKeyStore")
 		}
 	} else {
 		keyStore = mock.NewKeyStore(cfg.IdentitySigningKey)
