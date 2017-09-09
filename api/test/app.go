@@ -23,7 +23,7 @@ func App() *api.App {
 
 	cfg := config.Config{
 		BcryptCost:            4,
-		SessionSigningKey:     []byte("TODO"),
+		SessionSigningKey:     []byte("TestKey"),
 		AuthNURL:              authnURL,
 		SessionCookieName:     "authn",
 		ApplicationDomains:    []config.Domain{{Hostname: "test.com"}},
