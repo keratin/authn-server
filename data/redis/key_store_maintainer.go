@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-redis/redis"
 	"github.com/keratin/authn-server/compat"
+	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
 )
 
@@ -32,7 +33,7 @@ type maintainer struct {
 }
 
 // maintain will restore and rotate a keyStore at periodic intervals.
-func (m *maintainer) maintain(ks *keyStore) error {
+func (m *maintainer) maintain(ks *keyStore, r ops.ErrorReporter) error {
 	// fetch current keys
 	keys, err := m.restore()
 	if err != nil {
@@ -60,7 +61,7 @@ func (m *maintainer) maintain(ks *keyStore) error {
 		for range ticker {
 			err = m.rotate(ks)
 			if err != nil {
-				// TODO: report
+				r.ReportError(err)
 			}
 		}
 	}()

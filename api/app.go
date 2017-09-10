@@ -30,6 +30,17 @@ type App struct {
 func NewApp() (*App, error) {
 	cfg := config.ReadEnv()
 
+	var reporter ops.ErrorReporter
+	if cfg.SentryDSN != "" {
+		c, err := raven.New(cfg.SentryDSN)
+		if err != nil {
+			return nil, errors.Wrap(err, "raven.New")
+		}
+		reporter = &ops.SentryReporter{Client: c}
+	} else {
+		reporter = &ops.LogReporter{}
+	}
+
 	db, accountStore, err := data.NewDB(cfg.DatabaseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "NewDB")
@@ -50,6 +61,7 @@ func NewApp() (*App, error) {
 	if cfg.IdentitySigningKey == nil {
 		keyStore, err = dataRedis.NewKeyStore(
 			redis,
+			reporter,
 			cfg.AccessTokenTTL,
 			time.Duration(500)*time.Millisecond,
 			cfg.DBEncryptionKey,
@@ -68,17 +80,6 @@ func NewApp() (*App, error) {
 		cfg.WeeklyActivesRetention,
 		5*12,
 	)
-
-	var reporter ops.ErrorReporter
-	if cfg.SentryDSN != "" {
-		c, err := raven.New(cfg.SentryDSN)
-		if err != nil {
-			return nil, errors.Wrap(err, "raven.New")
-		}
-		reporter = &ops.SentryReporter{Client: c}
-	} else {
-		reporter = &ops.LogReporter{}
-	}
 
 	return &App{
 		DbCheck:           func() bool { return db.Ping() == nil },

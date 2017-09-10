@@ -23,13 +23,13 @@ func Session(app *App) func(http.Handler) http.Handler {
 					if err == http.ErrNoCookie {
 						return
 					} else if err != nil {
-						// TODO: record and continue
+						app.Reporter.ReportError(err)
 						return
 					}
 
 					session, err = sessions.Parse(cookie.Value, app.Config)
 					if err != nil {
-						// TODO: record and continue
+						app.Reporter.ReportError(err)
 					}
 				})
 
@@ -48,7 +48,7 @@ func Session(app *App) func(http.Handler) http.Handler {
 
 					accountID, err = app.RefreshTokenStore.Find(models.RefreshToken(session.Subject))
 					if err != nil {
-						// TODO: record and continue
+						app.Reporter.ReportError(err)
 					}
 				})
 

@@ -8,6 +8,7 @@ import (
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/ops"
 )
 
 func App() *api.App {
@@ -38,5 +39,6 @@ func App() *api.App {
 		AccountStore:      mock.NewAccountStore(),
 		RefreshTokenStore: mock.NewRefreshTokenStore(),
 		Actives:           mock.NewActives(),
+		Reporter:          &ops.LogReporter{},
 	}
 }

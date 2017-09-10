@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis"
+	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
 )
 
@@ -20,7 +21,7 @@ type keyStore struct {
 // regularly. The key is encrypted using SECRET_KEY_BASE, which is already the ultimate SPOF for
 // AuthN security. It's expected that very few people will be in position to improve on the security
 // tradeoffs of this provider.
-func NewKeyStore(client *redis.Client, interval time.Duration, race time.Duration, encryptionKey []byte) (*keyStore, error) {
+func NewKeyStore(client *redis.Client, reporter ops.ErrorReporter, interval time.Duration, race time.Duration, encryptionKey []byte) (*keyStore, error) {
 	ks := &keyStore{
 		keys:   []*rsa.PrivateKey{},
 		rwLock: &sync.RWMutex{},
@@ -33,7 +34,7 @@ func NewKeyStore(client *redis.Client, interval time.Duration, race time.Duratio
 		client:        client,
 		encryptionKey: encryptionKey,
 	}
-	err := m.maintain(ks)
+	err := m.maintain(ks, reporter)
 	if err != nil {
 		return nil, errors.Wrap(err, "maintain")
 	}
