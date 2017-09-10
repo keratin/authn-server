@@ -3,9 +3,11 @@ package api
 import (
 	"time"
 
+	raven "github.com/getsentry/raven-go"
 	"github.com/go-redis/redis"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
+	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
 
 	"github.com/keratin/authn-server/data/mock"
@@ -22,6 +24,7 @@ type App struct {
 	RefreshTokenStore data.RefreshTokenStore
 	KeyStore          data.KeyStore
 	Actives           data.Actives
+	Reporter          ops.ErrorReporter
 }
 
 func NewApp() (*App, error) {
@@ -66,6 +69,17 @@ func NewApp() (*App, error) {
 		5*12,
 	)
 
+	var reporter ops.ErrorReporter
+	if cfg.SentryDSN != "" {
+		c, err := raven.New(cfg.SentryDSN)
+		if err != nil {
+			return nil, errors.Wrap(err, "raven.New")
+		}
+		reporter = &ops.SentryReporter{Client: c}
+	} else {
+		reporter = &ops.LogReporter{}
+	}
+
 	return &App{
 		DbCheck:           func() bool { return db.Ping() == nil },
 		RedisCheck:        func() bool { return redis.Ping().Err() == nil },
@@ -74,5 +88,6 @@ func NewApp() (*App, error) {
 		RefreshTokenStore: tokenStore,
 		KeyStore:          keyStore,
 		Actives:           actives,
+		Reporter:          reporter,
 	}, nil
 }
