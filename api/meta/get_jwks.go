@@ -13,12 +13,17 @@ func getJWKs(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		keys := []jose.JSONWebKey{}
 		for _, key := range app.KeyStore.Keys() {
-			keys = append(keys, jose.JSONWebKey{
-				Key:       key.Public(),
-				Use:       "sig",
-				Algorithm: "RS256",
-				KeyID:     compat.KeyID(key.Public()),
-			})
+			keyID, err := compat.KeyID(key.Public())
+			if err != nil {
+				app.Reporter.ReportError(err)
+			} else {
+				keys = append(keys, jose.JSONWebKey{
+					Key:       key.Public(),
+					Use:       "sig",
+					Algorithm: "RS256",
+					KeyID:     keyID,
+				})
+			}
 		}
 
 		api.WriteJSON(w, http.StatusOK, jose.JSONWebKeySet{Keys: keys})

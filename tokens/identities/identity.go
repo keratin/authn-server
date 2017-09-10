@@ -19,9 +19,14 @@ type Claims struct {
 }
 
 func (c *Claims) Sign(rsaKey *rsa.PrivateKey) (string, error) {
+	keyID, err := compat.KeyID(rsaKey.Public())
+	if err != nil {
+		return "", errors.Wrap(err, "KeyID")
+	}
+
 	jwk := jose.JSONWebKey{
 		Key:   rsaKey,
-		KeyID: compat.KeyID(rsaKey.Public()),
+		KeyID: keyID,
 	}
 
 	signer, err := jose.NewSigner(
