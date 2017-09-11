@@ -27,7 +27,7 @@ func postSession(app *api.App) http.HandlerFunc {
 
 		err = api.RevokeSession(app.RefreshTokenStore, app.Config, r)
 		if err != nil {
-			app.Reporter.ReportError(err)
+			app.Reporter.ReportRequestError(err, r)
 		}
 
 		sessionToken, identityToken, err := api.NewSession(app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, account.ID, api.MatchedDomain(r))

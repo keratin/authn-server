@@ -18,7 +18,7 @@ func getPasswordReset(app *api.App) http.HandlerFunc {
 		go func() {
 			err := services.PasswordResetSender(app.Config, account)
 			if err != nil {
-				app.Reporter.ReportError(err)
+				app.Reporter.ReportRequestError(err, r)
 			}
 		}()
 

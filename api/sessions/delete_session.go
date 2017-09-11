@@ -10,7 +10,7 @@ func deleteSession(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := api.RevokeSession(app.RefreshTokenStore, app.Config, r)
 		if err != nil {
-			app.Reporter.ReportError(err)
+			app.Reporter.ReportRequestError(err, r)
 		}
 
 		api.SetSession(app.Config, w, "")

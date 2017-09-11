@@ -15,7 +15,7 @@ func getJWKs(app *api.App) http.HandlerFunc {
 		for _, key := range app.KeyStore.Keys() {
 			keyID, err := compat.KeyID(key.Public())
 			if err != nil {
-				app.Reporter.ReportError(err)
+				app.Reporter.ReportRequestError(err, r)
 			} else {
 				keys = append(keys, jose.JSONWebKey{
 					Key:       key.Public(),
