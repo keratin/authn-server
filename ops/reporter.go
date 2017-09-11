@@ -8,7 +8,8 @@ import (
 	raven "github.com/getsentry/raven-go"
 )
 
-// ErrorReporter is a thing that exports details about errors and panics to another service.
+// ErrorReporter is a thing that exports details about errors and panics to another service. Care
+// must be taken by each implementation to ensure that passwords are not leaked.
 type ErrorReporter interface {
 	ReportError(err error)
 	ReportRequestError(err error, r *http.Request)
@@ -56,13 +57,17 @@ func (r *SentryReporter) ReportError(err error) {
 }
 
 // ReportRequestError will deliver the given error to Sentry in a background routine along with
-// data relevant to the current http.Request
+// data relevant to the current http.Request.
+//
+// NOTE: POST data is never reported to Sentry, so passwords remain private.
 func (r *SentryReporter) ReportRequestError(err error, req *http.Request) {
 	r.CaptureError(err, map[string]string{}, raven.NewHttp(req))
 }
 
 // PanicHandler returns a http.Handler that will recover any panics and deliver them to Sentry
 // in a background routine. If a panic is caught, the handler will return HTTP 500.
+//
+// NOTE: POST data is never reported to Sentry, so passwords remain private.
 func (r *SentryReporter) PanicHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		err, _ := r.CapturePanic(
