@@ -11,6 +11,7 @@ title: Server Configuration
 * Password Policy: [`PASSWORD_POLICY_SCORE`](#password_policy_score) • [`BCRYPT_COST`](#bcrypt_cost)
 * Password Resets: [`APP_PASSWORD_RESET_URL`](#app_password_reset_url) • [`PASSWORD_RESET_TOKEN_TTL`](#password_reset_token_ttl)
 * Stats: [`TIME_ZONE`](#time_zone) • [`DAILY_ACTIVES_RETENTION`](#daily_actives_retention) • [`WEEKLY_ACTIVES_RETENTION`](#weekly_actives_retention)
+* Operations: [`SENTRY_DSN`](#sentry_dsn)
 
 ## Core Settings
 
@@ -238,3 +239,15 @@ Stats on daily actives will be set to expire after this many days. No mechanism 
 | Default | `104` (~2 years) |
 
 Stats on weekly actives will be set to expire after this many weeks. No mechanism is provided for changing this TTL retroactively.
+
+## Operations
+
+### `SENTRY_DSN`
+
+|           |     |
+| --------- | --- |
+| Required? | No |
+| Value | string |
+| Default | nil |
+
+Configures AuthN to report panics and unhandled errors to a Sentry backend.

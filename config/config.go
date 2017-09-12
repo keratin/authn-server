@@ -45,6 +45,7 @@ type Config struct {
 	StatisticsTimeZone     *time.Location
 	DailyActivesRetention  int
 	WeeklyActivesRetention int
+	SentryDSN              string
 }
 
 var configurers = []configurer{
@@ -342,6 +343,15 @@ var configurers = []configurer{
 			c.WeeklyActivesRetention = num
 		}
 		return err
+	},
+
+	// SENTRY_DSN is a configuration string for the Sentry error reporting backend. When provided,
+	// errors and panics will be reported asynchronously.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("SENTRY_DSN"); ok {
+			c.SentryDSN = val
+		}
+		return nil
 	},
 
 	func(c *Config) error {

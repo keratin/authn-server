@@ -43,7 +43,7 @@ func postPassword(app *api.App) http.HandlerFunc {
 
 		err = api.RevokeSession(app.RefreshTokenStore, app.Config, r)
 		if err != nil {
-			// TODO: alert but continue
+			app.Reporter.ReportRequestError(err, r)
 		}
 
 		sessionToken, identityToken, err := api.NewSession(app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, accountID, api.MatchedDomain(r))

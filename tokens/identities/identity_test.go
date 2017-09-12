@@ -36,6 +36,9 @@ func TestIdentityClaims(t *testing.T) {
 
 		parsed, err := jose.ParseSigned(identityStr)
 		require.NoError(t, err)
-		assert.Equal(t, compat.KeyID(key.Public()), parsed.Signatures[0].Header.KeyID)
+
+		keyID, err := compat.KeyID(key.Public())
+		require.NoError(t, err)
+		assert.Equal(t, keyID, parsed.Signatures[0].Header.KeyID)
 	})
 }

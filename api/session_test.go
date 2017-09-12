@@ -10,6 +10,7 @@ import (
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/ops"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -23,6 +24,7 @@ func TestSession(t *testing.T) {
 			ApplicationDomains: []config.Domain{{Hostname: "example.com"}},
 		},
 		RefreshTokenStore: mock.NewRefreshTokenStore(),
+		Reporter:          &ops.LogReporter{},
 	}
 
 	t.Run("valid session", func(t *testing.T) {

@@ -1,10 +1,14 @@
-hash: d6240e17deac9c6af046884043ca351a7b10cc4fe3ba1c956b133f376d813c37
-updated: 2017-09-01T13:35:21.096893381-07:00
+hash: 29abb000b55b2edf14af6141701d7dda3d68cfe9fdf6a0a71bbdcca24c93c17e
+updated: 2017-09-10T13:02:12.874180961-07:00
 imports:
+- name: github.com/certifi/gocertifi
+  version: 3fd9e1adb12b72d2f3f82191d49be9b93c69f67c
 - name: github.com/davecgh/go-spew
   version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
   subpackages:
   - spew
+- name: github.com/getsentry/raven-go
+  version: d175f85701dfbf44cb0510114c9943e665e60907
 - name: github.com/go-redis/redis
   version: 74d5147d860804ea34633071d0c91a7f4b0b5c3a
   subpackages:

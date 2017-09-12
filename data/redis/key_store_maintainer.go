@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-redis/redis"
 	"github.com/keratin/authn-server/compat"
+	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
 )
 
@@ -32,7 +33,7 @@ type maintainer struct {
 }
 
 // maintain will restore and rotate a keyStore at periodic intervals.
-func (m *maintainer) maintain(ks *keyStore) error {
+func (m *maintainer) maintain(ks *keyStore, r ops.ErrorReporter) error {
 	// fetch current keys
 	keys, err := m.restore()
 	if err != nil {
@@ -58,20 +59,23 @@ func (m *maintainer) maintain(ks *keyStore) error {
 	go func() {
 		ticker := NewEpochIntervalTicker(m.interval)
 		for range ticker {
-			m.rotate(ks)
+			err = m.rotate(ks)
+			if err != nil {
+				r.ReportError(err)
+			}
 		}
 	}()
 
 	return nil
 }
 
-func (m *maintainer) rotate(ks *keyStore) {
+func (m *maintainer) rotate(ks *keyStore) error {
 	newKey, err := m.generate()
 	if err != nil {
-		// TODO: report
-		return
+		return errors.Wrap(err, "generate")
 	}
 	ks.Rotate(newKey)
+	return nil
 }
 
 // restore will query Redis for the previous and current keys. It returns keys in the proper sorting
@@ -146,14 +150,14 @@ func (m *maintainer) find(bucket int64) (*rsa.PrivateKey, error) {
 	if err == redis.Nil {
 		return nil, nil
 	} else if err != nil {
-		return nil, errors.Wrap(err, "Redis Get")
+		return nil, errors.Wrap(err, "Get")
 	} else if blob == placeholder {
 		return nil, nil
 	}
 
 	plaintext, err := compat.Decrypt([]byte(blob), m.encryptionKey)
 	if err != nil {
-		return nil, errors.Wrap(err, "compat.Decrypt")
+		return nil, errors.Wrap(err, "Decrypt")
 	}
 
 	return bytesToKey([]byte(plaintext)), nil
