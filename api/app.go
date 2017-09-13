@@ -4,7 +4,6 @@ import (
 	"time"
 
 	raven "github.com/getsentry/raven-go"
-	"github.com/go-redis/redis"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/ops"
@@ -43,14 +42,13 @@ func NewApp() (*App, error) {
 
 	db, accountStore, err := data.NewDB(cfg.DatabaseURL)
 	if err != nil {
-		return nil, errors.Wrap(err, "NewDB")
+		return nil, errors.Wrap(err, "data.NewDB")
 	}
 
-	opts, err := redis.ParseURL(cfg.RedisURL.String())
+	redis, err := dataRedis.New(cfg.RedisURL)
 	if err != nil {
-		return nil, errors.Wrap(err, "ParseURL")
+		return nil, errors.Wrap(err, "redis.New")
 	}
-	redis := redis.NewClient(opts)
 
 	tokenStore := &dataRedis.RefreshTokenStore{
 		Client: redis,
