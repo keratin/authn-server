@@ -2,10 +2,23 @@ package redis
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 
 	"github.com/go-redis/redis"
+	"github.com/pkg/errors"
 )
+
+func New(url *url.URL) (*redis.Client, error) {
+	opts, err := redis.ParseURL(url.String())
+	if url.Port() == "" {
+		opts.Addr = opts.Addr + ":6379"
+	}
+	if err != nil {
+		return nil, errors.Wrap(err, "ParseURL")
+	}
+	return redis.NewClient(opts), nil
+}
 
 func TestDB() (*redis.Client, error) {
 	str, ok := os.LookupEnv("TEST_REDIS_URL")
