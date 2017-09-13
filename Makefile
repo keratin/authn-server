@@ -42,8 +42,8 @@ test:
 # Run CI tests
 .PHONY: ci
 test-ci:
-	TEST_REDIS_URL=redis://127.0.0.1:6379/1 \
-	  TEST_MYSQL_URL=mysql://root@127.0.0.1:3306/test \
+	TEST_REDIS_URL=redis://127.0.0.1/1 \
+	  TEST_MYSQL_URL=mysql://root@127.0.0.1/test \
 	  go test -race $(PKGS)
 
 # Run migrations
