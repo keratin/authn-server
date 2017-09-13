@@ -50,6 +50,9 @@ func cfgFromURL(url *url.URL) *mysql.Config {
 		Net:    "tcp",
 		Params: map[string]string{"parseTime": "true"},
 	}
+	if url.Port() == "" {
+		cfg.Addr = cfg.Addr + ":3306"
+	}
 	if url.User != nil {
 		cfg.User = url.User.Username()
 		if pwd, ok := url.User.Password(); ok {
