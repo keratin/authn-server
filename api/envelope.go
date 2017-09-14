@@ -23,6 +23,10 @@ func WriteErrors(w http.ResponseWriter, e services.FieldErrors) {
 	WriteJSON(w, http.StatusUnprocessableEntity, ServiceErrors{Errors: e})
 }
 
+func WriteNotFound(w http.ResponseWriter, resource string) {
+	WriteJSON(w, http.StatusUnprocessableEntity, ServiceErrors{Errors: services.FieldErrors{{resource, services.ErrNotFound}}})
+}
+
 func WriteJSON(w http.ResponseWriter, httpCode int, d interface{}) {
 	j, err := json.Marshal(d)
 	if err != nil {
