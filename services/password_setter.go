@@ -18,9 +18,5 @@ func PasswordSetter(store data.AccountStore, cfg *config.Config, accountID int, 
 		return errors.Wrap(err, "GenerateFromPassword")
 	}
 
-	err = store.SetPassword(accountID, hash)
-	if err != nil {
-		return errors.Wrap(err, "SetPassword")
-	}
-	return nil
+	return store.SetPassword(accountID, hash)
 }

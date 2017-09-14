@@ -14,7 +14,5 @@ func AccountArchiver(store data.AccountStore, accountID int) error {
 		return FieldErrors{{"account", ErrNotFound}}
 	}
 
-	store.Archive(account.ID)
-
-	return nil
+	return store.Archive(account.ID)
 }

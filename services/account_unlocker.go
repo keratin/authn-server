@@ -14,7 +14,5 @@ func AccountUnlocker(store data.AccountStore, accountID int) error {
 		return FieldErrors{{"account", ErrNotFound}}
 	}
 
-	store.Unlock(account.ID)
-
-	return nil
+	return store.Unlock(account.ID)
 }
