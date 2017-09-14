@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/keratin/authn-server/services"
+
 	"github.com/keratin/authn-server/api/accounts"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/stretchr/testify/assert"
@@ -26,7 +28,7 @@ func TestPatchAccount(t *testing.T) {
 	})
 
 	t.Run("existing account", func(t *testing.T) {
-		account, err := app.AccountStore.Create("unlocked@test.com", []byte("bar"))
+		account, err := app.AccountStore.Create("one@test.com", []byte("bar"))
 		require.NoError(t, err)
 
 		res, err := client.Patch(fmt.Sprintf("/accounts/%v", account.ID), url.Values{"username": []string{"newname"}})
@@ -36,5 +38,16 @@ func TestPatchAccount(t *testing.T) {
 		account, err = app.AccountStore.Find(account.ID)
 		require.NoError(t, err)
 		assert.Equal(t, "newname", account.Username)
+	})
+
+	t.Run("bad username", func(t *testing.T) {
+		account, err := app.AccountStore.Create("two@test.com", []byte("bar"))
+		require.NoError(t, err)
+
+		res, err := client.Patch(fmt.Sprintf("/accounts/%v", account.ID), url.Values{"username": []string{""}})
+		require.NoError(t, err)
+
+		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
+		test.AssertErrors(t, res, services.FieldErrors{{"username", services.ErrMissing}})
 	})
 }

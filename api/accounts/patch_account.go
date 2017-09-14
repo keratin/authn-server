@@ -13,13 +13,18 @@ func patchAccount(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(mux.Vars(r)["id"])
 		if err != nil {
-			panic(err)
+			api.WriteNotFound(w, "account")
+			return
 		}
 
 		err = services.AccountUpdater(app.AccountStore, app.Config, id, r.FormValue("username"))
 		if err != nil {
 			if fe, ok := err.(services.FieldErrors); ok {
-				api.WriteJSON(w, http.StatusNotFound, api.ServiceErrors{fe})
+				if fe[0].Message == services.ErrNotFound {
+					api.WriteNotFound(w, "account")
+				} else {
+					api.WriteErrors(w, fe)
+				}
 				return
 			}
 
