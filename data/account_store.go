@@ -11,4 +11,5 @@ type AccountStore interface {
 	Unlock(id int) error
 	RequireNewPassword(id int) error
 	SetPassword(id int, p []byte) error
+	UpdateUsername(id int, u string) error
 }

@@ -145,3 +145,15 @@ func testSetPassword(t *testing.T, store data.AccountStore) {
 	assert.False(t, after.RequireNewPassword)
 	assert.NotEqual(t, account.PasswordChangedAt, after.PasswordChangedAt)
 }
+
+func testUpdateUsername(t *testing.T, store data.AccountStore) {
+	account, err := store.Create("old", []byte("old"))
+	require.NoError(t, err)
+
+	err = store.UpdateUsername(account.ID, "new")
+	require.NoError(t, err)
+
+	after, err := store.Find(account.ID)
+	require.NoError(t, err)
+	assert.Equal(t, "new", after.Username)
+}

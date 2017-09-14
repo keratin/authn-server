@@ -115,6 +115,15 @@ func (s *accountStore) SetPassword(id int, p []byte) error {
 	return nil
 }
 
+func (s *accountStore) UpdateUsername(id int, u string) error {
+	account := s.accountsByID[id]
+	if account != nil {
+		account.Username = u
+		account.UpdatedAt = time.Now()
+	}
+	return nil
+}
+
 // i think this works? i want to avoid accidentally giving callers the ability
 // to reach into the memory map and modify things or see changes without relying
 // on the store api.

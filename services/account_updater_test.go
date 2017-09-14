@@ -1,0 +1,60 @@
+package services_test
+
+import (
+	"testing"
+
+	"github.com/keratin/authn-server/services"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/data/mock"
+)
+
+func TestAccountUpdater(t *testing.T) {
+	accountStore := mock.NewAccountStore()
+	existing, err := accountStore.Create("existing", []byte("secret"))
+	require.NoError(t, err)
+
+	t.Run("email usernames", func(t *testing.T) {
+		cfg := &config.Config{
+			UsernameIsEmail: true,
+		}
+
+		t.Run("success", func(t *testing.T) {
+			err := services.AccountUpdater(accountStore, cfg, existing.ID, "new@email.tech")
+			require.NoError(t, err)
+
+			found, err := accountStore.Find(existing.ID)
+			require.NoError(t, err)
+			assert.Equal(t, "new@email.tech", found.Username)
+		})
+
+		t.Run("invalid", func(t *testing.T) {
+			err := services.AccountUpdater(accountStore, cfg, existing.ID, "invalid")
+			assert.Equal(t, services.FieldErrors{{"username", services.ErrFormatInvalid}}, err)
+		})
+	})
+
+	t.Run("string usernames", func(t *testing.T) {
+		cfg := &config.Config{
+			UsernameIsEmail:   false,
+			UsernameMinLength: 5,
+		}
+
+		t.Run("success", func(t *testing.T) {
+			err := services.AccountUpdater(accountStore, cfg, existing.ID, "newname")
+			require.NoError(t, err)
+
+			found, err := accountStore.Find(existing.ID)
+			require.NoError(t, err)
+			assert.Equal(t, "newname", found.Username)
+		})
+
+		t.Run("invalid", func(t *testing.T) {
+			err := services.AccountUpdater(accountStore, cfg, existing.ID, "nope")
+			assert.Equal(t, services.FieldErrors{{"username", services.ErrFormatInvalid}}, err)
+		})
+	})
+}

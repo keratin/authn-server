@@ -9,6 +9,7 @@ title: Server API
 * Endpoints
   * Accounts
     * [Signup](#signup)
+    * [Update](#update)
     * [Username Availability](#username-availability)
     * [Lock Account](#lock-account)
     * [Unlock Account](#unlock-account)
@@ -104,6 +105,42 @@ Visibility: Public
 The reason for `FORMAT_INVALID` will depend on whether you've configured AuthN to validate usernames
 as email addresses.
 
+### Update
+
+Visibility: Private
+
+`PATCH|PUT /accounts/:id`
+
+| Params | Type | Notes |
+| ------ | ---- | ----- |
+| `id` | integer | available from the JWT `sub` claim |
+| `username` | string | &nbsp; |
+
+#### Success:
+
+    200 Ok
+
+#### Failure:
+
+    404 Not Found
+
+    {
+      "errors": [
+        {"field": "account", "message": "NOT_FOUND"}
+      ]
+    }
+
+    422 Unprocessable Entity
+
+    {
+      "errors": [
+        {"field": "username", "message": "FORMAT_INVALID"}
+      ]
+    }
+
+The reason for `FORMAT_INVALID` will depend on whether you've configured AuthN to validate usernames
+as email addresses.
+
 ### Username Availability
 
 Visibility: Public
@@ -136,7 +173,7 @@ Visibility: Public
 
 Visibility: Private
 
-`PATCH|PUT /accounts/:id`
+`PATCH|PUT /accounts/:id/lock`
 
 | Params | Type | Notes |
 | ------ | ---- | ----- |
@@ -160,7 +197,7 @@ Visibility: Private
 
 Visibility: Private
 
-`PATCH|PUT /accounts/:id`
+`PATCH|PUT /accounts/:id/unlock`
 
 | Params | Type | Notes |
 | ------ | ---- | ----- |
