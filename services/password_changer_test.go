@@ -3,9 +3,13 @@ package services_test
 import (
 	"testing"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/services"
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -17,20 +21,29 @@ func TestPasswordChanger(t *testing.T) {
 		PasswordMinComplexity: 1,
 	}
 
-	invoke := func(id int, password string) error {
-		return services.PasswordChanger(accountStore, cfg, id, password)
+	invoke := func(id int, currentPassword string, password string) error {
+		return services.PasswordChanger(accountStore, cfg, id, currentPassword, password)
 	}
 
-	account, err := accountStore.Create("existing@keratin.tech", []byte("old"))
+	factory := func(username string, password string) (*models.Account, error) {
+		hash, err := bcrypt.GenerateFromPassword([]byte(password), cfg.BcryptCost)
+		if err != nil {
+			return nil, errors.Wrap(err, "bcrypt")
+		}
+
+		return accountStore.Create(username, hash)
+	}
+
+	account, err := factory("existing@keratin.tech", "old")
 	require.NoError(t, err)
 
 	t.Run("it resets RequireNoPassword", func(t *testing.T) {
-		expired, err := accountStore.Create("expired@keratin.tech", []byte("old"))
+		expired, err := factory("expired@keratin.tech", "old")
 		require.NoError(t, err)
 		err = accountStore.RequireNewPassword(expired.ID)
 		require.NoError(t, err)
 
-		err = invoke(expired.ID, "0a0b0c0d0e0f")
+		err = invoke(expired.ID, "old", "0a0b0c0d0e0f")
 		assert.NoError(t, err)
 
 		account, err := accountStore.Find(expired.ID)
@@ -40,27 +53,32 @@ func TestPasswordChanger(t *testing.T) {
 	})
 
 	t.Run("with an unknown account", func(t *testing.T) {
-		err := invoke(0, "0ab0c0d0e0f")
+		err := invoke(0, "unknown", "0ab0c0d0e0f")
 		assert.Equal(t, services.FieldErrors{{"account", "NOT_FOUND"}}, err)
 	})
 
 	t.Run("with a locked account", func(t *testing.T) {
-		lockedAccount, err := accountStore.Create("locked@keratin.tech", []byte("old"))
+		lockedAccount, err := factory("locked@keratin.tech", "old")
 		require.NoError(t, err)
 		err = accountStore.Lock(lockedAccount.ID)
 		require.NoError(t, err)
 
-		err = invoke(lockedAccount.ID, "0ab0c0d0e0f")
+		err = invoke(lockedAccount.ID, "old", "0ab0c0d0e0f")
 		assert.Equal(t, services.FieldErrors{{"account", "LOCKED"}}, err)
 	})
 
 	t.Run("with an insecure password", func(t *testing.T) {
-		err := invoke(account.ID, "abc")
+		err := invoke(account.ID, "old", "abc")
 		assert.Equal(t, services.FieldErrors{{"password", "INSECURE"}}, err)
 	})
 
 	t.Run("with a missing password", func(t *testing.T) {
-		err := invoke(account.ID, "")
+		err := invoke(account.ID, "old", "")
 		assert.Equal(t, services.FieldErrors{{"password", "MISSING"}}, err)
+	})
+
+	t.Run("with the wrong current password", func(t *testing.T) {
+		err := invoke(account.ID, "wrong", "")
+		assert.Equal(t, services.FieldErrors{{"credentials", "FAILED"}}, err)
 	})
 }

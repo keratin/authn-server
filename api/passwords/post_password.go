@@ -28,6 +28,7 @@ func postPassword(app *api.App) http.HandlerFunc {
 				app.AccountStore,
 				app.Config,
 				accountID,
+				r.FormValue("currentPassword"),
 				r.FormValue("password"),
 			)
 		}

@@ -5,12 +5,15 @@ import (
 	"net/url"
 	"testing"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/keratin/authn-server/api/passwords"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/services"
 	"github.com/keratin/authn-server/tokens/resets"
 	"github.com/keratin/authn-server/tokens/sessions"
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -31,9 +34,18 @@ func TestPostPassword(t *testing.T) {
 		assert.NotEqual(t, found.Password, account.Password)
 	}
 
+	factory := func(username string, password string) (*models.Account, error) {
+		hash, err := bcrypt.GenerateFromPassword([]byte(password), app.Config.BcryptCost)
+		if err != nil {
+			return nil, errors.Wrap(err, "bcrypt")
+		}
+
+		return app.AccountStore.Create(username, hash)
+	}
+
 	t.Run("valid reset token", func(t *testing.T) {
 		// given an account
-		account, err := app.AccountStore.Create("valid.token@authn.tech", []byte("oldpwd"))
+		account, err := factory("valid.token@authn.tech", "oldpwd")
 		require.NoError(t, err)
 
 		// given a reset token
@@ -68,7 +80,7 @@ func TestPostPassword(t *testing.T) {
 
 	t.Run("valid session", func(t *testing.T) {
 		// given an account
-		account, err := app.AccountStore.Create("valid.session@authn.tech", []byte("oldpwd"))
+		account, err := factory("valid.session@authn.tech", "oldpwd")
 		require.NoError(t, err)
 
 		// given a session
@@ -76,7 +88,8 @@ func TestPostPassword(t *testing.T) {
 
 		// invoking the endpoint
 		res, err := client.WithSession(session).PostForm("/password", url.Values{
-			"password": []string{"0a0b0c0d0"},
+			"currentPassword": []string{"oldpwd"},
+			"password":        []string{"0a0b0c0d0"},
 		})
 		require.NoError(t, err)
 
@@ -93,7 +106,7 @@ func TestPostPassword(t *testing.T) {
 
 	t.Run("valid session and bad password", func(t *testing.T) {
 		// given an account
-		account, err := app.AccountStore.Create("bad.password@authn.tech", []byte("oldpwd"))
+		account, err := factory("bad.password@authn.tech", "oldpwd")
 		require.NoError(t, err)
 
 		// given a session
@@ -101,12 +114,32 @@ func TestPostPassword(t *testing.T) {
 
 		// invoking the endpoint
 		res, err := client.WithSession(session).PostForm("/password", url.Values{
-			"password": []string{"a"},
+			"currentPassword": []string{"oldpwd"},
+			"password":        []string{"a"},
 		})
 		require.NoError(t, err)
 
 		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
 		test.AssertErrors(t, res, services.FieldErrors{{"password", "INSECURE"}})
+	})
+
+	t.Run("valid session and bad currentPassword", func(t *testing.T) {
+		// given an account
+		account, err := factory("bad.currentPassword@authn.tech", "oldpwd")
+		require.NoError(t, err)
+
+		// given a session
+		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
+
+		// invoking the endpoint
+		res, err := client.WithSession(session).PostForm("/password", url.Values{
+			"currentPassword": []string{"wrong"},
+			"password":        []string{"0a0b0c0d0"},
+		})
+		require.NoError(t, err)
+
+		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
+		test.AssertErrors(t, res, services.FieldErrors{{"credentials", "FAILED"}})
 	})
 
 	t.Run("invalid session", func(t *testing.T) {
@@ -116,7 +149,8 @@ func TestPostPassword(t *testing.T) {
 		}
 
 		res, err := client.WithSession(session).PostForm("/password", url.Values{
-			"password": []string{"0a0b0c0d0"},
+			"currentPassword": []string{"oldpwd"},
+			"password":        []string{"0a0b0c0d0"},
 		})
 		require.NoError(t, err)
 
@@ -125,7 +159,7 @@ func TestPostPassword(t *testing.T) {
 
 	t.Run("token AND session", func(t *testing.T) {
 		// given an account
-		tokenAccount, err := app.AccountStore.Create("token@authn.tech", []byte("oldpwd"))
+		tokenAccount, err := factory("token@authn.tech", "oldpwd")
 		require.NoError(t, err)
 		// with a reset token
 		token, err := resets.New(app.Config, tokenAccount.ID, tokenAccount.PasswordChangedAt)
@@ -134,15 +168,16 @@ func TestPostPassword(t *testing.T) {
 		require.NoError(t, err)
 
 		// given another account
-		sessionAccount, err := app.AccountStore.Create("session@authn.tech", []byte("oldpwd"))
+		sessionAccount, err := factory("session@authn.tech", "oldpwd")
 		require.NoError(t, err)
 		// with a session
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, sessionAccount.ID)
 
 		// invoking the endpoint
 		res, err := client.WithSession(session).PostForm("/password", url.Values{
-			"token":    []string{tokenStr},
-			"password": []string{"0a0b0c0d0"},
+			"token":           []string{tokenStr},
+			"currentPassword": []string{"oldpwd"},
+			"password":        []string{"0a0b0c0d0"},
 		})
 		require.NoError(t, err)
 
