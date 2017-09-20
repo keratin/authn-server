@@ -37,6 +37,10 @@ func PasswordResetSender(cfg *config.Config, account *models.Account) error {
 		"token":      []string{resetStr},
 	})
 	if err != nil {
+		if urlErr, ok := err.(*url.Error); ok {
+			// avoid reporting the URL with potential HTTP auth credentials
+			return errors.Wrap(urlErr.Err, "PostForm")
+		}
 		return errors.Wrap(err, "PostForm")
 	}
 	if res.StatusCode > 299 {
