@@ -1,8 +1,6 @@
 package services
 
 import (
-	"fmt"
-	"net/http"
 	"net/url"
 	"strconv"
 
@@ -14,9 +12,6 @@ import (
 )
 
 func PasswordResetSender(cfg *config.Config, account *models.Account) error {
-	if cfg.AppPasswordResetURL == nil {
-		return fmt.Errorf("AppPasswordResetURL unconfigured")
-	}
 	if account == nil {
 		return FieldErrors{{"account", ErrMissing}}
 	}
@@ -33,19 +28,12 @@ func PasswordResetSender(cfg *config.Config, account *models.Account) error {
 		return errors.Wrap(err, "Sign")
 	}
 
-	res, err := http.PostForm(cfg.AppPasswordResetURL.String(), url.Values{
+	err = WebhookSender(cfg.AppPasswordResetURL, &url.Values{
 		"account_id": []string{strconv.Itoa(account.ID)},
 		"token":      []string{resetStr},
 	})
 	if err != nil {
-		if urlErr, ok := err.(*url.Error); ok {
-			// avoid reporting the URL with potential HTTP auth credentials
-			return errors.Wrap(urlErr.Err, "PostForm")
-		}
-		return errors.Wrap(err, "PostForm")
-	}
-	if res.StatusCode > 299 {
-		return fmt.Errorf("Status Code: %v", res.StatusCode)
+		return errors.Wrap(err, "Webhook")
 	}
 
 	log.WithFields(log.Fields{"accountID": account.ID}).Info("sent password reset token")
