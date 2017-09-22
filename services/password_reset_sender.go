@@ -12,11 +12,8 @@ import (
 )
 
 func PasswordResetSender(cfg *config.Config, account *models.Account) error {
-	if account == nil {
-		return FieldErrors{{"account", ErrMissing}}
-	}
-	if account.Locked {
-		return FieldErrors{{"account", ErrLocked}}
+	if account == nil || account.Locked {
+		return nil
 	}
 
 	reset, err := resets.New(cfg, account.ID, account.PasswordChangedAt)
