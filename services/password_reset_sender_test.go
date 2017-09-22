@@ -56,11 +56,11 @@ func TestPasswordResetSender(t *testing.T) {
 			PasswordChangedAt: time.Now(),
 			Locked:            true,
 		})
-		assert.Equal(t, services.FieldErrors{{"account", "LOCKED"}}, err)
+		assert.NoError(t, err)
 	})
 
 	t.Run("with no account", func(t *testing.T) {
 		err := invoke(nil)
-		assert.Equal(t, services.FieldErrors{{"account", "MISSING"}}, err)
+		assert.NoError(t, err)
 	})
 }
