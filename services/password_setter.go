@@ -22,14 +22,16 @@ func PasswordSetter(store data.AccountStore, r ops.ErrorReporter, cfg *config.Co
 		return errors.Wrap(err, "GenerateFromPassword")
 	}
 
-	go func() {
-		err := WebhookSender(cfg.AppPasswordChangedURL, &url.Values{
-			"account_id": []string{strconv.Itoa(accountID)},
-		})
-		if err != nil {
-			r.ReportError(err)
-		}
-	}()
+	if cfg.AppPasswordChangedURL != nil {
+		go func() {
+			err := WebhookSender(cfg.AppPasswordChangedURL, &url.Values{
+				"account_id": []string{strconv.Itoa(accountID)},
+			})
+			if err != nil {
+				r.ReportError(err)
+			}
+		}()
+	}
 
 	return store.SetPassword(accountID, hash)
 }
