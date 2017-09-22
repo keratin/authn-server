@@ -5,6 +5,7 @@ import (
 
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/ops"
 	"github.com/keratin/authn-server/services"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -18,7 +19,7 @@ func TestPasswordSetter(t *testing.T) {
 	}
 
 	invoke := func(id int, password string) error {
-		return services.PasswordSetter(accountStore, cfg, id, password)
+		return services.PasswordSetter(accountStore, &ops.LogReporter{}, cfg, id, password)
 	}
 
 	account, err := accountStore.Create("existing@keratin.tech", []byte("old"))
