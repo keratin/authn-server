@@ -10,6 +10,7 @@ import (
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/resets"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 func PasswordResetSender(cfg *config.Config, account *models.Account) error {
@@ -46,5 +47,8 @@ func PasswordResetSender(cfg *config.Config, account *models.Account) error {
 	if res.StatusCode > 299 {
 		return fmt.Errorf("Status Code: %v", res.StatusCode)
 	}
+
+	log.WithFields(log.Fields{"accountID": account.ID}).Info("sent password reset token")
+
 	return nil
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/keratin/authn-server/compat"
 	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 type maintainer struct {
@@ -43,17 +44,26 @@ func (m *maintainer) maintain(ks *keyStore, r ops.ErrorReporter) error {
 	// rotate in the previous key
 	if keys[0] != nil {
 		ks.Rotate(keys[0])
+
+		keyID, _ := compat.KeyID(keys[0].Public())
+		log.WithFields(log.Fields{"keyID": keyID}).Info("previous key restored")
 	}
 
 	// ensure and rotate in the current key
 	if keys[1] != nil {
 		ks.Rotate(keys[1])
+
+		keyID, _ := compat.KeyID(keys[1].Public())
+		log.WithFields(log.Fields{"keyID": keyID}).Info("current key restored")
 	} else {
 		newKey, err := m.generate()
 		if err != nil {
 			return errors.Wrap(err, "generate")
 		}
 		ks.Rotate(newKey)
+
+		keyID, _ := compat.KeyID(newKey.Public())
+		log.WithFields(log.Fields{"keyID": keyID}).Info("current key generated")
 	}
 
 	go func() {
@@ -75,6 +85,10 @@ func (m *maintainer) rotate(ks *keyStore) error {
 		return errors.Wrap(err, "generate")
 	}
 	ks.Rotate(newKey)
+
+	keyID, _ := compat.KeyID(newKey.Public())
+	log.WithFields(log.Fields{"keyID": keyID}).Info("new key generated")
+
 	return nil
 }
 

@@ -1,5 +1,5 @@
-hash: 29abb000b55b2edf14af6141701d7dda3d68cfe9fdf6a0a71bbdcca24c93c17e
-updated: 2017-09-10T13:02:12.874180961-07:00
+hash: 635cdba30635229b8c7eceb94e5e8d9ca1fd680622cb73b2eb3daf2fd712d47f
+updated: 2017-09-22T08:01:21.536192397-07:00
 imports:
 - name: github.com/certifi/gocertifi
   version: 3fd9e1adb12b72d2f3f82191d49be9b93c69f67c
@@ -10,7 +10,7 @@ imports:
 - name: github.com/getsentry/raven-go
   version: d175f85701dfbf44cb0510114c9943e665e60907
 - name: github.com/go-redis/redis
-  version: 74d5147d860804ea34633071d0c91a7f4b0b5c3a
+  version: 975882d73d21759d45a4eb49652064083bc23e61
   subpackages:
   - internal
   - internal/consistenthash
@@ -24,13 +24,13 @@ imports:
 - name: github.com/gorilla/handlers
   version: a4043c62cc2329bacda331d33fc908ab11ef0ec3
 - name: github.com/gorilla/mux
-  version: bcd8bc72b08df0f70df986b97f95590779502d31
+  version: 24fca303ac6da784b9e8269f724ddeb0b2eea5e7
 - name: github.com/jmoiron/sqlx
   version: d9bd385d68c068f1fabb5057e3dedcbcbb039d0f
   subpackages:
   - reflectx
 - name: github.com/joho/godotenv
-  version: 726cc8b906e3d31c70a9671c90a13716a8d3f50d
+  version: a79fa1e548e2c689c241d10173efd51e5d689d5b
   subpackages:
   - autoload
 - name: github.com/mattn/go-sqlite3
@@ -52,8 +52,10 @@ imports:
   version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
   subpackages:
   - difflib
+- name: github.com/sirupsen/logrus
+  version: f006c2ac4710855cf0f916dd6b77acf6b048dc6e
 - name: github.com/square/go-jose
-  version: b25e6cab129e4a54675b42ea49d38e9c33ade9e6
+  version: f8f38de21b4dcd69d0413faf231983f5fd6634b1
 - name: github.com/stretchr/testify
   version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
   subpackages:
@@ -64,13 +66,20 @@ imports:
   subpackages:
   - bcrypt
   - blowfish
+  - ed25519
+  - ed25519/internal/edwards25519
   - pbkdf2
+  - ssh/terminal
 - name: golang.org/x/net
   version: 5f8847ae0d0e90b6a9dc8148e7ad616874625171
   subpackages:
   - context
+- name: golang.org/x/sys
+  version: 429f518978ab01db8bb6f44b66785088e7fba58b
+  subpackages:
+  - unix
 - name: gopkg.in/square/go-jose.v2
-  version: b25e6cab129e4a54675b42ea49d38e9c33ade9e6
+  version: f8f38de21b4dcd69d0413faf231983f5fd6634b1
   subpackages:
   - cipher
   - json
