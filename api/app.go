@@ -1,6 +1,7 @@
 package api
 
 import (
+	"os"
 	"time"
 
 	raven "github.com/getsentry/raven-go"
@@ -8,6 +9,7 @@ import (
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 
 	"github.com/keratin/authn-server/data/mock"
 	dataRedis "github.com/keratin/authn-server/data/redis"
@@ -28,6 +30,10 @@ type App struct {
 
 func NewApp() (*App, error) {
 	cfg := config.ReadEnv()
+
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+	logrus.SetLevel(logrus.InfoLevel)
+	logrus.SetOutput(os.Stdout)
 
 	var reporter ops.ErrorReporter
 	if cfg.SentryDSN != "" {
