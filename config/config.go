@@ -20,6 +20,7 @@ import (
 
 type Config struct {
 	AppPasswordResetURL    *url.URL
+	AppPasswordChangedURL  *url.URL
 	ApplicationDomains     []Domain
 	BcryptCost             int
 	UsernameIsEmail        bool
@@ -273,12 +274,29 @@ var configurers = []configurer{
 		return nil
 	},
 
+	// APP_PASSWORD_CHANGED_URL is an endpoint that will be notified when an account
+	// has changed its password. This notification may be used to deliver an email
+	// confirmation.
+	//
+	// For security, this URL should specify https and include a basic auth username
+	// and password.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("APP_PASSWORD_CHANGED_URL"); ok {
+			appURL, err := url.Parse(val)
+			if err != nil {
+				return err
+			}
+			c.AppPasswordChangedURL = appURL
+		}
+		return nil
+	},
+
 	// APP_PASSWORD_RESET_URL is an endpoint that will be notified when an account
 	// has requested a password reset. The endpoint is expected to deliver an email
 	// with the given password reset token, then respond with a 2xx HTTP status.
 	//
-	// For security, this URL should specify https and include a basic auth
-	// username and password.
+	// For security, this URL should specify https and include a basic auth username
+	// and password.
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("APP_PASSWORD_RESET_URL"); ok {
 			resetURL, err := url.Parse(val)

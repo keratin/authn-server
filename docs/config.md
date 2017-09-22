@@ -9,7 +9,7 @@ title: Server Configuration
 [`ACCESS_TOKEN_TTL`](#access_token_ttl) • [`REFRESH_TOKEN_TTL`](#refresh_token_ttl) • [`SESSION_KEY_SALT`](#session_key_salt) • [`DB_ENCRYPTION_KEY_SALT`](#db_encryption_key_salt) • [`RSA_PRIVATE_KEY`](#rsa_private_key)
 * Username Policy: [`USERNAME_IS_EMAIL`](#username_is_email) • [`EMAIL_USERNAME_DOMAINS`](#email_username_domains)
 * Password Policy: [`PASSWORD_POLICY_SCORE`](#password_policy_score) • [`BCRYPT_COST`](#bcrypt_cost)
-* Password Resets: [`APP_PASSWORD_RESET_URL`](#app_password_reset_url) • [`PASSWORD_RESET_TOKEN_TTL`](#password_reset_token_ttl)
+* Password Resets: [`APP_PASSWORD_RESET_URL`](#app_password_reset_url) • [`PASSWORD_RESET_TOKEN_TTL`](#password_reset_token_ttl) • [`APP_PASSWORD_CHANGED_URL`](#app_password_changed_url)
 * Stats: [`TIME_ZONE`](#time_zone) • [`DAILY_ACTIVES_RETENTION`](#daily_actives_retention) • [`WEEKLY_ACTIVES_RETENTION`](#weekly_actives_retention)
 * Operations: [`SENTRY_DSN`](#sentry_dsn)
 
@@ -207,6 +207,16 @@ Must be provided to enable password resets. This URL must respond to `POST`, sho
 | Default | 1800 (30.minutes) |
 
 Specifies the amount of time a user has to complete a password reset process. After this period of time, the reset token will no longer be accepted. (Note that a reset token will also be invalidated if the password changes before this TTL.)
+
+### `APP_PASSWORD_CHANGED_URL`
+
+|           |    |
+| --------- | --- |
+| Required? | No |
+| Value | URL |
+| Default | nil |
+
+Must be provided to enable notifications of password changes. This URL must respond to `POST`, should expect to receive an `account_id` param, and is expected to deliver an email confirmation.
 
 ## Stats
 

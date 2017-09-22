@@ -14,6 +14,7 @@ func postPassword(app *api.App) http.HandlerFunc {
 		if r.FormValue("token") != "" {
 			accountID, err = services.PasswordResetter(
 				app.AccountStore,
+				app.Reporter,
 				app.Config,
 				r.FormValue("token"),
 				r.FormValue("password"),
@@ -26,6 +27,7 @@ func postPassword(app *api.App) http.HandlerFunc {
 			}
 			err = services.PasswordChanger(
 				app.AccountStore,
+				app.Reporter,
 				app.Config,
 				accountID,
 				r.FormValue("currentPassword"),

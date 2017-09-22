@@ -7,6 +7,7 @@ import (
 
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/ops"
 	"github.com/keratin/authn-server/services"
 	"github.com/keratin/authn-server/tokens/resets"
 	"github.com/stretchr/testify/assert"
@@ -31,7 +32,7 @@ func TestPasswordResetter(t *testing.T) {
 	}
 
 	invoke := func(token string, password string) error {
-		_, err := services.PasswordResetter(accountStore, cfg, token, password)
+		_, err := services.PasswordResetter(accountStore, &ops.LogReporter{}, cfg, token, password)
 		return err
 	}
 

@@ -20,10 +20,8 @@ func TestPasswordResetSender(t *testing.T) {
 
 		if !ok || u != "user" || p != "pass" {
 			w.WriteHeader(http.StatusUnauthorized)
-		} else if r.URL.Path == "/success" {
+		} else if r.URL.Path == "/reset" {
 			w.WriteHeader(http.StatusOK)
-		} else if r.URL.Path == "/failure" {
-			w.WriteHeader(http.StatusInternalServerError)
 		} else {
 			w.WriteHeader(http.StatusNotFound)
 		}
@@ -32,10 +30,9 @@ func TestPasswordResetSender(t *testing.T) {
 	require.NoError(t, err)
 
 	authNURL := &url.URL{Scheme: "https", Host: "authn.example.com"}
-	successURL := &url.URL{Scheme: "http", Host: serverURL.Host, Path: "/success", User: url.UserPassword("user", "pass")}
-	failureURL := &url.URL{Scheme: "http", Host: serverURL.Host, Path: "/failure", User: url.UserPassword("user", "pass")}
+	resetURL := &url.URL{Scheme: "http", Host: serverURL.Host, Path: "/reset", User: url.UserPassword("user", "pass")}
 
-	invoke := func(resetURL *url.URL, account *models.Account) error {
+	invoke := func(account *models.Account) error {
 		cfg := &config.Config{
 			AuthNURL:            authNURL,
 			AppPasswordResetURL: resetURL,
@@ -46,23 +43,15 @@ func TestPasswordResetSender(t *testing.T) {
 	}
 
 	t.Run("posting to remote app", func(t *testing.T) {
-		err := invoke(successURL, &models.Account{
+		err := invoke(&models.Account{
 			ID:                1234,
 			PasswordChangedAt: time.Now(),
 		})
 		assert.NoError(t, err)
 	})
 
-	t.Run("without configured url", func(t *testing.T) {
-		err := invoke(nil, &models.Account{
-			ID:                1234,
-			PasswordChangedAt: time.Now(),
-		})
-		assert.Equal(t, "AppPasswordResetURL unconfigured", err.Error())
-	})
-
 	t.Run("with locked account", func(t *testing.T) {
-		err := invoke(successURL, &models.Account{
+		err := invoke(&models.Account{
 			ID:                1234,
 			PasswordChangedAt: time.Now(),
 			Locked:            true,
@@ -70,16 +59,8 @@ func TestPasswordResetSender(t *testing.T) {
 		assert.Equal(t, services.FieldErrors{{"account", "LOCKED"}}, err)
 	})
 
-	t.Run("with remote app failure", func(t *testing.T) {
-		err := invoke(failureURL, &models.Account{
-			ID:                1234,
-			PasswordChangedAt: time.Now(),
-		})
-		assert.Equal(t, "Status Code: 500", err.Error())
-	})
-
 	t.Run("with no account", func(t *testing.T) {
-		err := invoke(successURL, nil)
+		err := invoke(nil)
 		assert.Equal(t, services.FieldErrors{{"account", "MISSING"}}, err)
 	})
 }
