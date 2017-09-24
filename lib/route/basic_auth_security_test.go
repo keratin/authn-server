@@ -1,12 +1,12 @@
-package api_test
+package route_test
 
 import (
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/keratin/authn-server/api"
-	"github.com/keratin/authn-server/api/test"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -16,9 +16,16 @@ func TestBasicAuthSecurity(t *testing.T) {
 		w.Write([]byte("success"))
 	})
 
-	adapter := api.BasicAuthSecurity("user", "pass", "authn-server tests")
+	adapter := route.BasicAuthSecurity("user", "pass", "authn-server tests")
 	server := httptest.NewServer(adapter(nextHandler))
 	defer server.Close()
+
+	readBody := func(res *http.Response) []byte {
+		body, err := ioutil.ReadAll(res.Body)
+		require.NoError(t, err)
+		res.Body.Close()
+		return body
+	}
 
 	testCases := []struct {
 		username string
@@ -40,7 +47,7 @@ func TestBasicAuthSecurity(t *testing.T) {
 		require.NoError(t, err)
 
 		if tc.success {
-			assert.Equal(t, string(test.ReadBody(res)), "success")
+			assert.Equal(t, string(readBody(res)), "success")
 		} else {
 			assert.Equal(t, http.StatusUnauthorized, res.StatusCode)
 		}

@@ -1,19 +1,22 @@
 package passwords
 
-import "github.com/keratin/authn-server/api"
+import (
+	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/lib/route"
+)
 
-func Routes(app *api.App) []*api.HandledRoute {
-	refererSecurity := api.RefererSecurity(app.Config.ApplicationDomains)
+func Routes(app *api.App) []*route.HandledRoute {
+	refererSecurity := route.RefererSecurity(app.Config.ApplicationDomains)
 
-	routes := []*api.HandledRoute{
-		api.Post("/password").
+	routes := []*route.HandledRoute{
+		route.Post("/password").
 			SecuredWith(refererSecurity).
 			Handle(postPassword(app)),
 	}
 
 	if app.Config.AppPasswordResetURL != nil {
 		routes = append(routes,
-			api.Get("/password/reset").
+			route.Get("/password/reset").
 				SecuredWith(refererSecurity).
 				Handle(getPasswordReset(app)),
 		)

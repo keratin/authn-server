@@ -1,21 +1,24 @@
 package meta
 
-import "github.com/keratin/authn-server/api"
+import (
+	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/lib/route"
+)
 
-func Routes(app *api.App) []*api.HandledRoute {
-	authentication := api.BasicAuthSecurity(app.Config.AuthUsername, app.Config.AuthPassword, "Private AuthN Realm")
+func Routes(app *api.App) []*route.HandledRoute {
+	authentication := route.BasicAuthSecurity(app.Config.AuthUsername, app.Config.AuthPassword, "Private AuthN Realm")
 
-	return []*api.HandledRoute{
-		api.Get("/health").
-			SecuredWith(api.Unsecured()).
+	return []*route.HandledRoute{
+		route.Get("/health").
+			SecuredWith(route.Unsecured()).
 			Handle(getHealth(app)),
-		api.Get("/jwks").
-			SecuredWith(api.Unsecured()).
+		route.Get("/jwks").
+			SecuredWith(route.Unsecured()).
 			Handle(getJWKs(app)),
-		api.Get("/configuration").
-			SecuredWith(api.Unsecured()).
+		route.Get("/configuration").
+			SecuredWith(route.Unsecured()).
 			Handle(getConfiguration(app)),
-		api.Get("/stats").
+		route.Get("/stats").
 			SecuredWith(authentication).
 			Handle(getStats(app)),
 	}

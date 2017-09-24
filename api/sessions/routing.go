@@ -2,21 +2,22 @@ package sessions
 
 import (
 	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/lib/route"
 )
 
-func Routes(app *api.App) []*api.HandledRoute {
-	refererSecurity := api.RefererSecurity(app.Config.ApplicationDomains)
+func Routes(app *api.App) []*route.HandledRoute {
+	refererSecurity := route.RefererSecurity(app.Config.ApplicationDomains)
 
-	return []*api.HandledRoute{
-		api.Post("/session").
+	return []*route.HandledRoute{
+		route.Post("/session").
 			SecuredWith(refererSecurity).
 			Handle(postSession(app)),
 
-		api.Delete("/session").
+		route.Delete("/session").
 			SecuredWith(refererSecurity).
 			Handle(deleteSession(app)),
 
-		api.Get("/session/refresh").
+		route.Get("/session/refresh").
 			SecuredWith(refererSecurity).
 			Handle(getSessionRefresh(app)),
 	}

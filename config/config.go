@@ -15,13 +15,14 @@ import (
 
 	// a .env file is extremely useful during development
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/keratin/authn-server/lib/route"
 	"golang.org/x/crypto/pbkdf2"
 )
 
 type Config struct {
 	AppPasswordResetURL    *url.URL
 	AppPasswordChangedURL  *url.URL
-	ApplicationDomains     []Domain
+	ApplicationDomains     []route.Domain
 	BcryptCost             int
 	UsernameIsEmail        bool
 	UsernameMinLength      int
@@ -56,9 +57,9 @@ var configurers = []configurer{
 	func(c *Config) error {
 		val, err := requireEnv("APP_DOMAINS")
 		if err == nil {
-			c.ApplicationDomains = make([]Domain, 0)
+			c.ApplicationDomains = make([]route.Domain, 0)
 			for _, domain := range strings.Split(val, ",") {
-				c.ApplicationDomains = append(c.ApplicationDomains, ParseDomain(domain))
+				c.ApplicationDomains = append(c.ApplicationDomains, route.ParseDomain(domain))
 			}
 		}
 		return err

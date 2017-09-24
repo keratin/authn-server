@@ -1,10 +1,13 @@
-package api
+package route
 
 import (
 	"crypto/subtle"
 	"net/http"
 )
 
+// BasicAuthSecurity is a SecurityHandler that relies on HTTP Basic Auth. It takes precaution to
+// ensure that verifying credentials is a constant time operation, and will not even allow a timing
+// attack to confirm if the guessed username is correct without a correct password.
 func BasicAuthSecurity(username string, password string, realm string) SecurityHandler {
 
 	// SECURITY: ensure that both ConstantTimeCompare operations are run, so that a

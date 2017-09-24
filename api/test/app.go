@@ -8,6 +8,7 @@ import (
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
 )
 
@@ -27,7 +28,7 @@ func App() *api.App {
 		SessionSigningKey:     []byte("TestKey"),
 		AuthNURL:              authnURL,
 		SessionCookieName:     "authn",
-		ApplicationDomains:    []config.Domain{{Hostname: "test.com"}},
+		ApplicationDomains:    []route.Domain{{Hostname: "test.com"}},
 		PasswordMinComplexity: 2,
 		AppPasswordResetURL:   &url.URL{Scheme: "https", Host: "app.example.com"},
 		EnableSignup:          true,

@@ -5,13 +5,14 @@ import (
 
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/identities"
 	"github.com/keratin/authn-server/tokens/sessions"
 	"github.com/pkg/errors"
 )
 
-func NewSession(refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore, actives data.Actives, cfg *config.Config, accountID int, authorizedAudience *config.Domain) (string, string, error) {
+func NewSession(refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore, actives data.Actives, cfg *config.Config, accountID int, authorizedAudience *route.Domain) (string, string, error) {
 	session, err := sessions.New(refreshTokenStore, cfg, accountID, authorizedAudience.String())
 	if err != nil {
 		return "", "", errors.Wrap(err, "New")

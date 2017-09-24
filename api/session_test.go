@@ -10,6 +10,7 @@ import (
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -21,7 +22,7 @@ func TestSession(t *testing.T) {
 			SessionCookieName:  "authn-test",
 			SessionSigningKey:  []byte("drinkme"),
 			AuthNURL:           &url.URL{Scheme: "http", Host: "authn.example.com"},
-			ApplicationDomains: []config.Domain{{Hostname: "example.com"}},
+			ApplicationDomains: []route.Domain{{Hostname: "example.com"}},
 		},
 		RefreshTokenStore: mock.NewRefreshTokenStore(),
 		Reporter:          &ops.LogReporter{},

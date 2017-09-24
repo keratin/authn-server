@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/services"
 )
 
@@ -30,7 +31,7 @@ func postSession(app *api.App) http.HandlerFunc {
 			app.Reporter.ReportRequestError(err, r)
 		}
 
-		sessionToken, identityToken, err := api.NewSession(app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, account.ID, api.MatchedDomain(r))
+		sessionToken, identityToken, err := api.NewSession(app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, account.ID, route.MatchedDomain(r))
 		if err != nil {
 			panic(err)
 		}

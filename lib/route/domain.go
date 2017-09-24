@@ -1,15 +1,18 @@
-package config
+package route
 
 import (
 	"net/url"
 	"strings"
 )
 
+// Domain is subset of url.URL that enables a fuzzy match. A Domain must always have a Hostname, and
+// may also have a Port.
 type Domain struct {
 	Hostname string
 	Port     string
 }
 
+// ParseDomain will parse a string containing either host or host:port and return a Domain.
 func ParseDomain(domain string) Domain {
 	pieces := strings.SplitN(domain, ":", 2)
 	if len(pieces) == 1 {
@@ -18,6 +21,9 @@ func ParseDomain(domain string) Domain {
 	return Domain{Hostname: pieces[0], Port: pieces[1]}
 }
 
+// Matches will compare the Domain against a given URL. The Hostname must always be a perfect match,
+// and if Port is specified (non-blank) then it must also match. The common ports 80 and 443 will be
+// satisfied by http and https schemes, respectively.
 func (d *Domain) Matches(origin *url.URL) bool {
 	// hostname must always match.
 	if d.Hostname != origin.Hostname() {
@@ -41,6 +47,7 @@ func (d *Domain) Matches(origin *url.URL) bool {
 	return false
 }
 
+// String converts a Domain back into a host or host:port string.
 func (d *Domain) String() string {
 	if d.Port == "" {
 		return d.Hostname

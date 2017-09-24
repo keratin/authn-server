@@ -1,19 +1,24 @@
-package api_test
+package route_test
 
 import (
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/keratin/authn-server/api"
-	"github.com/keratin/authn-server/api/test"
-	"github.com/keratin/authn-server/config"
-	"github.com/keratin/authn-server/services"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestRefererSecurity(t *testing.T) {
+	readBody := func(res *http.Response) []byte {
+		body, err := ioutil.ReadAll(res.Body)
+		require.NoError(t, err)
+		res.Body.Close()
+		return body
+	}
+
 	testCases := []struct {
 		domain  string
 		referer string
@@ -39,7 +44,7 @@ func TestRefererSecurity(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.domain, func(t *testing.T) {
-			adapter := api.RefererSecurity([]config.Domain{config.ParseDomain(tc.domain)})
+			adapter := route.RefererSecurity([]route.Domain{route.ParseDomain(tc.domain)})
 
 			server := httptest.NewServer(adapter(nextHandler))
 			defer server.Close()
@@ -51,9 +56,9 @@ func TestRefererSecurity(t *testing.T) {
 			require.NoError(t, err)
 
 			if tc.success {
-				assert.Equal(t, string(test.ReadBody(res)), "success")
+				assert.Equal(t, string(readBody(res)), "success")
 			} else {
-				test.AssertErrors(t, res, services.FieldErrors{{"referer", "is not a trusted host"}})
+				assert.Equal(t, http.StatusForbidden, res.StatusCode)
 			}
 		})
 	}
