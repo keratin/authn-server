@@ -10,7 +10,9 @@ import (
 
 type modder func(*http.Request) *http.Request
 
-type client struct {
+// Client is a HTTP client similar to net/http, but with a fluent API for modifying requests before
+// submission. This can be used to inject headers, cookies, etc.
+type Client struct {
 	BaseURL   string
 	Modifiers []modder
 }
@@ -23,21 +25,20 @@ const (
 	put    = "PUT"
 )
 
-// NewClient returns a HTTP client similar to net/http's but with a fluent API for modifying the
-// request with headers before submission.
-func NewClient(baseURL string) *client {
-	return &client{baseURL, []modder{}}
+// NewClient returns a new Client.
+func NewClient(baseURL string) *Client {
+	return &Client{baseURL, []modder{}}
 }
 
 // Referred will inject a Referer header into a client's requests.
-func (c *client) Referred(domain *Domain) *client {
+func (c *Client) Referred(domain *Domain) *Client {
 	scheme := "http"
 	if domain.Port == "443" {
 		scheme = "https"
 	}
 	origin := fmt.Sprintf("%s://%s", scheme, domain.String())
 
-	return &client{
+	return &Client{
 		c.BaseURL,
 		append(c.Modifiers, func(req *http.Request) *http.Request {
 			req.Header.Add("Referer", origin)
@@ -47,8 +48,8 @@ func (c *client) Referred(domain *Domain) *client {
 }
 
 // WithCookie will inject a Cookie header into a client's requests.
-func (c *client) WithCookie(cookie *http.Cookie) *client {
-	return &client{
+func (c *Client) WithCookie(cookie *http.Cookie) *Client {
+	return &Client{
 		c.BaseURL,
 		append(c.Modifiers, func(req *http.Request) *http.Request {
 			req.AddCookie(cookie)
@@ -58,8 +59,8 @@ func (c *client) WithCookie(cookie *http.Cookie) *client {
 }
 
 // Authenticated will inject HTTP Basic Auth configuration into a client's requests.
-func (c *client) Authenticated(username string, password string) *client {
-	return &client{
+func (c *Client) Authenticated(username string, password string) *Client {
+	return &Client{
 		c.BaseURL,
 		append(c.Modifiers, func(req *http.Request) *http.Request {
 			req.SetBasicAuth(username, password)
@@ -68,31 +69,31 @@ func (c *client) Authenticated(username string, password string) *client {
 	}
 }
 
-// PostForm issues a GET to the specified path like net/http's Get, but with any modifications
+// Get issues a GET to the specified path like net/http's Get, but with any modifications
 // configured for the current client.
-func (c *client) Get(path string) (*http.Response, error) {
+func (c *Client) Get(path string) (*http.Response, error) {
 	return c.do(get, path, nil)
 }
 
-// PostForm issues a DELETE to the specified path, with any modifications configured for the current
+// Delete issues a DELETE to the specified path, with any modifications configured for the current
 // client.
-func (c *client) Delete(path string) (*http.Response, error) {
+func (c *Client) Delete(path string) (*http.Response, error) {
 	return c.do(delete, path, nil)
 }
 
 // PostForm issues a POST to the specified path like net/http's PostForm, but with any modifications
 // configured for the current client.
-func (c *client) PostForm(path string, form url.Values) (*http.Response, error) {
+func (c *Client) PostForm(path string, form url.Values) (*http.Response, error) {
 	return c.do(post, path, strings.NewReader(form.Encode()))
 }
 
-// PostForm issues a PATCH to the specified path like net/http's PostForm, but with any
+// Patch issues a PATCH to the specified path like net/http's PostForm, but with any
 // modifications configured for the current client.
-func (c *client) Patch(path string, form url.Values) (*http.Response, error) {
+func (c *Client) Patch(path string, form url.Values) (*http.Response, error) {
 	return c.do(patch, path, strings.NewReader(form.Encode()))
 }
 
-func (c *client) do(verb string, path string, body io.Reader) (*http.Response, error) {
+func (c *Client) do(verb string, path string, body io.Reader) (*http.Response, error) {
 	req, err := http.NewRequest(verb, fmt.Sprintf("%s%s", c.BaseURL, path), body)
 
 	if verb == post || verb == patch || verb == put {

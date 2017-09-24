@@ -51,6 +51,7 @@ func UnmarshalString(data []byte) (string, error) {
 	return string(inner[1:]), nil
 }
 
+// UnmarshalInt imitates Marshal.load(dumped_int) as of v4.8
 func UnmarshalInt(data []byte) (int, error) {
 	if string(data[0:2]) != marshalVersion {
 		return 0, fmt.Errorf("unsupported Marshal version")

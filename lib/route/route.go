@@ -15,50 +15,52 @@ import (
 type SecurityHandler func(http.Handler) http.Handler
 
 // Post creates a new POST route. A security handler must be registered next.
-func Post(tpl string) *route {
-	return &route{verb: "POST", tpl: tpl}
+func Post(tpl string) *Route {
+	return &Route{verb: "POST", tpl: tpl}
 }
 
 // Get creates a new GET route. A security handler must be registered next.
-func Get(tpl string) *route {
-	return &route{verb: "GET", tpl: tpl}
+func Get(tpl string) *Route {
+	return &Route{verb: "GET", tpl: tpl}
 }
 
 // Delete creates a new DELETE route. A security handler must be registered next.
-func Delete(tpl string) *route {
-	return &route{verb: "DELETE", tpl: tpl}
+func Delete(tpl string) *Route {
+	return &Route{verb: "DELETE", tpl: tpl}
 }
 
 // Patch creates a new PATCH route. A security handler must be registered next.
-func Patch(tpl string) *route {
-	return &route{verb: "PATCH", tpl: tpl}
+func Patch(tpl string) *Route {
+	return &Route{verb: "PATCH", tpl: tpl}
 }
 
-// route is private because it is incomplete.
-type route struct {
+// Route is an incomplete Route comprising only verb and path (as a gorilla/mux template). It must
+// next be `SecuredWith`.
+type Route struct {
 	verb string
 	tpl  string
 }
 
 // SecuredWith registers a security handler for a route. A handler must be registered next.
-func (r *route) SecuredWith(fn SecurityHandler) *securedRoute {
-	return &securedRoute{route: r, security: fn}
+func (r Route) SecuredWith(fn SecurityHandler) *SecuredRoute {
+	return &SecuredRoute{route: r, security: fn}
 }
 
-// securedRoute is private because it is incomplete.
-type securedRoute struct {
-	route    *route
+// SecuredRoute is an incomplete Route with a defined SecurityHandler. It is ready for a
+// http.Handler.
+type SecuredRoute struct {
+	route    Route
 	security SecurityHandler
 }
 
-// Handle registers a function as a HandlerFunc. The route may now be attached.
-func (r *securedRoute) Handle(fn func(w http.ResponseWriter, r *http.Request)) *HandledRoute {
+// Handle registers a HandlerFunc. The route may now be `Attach`d.
+func (r *SecuredRoute) Handle(fn func(w http.ResponseWriter, r *http.Request)) *HandledRoute {
 	return &HandledRoute{route: r, handler: http.HandlerFunc(fn)}
 }
 
-// HandledRoute is a fully defined, attachable route.
+// HandledRoute is a fully defined route. It is ready to be `Attach`d.
 type HandledRoute struct {
-	route   *securedRoute
+	route   *SecuredRoute
 	handler http.Handler
 }
 
