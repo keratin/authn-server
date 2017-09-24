@@ -13,10 +13,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Encrypt performs AES-256-GCM encryption in a Rails-compatible manner by
-// imitating the Marshal.dump(value) effect (for a string value, as of v4.8)
-// and also splitting the authentication tag into a separate value joined
-// with dashes.
+// Encrypt performs AES-256-GCM encryption in a Rails-compatible manner by imitating the
+// `Marshal.dump(value)`` effect (for a string value, as of v4.8) and also splitting the
+// authentication tag into a separate value joined with dashes.
 //
 // See: ActiveSupport::MessageEncryptor with GCM changes
 func Encrypt(value []byte, secret []byte) ([]byte, error) {
@@ -51,9 +50,9 @@ func EncryptWithNonce(value []byte, secret []byte, nonce []byte) ([]byte, error)
 	)), nil
 }
 
-// Decrypt performs AES-256-GCM decryption in a Rails-compatible manner by
-// expecting the message to comprise encrypted data, nonce, and an auth tag.
-// It will also attempt to unwrap the plaintext as if it were Marshal.dump'd.
+// Decrypt performs AES-256-GCM decryption in a Rails-compatible manner by expecting the message to
+// comprise encrypted data, nonce, and an auth tag. It will also attempt to unwrap the plaintext as
+// if it were Marshal.dump'd.
 //
 // See: ActiveSupport::MessageEncryptor with GCM changes
 func Decrypt(message []byte, key []byte) (string, error) {

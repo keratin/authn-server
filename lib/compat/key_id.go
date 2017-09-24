@@ -10,6 +10,7 @@ import (
 	jose "github.com/square/go-jose"
 )
 
+// KeyID uses square/go-jose to extract the JWK thumbprint for a RSA public key.
 func KeyID(key crypto.PublicKey) (string, error) {
 	rsaKey, ok := key.(*rsa.PublicKey)
 	if !ok {

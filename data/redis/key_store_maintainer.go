@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis"
-	"github.com/keratin/authn-server/compat"
+	"github.com/keratin/authn-server/lib/compat"
 	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"

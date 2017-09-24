@@ -3,7 +3,7 @@ package meta
 import (
 	"net/http"
 
-	"github.com/keratin/authn-server/compat"
+	"github.com/keratin/authn-server/lib/compat"
 
 	"github.com/keratin/authn-server/api"
 	jose "github.com/square/go-jose"

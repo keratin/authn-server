@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/keratin/authn-server/compat"
+	"github.com/keratin/authn-server/lib/compat"
 
 	jose "gopkg.in/square/go-jose.v2"
 

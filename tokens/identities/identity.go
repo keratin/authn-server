@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/keratin/authn-server/compat"
 	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/lib/compat"
 	"github.com/keratin/authn-server/tokens/sessions"
 	"github.com/pkg/errors"
 	jose "gopkg.in/square/go-jose.v2"
