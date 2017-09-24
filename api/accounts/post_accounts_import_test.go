@@ -7,6 +7,7 @@ import (
 
 	"github.com/keratin/authn-server/api/accounts"
 	"github.com/keratin/authn-server/api/test"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/services"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -17,7 +18,7 @@ func TestPostAccountsImport(t *testing.T) {
 	server := test.Server(app, accounts.Routes(app))
 	defer server.Close()
 
-	client := test.NewClient(server).Authenticated(app.Config)
+	client := route.NewClient(server.URL).Authenticated(app.Config.AuthUsername, app.Config.AuthPassword)
 
 	t.Run("importing someone", func(t *testing.T) {
 		res, err := client.PostForm("/accounts/import", url.Values{

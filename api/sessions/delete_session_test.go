@@ -7,6 +7,7 @@ import (
 	apiSessions "github.com/keratin/authn-server/api/sessions"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/sessions"
 	"github.com/stretchr/testify/assert"
@@ -28,7 +29,7 @@ func TestDeleteSessionSuccess(t *testing.T) {
 	require.NoError(t, err)
 	assert.NotEmpty(t, id)
 
-	client := test.NewClient(server).Referred(app.Config).WithSession(session)
+	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0]).WithCookie(session)
 	res, err := client.Delete("/session")
 	require.NoError(t, err)
 
@@ -54,7 +55,7 @@ func TestDeleteSessionFailure(t *testing.T) {
 	}
 	session := test.CreateSession(app.RefreshTokenStore, badCfg, 123)
 
-	client := test.NewClient(server).Referred(app.Config).WithSession(session)
+	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0]).WithCookie(session)
 	res, err := client.Delete("/session")
 	require.NoError(t, err)
 
@@ -67,7 +68,7 @@ func TestDeleteSessionWithoutSession(t *testing.T) {
 	server := test.Server(app, apiSessions.Routes(app))
 	defer server.Close()
 
-	client := test.NewClient(server).Referred(app.Config)
+	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
 	res, err := client.Delete("/session")
 	require.NoError(t, err)
 

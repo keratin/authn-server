@@ -6,6 +6,7 @@ import (
 
 	"github.com/keratin/authn-server/api/accounts"
 	"github.com/keratin/authn-server/api/test"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -18,7 +19,7 @@ func TestGetAccountsAvailable(t *testing.T) {
 	account, err := app.AccountStore.Create("existing@test.com", []byte("bar"))
 	require.NoError(t, err)
 
-	client := test.NewClient(server).Referred(app.Config)
+	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
 
 	t.Run("known username", func(t *testing.T) {
 		res, err := client.Get("/accounts/available?username=" + account.Username)

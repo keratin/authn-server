@@ -6,6 +6,7 @@ import (
 
 	"github.com/keratin/authn-server/api/passwords"
 	"github.com/keratin/authn-server/api/test"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -15,7 +16,7 @@ func TestGetPasswordReset(t *testing.T) {
 	server := test.Server(app, passwords.Routes(app))
 	defer server.Close()
 
-	client := test.NewClient(server).Referred(app.Config)
+	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
 
 	t.Run("known account", func(t *testing.T) {
 		_, err := app.AccountStore.Create("known@keratin.tech", []byte("pwd"))

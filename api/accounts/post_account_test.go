@@ -7,6 +7,7 @@ import (
 
 	"github.com/keratin/authn-server/api/accounts"
 	"github.com/keratin/authn-server/api/test"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/services"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -17,7 +18,7 @@ func TestPostAccountSuccess(t *testing.T) {
 	server := test.Server(app, accounts.Routes(app))
 	defer server.Close()
 
-	client := test.NewClient(server).Referred(app.Config)
+	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
 	res, err := client.PostForm("/accounts", url.Values{
 		"username": []string{"foo"},
 		"password": []string{"0a0b0c0"},
@@ -42,7 +43,7 @@ func TestPostAccountSuccessWithSession(t *testing.T) {
 	require.NoError(t, err)
 	refreshToken := refreshTokens[0]
 
-	client := test.NewClient(server).Referred(app.Config).WithSession(session)
+	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0]).WithCookie(session)
 	_, err = client.PostForm("/accounts", url.Values{
 		"username": []string{"foo"},
 		"password": []string{"0a0b0c0"},
@@ -69,7 +70,7 @@ func TestPostAccountFailure(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		client := test.NewClient(server).Referred(app.Config)
+		client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
 		res, err := client.PostForm("/accounts", url.Values{
 			"username": []string{tc.username},
 			"password": []string{tc.password},

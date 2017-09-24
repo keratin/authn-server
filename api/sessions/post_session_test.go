@@ -9,6 +9,7 @@ import (
 
 	"github.com/keratin/authn-server/api/sessions"
 	"github.com/keratin/authn-server/api/test"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/services"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -22,7 +23,7 @@ func TestPostSessionSuccess(t *testing.T) {
 	b, _ := bcrypt.GenerateFromPassword([]byte("bar"), 4)
 	app.AccountStore.Create("foo", b)
 
-	client := test.NewClient(server).Referred(app.Config)
+	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
 	res, err := client.PostForm("/session", url.Values{
 		"username": []string{"foo"},
 		"password": []string{"bar"},
@@ -50,7 +51,7 @@ func TestPostSessionSuccessWithSession(t *testing.T) {
 	require.NoError(t, err)
 	refreshToken := refreshTokens[0]
 
-	client := test.NewClient(server).Referred(app.Config).WithSession(session)
+	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0]).WithCookie(session)
 	_, err = client.PostForm("/session", url.Values{
 		"username": []string{"foo"},
 		"password": []string{"bar"},
@@ -77,7 +78,7 @@ func TestPostSessionFailure(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		client := test.NewClient(server).Referred(app.Config)
+		client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
 		res, err := client.PostForm("/session", url.Values{
 			"username": []string{tc.username},
 			"password": []string{tc.password},

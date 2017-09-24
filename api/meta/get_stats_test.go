@@ -6,6 +6,7 @@ import (
 
 	"github.com/keratin/authn-server/api/meta"
 	"github.com/keratin/authn-server/api/test"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -17,7 +18,7 @@ func TestGetStats(t *testing.T) {
 
 	app.Actives.Track(1)
 
-	client := test.NewClient(server).Authenticated(app.Config)
+	client := route.NewClient(server.URL).Authenticated(app.Config.AuthUsername, app.Config.AuthPassword)
 
 	res, err := client.Get("/stats")
 	require.NoError(t, err)

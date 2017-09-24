@@ -41,7 +41,7 @@ func TestSession(t *testing.T) {
 		server := httptest.NewServer(api.Session(app)(http.HandlerFunc(handler)))
 		defer server.Close()
 
-		client := test.NewClient(server).WithSession(session)
+		client := route.NewClient(server.URL).WithCookie(session)
 		res, err := client.Get("/")
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.StatusCode)
@@ -66,7 +66,7 @@ func TestSession(t *testing.T) {
 		server := httptest.NewServer(api.Session(app)(http.HandlerFunc(handler)))
 		defer server.Close()
 
-		client := test.NewClient(server).WithSession(session)
+		client := route.NewClient(server.URL).WithCookie(session)
 		res, err := client.Get("/")
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.StatusCode)
@@ -86,7 +86,7 @@ func TestSession(t *testing.T) {
 		server := httptest.NewServer(api.Session(app)(http.HandlerFunc(handler)))
 		defer server.Close()
 
-		client := test.NewClient(server).WithSession(session)
+		client := route.NewClient(server.URL).WithCookie(session)
 		res, err := client.Get("/")
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.StatusCode)
@@ -102,7 +102,7 @@ func TestSession(t *testing.T) {
 		server := httptest.NewServer(api.Session(app)(http.HandlerFunc(handler)))
 		defer server.Close()
 
-		client := test.NewClient(server)
+		client := route.NewClient(server.URL)
 		res, err := client.Get("/")
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.StatusCode)

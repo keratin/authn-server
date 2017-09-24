@@ -8,6 +8,7 @@ import (
 
 	"github.com/keratin/authn-server/api/accounts"
 	"github.com/keratin/authn-server/api/test"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -17,7 +18,7 @@ func TestPatchAccountUnlock(t *testing.T) {
 	server := test.Server(app, accounts.Routes(app))
 	defer server.Close()
 
-	client := test.NewClient(server).Authenticated(app.Config)
+	client := route.NewClient(server.URL).Authenticated(app.Config.AuthUsername, app.Config.AuthPassword)
 
 	t.Run("unknown account", func(t *testing.T) {
 		res, err := client.Patch("/accounts/999999/unlock", url.Values{})

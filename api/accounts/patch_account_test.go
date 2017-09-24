@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/services"
 
 	"github.com/keratin/authn-server/api/accounts"
@@ -19,7 +20,7 @@ func TestPatchAccount(t *testing.T) {
 	server := test.Server(app, accounts.Routes(app))
 	defer server.Close()
 
-	client := test.NewClient(server).Authenticated(app.Config)
+	client := route.NewClient(server.URL).Authenticated(app.Config.AuthUsername, app.Config.AuthPassword)
 
 	t.Run("unknown account", func(t *testing.T) {
 		res, err := client.Patch("/accounts/999999", url.Values{"username": []string{"irrelevant"}})

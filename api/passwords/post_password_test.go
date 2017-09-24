@@ -9,6 +9,7 @@ import (
 
 	"github.com/keratin/authn-server/api/passwords"
 	"github.com/keratin/authn-server/api/test"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/services"
 	"github.com/keratin/authn-server/tokens/resets"
@@ -23,7 +24,7 @@ func TestPostPassword(t *testing.T) {
 	server := test.Server(app, passwords.Routes(app))
 	defer server.Close()
 
-	client := test.NewClient(server).Referred(app.Config)
+	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
 
 	assertSuccess := func(t *testing.T, res *http.Response, account *models.Account) {
 		assert.Equal(t, http.StatusCreated, res.StatusCode)
@@ -87,7 +88,7 @@ func TestPostPassword(t *testing.T) {
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 
 		// invoking the endpoint
-		res, err := client.WithSession(session).PostForm("/password", url.Values{
+		res, err := client.WithCookie(session).PostForm("/password", url.Values{
 			"currentPassword": []string{"oldpwd"},
 			"password":        []string{"0a0b0c0d0"},
 		})
@@ -113,7 +114,7 @@ func TestPostPassword(t *testing.T) {
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 
 		// invoking the endpoint
-		res, err := client.WithSession(session).PostForm("/password", url.Values{
+		res, err := client.WithCookie(session).PostForm("/password", url.Values{
 			"currentPassword": []string{"oldpwd"},
 			"password":        []string{"a"},
 		})
@@ -132,7 +133,7 @@ func TestPostPassword(t *testing.T) {
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 
 		// invoking the endpoint
-		res, err := client.WithSession(session).PostForm("/password", url.Values{
+		res, err := client.WithCookie(session).PostForm("/password", url.Values{
 			"currentPassword": []string{"wrong"},
 			"password":        []string{"0a0b0c0d0"},
 		})
@@ -148,7 +149,7 @@ func TestPostPassword(t *testing.T) {
 			Value: "invalid",
 		}
 
-		res, err := client.WithSession(session).PostForm("/password", url.Values{
+		res, err := client.WithCookie(session).PostForm("/password", url.Values{
 			"currentPassword": []string{"oldpwd"},
 			"password":        []string{"0a0b0c0d0"},
 		})
@@ -174,7 +175,7 @@ func TestPostPassword(t *testing.T) {
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, sessionAccount.ID)
 
 		// invoking the endpoint
-		res, err := client.WithSession(session).PostForm("/password", url.Values{
+		res, err := client.WithCookie(session).PostForm("/password", url.Values{
 			"token":           []string{tokenStr},
 			"currentPassword": []string{"oldpwd"},
 			"password":        []string{"0a0b0c0d0"},
