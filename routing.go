@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"net/url"
 	"os"
 
 	gorilla "github.com/gorilla/handlers"
@@ -26,19 +25,7 @@ func router(app *api.App) http.Handler {
 	corsAdapter := gorilla.CORS(
 		gorilla.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE"}),
 		gorilla.AllowCredentials(),
-		gorilla.AllowedOriginValidator(func(origin string) bool {
-			originURL, err := url.Parse(origin)
-			if err != nil {
-				return false
-			}
-
-			for _, appDomain := range app.Config.ApplicationDomains {
-				if appDomain.Matches(originURL) {
-					return true
-				}
-			}
-			return false
-		}),
+		gorilla.AllowedOriginValidator(api.OriginValidator(app.Config.ApplicationDomains)),
 	)
 
 	session := api.Session(app)
