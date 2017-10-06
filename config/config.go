@@ -10,6 +10,7 @@ import (
 	"math/big"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -48,6 +49,7 @@ type Config struct {
 	DailyActivesRetention  int
 	WeeklyActivesRetention int
 	SentryDSN              string
+	ServerPort             int
 }
 
 var configurers = []configurer{
@@ -375,6 +377,17 @@ var configurers = []configurer{
 	func(c *Config) error {
 		c.SessionCookieName = "authn"
 		return nil
+	},
+
+	// PORT is the local port the AuthN server listens to. The default is taken from AUTHN_URL, but
+	// may be different for port mapping scenarios as with containers and load balancers.
+	func(c *Config) error {
+		defaultPort, err := strconv.Atoi(c.AuthNURL.Port())
+		val, err := lookupInt("PORT", defaultPort)
+		if err == nil {
+			c.ServerPort = val
+		}
+		return err
 	},
 }
 

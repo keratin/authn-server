@@ -4,7 +4,7 @@ title: Server Configuration
 
 # Server Configuration
 
-* Core Settings: [`AUTHN_URL`](#authn_url) • [`APP_DOMAINS`](#app_domains) • [`HTTP_AUTH_USERNAME`](#http_auth_username) • [`HTTP_AUTH_PASSWORD`](#http_auth_password) • [`SECRET_KEY_BASE`](#secret_key_base)
+* Core Settings: [`AUTHN_URL`](#authn_url) • [`APP_DOMAINS`](#app_domains) • [`HTTP_AUTH_USERNAME`](#http_auth_username) • [`HTTP_AUTH_PASSWORD`](#http_auth_password) • [`SECRET_KEY_BASE`](#secret_key_base) • [`PORT`](#port)
 * Sessions:
 [`ACCESS_TOKEN_TTL`](#access_token_ttl) • [`REFRESH_TOKEN_TTL`](#refresh_token_ttl) • [`SESSION_KEY_SALT`](#session_key_salt) • [`DB_ENCRYPTION_KEY_SALT`](#db_encryption_key_salt) • [`RSA_PRIVATE_KEY`](#rsa_private_key)
 * Username Policy: [`USERNAME_IS_EMAIL`](#username_is_email) • [`EMAIL_USERNAME_DOMAINS`](#email_username_domains)
@@ -65,6 +65,16 @@ Any access to private AuthN endpoints must use HTTP Basic Auth, with this passwo
 Any HMAC keys used by AuthN will be derived from this base value. Currently this only includes the key used to securely sign sessions maintained with the AuthN service.
 
 This value is commonly a 64-byte string, and can be generated with [`SecureRandom.hex(64)`](http://ruby-doc.org/stdlib-2.3.3/libdoc/securerandom/rdoc/Random/Formatter.html#method-i-hex) or `bin/rake secret`. Some deployment systems (e.g. Heroku) can provision it automatically.
+
+### `PORT`
+
+|           |    |
+| --------- | --- |
+| Required? | No |
+| Value | integer |
+| Default | from AUTHN_URL |
+
+The PORT specifies where the AuthN server should bind. This may be different from the AUTHN_URL in scenarios with port mapping, as with load balancers and Docker containers.
 
 ## Sessions
 
