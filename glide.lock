@@ -1,5 +1,5 @@
-hash: 635cdba30635229b8c7eceb94e5e8d9ca1fd680622cb73b2eb3daf2fd712d47f
-updated: 2017-09-22T08:01:21.536192397-07:00
+hash: 7732b7fe1b878dfe855ee95844f7f1bc50d46c0f6eceae057273ca286dab5dba
+updated: 2017-10-01T19:01:12.698248014-07:00
 imports:
 - name: github.com/certifi/gocertifi
   version: 3fd9e1adb12b72d2f3f82191d49be9b93c69f67c
@@ -10,7 +10,7 @@ imports:
 - name: github.com/getsentry/raven-go
   version: d175f85701dfbf44cb0510114c9943e665e60907
 - name: github.com/go-redis/redis
-  version: 975882d73d21759d45a4eb49652064083bc23e61
+  version: 8e6b51ec3a92ec095dcbd2439c7a3eec6b6cb586
   subpackages:
   - internal
   - internal/consistenthash
@@ -35,6 +35,8 @@ imports:
   - autoload
 - name: github.com/mattn/go-sqlite3
   version: ca5e3819723d8eeaf170ad510e7da1d6d2e94a08
+- name: github.com/namsral/flag
+  version: 67f268f20922975c067ed799e4be6bacf152208c
 - name: github.com/nbutton23/zxcvbn-go
   version: a22cb81b2ecdde8b68e9ffb8824731cbf88e1de4
   subpackages:

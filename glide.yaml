@@ -29,3 +29,4 @@ import:
 - package: github.com/getsentry/raven-go
 - package: github.com/sirupsen/logrus
   version: ^1.0.3
+- package: github.com/namsral/flag
