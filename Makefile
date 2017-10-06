@@ -29,7 +29,10 @@ docker:
 # Run the server
 .PHONY: server
 server:
-	go run *.go
+	docker-compose up -d redis
+	DATABASE_URL=sqlite3://localhost/dev \
+		REDIS_URL=redis://127.0.0.1:8701/11 \
+		go run *.go
 
 # Run tests
 .PHONY: test
