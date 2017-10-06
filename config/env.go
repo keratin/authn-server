@@ -1,18 +1,24 @@
 package config
 
 import (
-	"fmt"
+	"net/url"
 	"os"
 	"regexp"
 	"strconv"
 )
+
+type ErrMissingEnvVar string
+
+func (name ErrMissingEnvVar) Error() string {
+	return "missing environment variable: " + string(name) + ". See https://github.com/keratin/authn/wiki/Server-Configuration for details"
+}
 
 func requireEnv(name string) (string, error) {
 	if val, ok := os.LookupEnv(name); ok {
 		return val, nil
 	}
 
-	return "", fmt.Errorf("missing environment variable: %s. See https://github.com/keratin/authn/wiki/Server-Configuration for details", name)
+	return "", ErrMissingEnvVar(name)
 }
 
 func lookupInt(name string, def int) (int, error) {
@@ -29,4 +35,11 @@ func lookupBool(name string, def bool) (bool, error) {
 	}
 
 	return def, nil
+}
+
+func lookupURL(name string) (*url.URL, error) {
+	if val, ok := os.LookupEnv(name); ok {
+		return url.Parse(val)
+	}
+	return nil, nil
 }

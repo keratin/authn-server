@@ -30,7 +30,7 @@ func NewDB(url *url.URL) (*sqlx.DB, AccountStore, error) {
 		store := mysql.AccountStore{db}
 		return db, &store, nil
 	default:
-		return nil, nil, fmt.Errorf("Unsupported database")
+		return nil, nil, fmt.Errorf("Unsupported database: %s", url.Scheme)
 	}
 }
 

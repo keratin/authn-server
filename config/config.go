@@ -73,14 +73,14 @@ var configurers = []configurer{
 	//
 	// example: https://app.domain.com/authn
 	func(c *Config) error {
-		val, err := requireEnv("AUTHN_URL")
+		val, err := lookupURL("AUTHN_URL")
 		if err == nil {
-			authnURL, err := url.Parse(val)
-			if err == nil {
-				c.AuthNURL = authnURL
-				c.MountedPath = authnURL.Path
-				c.ForceSSL = authnURL.Scheme == "https"
+			if val == nil {
+				return ErrMissingEnvVar("AUTHN_URL")
 			}
+			c.AuthNURL = val
+			c.MountedPath = val.Path
+			c.ForceSSL = val.Scheme == "https"
 		}
 		return err
 	},
@@ -148,12 +148,12 @@ var configurers = []configurer{
 	//
 	// Example: sqlite3://localhost/authn-go
 	func(c *Config) error {
-		dbURL, err := requireEnv("DATABASE_URL")
+		val, err := lookupURL("DATABASE_URL")
 		if err == nil {
-			url, err := url.Parse(dbURL)
-			if err == nil {
-				c.DatabaseURL = url
+			if val == nil {
+				return ErrMissingEnvVar("DATABASE_URL")
 			}
+			c.DatabaseURL = val
 		}
 		return err
 	},
@@ -163,12 +163,12 @@ var configurers = []configurer{
 	//
 	// Example: redis://127.0.0.1:6379/11
 	func(c *Config) error {
-		redisURL, err := requireEnv("REDIS_URL")
+		val, err := lookupURL("REDIS_URL")
 		if err == nil {
-			url, err := url.Parse(redisURL)
-			if err == nil {
-				c.RedisURL = url
+			if val == nil {
+				return ErrMissingEnvVar("REDIS_URL")
 			}
+			c.RedisURL = val
 		}
 		return err
 	},
@@ -282,14 +282,11 @@ var configurers = []configurer{
 	// For security, this URL should specify https and include a basic auth username
 	// and password.
 	func(c *Config) error {
-		if val, ok := os.LookupEnv("APP_PASSWORD_CHANGED_URL"); ok {
-			appURL, err := url.Parse(val)
-			if err != nil {
-				return err
-			}
-			c.AppPasswordChangedURL = appURL
+		val, err := lookupURL("APP_PASSWORD_CHANGED_URL")
+		if err == nil && val != nil {
+			c.AppPasswordChangedURL = val
 		}
-		return nil
+		return err
 	},
 
 	// APP_PASSWORD_RESET_URL is an endpoint that will be notified when an account
@@ -299,14 +296,11 @@ var configurers = []configurer{
 	// For security, this URL should specify https and include a basic auth username
 	// and password.
 	func(c *Config) error {
-		if val, ok := os.LookupEnv("APP_PASSWORD_RESET_URL"); ok {
-			resetURL, err := url.Parse(val)
-			if err == nil {
-				c.AppPasswordResetURL = resetURL
-			}
-			return err
+		val, err := lookupURL("APP_PASSWORD_RESET_URL")
+		if err == nil && val != nil {
+			c.AppPasswordResetURL = val
 		}
-		return nil
+		return err
 	},
 
 	// RSA_PRIVATE_KEY is a RSA private key in PEM format. If provided as a single
