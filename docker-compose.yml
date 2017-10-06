@@ -12,3 +12,16 @@ services:
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_ROOT_PASSWORD
+
+  server:
+    image: keratin/authn-server:latest
+    ports:
+      - "7001:3000"
+    environment:
+      - APP_DOMAINS
+      - AUTHN_URL
+      - SECRET_KEY_BASE
+      - DATABASE_URL=sqlite3://localhost/dev
+      - REDIS_URL=redis://redis:6379/11
+    depends_on:
+      - redis
