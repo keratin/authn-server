@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,11 +11,13 @@ import (
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
+	"github.com/namsral/flag"
 )
 
 func main() {
 	port := flag.Int("port", 0, "Optional port for server. Default value is from AUTHN_URL.")
 	flag.Parse()
+
 	args := flag.Args()
 
 	var cmd string
@@ -38,8 +39,12 @@ func main() {
 }
 
 func serve(port *int) {
+	cfg, err := config.ReadFlags()
+	if err != nil {
+		panic(err)
+	}
 	// set up connections and configuration
-	app, err := api.NewApp()
+	app, err := api.NewApp(cfg)
 	if err != nil {
 		panic(err)
 	}
@@ -56,9 +61,12 @@ func serve(port *int) {
 }
 
 func migrate() {
-	cfg := config.ReadEnv()
+	cfg, err := config.ReadFlags()
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println("Running migrations.")
-	err := data.MigrateDB(cfg.DatabaseURL)
+	err = data.MigrateDB(cfg.DatabaseURL)
 	if err != nil {
 		fmt.Println(err)
 	} else {

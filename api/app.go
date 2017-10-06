@@ -28,9 +28,7 @@ type App struct {
 	Reporter          ops.ErrorReporter
 }
 
-func NewApp() (*App, error) {
-	cfg := config.ReadEnv()
-
+func NewApp(cfg *config.Config) (*App, error) {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.SetLevel(logrus.InfoLevel)
 	logrus.SetOutput(os.Stdout)
