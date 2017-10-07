@@ -17,13 +17,17 @@ build: vendor
 	mkdir -p dist
 	CGO_ENABLED=1 go build -o dist/authn
 
+.PHONY: build-builder
+build-builder:
+	docker build -f Dockerfile.builder -t keratin/authn-server-builder .
+
 .PHONY: docker
-docker:
+docker: build-builder
 	docker run --rm \
 		-v $(PWD):/go/src/github.com/keratin/authn-server \
 		-w /go/src/github.com/keratin/authn-server \
-		billyteves/alpine-golang-glide:1.2.0 \
-		bash -c 'apk add --no-cache gcc musl-dev; make clean build'
+		keratin/authn-server-builder \
+		make clean build
 	docker build --tag keratin/authn-server:latest .
 
 # Run the server

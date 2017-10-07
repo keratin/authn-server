@@ -1,5 +1,5 @@
 hash: 635cdba30635229b8c7eceb94e5e8d9ca1fd680622cb73b2eb3daf2fd712d47f
-updated: 2017-09-22T08:01:21.536192397-07:00
+updated: 2017-10-06T16:28:29.774912928-07:00
 imports:
 - name: github.com/certifi/gocertifi
   version: 3fd9e1adb12b72d2f3f82191d49be9b93c69f67c
@@ -10,7 +10,7 @@ imports:
 - name: github.com/getsentry/raven-go
   version: d175f85701dfbf44cb0510114c9943e665e60907
 - name: github.com/go-redis/redis
-  version: 975882d73d21759d45a4eb49652064083bc23e61
+  version: 8e6b51ec3a92ec095dcbd2439c7a3eec6b6cb586
   subpackages:
   - internal
   - internal/consistenthash
