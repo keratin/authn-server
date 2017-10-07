@@ -26,7 +26,7 @@ func PasswordSetter(store data.AccountStore, r ops.ErrorReporter, cfg *config.Co
 		go func() {
 			err := WebhookSender(cfg.AppPasswordChangedURL, &url.Values{
 				"account_id": []string{strconv.Itoa(accountID)},
-			})
+			}, timeSensitiveDelivery)
 			if err != nil {
 				r.ReportError(err)
 			}
