@@ -212,7 +212,7 @@ var configurers = []configurer{
 	// last touch. This is necessary to prevent years-long Redis bloat from
 	// inactive sessions, where users close the window rather than log out.
 	func(c *Config) error {
-		ttl, err := lookupInt("REFRESH_TOKEN_TTL", 86400*365.25)
+		ttl, err := lookupInt("REFRESH_TOKEN_TTL", 86400*30)
 		if err == nil {
 			c.RefreshTokenTTL = time.Duration(ttl) * time.Second
 		}

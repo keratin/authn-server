@@ -96,11 +96,9 @@ Worried about short sessions? Applications can and should implement a periodic r
 | --------- | --- |
 | Required? | No |
 | Value | seconds |
-| Default | `31557600` (~1 year) |
+| Default | `2592000` (30 days) |
 
-This setting controls how long a refresh token will remain alive after their last activity. Refresh tokens are currently `touch`'d when generated and when used to create another access token.
-
-This is important to prevent the kind of bloated data storage that might arise from heavy usage over a number of years when users close their windows rather than log out.
+This setting controls how frequently a refresh token must be used to keep a session alive. Changing this setting will not apply retroactively to previous tokens.
 
 ### `SESSION_KEY_SALT`
 
