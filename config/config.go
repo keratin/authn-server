@@ -402,5 +402,5 @@ func ReadEnv() *Config {
 
 // 20k iterations of PBKDF2 HMAC SHA-256
 func derive(base []byte, salt string) []byte {
-	return pbkdf2.Key(base, []byte(salt), 2e4, 64, sha256.New)
+	return pbkdf2.Key(base, []byte(salt), 2e4, 128, sha256.New)
 }
