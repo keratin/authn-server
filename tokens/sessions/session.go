@@ -1,6 +1,7 @@
 package sessions
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/keratin/authn-server/config"
@@ -10,8 +11,11 @@ import (
 	jwt "gopkg.in/square/go-jose.v2/jwt"
 )
 
+const scope = "refresh"
+
 type Claims struct {
-	Azp string `json:"azp"`
+	Scope string `json:"scope"`
+	Azp   string `json:"azp"`
 	jwt.Claims
 }
 
@@ -45,6 +49,9 @@ func Parse(tokenStr string, cfg *config.Config) (*Claims, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "Validate")
 	}
+	if claims.Scope != scope {
+		return nil, fmt.Errorf("token scope not valid")
+	}
 
 	return &claims, nil
 }
@@ -56,7 +63,8 @@ func New(store data.RefreshTokenStore, cfg *config.Config, accountID int, author
 	}
 
 	return &Claims{
-		Azp: authorizedAudience,
+		Scope: scope,
+		Azp:   authorizedAudience,
 		Claims: jwt.Claims{
 			Issuer:   cfg.AuthNURL.String(),
 			Subject:  string(refreshToken),

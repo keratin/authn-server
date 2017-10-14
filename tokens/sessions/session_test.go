@@ -22,6 +22,7 @@ func TestNewAndParseAndSign(t *testing.T) {
 
 	token, err := sessions.New(store, &cfg, 658908, "example.com")
 	require.NoError(t, err)
+	assert.Equal(t, "refresh", token.Scope)
 	assert.Equal(t, "http://authn.example.com", token.Issuer)
 	assert.True(t, token.Audience.Contains("http://authn.example.com"))
 	assert.NotEmpty(t, token.Subject)
