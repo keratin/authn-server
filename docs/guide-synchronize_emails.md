@@ -18,7 +18,7 @@ will also update the user's AuthN account.
 
 ## Implementation
 
-Backend:
+### Backend
 
 1. Detect changes to user profile email addresses.
 2. Queue a job (or thread) to send the new email address to AuthN.

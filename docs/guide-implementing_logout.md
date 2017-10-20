@@ -10,7 +10,7 @@ the access token and refresh token). Your application may want to do more.
 
 ## Implementation
 
-Frontend:
+### Frontend
 
 1. Create a link that users can click.
 2. Invoke AuthN's logout.

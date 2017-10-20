@@ -12,7 +12,7 @@ Your users will sometimes want to change their passwords while they are logged i
 
 ## Implementation
 
-Frontend:
+### Frontend
 
 * Create a form where a logged-in user may enter their current and new passwords.
 * Submit the current and new passwords to AuthN.

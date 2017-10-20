@@ -53,8 +53,8 @@ Your system is now ready to appropriately route users through AuthN when `users.
 | 5 | 20%, 50% |
 | 6 | 100% |
 
-  NOTE:
-  During this period, you should expect that some users will attempt to sign up when they mean to log in. If their signup attempt is sent to AuthN, it might be accepted! This is because AuthN's uniqueness validations do not encompass your legacy data. Have no fear, the situation can be resolved: in your system's `POST /users` endpoint, add a condition that will check for duplicate usernames accompanied by AuthN tokens, and will then update the _existing_ user's account_id instead of creating a new user. Then, if the existing user's account should be locked, be sure to immediately update AuthN.
+> NOTE:
+> During this period, you should expect that some users will attempt to sign up when they mean to log in. If their signup attempt is sent to AuthN, it might be accepted! This is because AuthN's uniqueness validations do not encompass your legacy data. Have no fear, the situation can be resolved: in your system's `POST /users` endpoint, add a condition that will check for duplicate usernames accompanied by AuthN tokens, and will then update the _existing_ user's account_id instead of creating a new user. Then, if the existing user's account should be locked, be sure to immediately update AuthN.
 
 ## 3. Migrate Existing Users
 

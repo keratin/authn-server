@@ -17,19 +17,19 @@ for delivery.
 
 ## Implementation
 
-Frontend:
+### Frontend
 
 1. Create a form where the user may enter an account email.
 2. Submit the email to AuthN, and display success (AuthN always claims success).
 
-Backend:
+### Backend
 
 3. Create an endpoint (secured by SSL + HTTP Basic Auth) that expects to receive `account_id` and
    `token` params
 4. Use the `account_id` to find which User is requesting a reset
 5. Embed the `token` param into a link back to your frontend, and send to the user.
 
-Frontend:
+### Frontend Part Two
 
 6. Create a form where the user may enter a new password. This form also needs the earlier `token`,
    likely from the current URL.

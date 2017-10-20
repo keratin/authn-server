@@ -18,7 +18,7 @@ will not declare which field was incorrect, but instead fails with a generic cre
 
 ## Implementation
 
-Frontend:
+### Frontend
 
 1. Create a form where the user may enter their username and password.
 2. Submit the username and password to AuthN.

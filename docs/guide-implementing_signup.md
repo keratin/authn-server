@@ -17,7 +17,7 @@ process that submits with two API calls.
 
 ## Implementation
 
-Frontend:
+### Frontend
 
 1. Create a form that collects a user's preferred username (email?) and password.
 2. Additionally collect other fields like name, newsletter subscriptions, as needed.
@@ -26,13 +26,13 @@ Frontend:
 5. If AuthN creates an account, the user will be logged in _without a user profile_.
 6. Submit the remaining details to your application.
 
-  NOTE:
-  If a user succeeds in creating an account (step 5) but fails to create a user (step 7) then your
-  frontend needs a plan for how to rerun step 6 while preserving the result of step 5. Validating
-  the data client-side (step 3) is important because it will significantly reduce the odds of this
-  happening.
+> NOTE:
+> If a user succeeds in creating an account (step 5) but fails to create a user (step 7) then your
+> frontend needs a plan for how to rerun step 6 while preserving the result of step 5. Validating
+> the data client-side (step 3) is important because it will significantly reduce the odds of this
+> happening.
 
-Backend:
+### Backend
 
 7. Validate and save the user's AuthN `account_id` along with your other user profile fields.
 

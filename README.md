@@ -83,7 +83,8 @@ For maximum security, give AuthN its own dedicated SQL and Redis databases and b
 To run a dev server:
 
 1. Create a own `.env` file with desired configuration.
-2. Run `make migrate server`
+2. Run `make migrate`
+3. Run `make server`
 
 To build a compiled server for integration testing:
 
