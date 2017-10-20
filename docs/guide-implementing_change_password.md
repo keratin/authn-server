@@ -8,7 +8,7 @@ Your users will sometimes want to change their passwords while they are logged i
 
 ## Configuration
 
-* [`PASSWORD_POLICY_SCORE`](#password_policy_score)
+* [PASSWORD_POLICY_SCORE](#password_policy_score)
 
 ## Implementation
 

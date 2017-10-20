@@ -7,9 +7,9 @@
 
 * [Signup](guide-implementing_signup.md)
 * [Login](guide-implementing_login.md)
-* [Forgotten Passwords](guides-implementing_forgotten_passwords.md)
-* [Change Password](guides-implementing_change_password.md)
-* [Logout](guides-implementing_logout.md)
+* [Forgotten Passwords](guide-implementing_forgotten_passwords.md)
+* [Change Password](guide-implementing_change_password.md)
+* [Logout](guide-implementing_logout.md)
 
 ## Other Guides
 

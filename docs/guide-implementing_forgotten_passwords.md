@@ -13,7 +13,7 @@ for delivery.
 
 * [PASSWORD_RESET_TOKEN_TTL](config.md#password_reset_token_ttl)
 * [APP_PASSWORD_RESET_URL](config.md#app_password_reset_url)
-* [`PASSWORD_POLICY_SCORE`](config.md#password_policy_score)
+* [PASSWORD_POLICY_SCORE](config.md#password_policy_score)
 
 ## Implementation
 
