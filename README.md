@@ -5,9 +5,7 @@ A modern authentication backend service. ([https://keratin.tech](https://keratin
 
 [![Build Status](https://travis-ci.org/keratin/authn-server.svg?branch=master)](https://travis-ci.org/keratin/authn-server)[![Go Report](https://goreportcard.com/badge/github.com/keratin/authn-server)](https://goreportcard.com/report/github.com/keratin/authn-server)
 
-## Implementation
-
-[Documentation](https://github.com/keratin/authn-server/docs/README.md)
+## Related
 
 This repository builds a backend Go service that provides secured endpoints related to accounts and passwords. You must integrate it with your application's frontend(s) and backend(s).
 
@@ -18,11 +16,17 @@ Client libraries are currently available for:
 
 If you are missing a client library, please [submit a request](https://github.com/keratin/authn-server/issues).
 
+## Implementation
+
+[Documentation](https://github.com/keratin/authn-server/docs/README.md)
+
 ## Deployment
 
 [Documentation](https://github.com/keratin/authn-server/docs/README.md)
 
 ## Configuration
+
+All configuration is through ENV variables.
 
 [Documentation](https://github.com/keratin/authn-server/docs/config.md)
 
