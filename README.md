@@ -1,6 +1,7 @@
-Keratin AuthN is an authentication service that keeps you in control of the experience without forcing you to be an expert in web security.
+# Keratin AuthN
 
-Read more at [keratin.tech](https://keratin.tech).
+[![Keratin Pangolin](https://keratin.tech/pangolin-logo-dark.gif)](https://keratin.tech)
+A modern authentication backend service. ([https://keratin.tech](https://keratin.tech))
 
 [![Build Status](https://travis-ci.org/keratin/authn-server.svg?branch=master)](https://travis-ci.org/keratin/authn-server)[![Go Report](https://goreportcard.com/badge/github.com/keratin/authn-server)](https://goreportcard.com/report/github.com/keratin/authn-server)
 
