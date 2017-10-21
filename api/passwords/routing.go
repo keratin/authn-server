@@ -6,18 +6,18 @@ import (
 )
 
 func Routes(app *api.App) []*route.HandledRoute {
-	refererSecurity := route.RefererSecurity(app.Config.ApplicationDomains)
+	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
 
 	routes := []*route.HandledRoute{
 		route.Post("/password").
-			SecuredWith(refererSecurity).
+			SecuredWith(originSecurity).
 			Handle(postPassword(app)),
 	}
 
 	if app.Config.AppPasswordResetURL != nil {
 		routes = append(routes,
 			route.Get("/password/reset").
-				SecuredWith(refererSecurity).
+				SecuredWith(originSecurity).
 				Handle(getPasswordReset(app)),
 		)
 	}

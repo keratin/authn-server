@@ -6,7 +6,7 @@ import (
 )
 
 func Routes(app *api.App) []*route.HandledRoute {
-	refererSecurity := route.RefererSecurity(app.Config.ApplicationDomains)
+	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
 	authentication := route.BasicAuthSecurity(app.Config.AuthUsername, app.Config.AuthPassword, "Private AuthN Realm")
 
 	routes := []*route.HandledRoute{}
@@ -14,10 +14,10 @@ func Routes(app *api.App) []*route.HandledRoute {
 	if app.Config.EnableSignup {
 		routes = append(routes,
 			route.Post("/accounts").
-				SecuredWith(refererSecurity).
+				SecuredWith(originSecurity).
 				Handle(postAccount(app)),
 			route.Get("/accounts/available").
-				SecuredWith(refererSecurity).
+				SecuredWith(originSecurity).
 				Handle(getAccountsAvailable(app)),
 		)
 	}

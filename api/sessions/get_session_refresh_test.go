@@ -28,8 +28,9 @@ func TestGetSessionRefreshSuccess(t *testing.T) {
 	res, err := client.Get("/session/refresh")
 	require.NoError(t, err)
 
-	assert.Equal(t, http.StatusCreated, res.StatusCode)
-	test.AssertIDTokenResponse(t, res, app.KeyStore, app.Config)
+	if assert.Equal(t, http.StatusCreated, res.StatusCode) {
+		test.AssertIDTokenResponse(t, res, app.KeyStore, app.Config)
+	}
 }
 
 func TestGetSessionRefreshFailure(t *testing.T) {

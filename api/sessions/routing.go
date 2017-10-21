@@ -6,19 +6,19 @@ import (
 )
 
 func Routes(app *api.App) []*route.HandledRoute {
-	refererSecurity := route.RefererSecurity(app.Config.ApplicationDomains)
+	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
 
 	return []*route.HandledRoute{
 		route.Post("/session").
-			SecuredWith(refererSecurity).
+			SecuredWith(originSecurity).
 			Handle(postSession(app)),
 
 		route.Delete("/session").
-			SecuredWith(refererSecurity).
+			SecuredWith(originSecurity).
 			Handle(deleteSession(app)),
 
 		route.Get("/session/refresh").
-			SecuredWith(refererSecurity).
+			SecuredWith(originSecurity).
 			Handle(getSessionRefresh(app)),
 	}
 }

@@ -1,6 +1,6 @@
 // Package route is a fluent API for building secured gorilla/mux routes. It requires every route to
 // have a defined SecurityHandler, which is a middleware that encodes some authorization strategy.
-// Included SecurityHandlers can authorize a request by HTTP Referer (for CSRF security) or HTTP
+// Included SecurityHandlers can authorize a request by HTTP Origin (for CSRF security) or HTTP
 // Basic Auth. There is also an Unsecured handler for explicitly acknowledging that an endpoint is
 // wide open.
 package route

@@ -32,9 +32,7 @@ title: Server API
 
 AuthN exposes both **public** and **private** endpoints.
 
-**Public** endpoints are intended to receive traffic directly from a client, although you may certainly route that traffic through a gateway if you prefer. These endpoints rely on trusted HTTP Referer† headers to prevent CSRF attacks. V1.0 will also include support for a custom `AUTHN-AUDIENCE` header, intended for native clients.
-
-† The Referer header was found to exist for [99.9% of users over HTTPS](http://seclab.stanford.edu/websec/csrf/csrf.pdf) (which you should be using anyway).
+**Public** endpoints are intended to receive traffic directly from a client, although you may certainly route that traffic through a gateway if you prefer. These endpoints rely on trusted Origin headers to prevent CSRF attacks. V1.0 will also include support for a custom `AUTHN-AUDIENCE` header, intended for native clients.
 
 **Private** endpoints are intended to receive only traffic from your application's backend. They require HTTP Basic Auth username and password, and should only be accessed over HTTPS (which you should be using anyway).
 

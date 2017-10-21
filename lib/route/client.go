@@ -30,7 +30,7 @@ func NewClient(baseURL string) *Client {
 	return &Client{baseURL, []modder{}}
 }
 
-// Referred will inject a Referer header into a client's requests.
+// Referred will inject an Origin header into a client's requests.
 func (c *Client) Referred(domain *Domain) *Client {
 	scheme := "http"
 	if domain.Port == "443" {
@@ -41,7 +41,7 @@ func (c *Client) Referred(domain *Domain) *Client {
 	return &Client{
 		c.BaseURL,
 		append(c.Modifiers, func(req *http.Request) *http.Request {
-			req.Header.Add("Referer", origin)
+			req.Header.Add("Origin", origin)
 			return req
 		}),
 	}

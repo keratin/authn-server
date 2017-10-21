@@ -8,16 +8,16 @@ import (
 
 type matchedDomainKey int
 
-// RefererSecurity is a SecurityHandler that will ensure a request comes from a known referer. This
+// OriginSecurity is a SecurityHandler that will ensure a request comes from a known origin. This
 // can be an effective way to mitigate CSRF attacks, which are unable to forge headers due to the
 // passive nature of the attack vector.
 //
-// RefererSecurity will store the matching domain in the http.Request's Context. Use MatchedDomain
+// OriginSecurity will store the matching domain in the http.Request's Context. Use MatchedDomain
 // to retrieve the value in later logic.
-func RefererSecurity(domains []Domain) SecurityHandler {
+func OriginSecurity(domains []Domain) SecurityHandler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			url, err := url.Parse(r.Header.Get("Referer"))
+			url, err := url.Parse(r.Header.Get("Origin"))
 			if err != nil {
 				panic(err)
 			}
@@ -33,13 +33,13 @@ func RefererSecurity(domains []Domain) SecurityHandler {
 			}
 
 			w.WriteHeader(http.StatusForbidden)
-			w.Write([]byte("Referer is not a trusted host."))
+			w.Write([]byte("Origin is not a trusted host."))
 		})
 	}
 }
 
 // MatchedDomain will retrieve from the http.Request's Context the domain that satisfied
-// RefererSecurity.
+// OriginSecurity.
 func MatchedDomain(r *http.Request) *Domain {
 	d, ok := r.Context().Value(matchedDomainKey(0)).(*Domain)
 	if ok {

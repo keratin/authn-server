@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestRefererSecurity(t *testing.T) {
+func TestOriginSecurity(t *testing.T) {
 	readBody := func(res *http.Response) []byte {
 		body, err := ioutil.ReadAll(res.Body)
 		require.NoError(t, err)
@@ -21,7 +21,7 @@ func TestRefererSecurity(t *testing.T) {
 
 	testCases := []struct {
 		domain  string
-		referer string
+		origin  string
 		success bool
 	}{
 		{"example.com", "http://example.com", true},
@@ -44,14 +44,14 @@ func TestRefererSecurity(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.domain, func(t *testing.T) {
-			adapter := route.RefererSecurity([]route.Domain{route.ParseDomain(tc.domain)})
+			adapter := route.OriginSecurity([]route.Domain{route.ParseDomain(tc.domain)})
 
 			server := httptest.NewServer(adapter(nextHandler))
 			defer server.Close()
 
 			req, err := http.NewRequest("GET", server.URL, nil)
 			require.NoError(t, err)
-			req.Header.Add("Referer", tc.referer)
+			req.Header.Add("Origin", tc.origin)
 			res, err := http.DefaultClient.Do(req)
 			require.NoError(t, err)
 
