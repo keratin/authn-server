@@ -2,6 +2,7 @@
 title: Integrating AuthN with an API Gateway
 tags:
   - guides
+  - deployment
 ---
 
 # Guide: Integrating AuthN with an API Gateway
