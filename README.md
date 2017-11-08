@@ -18,17 +18,17 @@ If you are missing a client library, please [submit a request](https://github.co
 
 ## Implementation
 
-[Documentation](https://github.com/keratin/authn-server/docs/README.md)
+[Documentation](https://github.com/keratin/authn-server/blob/master/docs/README.md)
 
 ## Deployment
 
-[Documentation](https://github.com/keratin/authn-server/docs/README.md)
+[Documentation](https://github.com/keratin/authn-server/blob/master/docs/README.md)
 
 ## Configuration
 
 All configuration is through ENV variables.
 
-[Documentation](https://github.com/keratin/authn-server/docs/config.md)
+[Documentation](https://github.com/keratin/authn-server/blob/master/docs/config.md)
 
 ## Developing
 
