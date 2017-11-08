@@ -5,7 +5,12 @@ clean:
 	rm -rf vendor
 	rm -rf dist
 	rm -f authn
-	find . -name *.ego.go | xargs rm
+	rm -f api/views/*.ego.go
+
+# Code generation (ego)
+.PHONY:
+generate:
+	go generate github.com/keratin/authn-server/api/views
 
 # Fetch dependencies
 vendor:
@@ -14,9 +19,8 @@ vendor:
 
 # Build the project
 .PHONY: build
-build: vendor
+build: generate vendor
 	mkdir -p dist
-	ego api/views
 	CGO_ENABLED=1 go build -o dist/authn
 
 .PHONY: build-builder
@@ -34,8 +38,7 @@ docker: build-builder
 
 # Run the server
 .PHONY: server
-server: vendor
-	ego api/views
+server: vendor generate
 	docker-compose up -d redis
 	DATABASE_URL=sqlite3://localhost/dev \
 		REDIS_URL=redis://127.0.0.1:8701/11 \
@@ -43,8 +46,7 @@ server: vendor
 
 # Run tests
 .PHONY: test
-test: vendor
-	ego api/views
+test: vendor generate
 	docker-compose up -d
 	TEST_REDIS_URL=redis://127.0.0.1:8701/12 \
 	  TEST_MYSQL_URL=mysql://root@127.0.0.1:8702/authnservertest \
