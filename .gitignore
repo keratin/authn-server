@@ -3,3 +3,4 @@
 vendor/
 dist/
 .glide/
+*.ego.go

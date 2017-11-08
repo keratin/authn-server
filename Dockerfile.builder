@@ -8,6 +8,8 @@ RUN wget https://github.com/Masterminds/glide/releases/download/${glide_version}
 RUN tar -xvzf glide-${glide_version}-linux-amd64.tar.gz
 RUN mv linux-amd64/glide /usr/local/bin/glide
 
+RUN go get github.com/benbjohnson/ego/cmd/ego
+
 ENV PATH="${PATH}:/usr/local/go/bin"
 
 WORKDIR /

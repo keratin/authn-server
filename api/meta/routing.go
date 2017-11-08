@@ -9,6 +9,9 @@ func Routes(app *api.App) []*route.HandledRoute {
 	authentication := route.BasicAuthSecurity(app.Config.AuthUsername, app.Config.AuthPassword, "Private AuthN Realm")
 
 	return []*route.HandledRoute{
+		route.Get("/").
+			SecuredWith(route.Unsecured()).
+			Handle(getRoot(app)),
 		route.Get("/health").
 			SecuredWith(route.Unsecured()).
 			Handle(getHealth(app)),
