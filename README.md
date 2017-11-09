@@ -57,4 +57,4 @@ To build a Docker image for integration testing:
 
 Copyright (c) 2016 Lance Ivy
 
-Keratin AuthN is distributed under the terms of the GPLv3. See [LICENSE-GPLv3](LICENSE-GPLv3) for details.
+Keratin AuthN is distributed under the terms of the LGPLv3. See [LICENSE-LGPLv3](LICENSE-LGPLv3) for details.
