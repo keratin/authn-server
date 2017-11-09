@@ -35,7 +35,7 @@ func CredentialsVerifier(store data.AccountStore, cfg *config.Config, username s
 	}
 
 	err = bcrypt.CompareHashAndPassword(passwordHash, []byte(password))
-	if err != nil {
+	if account == nil || err != nil {
 		return nil, FieldErrors{{"credentials", ErrFailed}}
 	}
 	if account.Locked {

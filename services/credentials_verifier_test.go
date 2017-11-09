@@ -43,6 +43,7 @@ func TestCredentialsVerifierFailure(t *testing.T) {
 		errors   services.FieldErrors
 	}{
 		{"", "", services.FieldErrors{{"credentials", "FAILED"}}},
+		{"unknown", "", services.FieldErrors{{"credentials", "FAILED"}}},
 		{"unknown", "unknown", services.FieldErrors{{"credentials", "FAILED"}}},
 		{"known", "unknown", services.FieldErrors{{"credentials", "FAILED"}}},
 		{"unknown", password, services.FieldErrors{{"credentials", "FAILED"}}},
