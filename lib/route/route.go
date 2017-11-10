@@ -43,24 +43,24 @@ type Route struct {
 
 // SecuredWith registers a security handler for a route. A handler must be registered next.
 func (r Route) SecuredWith(fn SecurityHandler) *SecuredRoute {
-	return &SecuredRoute{route: r, security: fn}
+	return &SecuredRoute{r, fn}
 }
 
 // SecuredRoute is an incomplete Route with a defined SecurityHandler. It is ready for a
 // http.Handler.
 type SecuredRoute struct {
-	route    Route
+	Route
 	security SecurityHandler
 }
 
 // Handle registers a HandlerFunc. The route may now be `Attach`d.
 func (r *SecuredRoute) Handle(fn func(w http.ResponseWriter, r *http.Request)) *HandledRoute {
-	return &HandledRoute{route: r, handler: http.HandlerFunc(fn)}
+	return &HandledRoute{r, http.HandlerFunc(fn)}
 }
 
 // HandledRoute is a fully defined route. It is ready to be `Attach`d.
 type HandledRoute struct {
-	route   *SecuredRoute
+	*SecuredRoute
 	handler http.Handler
 }
 
@@ -69,8 +69,8 @@ func Attach(router *mux.Router, pathPrefix string, routes ...*HandledRoute) {
 	for _, r := range routes {
 		router.
 			PathPrefix(pathPrefix).
-			Methods(r.route.route.verb).
-			Path(r.route.route.tpl).
-			Handler(r.route.security(r.handler))
+			Methods(r.verb).
+			Path(r.tpl).
+			Handler(r.security(r.handler))
 	}
 }
