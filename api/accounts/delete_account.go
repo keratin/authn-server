@@ -17,7 +17,7 @@ func deleteAccount(app *api.App) http.HandlerFunc {
 			return
 		}
 
-		err = services.AccountArchiver(app.AccountStore, id)
+		err = services.AccountArchiver(app.AccountStore, app.RefreshTokenStore, id)
 		if err != nil {
 			if _, ok := err.(services.FieldErrors); ok {
 				api.WriteNotFound(w, "account")
