@@ -27,19 +27,14 @@ docker run \
   -e APP_DOMAINS=localhost \
   -e DATABASE_URL=sqlite3:db/demo.sqlite3 \
   -e REDIS_URL=redis://rd:6379/1 \
-  -e SECRET_KEY_BASE=`ruby -rSecureRandom -e 'puts SecureRandom.hex(64)'` \
+  -e SECRET_KEY_BASE=changeme \
   -e HTTP_AUTH_USERNAME=hello \
   -e HTTP_AUTH_PASSWORD=world \
   --detach \
   --name authn_app \
   keratin/authn-server:latest \
-  sh -c "./authn migrate && ./authn -port 3000 server"
+  sh -c "./authn migrate && ./authn 3000 server"
 ```
-
-> NOTE:
-> This AuthN daemon uses a random `SECRET_KEY_BASE`, which will invalidate old sessions every time
-> it starts up. Please review the configuration options to suit your environment before depending
-> on this command.
 
 ### Compose
 
