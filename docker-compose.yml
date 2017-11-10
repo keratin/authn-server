@@ -16,7 +16,7 @@ services:
   server:
     image: keratin/authn-server:latest
     ports:
-      - "7001:3000"
+      - "7002:3000"
     environment:
       - APP_DOMAINS
       - AUTHN_URL
