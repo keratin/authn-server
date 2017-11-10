@@ -47,7 +47,7 @@ server: vendor generate
 # Run tests
 .PHONY: test
 test: vendor generate
-	docker-compose up -d
+	docker-compose up -d redis mysql
 	TEST_REDIS_URL=redis://127.0.0.1:8701/12 \
 	  TEST_MYSQL_URL=mysql://root@127.0.0.1:8702/authnservertest \
 	  go test $(PKGS)
