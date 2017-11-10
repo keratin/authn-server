@@ -30,7 +30,11 @@ All configuration is through ENV variables.
 
 [Documentation](https://github.com/keratin/authn-server/blob/master/docs/config.md)
 
-## Developing
+## Contributing
+
+Welcome! Please familiarize yourself with the [CONTRIBUTING](CONTRIBUTING.md) doc and the [CODE OF CONDUCT](CODE_OF_CONDUCT.md).
+
+Here's how the dev environment works:
 
 1. Install [Glide](https://github.com/Masterminds/glide#install).
 2. Run `make vendor` to set up the vendor/ directory using Glide
