@@ -1,4 +1,8 @@
 PKGS := $(shell glide nv)
+ORG := keratin
+PROJECT := authn-server
+NAME := $(ORG)/$(PROJECT)
+VERSION := 1.0.0-rc2
 
 .PHONY: clean
 clean:
@@ -10,7 +14,7 @@ clean:
 # Code generation (ego)
 .PHONY:
 generate:
-	go generate github.com/keratin/authn-server/api/views
+	go generate github.com/$(NAME)/api/views
 
 # Fetch dependencies
 vendor:
@@ -25,16 +29,16 @@ build: generate vendor
 
 .PHONY: build-builder
 build-builder:
-	docker build -f Dockerfile.builder -t keratin/authn-server-builder .
+	docker build -f Dockerfile.builder -t $(NAME)-builder .
 
 .PHONY: docker
 docker: build-builder
 	docker run --rm \
-		-v $(PWD):/go/src/github.com/keratin/authn-server \
-		-w /go/src/github.com/keratin/authn-server \
-		keratin/authn-server-builder \
+		-v $(PWD):/go/src/github.com/$(NAME) \
+		-w /go/src/github.com/$(NAME) \
+		$(NAME)-builder \
 		make clean build
-	docker build --tag keratin/authn-server:latest .
+	docker build --tag $(NAME):latest .
 
 # Run the server
 .PHONY: server
@@ -63,3 +67,12 @@ test-ci:
 .PHONY: migrate
 migrate:
 	go run *.go migrate
+
+# Cut a release of the current version.
+.PHONY: release
+release: test docker
+	docker tag $(NAME):latest $(NAME):$(VERSION)
+	docker push $(NAME):$(VERSION)
+	git tag v$(VERSION)
+	git push --tags
+	open https://github.com/$(NAME)/releases/tag/v$(VERSION)
