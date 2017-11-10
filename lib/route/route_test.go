@@ -11,8 +11,8 @@ func ExampleRoute() {
 	r := mux.NewRouter()
 	basicAuth := route.BasicAuthSecurity("username", "password", "Realm Name")
 
-	privateHandler := func(w http.ResponseWriter, r *http.Request) {}
-	healthHandler := func(w http.ResponseWriter, r *http.Request) {}
+	privateHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
+	healthHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {})
 
 	route.Attach(r, "/",
 		route.Get("/private").

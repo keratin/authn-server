@@ -54,8 +54,8 @@ type SecuredRoute struct {
 }
 
 // Handle registers a HandlerFunc. The route may now be `Attach`d.
-func (r *SecuredRoute) Handle(fn func(w http.ResponseWriter, r *http.Request)) *HandledRoute {
-	return &HandledRoute{r, http.HandlerFunc(fn)}
+func (r *SecuredRoute) Handle(h http.Handler) *HandledRoute {
+	return &HandledRoute{r, h}
 }
 
 // HandledRoute is a fully defined route. It is ready to be `Attach`d.
