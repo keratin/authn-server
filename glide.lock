@@ -1,5 +1,5 @@
-hash: b26eff5066cc5f7b9adf595573ae694ca85dc89f590ae1c9ac070942220ba121
-updated: 2017-11-10T10:36:35.394427-08:00
+hash: 2c494641d330e16d311509951079f72ac08a45e8fe3d458bc68219bc9ef48ac1
+updated: 2017-11-10T12:14:21.042279-08:00
 imports:
 - name: github.com/beorn7/perks
   version: 4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9
@@ -11,6 +11,8 @@ imports:
   version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
   subpackages:
   - spew
+- name: github.com/felixge/httpsnoop
+  version: eadd4fad6aac69ae62379194fe0219f3dbc80fd3
 - name: github.com/getsentry/raven-go
   version: d175f85701dfbf44cb0510114c9943e665e60907
 - name: github.com/go-redis/redis
@@ -68,6 +70,7 @@ imports:
   version: 967789050ba94deca04a5e84cce8ad472ce313c1
   subpackages:
   - prometheus
+  - prometheus/promhttp
 - name: github.com/prometheus/client_model
   version: 6f3806018612930941127f2a7c6c453ba2c527d2
   subpackages:

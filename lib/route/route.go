@@ -71,6 +71,6 @@ func Attach(router *mux.Router, pathPrefix string, routes ...*HandledRoute) {
 			PathPrefix(pathPrefix).
 			Methods(r.verb).
 			Path(r.tpl).
-			Handler(r.security(r.handler))
+			Handler(instrumentRoute(r.verb+" "+r.tpl, r.security(r.handler)))
 	}
 }
