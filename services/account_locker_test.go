@@ -10,34 +10,51 @@ import (
 )
 
 func TestAccountLocker(t *testing.T) {
-	store := mock.NewAccountStore()
+	accountStore := mock.NewAccountStore()
+	refreshStore := mock.NewRefreshTokenStore()
 
-	lockedAccount, err := store.Create("locked@keratin.tech", []byte("password"))
-	require.NoError(t, err)
-	err = store.Lock(lockedAccount.ID)
-	require.NoError(t, err)
+	t.Run("logged in account", func(t *testing.T) {
+		account, err := accountStore.Create("loggedin@keratin.tech", []byte("password"))
+		require.NoError(t, err)
+		token1, err := refreshStore.Create(account.ID)
+		require.NoError(t, err)
 
-	unlockedAccount, err := store.Create("unlocked@keratin.tech", []byte("password"))
-	require.NoError(t, err)
+		errs := services.AccountLocker(accountStore, refreshStore, account.ID)
+		assert.Empty(t, errs)
 
-	var testCases = []struct {
-		accountID int
-		errors    *services.FieldErrors
-	}{
-		{123456789, &services.FieldErrors{{"account", services.ErrNotFound}}},
-		{lockedAccount.ID, nil},
-		{unlockedAccount.ID, nil},
-	}
+		id, err := refreshStore.Find(token1)
+		require.NoError(t, err)
+		assert.Empty(t, id)
+	})
 
-	for _, tc := range testCases {
-		errs := services.AccountLocker(store, tc.accountID)
-		if tc.errors == nil {
-			assert.Empty(t, errs)
-			acct, err := store.Find(tc.accountID)
-			require.NoError(t, err)
-			assert.True(t, acct.Locked)
-		} else {
-			assert.Equal(t, *tc.errors, errs)
-		}
-	}
+	t.Run("locked account", func(t *testing.T) {
+		account, err := accountStore.Create("locked@keratin.tech", []byte("password"))
+		require.NoError(t, err)
+		err = accountStore.Lock(account.ID)
+		require.NoError(t, err)
+
+		errs := services.AccountLocker(accountStore, refreshStore, account.ID)
+		assert.Empty(t, errs)
+
+		acct, err := accountStore.Find(account.ID)
+		require.NoError(t, err)
+		assert.True(t, acct.Locked)
+	})
+
+	t.Run("unlocked account", func(t *testing.T) {
+		account, err := accountStore.Create("unlocked@keratin.tech", []byte("password"))
+		require.NoError(t, err)
+
+		errs := services.AccountLocker(accountStore, refreshStore, account.ID)
+		assert.Empty(t, errs)
+
+		acct, err := accountStore.Find(account.ID)
+		require.NoError(t, err)
+		assert.True(t, acct.Locked)
+	})
+
+	t.Run("unknown account", func(t *testing.T) {
+		errs := services.AccountLocker(accountStore, refreshStore, 123456789)
+		assert.Equal(t, services.FieldErrors{{"account", services.ErrNotFound}}, errs)
+	})
 }

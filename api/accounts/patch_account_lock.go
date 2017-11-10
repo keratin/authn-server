@@ -17,7 +17,7 @@ func patchAccountLock(app *api.App) http.HandlerFunc {
 			return
 		}
 
-		err = services.AccountLocker(app.AccountStore, id)
+		err = services.AccountLocker(app.AccountStore, app.RefreshTokenStore, id)
 		if err != nil {
 			if _, ok := err.(services.FieldErrors); ok {
 				api.WriteNotFound(w, "account")

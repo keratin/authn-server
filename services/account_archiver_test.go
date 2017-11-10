@@ -10,30 +10,39 @@ import (
 )
 
 func TestAccountArchiver(t *testing.T) {
-	store := mock.NewAccountStore()
+	accountStore := mock.NewAccountStore()
+	refreshStore := mock.NewRefreshTokenStore()
 
-	account, err := store.Create("test@keratin.tech", []byte("password"))
-	require.NoError(t, err)
+	t.Run("existing account", func(t *testing.T) {
+		account, err := accountStore.Create("test@keratin.tech", []byte("password"))
+		require.NoError(t, err)
 
-	var testCases = []struct {
-		accountID int
-		errors    *services.FieldErrors
-	}{
-		{123456789, &services.FieldErrors{{"account", services.ErrNotFound}}},
-		{account.ID, nil},
-	}
+		errs := services.AccountArchiver(accountStore, refreshStore, account.ID)
+		assert.Empty(t, errs)
 
-	for _, tc := range testCases {
-		errs := services.AccountArchiver(store, tc.accountID)
-		if tc.errors == nil {
-			assert.Empty(t, errs)
-			acct, err := store.Find(tc.accountID)
-			require.NoError(t, err)
-			assert.Empty(t, acct.Username)
-			assert.Empty(t, acct.Password)
-			assert.NotEmpty(t, acct.DeletedAt)
-		} else {
-			assert.Equal(t, *tc.errors, errs)
-		}
-	}
+		acct, err := accountStore.Find(account.ID)
+		require.NoError(t, err)
+		assert.Empty(t, acct.Username)
+		assert.Empty(t, acct.Password)
+		assert.NotEmpty(t, acct.DeletedAt)
+	})
+
+	t.Run("logged in account", func(t *testing.T) {
+		account, err := accountStore.Create("loggedin@keratin.tech", []byte("password"))
+		require.NoError(t, err)
+		token1, err := refreshStore.Create(account.ID)
+		require.NoError(t, err)
+
+		errs := services.AccountArchiver(accountStore, refreshStore, account.ID)
+		assert.Empty(t, errs)
+
+		id, err := refreshStore.Find(token1)
+		require.NoError(t, err)
+		assert.Empty(t, id)
+	})
+
+	t.Run("unknown account", func(t *testing.T) {
+		errs := services.AccountArchiver(accountStore, refreshStore, 123456789)
+		assert.Equal(t, services.FieldErrors{{"account", services.ErrNotFound}}, errs)
+	})
 }
