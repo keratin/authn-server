@@ -14,7 +14,8 @@ func Root(w io.Writer) {
       <div style="flex: 1 0 auto;">
         <ul>
           <li><a href="health">Health</a></li>
-          <li><a href="stats">Stats</a></li>
+          <li><a href="stats">Active Users</a></li>
+          <li><a href="metrics">Server Metrics</a></li>
           <li><a href="jwks">Keys</a></li>
           <li><a href="https://github.com/keratin/authn-server">GitHub</a></li>
           <li><a href="https://github.com/keratin/authn-server/blob/master/docs/README.md">Docs</a></li>
