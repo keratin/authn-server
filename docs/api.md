@@ -481,7 +481,7 @@ This endpoint is primarily used by backend client libraries to fetch the public 
 
 ### Service Stats
 
-Visibility: Public
+Visibility: Private
 
 `GET /stats`
 
@@ -506,3 +506,23 @@ Time periods are labeled in ISO8601 formats:
         "monthly": {}
       }
     }
+
+### Server Stats
+
+Visibility: Private
+
+`GET /metrics`
+
+Returns server stats (memory usage) and traffic stats (counts, timings) that may be used to monitor and alert on server health. The data is formatted for consumption by Prometheus-compatible collectors.
+
+#### Success:
+
+    200 Ok
+
+    # HELP go_goroutines Number of goroutines that currently exist.
+    # TYPE go_goroutines gauge
+    go_goroutines 10
+    [...]
+    # HELP http_requests_total How many HTTP requests processed, partitioned by name and status code
+    # TYPE http_requests_total counter
+    http_requests_total{code="200",name="GET /health"} 97

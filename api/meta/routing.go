@@ -3,6 +3,7 @@ package meta
 import (
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/lib/route"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func Routes(app *api.App) []*route.HandledRoute {
@@ -24,5 +25,8 @@ func Routes(app *api.App) []*route.HandledRoute {
 		route.Get("/stats").
 			SecuredWith(authentication).
 			Handle(getStats(app)),
+		route.Get("/metrics").
+			SecuredWith(authentication).
+			Handle(promhttp.Handler()),
 	}
 }
