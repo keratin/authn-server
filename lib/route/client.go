@@ -18,11 +18,12 @@ type Client struct {
 }
 
 const (
-	delete = "DELETE"
-	get    = "GET"
-	patch  = "PATCH"
-	post   = "POST"
-	put    = "PUT"
+	delete  = "DELETE"
+	get     = "GET"
+	patch   = "PATCH"
+	post    = "POST"
+	put     = "PUT"
+	options = "OPTIONS"
 )
 
 // NewClient returns a new Client.
@@ -91,6 +92,18 @@ func (c *Client) PostForm(path string, form url.Values) (*http.Response, error) 
 // modifications configured for the current client.
 func (c *Client) Patch(path string, form url.Values) (*http.Response, error) {
 	return c.do(patch, path, strings.NewReader(form.Encode()))
+}
+
+// Preflight issues a CORS OPTIONS request
+func (c *Client) Preflight(domain *Domain, verb string, path string) (*http.Response, error) {
+	cPreflight := &Client{
+		c.BaseURL,
+		append(c.Referred(domain).Modifiers, func(req *http.Request) *http.Request {
+			req.Header.Add("Access-Control-Request-Method", verb)
+			return req
+		}),
+	}
+	return cPreflight.do(options, path, nil)
 }
 
 func (c *Client) do(verb string, path string, body io.Reader) (*http.Response, error) {

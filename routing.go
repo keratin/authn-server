@@ -25,6 +25,7 @@ func router(app *api.App) http.Handler {
 	corsAdapter := gorilla.CORS(
 		gorilla.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE"}),
 		gorilla.AllowCredentials(),
+		gorilla.AllowedOrigins([]string{}), // see: https://github.com/gorilla/handlers/issues/117
 		gorilla.AllowedOriginValidator(api.OriginValidator(app.Config.ApplicationDomains)),
 	)
 
