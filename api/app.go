@@ -44,7 +44,7 @@ func NewApp() (*App, error) {
 		reporter = &ops.LogReporter{}
 	}
 
-	db, accountStore, err := data.NewDB(cfg.DatabaseURL)
+	db, err := data.NewDB(cfg.DatabaseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "data.NewDB")
 	}
@@ -54,9 +54,14 @@ func NewApp() (*App, error) {
 		return nil, errors.Wrap(err, "redis.New")
 	}
 
-	tokenStore := &dataRedis.RefreshTokenStore{
-		Client: redis,
-		TTL:    cfg.RefreshTokenTTL,
+	accountStore := data.NewAccountStore(db)
+	if accountStore == nil {
+		return nil, errors.Wrap(err, "NewAccountStore")
+	}
+
+	tokenStore := data.NewRefreshTokenStore(db, redis, cfg.RefreshTokenTTL)
+	if tokenStore == nil {
+		return nil, errors.Wrap(err, "NewRefreshTokenStore")
 	}
 
 	keyStore := data.NewRotatingKeyStore()

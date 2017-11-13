@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/keratin/authn-server/ops"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/keratin/authn-server/lib"
 	"github.com/keratin/authn-server/models"
@@ -14,6 +16,16 @@ import (
 type RefreshTokenStore struct {
 	*sqlx.DB
 	TTL time.Duration
+}
+
+func (s *RefreshTokenStore) Clean(reporter ops.ErrorReporter) {
+	go func() {
+		_, err := s.Exec("DELETE FROM refresh_tokens WHERE expires_at < ?", time.Now())
+		if err != nil {
+			reporter.ReportError(err)
+		}
+		time.Sleep(time.Minute)
+	}()
 }
 
 func (s *RefreshTokenStore) Create(accountID int) (models.RefreshToken, error) {
