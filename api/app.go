@@ -59,7 +59,7 @@ func NewApp() (*App, error) {
 		return nil, errors.Wrap(err, "NewAccountStore")
 	}
 
-	tokenStore := data.NewRefreshTokenStore(db, redis, cfg.RefreshTokenTTL)
+	tokenStore := data.NewRefreshTokenStore(db, redis, reporter, cfg.RefreshTokenTTL)
 	if tokenStore == nil {
 		return nil, errors.Wrap(err, "NewRefreshTokenStore")
 	}

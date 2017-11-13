@@ -3,6 +3,8 @@ package data
 import (
 	"time"
 
+	"github.com/keratin/authn-server/ops"
+
 	"github.com/go-redis/redis"
 	"github.com/jmoiron/sqlx"
 	dataRedis "github.com/keratin/authn-server/data/redis"
@@ -33,7 +35,7 @@ type RefreshTokenStore interface {
 	Revoke(t models.RefreshToken) error
 }
 
-func NewRefreshTokenStore(db *sqlx.DB, redis *redis.Client, ttl time.Duration) RefreshTokenStore {
+func NewRefreshTokenStore(db *sqlx.DB, redis *redis.Client, reporter ops.ErrorReporter, ttl time.Duration) RefreshTokenStore {
 	if redis != nil {
 		return &dataRedis.RefreshTokenStore{
 			Client: redis,
@@ -43,10 +45,12 @@ func NewRefreshTokenStore(db *sqlx.DB, redis *redis.Client, ttl time.Duration) R
 
 	switch db.DriverName() {
 	case "sqlite3":
-		return &sqlite3.RefreshTokenStore{
+		store := &sqlite3.RefreshTokenStore{
 			DB:  db,
 			TTL: ttl,
 		}
+		store.Clean(reporter)
+		return store
 	default:
 		return nil
 	}
