@@ -7,7 +7,10 @@ import "github.com/jmoiron/sqlx"
 // determines which steps have run and which steps must still be run. Given the
 // expected final complexity of this project, this is acceptable.
 func MigrateDB(db *sqlx.DB) error {
-	return migration1(db)
+	if err := migration1(db); err != nil {
+		return err
+	}
+	return migration2(db)
 }
 
 func migration1(db *sqlx.DB) error {
@@ -22,6 +25,17 @@ func migration1(db *sqlx.DB) error {
             created_at DATETIME NOT NULL,
             updated_at DATETIME NOT NULL,
             deleted_at DATETIME
+        )
+    `)
+	return err
+}
+
+func migration2(db *sqlx.DB) error {
+	_, err := db.Exec(`
+        CREATE TABLE IF NOT EXISTS refresh_tokens (
+            token TEXT NOT NULL CONSTRAINT uniq UNIQUE,
+            account_id INTEGER NOT NULL,
+            expires_at DATETIME NOT NULL
         )
     `)
 	return err
