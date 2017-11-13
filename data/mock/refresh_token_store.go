@@ -1,9 +1,9 @@
 package mock
 
 import (
-	"crypto/rand"
 	"encoding/hex"
 
+	"github.com/keratin/authn-server/lib"
 	"github.com/keratin/authn-server/models"
 )
 
@@ -20,7 +20,7 @@ func NewRefreshTokenStore() *refreshTokenStore {
 }
 
 func (s *refreshTokenStore) Create(accountID int) (models.RefreshToken, error) {
-	binToken, err := generateToken()
+	binToken, err := lib.GenerateToken()
 	if err != nil {
 		return "", err
 	}
@@ -58,13 +58,4 @@ func without(needle models.RefreshToken, haystack []models.RefreshToken) []model
 		}
 	}
 	return haystack
-}
-
-func generateToken() ([]byte, error) {
-	token := make([]byte, 2)
-	_, err := rand.Read(token)
-	if err != nil {
-		return []byte{}, nil
-	}
-	return token, nil
 }

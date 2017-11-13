@@ -1,13 +1,13 @@
 package redis
 
 import (
-	"crypto/rand"
 	"encoding/hex"
 	"fmt"
 	"strconv"
 	"time"
 
 	"github.com/go-redis/redis"
+	"github.com/keratin/authn-server/lib"
 	"github.com/keratin/authn-server/models"
 )
 
@@ -71,7 +71,7 @@ func (s *RefreshTokenStore) FindAll(accountID int) ([]models.RefreshToken, error
 }
 
 func (s *RefreshTokenStore) Create(accountID int) (models.RefreshToken, error) {
-	binToken, err := generateToken()
+	binToken, err := lib.GenerateToken()
 	if err != nil {
 		return "", err
 	}
@@ -114,15 +114,4 @@ func (s *RefreshTokenStore) Revoke(hexToken models.RefreshToken) error {
 		return nil
 	})
 	return err
-}
-
-// 128 bits of randomness is more than a UUID v4
-// cf: https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_.28random.29
-func generateToken() ([]byte, error) {
-	token := make([]byte, 16)
-	_, err := rand.Read(token)
-	if err != nil {
-		return []byte{}, nil
-	}
-	return token, nil
 }
