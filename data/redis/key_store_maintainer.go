@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/keratin/authn-server/lib"
+
 	"github.com/go-redis/redis"
 	"github.com/keratin/authn-server/lib/compat"
 	"github.com/keratin/authn-server/ops"
@@ -67,8 +69,8 @@ func (m *maintainer) maintain(ks *keyStore, r ops.ErrorReporter) error {
 	}
 
 	go func() {
-		ticker := NewEpochIntervalTicker(m.interval)
-		for range ticker {
+		intervals := lib.EpochIntervalTick(m.interval)
+		for range intervals {
 			err = m.rotate(ks)
 			if err != nil {
 				r.ReportError(err)
