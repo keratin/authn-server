@@ -1,4 +1,4 @@
-package redis
+package data
 
 import (
 	"crypto/rand"
@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/lib"
 
 	"github.com/keratin/authn-server/lib/compat"
@@ -17,8 +16,29 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// MaintainKeyStore maintains a rotating key store by periodically generating new keys. It uses a
+// blob store to persist the key encrypted using SECRET_KEY_BASE, which is already the ultimate SPOF
+// for AuthN security.
+func MaintainKeyStore(ks *RotatingKeyStore, store BlobStore, reporter ops.ErrorReporter, interval time.Duration, encryptionKey []byte) error {
+	m := &maintainer{
+		store: store,
+		// the rotation interval should be slightly longer than access token expiry.
+		// this means that when a key goes inactive for some interval, we can know
+		// that it is useless and discardable by the third interval.
+		interval:      interval,
+		keyStrength:   2048,
+		encryptionKey: encryptionKey,
+	}
+	err := m.maintain(ks, reporter)
+	if err != nil {
+		return errors.Wrap(err, "maintain")
+	}
+
+	return nil
+}
+
 type maintainer struct {
-	store data.BlobStore
+	store BlobStore
 
 	// the rotation interval must be the same length as an access token expiry. that way a key can
 	// be in active use for one interval, remain available for verifying old access tokens during
@@ -29,7 +49,7 @@ type maintainer struct {
 }
 
 // maintain will restore and rotate a keyStore at periodic intervals.
-func (m *maintainer) maintain(ks *data.RotatingKeyStore, r ops.ErrorReporter) error {
+func (m *maintainer) maintain(ks *RotatingKeyStore, r ops.ErrorReporter) error {
 	// fetch current keys
 	keys, err := m.restore()
 	if err != nil {
@@ -74,7 +94,7 @@ func (m *maintainer) maintain(ks *data.RotatingKeyStore, r ops.ErrorReporter) er
 	return nil
 }
 
-func (m *maintainer) rotate(ks *data.RotatingKeyStore) error {
+func (m *maintainer) rotate(ks *RotatingKeyStore) error {
 	newKey, err := m.generate()
 	if err != nil {
 		return errors.Wrap(err, "generate")
@@ -87,9 +107,9 @@ func (m *maintainer) rotate(ks *data.RotatingKeyStore) error {
 	return nil
 }
 
-// restore will query Redis for the previous and current keys. It returns keys in the proper sorting
-// order, with the newest (current) key in last position. missing keys will leave a blank slot, so
-// that the caller may choose what to do.
+// restore will query the blob store for the previous and current keys. It returns keys in the
+// proper sorting order, with the newest (current) key in last position. missing keys will leave a
+// blank slot, so that the caller may choose what to do.
 func (m *maintainer) restore() ([]*rsa.PrivateKey, error) {
 	bucket := m.currentBucket()
 	keys := make([]*rsa.PrivateKey, 2)
@@ -109,11 +129,11 @@ func (m *maintainer) restore() ([]*rsa.PrivateKey, error) {
 	return keys, nil
 }
 
-// generate will create a new key and store it in Redis. It relies on a Redis lock to coordinate
-// with other AuthN servers.
+// generate will create a new key and store it as an encrypted blob. It relies on a write lock to
+// coordinate with other AuthN servers.
 func (m *maintainer) generate() (*rsa.PrivateKey, error) {
 	bucket := m.currentBucket()
-	redisKey := fmt.Sprintf("rsa:%d", bucket)
+	keyName := fmt.Sprintf("rsa:%d", bucket)
 	for {
 		// check if another server has created it
 		existingKey, err := m.find(bucket)
@@ -123,8 +143,8 @@ func (m *maintainer) generate() (*rsa.PrivateKey, error) {
 		if existingKey != nil {
 			return existingKey, nil
 		}
-		// acquire Redis lock (global mutex)
-		success, err := m.store.WLock(redisKey)
+		// acquire write lock (global mutex)
+		success, err := m.store.WLock(keyName)
 		if err != nil {
 			return nil, err
 		}
@@ -140,7 +160,7 @@ func (m *maintainer) generate() (*rsa.PrivateKey, error) {
 				return nil, err
 			}
 			// store the key
-			err = m.store.Write(redisKey, ciphertext)
+			err = m.store.Write(keyName, ciphertext)
 			if err != nil {
 				return nil, err
 			}
@@ -153,7 +173,7 @@ func (m *maintainer) generate() (*rsa.PrivateKey, error) {
 	}
 }
 
-// find will retrieve and deserialize/decrypt from Redis
+// find will retrieve and deserialize/decrypt from the blob store
 func (m *maintainer) find(bucket int64) (*rsa.PrivateKey, error) {
 	blob, err := m.store.Read(fmt.Sprintf("rsa:%d", bucket))
 	if err != nil {

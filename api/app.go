@@ -63,15 +63,23 @@ func NewApp() (*App, error) {
 
 	var keyStore data.KeyStore
 	if cfg.IdentitySigningKey == nil {
-		keyStore, err = dataRedis.NewKeyStore(
-			redis,
+		keyStore := data.NewRotatingKeyStore()
+		err = data.MaintainKeyStore(
+			keyStore,
+			&dataRedis.BlobStore{
+				// the lifetime of a key should be slightly more than two intervals
+				TTL: cfg.AccessTokenTTL*2 + 10*time.Second,
+				// the write lock should be greater than the peak time necessary to generate and
+				// encrypt a key, plus send it back over the wire to redis.
+				LockTime: time.Duration(500) * time.Millisecond,
+				Client:   redis,
+			},
 			reporter,
 			cfg.AccessTokenTTL,
-			time.Duration(500)*time.Millisecond,
 			cfg.DBEncryptionKey,
 		)
 		if err != nil {
-			return nil, errors.Wrap(err, "NewKeyStore")
+			return nil, errors.Wrap(err, "MaintainKeyStore")
 		}
 	} else {
 		keyStore = mock.NewKeyStore(cfg.IdentitySigningKey)
