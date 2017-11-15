@@ -1,29 +1,20 @@
 package redis
 
 import (
-	"crypto/rsa"
-	"sync"
 	"time"
 
 	"github.com/go-redis/redis"
+	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
 )
-
-type keyStore struct {
-	keys   []*rsa.PrivateKey
-	rwLock *sync.RWMutex
-}
 
 // NewKeyStore creates a key store that uses Redis to persist an auto-generated key and rotate it
 // regularly. The key is encrypted using SECRET_KEY_BASE, which is already the ultimate SPOF for
 // AuthN security. It's expected that very few people will be in position to improve on the security
 // tradeoffs of this provider.
-func NewKeyStore(client *redis.Client, reporter ops.ErrorReporter, interval time.Duration, race time.Duration, encryptionKey []byte) (*keyStore, error) {
-	ks := &keyStore{
-		keys:   []*rsa.PrivateKey{},
-		rwLock: &sync.RWMutex{},
-	}
+func NewKeyStore(client *redis.Client, reporter ops.ErrorReporter, interval time.Duration, race time.Duration, encryptionKey []byte) (*data.RotatingKeyStore, error) {
+	ks := data.NewRotatingKeyStore()
 
 	m := &maintainer{
 		store: &BlobStore{
@@ -47,35 +38,4 @@ func NewKeyStore(client *redis.Client, reporter ops.ErrorReporter, interval time
 	}
 
 	return ks, nil
-}
-
-// Key returns the current key. It relies on the internal keys slice being sorted with the newest
-// key last.
-func (ks *keyStore) Key() *rsa.PrivateKey {
-	ks.rwLock.RLock()
-	defer ks.rwLock.RUnlock()
-
-	return ks.keys[len(ks.keys)-1]
-}
-
-// Keys will return the previous and current keys, in that order.
-func (ks *keyStore) Keys() []*rsa.PrivateKey {
-	ks.rwLock.RLock()
-	defer ks.rwLock.RUnlock()
-
-	return ks.keys
-}
-
-// Rotate is responsible for adding a new key to the list. It maintains key order from oldest to
-// newest, and ensures a maximum of two entries.
-func (ks *keyStore) Rotate(k *rsa.PrivateKey) {
-	keys := []*rsa.PrivateKey{}
-	if len(ks.keys) > 0 {
-		keys = append(keys, ks.keys[len(ks.keys)-1])
-	}
-	keys = append(keys, k)
-
-	ks.rwLock.Lock()
-	defer ks.rwLock.Unlock()
-	ks.keys = keys
 }

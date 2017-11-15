@@ -29,7 +29,7 @@ type maintainer struct {
 }
 
 // maintain will restore and rotate a keyStore at periodic intervals.
-func (m *maintainer) maintain(ks *keyStore, r ops.ErrorReporter) error {
+func (m *maintainer) maintain(ks *data.RotatingKeyStore, r ops.ErrorReporter) error {
 	// fetch current keys
 	keys, err := m.restore()
 	if err != nil {
@@ -74,7 +74,7 @@ func (m *maintainer) maintain(ks *keyStore, r ops.ErrorReporter) error {
 	return nil
 }
 
-func (m *maintainer) rotate(ks *keyStore) error {
+func (m *maintainer) rotate(ks *data.RotatingKeyStore) error {
 	newKey, err := m.generate()
 	if err != nil {
 		return errors.Wrap(err, "generate")
