@@ -7,26 +7,19 @@ import (
 	"time"
 
 	"github.com/keratin/authn-server/data"
-	"github.com/keratin/authn-server/data/redis"
+	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/ops"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestMaintainKeyStore(t *testing.T) {
-	client, err := redis.TestDB()
 	reporter := &ops.LogReporter{}
-	require.NoError(t, err)
 	secret := []byte("32bigbytesofsuperultimatesecrecy")
 	interval := time.Hour
-	blobStore := &redis.BlobStore{ // TODO: mock.BlobStore
-		TTL:      interval*2 + 10*time.Second,
-		LockTime: time.Second,
-		Client:   client,
-	}
 
 	t.Run("empty remote storage", func(t *testing.T) {
-		client.FlushDB()
+		blobStore := mock.NewBlobStore(interval*2+time.Second, time.Second)
 		store := data.NewRotatingKeyStore()
 		err := data.MaintainKeyStore(store, blobStore, reporter, interval, secret)
 		require.NoError(t, err)
@@ -37,7 +30,7 @@ func TestMaintainKeyStore(t *testing.T) {
 	})
 
 	t.Run("multiple servers", func(t *testing.T) {
-		client.FlushDB()
+		blobStore := mock.NewBlobStore(interval*2+time.Second, time.Second)
 		store1 := data.NewRotatingKeyStore()
 		err := data.MaintainKeyStore(store1, blobStore, reporter, interval, secret)
 		require.NoError(t, err)
@@ -53,7 +46,7 @@ func TestMaintainKeyStore(t *testing.T) {
 	})
 
 	t.Run("rotation", func(t *testing.T) {
-		client.FlushDB()
+		blobStore := mock.NewBlobStore(interval*2+time.Second, time.Second)
 		store := data.NewRotatingKeyStore()
 		err := data.MaintainKeyStore(store, blobStore, reporter, interval, secret)
 		require.NoError(t, err)

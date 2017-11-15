@@ -10,14 +10,9 @@ import (
 var placeholder = "generating"
 
 type BlobStore struct {
-	// how long a blob will persist in the store
-	TTL time.Duration
-
-	// how long the wlock will persist while waiting for a write
+	TTL      time.Duration
 	LockTime time.Duration
-
-	// backend client
-	Client *redis.Client
+	Client   *redis.Client
 }
 
 func (s *BlobStore) WLock(name string) (bool, error) {
