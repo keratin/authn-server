@@ -16,18 +16,16 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// MaintainKeyStore maintains a rotating key store by periodically generating new keys. It uses a
-// blob store to persist the key encrypted using SECRET_KEY_BASE, which is already the ultimate SPOF
-// for AuthN security.
-func MaintainKeyStore(ks *RotatingKeyStore, store BlobStore, reporter ops.ErrorReporter, interval time.Duration, encryptionKey []byte) error {
+// MaintainKeyStore maintains a rotating key store by periodically generating new keys. It will only
+// persist keys into an _encrypted_ blob store.
+func MaintainKeyStore(ks *RotatingKeyStore, store *EncryptedBlobStore, reporter ops.ErrorReporter, interval time.Duration) error {
 	m := &maintainer{
 		store: store,
 		// the rotation interval should be slightly longer than access token expiry.
 		// this means that when a key goes inactive for some interval, we can know
 		// that it is useless and discardable by the third interval.
-		interval:      interval,
-		keyStrength:   2048,
-		encryptionKey: encryptionKey,
+		interval:    interval,
+		keyStrength: 2048,
 	}
 	err := m.maintain(ks, reporter)
 	if err != nil {
@@ -38,14 +36,12 @@ func MaintainKeyStore(ks *RotatingKeyStore, store BlobStore, reporter ops.ErrorR
 }
 
 type maintainer struct {
-	store BlobStore
-
 	// the rotation interval must be the same length as an access token expiry. that way a key can
 	// be in active use for one interval, remain available for verifying old access tokens during
 	// the second interval, and be removed and discarded during the third interval.
-	interval      time.Duration
-	keyStrength   int
-	encryptionKey []byte
+	interval    time.Duration
+	keyStrength int
+	store       *EncryptedBlobStore
 }
 
 // maintain will restore and rotate a keyStore at periodic intervals.
@@ -154,13 +150,8 @@ func (m *maintainer) generate() (*rsa.PrivateKey, error) {
 			if err != nil {
 				return nil, err
 			}
-			// encrypt the key
-			ciphertext, err := compat.Encrypt(keyToBytes(key), m.encryptionKey)
-			if err != nil {
-				return nil, err
-			}
 			// store the key
-			err = m.store.Write(keyName, ciphertext)
+			err = m.store.Write(keyName, keyToBytes(key))
 			if err != nil {
 				return nil, err
 			}
@@ -183,12 +174,7 @@ func (m *maintainer) find(bucket int64) (*rsa.PrivateKey, error) {
 		return nil, nil
 	}
 
-	plaintext, err := compat.Decrypt([]byte(blob), m.encryptionKey)
-	if err != nil {
-		return nil, errors.Wrap(err, "Decrypt")
-	}
-
-	return bytesToKey([]byte(plaintext)), nil
+	return bytesToKey(blob), nil
 }
 
 func (m *maintainer) currentBucket() int64 {

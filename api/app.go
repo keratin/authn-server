@@ -66,17 +66,19 @@ func NewApp() (*App, error) {
 		keyStore := data.NewRotatingKeyStore()
 		err = data.MaintainKeyStore(
 			keyStore,
-			&dataRedis.BlobStore{
-				// the lifetime of a key should be slightly more than two intervals
-				TTL: cfg.AccessTokenTTL*2 + 10*time.Second,
-				// the write lock should be greater than the peak time necessary to generate and
-				// encrypt a key, plus send it back over the wire to redis.
-				LockTime: time.Duration(500) * time.Millisecond,
-				Client:   redis,
-			},
+			data.NewEncryptedBlobStore(
+				&dataRedis.BlobStore{
+					// the lifetime of a key should be slightly more than two intervals
+					TTL: cfg.AccessTokenTTL*2 + 10*time.Second,
+					// the write lock should be greater than the peak time necessary to generate and
+					// encrypt a key, plus send it back over the wire to redis.
+					LockTime: time.Duration(500) * time.Millisecond,
+					Client:   redis,
+				},
+				cfg.DBEncryptionKey,
+			),
 			reporter,
 			cfg.AccessTokenTTL,
-			cfg.DBEncryptionKey,
 		)
 		if err != nil {
 			return nil, errors.Wrap(err, "MaintainKeyStore")
