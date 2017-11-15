@@ -10,8 +10,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-var placeholder = "generating"
-
 type keyStore struct {
 	keys   []*rsa.PrivateKey
 	rwLock *sync.RWMutex
@@ -28,10 +26,19 @@ func NewKeyStore(client *redis.Client, reporter ops.ErrorReporter, interval time
 	}
 
 	m := &maintainer{
+		store: &BlobStore{
+			// the lifetime of a key should be slightly more than two intervals
+			TTL: interval*2 + 10*time.Second,
+			// this should be greater than the peak time necessary to generate and encrypt a
+			// key, plus send it back over the wire to redis.
+			LockTime: race,
+			Client:   client,
+		},
+		// the rotation interval should be slightly longer than access token expiry.
+		// this means that when a key goes inactive for some interval, we can know
+		// that it is useless and discardable by the third interval.
 		interval:      interval,
-		race:          race,
 		keyStrength:   2048,
-		client:        client,
 		encryptionKey: encryptionKey,
 	}
 	err := m.maintain(ks, reporter)

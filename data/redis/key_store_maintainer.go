@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/lib"
 
-	"github.com/go-redis/redis"
 	"github.com/keratin/authn-server/lib/compat"
 	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
@@ -18,21 +18,14 @@ import (
 )
 
 type maintainer struct {
-	// the rotation interval should be slightly longer than access token expiry.
-	// this means that when a key goes inactive for some interval, we can know
-	// that it is useless and discardable by the third interval.
-	interval time.Duration
+	store data.BlobStore
 
-	// if two clients need to regenerate a key at the same time, this is how long
-	// one will have to attempt it while the other waits patiently.
-	//
-	// this should be greater than the peak time necessary to generate and encrypt a
-	// key, plus send it back over the wire to redis.
-	race time.Duration
-
+	// the rotation interval must be the same length as an access token expiry. that way a key can
+	// be in active use for one interval, remain available for verifying old access tokens during
+	// the second interval, and be removed and discarded during the third interval.
+	interval      time.Duration
 	keyStrength   int
 	encryptionKey []byte
-	client        *redis.Client
 }
 
 // maintain will restore and rotate a keyStore at periodic intervals.
@@ -131,7 +124,7 @@ func (m *maintainer) generate() (*rsa.PrivateKey, error) {
 			return existingKey, nil
 		}
 		// acquire Redis lock (global mutex)
-		success, err := m.client.SetNX(redisKey, placeholder, m.race).Result()
+		success, err := m.store.WLock(redisKey)
 		if err != nil {
 			return nil, err
 		}
@@ -147,7 +140,7 @@ func (m *maintainer) generate() (*rsa.PrivateKey, error) {
 				return nil, err
 			}
 			// store the key
-			err = m.client.Set(redisKey, ciphertext, m.interval*2+10*time.Second).Err()
+			err = m.store.Write(redisKey, ciphertext)
 			if err != nil {
 				return nil, err
 			}
@@ -162,12 +155,11 @@ func (m *maintainer) generate() (*rsa.PrivateKey, error) {
 
 // find will retrieve and deserialize/decrypt from Redis
 func (m *maintainer) find(bucket int64) (*rsa.PrivateKey, error) {
-	blob, err := m.client.Get(fmt.Sprintf("rsa:%d", bucket)).Result()
-	if err == redis.Nil {
-		return nil, nil
-	} else if err != nil {
+	blob, err := m.store.Read(fmt.Sprintf("rsa:%d", bucket))
+	if err != nil {
 		return nil, errors.Wrap(err, "Get")
-	} else if blob == placeholder {
+	}
+	if blob == nil {
 		return nil, nil
 	}
 
