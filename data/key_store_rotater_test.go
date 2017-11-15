@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMaintainKeyStore(t *testing.T) {
+func TestKeyStoreRotater(t *testing.T) {
 	reporter := &ops.LogReporter{}
 	secret := []byte("32bigbytesofsuperultimatesecrecy")
 	interval := time.Hour
@@ -21,7 +21,8 @@ func TestMaintainKeyStore(t *testing.T) {
 	t.Run("empty remote storage", func(t *testing.T) {
 		blobStore := data.NewEncryptedBlobStore(mock.NewBlobStore(interval*2+time.Second, time.Second), secret)
 		store := data.NewRotatingKeyStore()
-		err := data.MaintainKeyStore(store, blobStore, reporter, interval)
+		rotater := data.NewKeyStoreRotater(blobStore, interval)
+		err := rotater.Maintain(store, reporter)
 		require.NoError(t, err)
 
 		assert.NotEmpty(t, store.Keys())
@@ -31,24 +32,26 @@ func TestMaintainKeyStore(t *testing.T) {
 
 	t.Run("multiple servers", func(t *testing.T) {
 		blobStore := data.NewEncryptedBlobStore(mock.NewBlobStore(interval*2+time.Second, time.Second), secret)
+
 		store1 := data.NewRotatingKeyStore()
-		err := data.MaintainKeyStore(store1, blobStore, reporter, interval)
+		err := data.NewKeyStoreRotater(blobStore, interval).Maintain(store1, reporter)
 		require.NoError(t, err)
 		key1 := store1.Key()
 		assert.NotEmpty(t, key1)
 
 		store2 := data.NewRotatingKeyStore()
-		err = data.MaintainKeyStore(store2, blobStore, reporter, interval)
+		err = data.NewKeyStoreRotater(blobStore, interval).Maintain(store2, reporter)
 		require.NoError(t, err)
-		assert.Equal(t, key1, store2.Key())
 		assert.Len(t, store2.Keys(), 1)
+		assert.Equal(t, key1, store2.Key())
 		assert.Equal(t, key1, store2.Keys()[0])
 	})
 
 	t.Run("rotation", func(t *testing.T) {
 		blobStore := data.NewEncryptedBlobStore(mock.NewBlobStore(interval*2+time.Second, time.Second), secret)
 		store := data.NewRotatingKeyStore()
-		err := data.MaintainKeyStore(store, blobStore, reporter, interval)
+		rotater := data.NewKeyStoreRotater(blobStore, interval)
+		err := rotater.Maintain(store, reporter)
 		require.NoError(t, err)
 
 		firstKey := store.Keys()[0]

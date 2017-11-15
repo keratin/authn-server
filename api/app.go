@@ -10,7 +10,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/keratin/authn-server/data/mock"
 	dataRedis "github.com/keratin/authn-server/data/redis"
 )
 
@@ -60,23 +59,21 @@ func NewApp() (*App, error) {
 		TTL:    cfg.RefreshTokenTTL,
 	}
 
-	var keyStore data.KeyStore
+	keyStore := data.NewRotatingKeyStore()
 	if cfg.IdentitySigningKey == nil {
-		keyStore := data.NewRotatingKeyStore()
-		err = data.MaintainKeyStore(
-			keyStore,
+		m := data.NewKeyStoreRotater(
 			data.NewEncryptedBlobStore(
 				data.NewBlobStore(cfg.AccessTokenTTL, redis),
 				cfg.DBEncryptionKey,
 			),
-			reporter,
 			cfg.AccessTokenTTL,
 		)
+		err := m.Maintain(keyStore, reporter)
 		if err != nil {
-			return nil, errors.Wrap(err, "MaintainKeyStore")
+			return nil, errors.Wrap(err, "Maintain")
 		}
 	} else {
-		keyStore = mock.NewKeyStore(cfg.IdentitySigningKey)
+		keyStore.Rotate(cfg.IdentitySigningKey)
 	}
 
 	actives := dataRedis.NewActives(

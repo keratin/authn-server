@@ -16,36 +16,30 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// MaintainKeyStore maintains a rotating key store by periodically generating new keys. It will only
-// persist keys into an _encrypted_ blob store.
-func MaintainKeyStore(ks *RotatingKeyStore, store *EncryptedBlobStore, reporter ops.ErrorReporter, interval time.Duration) error {
-	m := &maintainer{
-		store: store,
-		// the rotation interval should be slightly longer than access token expiry.
-		// this means that when a key goes inactive for some interval, we can know
-		// that it is useless and discardable by the third interval.
+// NewKeyStoreRotater creates a KeyStoreRotater.
+//
+// The rotation interval should match the lifetime of an access token. This means a key can be used
+// to sign tokens for one time period, remain available to verify tokens for another time period,
+// and be discarded during the third.
+func NewKeyStoreRotater(blobStore *EncryptedBlobStore, interval time.Duration) *KeyStoreRotater {
+	return &KeyStoreRotater{
+		store:       blobStore,
 		interval:    interval,
 		keyStrength: 2048,
 	}
-	err := m.maintain(ks, reporter)
-	if err != nil {
-		return errors.Wrap(err, "maintain")
-	}
-
-	return nil
 }
 
-type maintainer struct {
-	// the rotation interval must be the same length as an access token expiry. that way a key can
-	// be in active use for one interval, remain available for verifying old access tokens during
-	// the second interval, and be removed and discarded during the third interval.
+// KeyStoreRotater will rotate a RotatingKeyStore by periodically generating new keys. The keys will be
+// persisted into an EncryptedBlobStore, shared with other processes, and read back on startup.
+type KeyStoreRotater struct {
 	interval    time.Duration
 	keyStrength int
 	store       *EncryptedBlobStore
 }
 
-// maintain will restore and rotate a keyStore at periodic intervals.
-func (m *maintainer) maintain(ks *RotatingKeyStore, r ops.ErrorReporter) error {
+// Maintain will restore and rotate a keyStore at periodic intervals. It will return an error only
+// for issues during startup. Any issues that arise later during background work will be reported.
+func (m *KeyStoreRotater) Maintain(ks *RotatingKeyStore, r ops.ErrorReporter) error {
 	// fetch current keys
 	keys, err := m.restore()
 	if err != nil {
@@ -90,7 +84,7 @@ func (m *maintainer) maintain(ks *RotatingKeyStore, r ops.ErrorReporter) error {
 	return nil
 }
 
-func (m *maintainer) rotate(ks *RotatingKeyStore) error {
+func (m *KeyStoreRotater) rotate(ks *RotatingKeyStore) error {
 	newKey, err := m.generate()
 	if err != nil {
 		return errors.Wrap(err, "generate")
@@ -106,7 +100,7 @@ func (m *maintainer) rotate(ks *RotatingKeyStore) error {
 // restore will query the blob store for the previous and current keys. It returns keys in the
 // proper sorting order, with the newest (current) key in last position. missing keys will leave a
 // blank slot, so that the caller may choose what to do.
-func (m *maintainer) restore() ([]*rsa.PrivateKey, error) {
+func (m *KeyStoreRotater) restore() ([]*rsa.PrivateKey, error) {
 	bucket := m.currentBucket()
 	keys := make([]*rsa.PrivateKey, 2)
 
@@ -127,7 +121,7 @@ func (m *maintainer) restore() ([]*rsa.PrivateKey, error) {
 
 // generate will create a new key and store it as an encrypted blob. It relies on a write lock to
 // coordinate with other AuthN servers.
-func (m *maintainer) generate() (*rsa.PrivateKey, error) {
+func (m *KeyStoreRotater) generate() (*rsa.PrivateKey, error) {
 	bucket := m.currentBucket()
 	keyName := fmt.Sprintf("rsa:%d", bucket)
 	for {
@@ -165,7 +159,7 @@ func (m *maintainer) generate() (*rsa.PrivateKey, error) {
 }
 
 // find will retrieve and deserialize/decrypt from the blob store
-func (m *maintainer) find(bucket int64) (*rsa.PrivateKey, error) {
+func (m *KeyStoreRotater) find(bucket int64) (*rsa.PrivateKey, error) {
 	blob, err := m.store.Read(fmt.Sprintf("rsa:%d", bucket))
 	if err != nil {
 		return nil, errors.Wrap(err, "Get")
@@ -177,7 +171,7 @@ func (m *maintainer) find(bucket int64) (*rsa.PrivateKey, error) {
 	return bytesToKey(blob), nil
 }
 
-func (m *maintainer) currentBucket() int64 {
+func (m *KeyStoreRotater) currentBucket() int64 {
 	return time.Now().Unix() / int64(m.interval/time.Second)
 }
 
