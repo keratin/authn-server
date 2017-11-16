@@ -102,7 +102,3 @@ func (s *RefreshTokenStore) Revoke(token models.RefreshToken) error {
 	_, err := s.Exec("DELETE FROM refresh_tokens WHERE token = ?", token)
 	return err
 }
-
-func generateToken() string {
-	return "TODO"
-}
