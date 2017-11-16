@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/keratin/authn-server/ops"
 	sq3 "github.com/mattn/go-sqlite3"
 	"github.com/pkg/errors"
 )
@@ -15,6 +16,16 @@ type BlobStore struct {
 	TTL      time.Duration
 	LockTime time.Duration
 	DB       *sqlx.DB
+}
+
+func (s *BlobStore) Clean(reporter ops.ErrorReporter) {
+	go func() {
+		_, err := s.DB.Exec("DELETE FROM blobs WHERE expires_at < ?", time.Now())
+		if err != nil {
+			reporter.ReportError(err)
+		}
+		time.Sleep(time.Minute)
+	}()
 }
 
 func (s *BlobStore) WLock(name string) (bool, error) {

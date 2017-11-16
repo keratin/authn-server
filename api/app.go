@@ -68,7 +68,7 @@ func NewApp() (*App, error) {
 	if cfg.IdentitySigningKey == nil {
 		m := data.NewKeyStoreRotater(
 			data.NewEncryptedBlobStore(
-				data.NewBlobStore(cfg.AccessTokenTTL, redis),
+				data.NewBlobStore(cfg.AccessTokenTTL, redis, db, reporter),
 				cfg.DBEncryptionKey,
 			),
 			cfg.AccessTokenTTL,
