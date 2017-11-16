@@ -1,4 +1,4 @@
-package redis
+package lib
 
 import (
 	"math"
@@ -19,7 +19,8 @@ type epochIntervalTicker struct {
 	lastReportedInterval int
 }
 
-func NewEpochIntervalTicker(interval time.Duration) <-chan int {
+// EpochIntervalTick returns only the channel from an epochIntervalTicker
+func EpochIntervalTick(interval time.Duration) <-chan int {
 	ticker := &epochIntervalTicker{
 		interval:             interval,
 		C:                    make(chan int),

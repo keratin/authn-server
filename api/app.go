@@ -2,7 +2,6 @@ package api
 
 import (
 	"os"
-	"time"
 
 	raven "github.com/getsentry/raven-go"
 	"github.com/keratin/authn-server/config"
@@ -11,7 +10,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	"github.com/keratin/authn-server/data/mock"
 	dataRedis "github.com/keratin/authn-server/data/redis"
 )
 
@@ -61,20 +59,21 @@ func NewApp() (*App, error) {
 		TTL:    cfg.RefreshTokenTTL,
 	}
 
-	var keyStore data.KeyStore
+	keyStore := data.NewRotatingKeyStore()
 	if cfg.IdentitySigningKey == nil {
-		keyStore, err = dataRedis.NewKeyStore(
-			redis,
-			reporter,
+		m := data.NewKeyStoreRotater(
+			data.NewEncryptedBlobStore(
+				data.NewBlobStore(cfg.AccessTokenTTL, redis),
+				cfg.DBEncryptionKey,
+			),
 			cfg.AccessTokenTTL,
-			time.Duration(500)*time.Millisecond,
-			cfg.DBEncryptionKey,
 		)
+		err := m.Maintain(keyStore, reporter)
 		if err != nil {
-			return nil, errors.Wrap(err, "NewKeyStore")
+			return nil, errors.Wrap(err, "Maintain")
 		}
 	} else {
-		keyStore = mock.NewKeyStore(cfg.IdentitySigningKey)
+		keyStore.Rotate(cfg.IdentitySigningKey)
 	}
 
 	actives := dataRedis.NewActives(

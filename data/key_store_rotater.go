@@ -1,4 +1,4 @@
-package redis
+package data
 
 import (
 	"crypto/rand"
@@ -8,33 +8,38 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-redis/redis"
+	"github.com/keratin/authn-server/lib"
+
 	"github.com/keratin/authn-server/lib/compat"
 	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
-type maintainer struct {
-	// the rotation interval should be slightly longer than access token expiry.
-	// this means that when a key goes inactive for some interval, we can know
-	// that it is useless and discardable by the third interval.
-	interval time.Duration
-
-	// if two clients need to regenerate a key at the same time, this is how long
-	// one will have to attempt it while the other waits patiently.
-	//
-	// this should be greater than the peak time necessary to generate and encrypt a
-	// key, plus send it back over the wire to redis.
-	race time.Duration
-
-	keyStrength   int
-	encryptionKey []byte
-	client        *redis.Client
+// NewKeyStoreRotater creates a KeyStoreRotater.
+//
+// The rotation interval should match the lifetime of an access token. This means a key can be used
+// to sign tokens for one time period, remain available to verify tokens for another time period,
+// and be discarded during the third.
+func NewKeyStoreRotater(blobStore *EncryptedBlobStore, interval time.Duration) *KeyStoreRotater {
+	return &KeyStoreRotater{
+		store:       blobStore,
+		interval:    interval,
+		keyStrength: 2048,
+	}
 }
 
-// maintain will restore and rotate a keyStore at periodic intervals.
-func (m *maintainer) maintain(ks *keyStore, r ops.ErrorReporter) error {
+// KeyStoreRotater will rotate a RotatingKeyStore by periodically generating new keys. The keys will be
+// persisted into an EncryptedBlobStore, shared with other processes, and read back on startup.
+type KeyStoreRotater struct {
+	interval    time.Duration
+	keyStrength int
+	store       *EncryptedBlobStore
+}
+
+// Maintain will restore and rotate a keyStore at periodic intervals. It will return an error only
+// for issues during startup. Any issues that arise later during background work will be reported.
+func (m *KeyStoreRotater) Maintain(ks *RotatingKeyStore, r ops.ErrorReporter) error {
 	// fetch current keys
 	keys, err := m.restore()
 	if err != nil {
@@ -67,8 +72,8 @@ func (m *maintainer) maintain(ks *keyStore, r ops.ErrorReporter) error {
 	}
 
 	go func() {
-		ticker := NewEpochIntervalTicker(m.interval)
-		for range ticker {
+		intervals := lib.EpochIntervalTick(m.interval)
+		for range intervals {
 			err = m.rotate(ks)
 			if err != nil {
 				r.ReportError(err)
@@ -79,7 +84,7 @@ func (m *maintainer) maintain(ks *keyStore, r ops.ErrorReporter) error {
 	return nil
 }
 
-func (m *maintainer) rotate(ks *keyStore) error {
+func (m *KeyStoreRotater) rotate(ks *RotatingKeyStore) error {
 	newKey, err := m.generate()
 	if err != nil {
 		return errors.Wrap(err, "generate")
@@ -92,10 +97,10 @@ func (m *maintainer) rotate(ks *keyStore) error {
 	return nil
 }
 
-// restore will query Redis for the previous and current keys. It returns keys in the proper sorting
-// order, with the newest (current) key in last position. missing keys will leave a blank slot, so
-// that the caller may choose what to do.
-func (m *maintainer) restore() ([]*rsa.PrivateKey, error) {
+// restore will query the blob store for the previous and current keys. It returns keys in the
+// proper sorting order, with the newest (current) key in last position. missing keys will leave a
+// blank slot, so that the caller may choose what to do.
+func (m *KeyStoreRotater) restore() ([]*rsa.PrivateKey, error) {
 	bucket := m.currentBucket()
 	keys := make([]*rsa.PrivateKey, 2)
 
@@ -114,11 +119,11 @@ func (m *maintainer) restore() ([]*rsa.PrivateKey, error) {
 	return keys, nil
 }
 
-// generate will create a new key and store it in Redis. It relies on a Redis lock to coordinate
-// with other AuthN servers.
-func (m *maintainer) generate() (*rsa.PrivateKey, error) {
+// generate will create a new key and store it as an encrypted blob. It relies on a write lock to
+// coordinate with other AuthN servers.
+func (m *KeyStoreRotater) generate() (*rsa.PrivateKey, error) {
 	bucket := m.currentBucket()
-	redisKey := fmt.Sprintf("rsa:%d", bucket)
+	keyName := fmt.Sprintf("rsa:%d", bucket)
 	for {
 		// check if another server has created it
 		existingKey, err := m.find(bucket)
@@ -128,8 +133,8 @@ func (m *maintainer) generate() (*rsa.PrivateKey, error) {
 		if existingKey != nil {
 			return existingKey, nil
 		}
-		// acquire Redis lock (global mutex)
-		success, err := m.client.SetNX(redisKey, placeholder, m.race).Result()
+		// acquire write lock (global mutex)
+		success, err := m.store.WLock(keyName)
 		if err != nil {
 			return nil, err
 		}
@@ -139,13 +144,8 @@ func (m *maintainer) generate() (*rsa.PrivateKey, error) {
 			if err != nil {
 				return nil, err
 			}
-			// encrypt the key
-			ciphertext, err := compat.Encrypt(keyToBytes(key), m.encryptionKey)
-			if err != nil {
-				return nil, err
-			}
 			// store the key
-			err = m.client.Set(redisKey, ciphertext, m.interval*2+10*time.Second).Err()
+			err = m.store.Write(keyName, keyToBytes(key))
 			if err != nil {
 				return nil, err
 			}
@@ -158,26 +158,20 @@ func (m *maintainer) generate() (*rsa.PrivateKey, error) {
 	}
 }
 
-// find will retrieve and deserialize/decrypt from Redis
-func (m *maintainer) find(bucket int64) (*rsa.PrivateKey, error) {
-	blob, err := m.client.Get(fmt.Sprintf("rsa:%d", bucket)).Result()
-	if err == redis.Nil {
-		return nil, nil
-	} else if err != nil {
-		return nil, errors.Wrap(err, "Get")
-	} else if blob == placeholder {
-		return nil, nil
-	}
-
-	plaintext, err := compat.Decrypt([]byte(blob), m.encryptionKey)
+// find will retrieve and deserialize/decrypt from the blob store
+func (m *KeyStoreRotater) find(bucket int64) (*rsa.PrivateKey, error) {
+	blob, err := m.store.Read(fmt.Sprintf("rsa:%d", bucket))
 	if err != nil {
-		return nil, errors.Wrap(err, "Decrypt")
+		return nil, errors.Wrap(err, "Get")
+	}
+	if blob == nil {
+		return nil, nil
 	}
 
-	return bytesToKey([]byte(plaintext)), nil
+	return bytesToKey(blob), nil
 }
 
-func (m *maintainer) currentBucket() int64 {
+func (m *KeyStoreRotater) currentBucket() int64 {
 	return time.Now().Unix() / int64(m.interval/time.Second)
 }
 
