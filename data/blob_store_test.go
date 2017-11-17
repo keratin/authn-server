@@ -7,6 +7,7 @@ import (
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/data/redis"
+	"github.com/keratin/authn-server/data/sqlite3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -37,6 +38,20 @@ func TestBlobStores(t *testing.T) {
 			client.FlushDb()
 		}
 	})
+
+	t.Run("Sqlite3", func(t *testing.T) {
+		for _, tester := range testers {
+			db, err := sqlite3.TestDB()
+			require.NoError(t, err)
+			store := &sqlite3.BlobStore{
+				TTL:      time.Minute,
+				LockTime: time.Minute,
+				DB:       db,
+			}
+			tester(t, store)
+			store.DB.Close()
+		}
+	})
 }
 
 func testReadWrite(t *testing.T, bs data.BlobStore) {
@@ -49,7 +64,7 @@ func testReadWrite(t *testing.T, bs data.BlobStore) {
 
 	blob, err = bs.Read("blob")
 	assert.NoError(t, err)
-	assert.Equal(t, []byte("val"), blob)
+	assert.Equal(t, "val", string(blob))
 }
 
 func testWriteLock(t *testing.T, bs data.BlobStore) {
@@ -73,5 +88,4 @@ func testWriteLock(t *testing.T, bs data.BlobStore) {
 	ok, err = bs.WLock("existing")
 	assert.NoError(t, err)
 	assert.False(t, ok)
-
 }

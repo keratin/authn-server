@@ -1,6 +1,16 @@
 package data
 
-import "github.com/keratin/authn-server/models"
+import (
+	"time"
+
+	"github.com/keratin/authn-server/ops"
+
+	"github.com/go-redis/redis"
+	"github.com/jmoiron/sqlx"
+	dataRedis "github.com/keratin/authn-server/data/redis"
+	"github.com/keratin/authn-server/data/sqlite3"
+	"github.com/keratin/authn-server/models"
+)
 
 type RefreshTokenStore interface {
 	// Generates and persists a token for the given accountID.
@@ -23,4 +33,25 @@ type RefreshTokenStore interface {
 	// Revokes the token and removes it from the set of active tokens for the account. Doesn't error
 	// if the token is unknown or already revoked.
 	Revoke(t models.RefreshToken) error
+}
+
+func NewRefreshTokenStore(db *sqlx.DB, redis *redis.Client, reporter ops.ErrorReporter, ttl time.Duration) RefreshTokenStore {
+	if redis != nil {
+		return &dataRedis.RefreshTokenStore{
+			Client: redis,
+			TTL:    ttl,
+		}
+	}
+
+	switch db.DriverName() {
+	case "sqlite3":
+		store := &sqlite3.RefreshTokenStore{
+			DB:  db,
+			TTL: ttl,
+		}
+		store.Clean(reporter)
+		return store
+	default:
+		return nil
+	}
 }

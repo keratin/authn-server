@@ -12,25 +12,15 @@ import (
 	sq3 "github.com/mattn/go-sqlite3"
 )
 
-func NewDB(url *url.URL) (*sqlx.DB, AccountStore, error) {
+func NewDB(url *url.URL) (*sqlx.DB, error) {
 	switch url.Scheme {
 	case "sqlite3":
-		db, err := sqlite3.NewDB(url.Path)
-		if err != nil {
-			return nil, nil, err
-		}
-		store := sqlite3.AccountStore{db}
-		return db, &store, nil
+		return sqlite3.NewDB(url.Path)
 	case "mysql", "mysql2":
 		// mysql2 is compatibility with the ruby version, where it is the name of a popular driver
-		db, err := mysql.NewDB(url)
-		if err != nil {
-			return nil, nil, err
-		}
-		store := mysql.AccountStore{db}
-		return db, &store, nil
+		return mysql.NewDB(url)
 	default:
-		return nil, nil, fmt.Errorf("Unsupported database: %s", url.Scheme)
+		return nil, fmt.Errorf("Unsupported database: %s", url.Scheme)
 	}
 }
 

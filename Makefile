@@ -63,6 +63,15 @@ test-ci:
 	  TEST_MYSQL_URL=mysql://root@127.0.0.1/test \
 	  go test -race $(PKGS)
 
+# Run benchmarks
+.PHONY: benchmarks
+benchmarks:
+	docker-compose up -d redis
+	TEST_REDIS_URL=redis://127.0.0.1:8701/12 \
+		go test -run=XXX -bench=. \
+			github.com/keratin/authn-server/api/meta \
+			github.com/keratin/authn-server/api/sessions
+
 # Run migrations
 .PHONY: migrate
 migrate:
