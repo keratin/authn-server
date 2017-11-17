@@ -4,6 +4,7 @@ import (
 	"os"
 
 	raven "github.com/getsentry/raven-go"
+	"github.com/go-redis/redis"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/ops"
@@ -49,9 +50,12 @@ func NewApp() (*App, error) {
 		return nil, errors.Wrap(err, "data.NewDB")
 	}
 
-	redis, err := dataRedis.New(cfg.RedisURL)
-	if err != nil {
-		return nil, errors.Wrap(err, "redis.New")
+	var redis *redis.Client
+	if cfg.RedisURL != nil {
+		redis, err = dataRedis.New(cfg.RedisURL)
+		if err != nil {
+			return nil, errors.Wrap(err, "redis.New")
+		}
 	}
 
 	accountStore := data.NewAccountStore(db)
@@ -81,17 +85,20 @@ func NewApp() (*App, error) {
 		keyStore.Rotate(cfg.IdentitySigningKey)
 	}
 
-	actives := dataRedis.NewActives(
-		redis,
-		cfg.StatisticsTimeZone,
-		cfg.DailyActivesRetention,
-		cfg.WeeklyActivesRetention,
-		5*12,
-	)
+	var actives data.Actives
+	if redis != nil {
+		actives = dataRedis.NewActives(
+			redis,
+			cfg.StatisticsTimeZone,
+			cfg.DailyActivesRetention,
+			cfg.WeeklyActivesRetention,
+			5*12,
+		)
+	}
 
 	return &App{
 		DbCheck:           func() bool { return db.Ping() == nil },
-		RedisCheck:        func() bool { return redis.Ping().Err() == nil },
+		RedisCheck:        func() bool { return redis != nil && redis.Ping().Err() == nil },
 		Config:            cfg,
 		AccountStore:      accountStore,
 		RefreshTokenStore: tokenStore,

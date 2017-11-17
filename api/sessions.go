@@ -54,7 +54,9 @@ func SetSession(cfg *config.Config, w http.ResponseWriter, val string) {
 }
 
 func IdentityForSession(keyStore data.KeyStore, actives data.Actives, cfg *config.Config, session *sessions.Claims, accountID int) (string, error) {
-	actives.Track(accountID)
+	if actives != nil {
+		actives.Track(accountID)
+	}
 	identity := identities.New(cfg, session, accountID)
 	identityToken, err := identity.Sign(keyStore.Key())
 	if err != nil {

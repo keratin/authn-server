@@ -28,3 +28,16 @@ func TestGetStats(t *testing.T) {
 	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
 	assert.NotEmpty(t, body)
 }
+
+func TestGetStatsWithoutRedis(t *testing.T) {
+	app := test.App()
+	app.Actives = nil
+	server := test.Server(app, meta.Routes(app))
+	defer server.Close()
+
+	client := route.NewClient(server.URL).Authenticated(app.Config.AuthUsername, app.Config.AuthPassword)
+
+	res, err := client.Get("/stats")
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusNotFound, res.StatusCode)
+}
