@@ -20,6 +20,15 @@ import (
 )
 
 func BenchmarkGetSessionRefresh(b *testing.B) {
+	verify := func(res *http.Response, err error) {
+		if err != nil {
+			panic(err)
+		}
+		if res.StatusCode != http.StatusCreated {
+			panic(res.StatusCode)
+		}
+	}
+
 	b.Run("mock    store", func(b *testing.B) {
 		app := test.App()
 		server := test.Server(app, apiSessions.Routes(app))
@@ -31,7 +40,7 @@ func BenchmarkGetSessionRefresh(b *testing.B) {
 
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
-			client.Get("/session/refresh")
+			verify(client.Get("/session/refresh"))
 		}
 	})
 
@@ -52,7 +61,7 @@ func BenchmarkGetSessionRefresh(b *testing.B) {
 
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
-			client.Get("/session/refresh")
+			verify(client.Get("/session/refresh"))
 		}
 	})
 
@@ -72,7 +81,7 @@ func BenchmarkGetSessionRefresh(b *testing.B) {
 
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
-			client.Get("/session/refresh")
+			verify(client.Get("/session/refresh"))
 		}
 	})
 }
