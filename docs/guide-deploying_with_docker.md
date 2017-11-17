@@ -13,27 +13,21 @@ rely on the `:latest` tag, as it is not guaranteed to reflect the newest stable 
 
 ### Daemon
 
-You can run the AuthN Docker image as a daemon. Here's the quickest way to get it running:
+You can run the AuthN Docker image as a daemon. Here's the quickest way to get it running with
+minimal dependencies:
 
 ```sh
-# start a Redis server in the background
-docker run --detach --name authn_redis redis
-
-# then, configure and start an AuthN server on localhost:8080
-docker run \
+docker run -it --rm \
   --publish 8080:3000 \
-  --link authn_redis:rd \
   -e AUTHN_URL=localhost:8080 \
   -e APP_DOMAINS=localhost \
   -e DATABASE_URL=sqlite3:db/demo.sqlite3 \
-  -e REDIS_URL=redis://rd:6379/1 \
   -e SECRET_KEY_BASE=changeme \
   -e HTTP_AUTH_USERNAME=hello \
   -e HTTP_AUTH_PASSWORD=world \
-  --detach \
   --name authn_app \
   keratin/authn-server:latest \
-  sh -c "./authn migrate && ./authn 3000 server"
+  sh -c "./authn migrate && ./authn server"
 ```
 
 ### Compose
