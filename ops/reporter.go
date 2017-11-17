@@ -26,7 +26,7 @@ func (r *LogReporter) ReportError(err error) {
 
 // ReportRequestError reports some error information to STDOUT. The printed details are not robust.
 func (r *LogReporter) ReportRequestError(err error, req *http.Request) {
-	fmt.Printf("[%v] %v\n", time.Now(), err)
+	fmt.Printf("[%v][%v %v] %v\n", time.Now(), req.Method, req.URL, err)
 }
 
 // PanicHandler returns a http.Handler that will recover any panics and print some information to
