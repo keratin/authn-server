@@ -25,13 +25,13 @@ func TestGetAccountsAvailable(t *testing.T) {
 		res, err := client.Get("/accounts/available?username=" + account.Username)
 		require.NoError(t, err)
 
-		assert.Equal(t, http.StatusOK, res.StatusCode)
+		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
 	})
 
 	t.Run("unknown username", func(t *testing.T) {
 		res, err := client.Get("/accounts/available?username=unknown@test.com")
 		require.NoError(t, err)
 
-		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
+		assert.Equal(t, http.StatusOK, res.StatusCode)
 	})
 }
