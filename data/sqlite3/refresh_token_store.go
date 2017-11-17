@@ -4,9 +4,11 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/keratin/authn-server/ops"
+	"github.com/pkg/errors"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/keratin/authn-server/lib"
@@ -20,11 +22,13 @@ type RefreshTokenStore struct {
 
 func (s *RefreshTokenStore) Clean(reporter ops.ErrorReporter) {
 	go func() {
-		_, err := s.Exec("DELETE FROM refresh_tokens WHERE expires_at < ?", time.Now())
-		if err != nil {
-			reporter.ReportError(err)
+		for range time.Tick(time.Minute + time.Duration(rand.Intn(5))*time.Second) {
+			_, err := s.Exec("DELETE FROM refresh_tokens WHERE expires_at < ?", time.Now())
+			if err != nil {
+				reporter.ReportError(errors.Wrap(err, "RefreshTokenStore Clean"))
+			}
+			time.Sleep(time.Minute)
 		}
-		time.Sleep(time.Minute)
 	}()
 }
 
