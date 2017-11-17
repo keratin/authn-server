@@ -58,23 +58,25 @@ func NewApp() (*App, error) {
 		}
 	}
 
-	accountStore := data.NewAccountStore(db)
-	if accountStore == nil {
+	accountStore, err := data.NewAccountStore(db)
+	if err != nil {
 		return nil, errors.Wrap(err, "NewAccountStore")
 	}
 
-	tokenStore := data.NewRefreshTokenStore(db, redis, reporter, cfg.RefreshTokenTTL)
-	if tokenStore == nil {
+	tokenStore, err := data.NewRefreshTokenStore(db, redis, reporter, cfg.RefreshTokenTTL)
+	if err != nil {
 		return nil, errors.Wrap(err, "NewRefreshTokenStore")
+	}
+
+	blobStore, err := data.NewBlobStore(cfg.AccessTokenTTL, redis, db, reporter)
+	if err != nil {
+		return nil, errors.Wrap(err, "NewBlobStore")
 	}
 
 	keyStore := data.NewRotatingKeyStore()
 	if cfg.IdentitySigningKey == nil {
 		m := data.NewKeyStoreRotater(
-			data.NewEncryptedBlobStore(
-				data.NewBlobStore(cfg.AccessTokenTTL, redis, db, reporter),
-				cfg.DBEncryptionKey,
-			),
+			data.NewEncryptedBlobStore(blobStore, cfg.DBEncryptionKey),
 			cfg.AccessTokenTTL,
 		)
 		err := m.Maintain(keyStore, reporter)
