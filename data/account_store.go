@@ -1,6 +1,8 @@
 package data
 
 import (
+	"fmt"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/keratin/authn-server/data/mysql"
 	"github.com/keratin/authn-server/data/sqlite3"
@@ -19,13 +21,13 @@ type AccountStore interface {
 	UpdateUsername(id int, u string) error
 }
 
-func NewAccountStore(db *sqlx.DB) AccountStore {
+func NewAccountStore(db *sqlx.DB) (AccountStore, error) {
 	switch db.DriverName() {
 	case "sqlite3":
-		return &sqlite3.AccountStore{DB: db}
+		return &sqlite3.AccountStore{DB: db}, nil
 	case "mysql":
-		return &mysql.AccountStore{DB: db}
+		return &mysql.AccountStore{DB: db}, nil
 	default:
-		return nil
+		return nil, fmt.Errorf("unsupported driver: %v", db.DriverName())
 	}
 }

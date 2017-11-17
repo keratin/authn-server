@@ -4,6 +4,7 @@ import (
 	"os"
 
 	raven "github.com/getsentry/raven-go"
+	"github.com/go-redis/redis"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/ops"
@@ -49,28 +50,33 @@ func NewApp() (*App, error) {
 		return nil, errors.Wrap(err, "data.NewDB")
 	}
 
-	redis, err := dataRedis.New(cfg.RedisURL)
-	if err != nil {
-		return nil, errors.Wrap(err, "redis.New")
+	var redis *redis.Client
+	if cfg.RedisURL != nil {
+		redis, err = dataRedis.New(cfg.RedisURL)
+		if err != nil {
+			return nil, errors.Wrap(err, "redis.New")
+		}
 	}
 
-	accountStore := data.NewAccountStore(db)
-	if accountStore == nil {
+	accountStore, err := data.NewAccountStore(db)
+	if err != nil {
 		return nil, errors.Wrap(err, "NewAccountStore")
 	}
 
-	tokenStore := data.NewRefreshTokenStore(db, redis, reporter, cfg.RefreshTokenTTL)
-	if tokenStore == nil {
+	tokenStore, err := data.NewRefreshTokenStore(db, redis, reporter, cfg.RefreshTokenTTL)
+	if err != nil {
 		return nil, errors.Wrap(err, "NewRefreshTokenStore")
+	}
+
+	blobStore, err := data.NewBlobStore(cfg.AccessTokenTTL, redis, db, reporter)
+	if err != nil {
+		return nil, errors.Wrap(err, "NewBlobStore")
 	}
 
 	keyStore := data.NewRotatingKeyStore()
 	if cfg.IdentitySigningKey == nil {
 		m := data.NewKeyStoreRotater(
-			data.NewEncryptedBlobStore(
-				data.NewBlobStore(cfg.AccessTokenTTL, redis, db, reporter),
-				cfg.DBEncryptionKey,
-			),
+			data.NewEncryptedBlobStore(blobStore, cfg.DBEncryptionKey),
 			cfg.AccessTokenTTL,
 		)
 		err := m.Maintain(keyStore, reporter)
@@ -81,17 +87,20 @@ func NewApp() (*App, error) {
 		keyStore.Rotate(cfg.IdentitySigningKey)
 	}
 
-	actives := dataRedis.NewActives(
-		redis,
-		cfg.StatisticsTimeZone,
-		cfg.DailyActivesRetention,
-		cfg.WeeklyActivesRetention,
-		5*12,
-	)
+	var actives data.Actives
+	if redis != nil {
+		actives = dataRedis.NewActives(
+			redis,
+			cfg.StatisticsTimeZone,
+			cfg.DailyActivesRetention,
+			cfg.WeeklyActivesRetention,
+			5*12,
+		)
+	}
 
 	return &App{
 		DbCheck:           func() bool { return db.Ping() == nil },
-		RedisCheck:        func() bool { return redis.Ping().Err() == nil },
+		RedisCheck:        func() bool { return redis != nil && redis.Ping().Err() == nil },
 		Config:            cfg,
 		AccountStore:      accountStore,
 		RefreshTokenStore: tokenStore,

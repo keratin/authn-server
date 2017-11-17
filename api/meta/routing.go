@@ -9,7 +9,17 @@ import (
 func Routes(app *api.App) []*route.HandledRoute {
 	authentication := route.BasicAuthSecurity(app.Config.AuthUsername, app.Config.AuthPassword, "Private AuthN Realm")
 
-	return []*route.HandledRoute{
+	routes := []*route.HandledRoute{}
+
+	if app.Actives != nil {
+		routes = append(routes,
+			route.Get("/stats").
+				SecuredWith(authentication).
+				Handle(getStats(app)),
+		)
+	}
+
+	routes = append(routes,
 		route.Get("/").
 			SecuredWith(route.Unsecured()).
 			Handle(getRoot(app)),
@@ -22,11 +32,10 @@ func Routes(app *api.App) []*route.HandledRoute {
 		route.Get("/configuration").
 			SecuredWith(route.Unsecured()).
 			Handle(getConfiguration(app)),
-		route.Get("/stats").
-			SecuredWith(authentication).
-			Handle(getStats(app)),
 		route.Get("/metrics").
 			SecuredWith(authentication).
 			Handle(promhttp.Handler()),
-	}
+	)
+
+	return routes
 }

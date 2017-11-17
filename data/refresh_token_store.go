@@ -1,6 +1,7 @@
 package data
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/keratin/authn-server/ops"
@@ -35,12 +36,12 @@ type RefreshTokenStore interface {
 	Revoke(t models.RefreshToken) error
 }
 
-func NewRefreshTokenStore(db *sqlx.DB, redis *redis.Client, reporter ops.ErrorReporter, ttl time.Duration) RefreshTokenStore {
+func NewRefreshTokenStore(db *sqlx.DB, redis *redis.Client, reporter ops.ErrorReporter, ttl time.Duration) (RefreshTokenStore, error) {
 	if redis != nil {
 		return &dataRedis.RefreshTokenStore{
 			Client: redis,
 			TTL:    ttl,
-		}
+		}, nil
 	}
 
 	switch db.DriverName() {
@@ -50,8 +51,8 @@ func NewRefreshTokenStore(db *sqlx.DB, redis *redis.Client, reporter ops.ErrorRe
 			TTL: ttl,
 		}
 		store.Clean(reporter)
-		return store
+		return store, nil
 	default:
-		return nil
+		return nil, fmt.Errorf("unsupported driver: %v", db.DriverName())
 	}
 }

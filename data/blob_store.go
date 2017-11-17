@@ -1,6 +1,7 @@
 package data
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/go-redis/redis"
@@ -22,7 +23,7 @@ type BlobStore interface {
 	Write(name string, blob []byte) error
 }
 
-func NewBlobStore(interval time.Duration, redis *redis.Client, db *sqlx.DB, reporter ops.ErrorReporter) BlobStore {
+func NewBlobStore(interval time.Duration, redis *redis.Client, db *sqlx.DB, reporter ops.ErrorReporter) (BlobStore, error) {
 	// the lifetime of a key should be slightly more than two intervals
 	ttl := interval*2 + 10*time.Second
 
@@ -35,7 +36,7 @@ func NewBlobStore(interval time.Duration, redis *redis.Client, db *sqlx.DB, repo
 			TTL:      ttl,
 			LockTime: lockTime,
 			Client:   redis,
-		}
+		}, nil
 	}
 
 	switch db.DriverName() {
@@ -46,8 +47,8 @@ func NewBlobStore(interval time.Duration, redis *redis.Client, db *sqlx.DB, repo
 			DB:       db,
 		}
 		store.Clean(reporter)
-		return store
+		return store, nil
 	default:
-		return nil
+		return nil, fmt.Errorf("unsupported driver: %v", db.DriverName())
 	}
 }

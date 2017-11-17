@@ -167,9 +167,6 @@ var configurers = []configurer{
 	func(c *Config) error {
 		val, err := lookupURL("REDIS_URL")
 		if err == nil {
-			if val == nil {
-				return ErrMissingEnvVar("REDIS_URL")
-			}
 			c.RedisURL = val
 		}
 		return err
