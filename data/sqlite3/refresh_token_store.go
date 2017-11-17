@@ -86,13 +86,13 @@ func (s *RefreshTokenStore) FindAll(accountID int) ([]models.RefreshToken, error
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var token models.RefreshToken
+		var token string
 		err := rows.Scan(&token)
 		if err != nil {
 			return []models.RefreshToken{}, err
 		}
 		fmt.Println(token)
-		tokens = append(tokens, token)
+		tokens = append(tokens, models.RefreshToken(token))
 	}
 
 	return tokens, nil
