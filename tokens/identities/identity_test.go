@@ -30,7 +30,7 @@ func TestIdentityClaims(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("includes KID", func(t *testing.T) {
-		identity := identities.New(&cfg, session, 1)
+		identity := identities.New(&cfg, session, 1, "example.com")
 		identityStr, err := identity.Sign(key)
 		require.NoError(t, err)
 

@@ -23,7 +23,7 @@ func NewSession(refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore
 		return "", "", errors.Wrap(err, "Sign")
 	}
 
-	identityToken, err := IdentityForSession(keyStore, actives, cfg, session, accountID)
+	identityToken, err := IdentityForSession(keyStore, actives, cfg, session, accountID, authorizedAudience)
 	if err != nil {
 		return "", "", errors.Wrap(err, "IdentityForSession")
 	}
@@ -53,14 +53,13 @@ func SetSession(cfg *config.Config, w http.ResponseWriter, val string) {
 	http.SetCookie(w, cookie)
 }
 
-func IdentityForSession(keyStore data.KeyStore, actives data.Actives, cfg *config.Config, session *sessions.Claims, accountID int) (string, error) {
+func IdentityForSession(keyStore data.KeyStore, actives data.Actives, cfg *config.Config, session *sessions.Claims, accountID int, audience *route.Domain) (string, error) {
 	if actives != nil {
 		actives.Track(accountID)
 	}
-	identity := identities.New(cfg, session, accountID)
-	identityToken, err := identity.Sign(keyStore.Key())
+	identityToken, err := identities.New(cfg, session, accountID, audience.String()).Sign(keyStore.Key())
 	if err != nil {
-		return "", errors.Wrap(err, "Track")
+		return "", errors.Wrap(err, "New")
 	}
 
 	return identityToken, nil

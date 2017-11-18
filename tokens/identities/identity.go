@@ -39,13 +39,13 @@ func (c *Claims) Sign(rsaKey *rsa.PrivateKey) (string, error) {
 	return jwt.Signed(signer).Claims(c).CompactSerialize()
 }
 
-func New(cfg *config.Config, session *sessions.Claims, accountID int) *Claims {
+func New(cfg *config.Config, session *sessions.Claims, accountID int, audience string) *Claims {
 	return &Claims{
 		AuthTime: session.IssuedAt,
 		Claims: jwt.Claims{
 			Issuer:   session.Issuer,
 			Subject:  strconv.Itoa(accountID),
-			Audience: jwt.Audience{session.Azp},
+			Audience: jwt.Audience{audience},
 			Expiry:   jwt.NewNumericDate(time.Now().Add(cfg.AccessTokenTTL)),
 			IssuedAt: jwt.NewNumericDate(time.Now()),
 		},
