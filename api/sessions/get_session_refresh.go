@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/models"
 )
 
@@ -24,7 +25,7 @@ func getSessionRefresh(app *api.App) http.HandlerFunc {
 		}
 
 		// generate the requested identity token
-		identityToken, err := api.IdentityForSession(app.KeyStore, app.Actives, app.Config, session, accountID)
+		identityToken, err := api.IdentityForSession(app.KeyStore, app.Actives, app.Config, session, accountID, route.MatchedDomain(r))
 		if err != nil {
 			panic(err)
 		}
