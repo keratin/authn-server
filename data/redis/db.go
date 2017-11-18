@@ -20,6 +20,7 @@ func New(url *url.URL) (*redis.Client, error) {
 	return redis.NewClient(opts), nil
 }
 
+// TODO: move to _test
 func TestDB() (*redis.Client, error) {
 	str, ok := os.LookupEnv("TEST_REDIS_URL")
 	if !ok {

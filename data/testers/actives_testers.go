@@ -1,4 +1,4 @@
-package data_test
+package testers
 
 import (
 	"strconv"
@@ -6,32 +6,15 @@ import (
 	"time"
 
 	"github.com/keratin/authn-server/data"
-	"github.com/keratin/authn-server/data/mock"
-	"github.com/keratin/authn-server/data/redis"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestActives(t *testing.T) {
-	testers := []func(*testing.T, data.Actives){
-		testActivesTrack,
-		testActivesActivesByDay,
-		testActivesActivesByWeek,
-		testActivesActivesByMonth,
-	}
-
-	for _, tester := range testers {
-		mStore := mock.NewActives()
-		tester(t, mStore)
-	}
-
-	client, err := redis.TestDB()
-	require.NoError(t, err)
-	rStore := redis.NewActives(client, time.UTC, 365, 52, 12)
-	for _, tester := range testers {
-		client.FlushDB()
-		tester(t, rStore)
-	}
+var ActivesTesters = []func(*testing.T, data.Actives){
+	testActivesTrack,
+	testActivesActivesByDay,
+	testActivesActivesByWeek,
+	testActivesActivesByMonth,
 }
 
 func testActivesTrack(t *testing.T, actives data.Actives) {

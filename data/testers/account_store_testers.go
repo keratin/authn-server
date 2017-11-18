@@ -1,52 +1,20 @@
-package data_test
+package testers
 
 import (
 	"testing"
 
 	"github.com/keratin/authn-server/data"
-	"github.com/keratin/authn-server/data/mock"
-	"github.com/keratin/authn-server/data/mysql"
-	"github.com/keratin/authn-server/data/sqlite3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestAccountStore(t *testing.T) {
-	testers := []func(*testing.T, data.AccountStore){
-		testCreate,
-		testFindByUsername,
-		testLockAndUnlock,
-		testArchive,
-		testRequireNewPassword,
-		testSetPassword,
-	}
-
-	t.Run("Mock", func(t *testing.T) {
-		for _, tester := range testers {
-			store := mock.NewAccountStore()
-			tester(t, store)
-		}
-	})
-
-	t.Run("Sqlite3", func(t *testing.T) {
-		for _, tester := range testers {
-			db, err := sqlite3.TestDB()
-			require.NoError(t, err)
-			store := &sqlite3.AccountStore{db}
-			tester(t, store)
-			store.Close()
-		}
-	})
-
-	t.Run("MySQL", func(t *testing.T) {
-		db, err := mysql.TestDB()
-		require.NoError(t, err)
-		store := &mysql.AccountStore{db}
-		for _, tester := range testers {
-			tester(t, store)
-			db.MustExec("TRUNCATE accounts")
-		}
-	})
+var AccountStoreTesters = []func(*testing.T, data.AccountStore){
+	testCreate,
+	testFindByUsername,
+	testLockAndUnlock,
+	testArchive,
+	testRequireNewPassword,
+	testSetPassword,
 }
 
 func testCreate(t *testing.T, store data.AccountStore) {

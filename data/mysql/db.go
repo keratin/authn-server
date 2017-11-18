@@ -17,6 +17,7 @@ func NewDB(url *url.URL) (*sqlx.DB, error) {
 	return sqlx.Connect("mysql", cfg.FormatDSN())
 }
 
+// TODO: move to _test
 func TestDB() (*sqlx.DB, error) {
 	str, ok := os.LookupEnv("TEST_MYSQL_URL")
 	if !ok {
