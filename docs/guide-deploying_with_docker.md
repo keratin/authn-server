@@ -54,11 +54,11 @@ services:
     image: redis
 
   authn:
-    image: keratin/authn-server:0.9.0
+    image: keratin/authn-server:1.0.0
     ports:
       - "8765:3000"
     environment:
-      - DATABASE_URL=mysql2://root@db:3306/authn
+      - DATABASE_URL=mysql://root@db:3306/authn
       - REDIS_URL=redis://redis:6379/0
       - AUTHN_URL=http://authn:3000
       - APP_DOMAINS=localhost

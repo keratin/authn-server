@@ -16,8 +16,7 @@ func NewDB(url *url.URL) (*sqlx.DB, error) {
 	switch url.Scheme {
 	case "sqlite3":
 		return sqlite3.NewDB(url.Path)
-	case "mysql", "mysql2":
-		// mysql2 is compatibility with the ruby version, where it is the name of a popular driver
+	case "mysql":
 		return mysql.NewDB(url)
 	default:
 		return nil, fmt.Errorf("Unsupported database: %s", url.Scheme)
