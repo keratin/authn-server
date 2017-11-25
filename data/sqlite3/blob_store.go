@@ -40,7 +40,7 @@ func (s *BlobStore) WLock(name string) (bool, error) {
 }
 
 func (s *BlobStore) Write(name string, blob []byte) error {
-	_, err := s.DB.Exec("REPLACE INTO blobs (name, blob, expires_at) VALUES (?, ?, ?)", name, blob, time.Now().Add(s.LockTime))
+	_, err := s.DB.Exec("REPLACE INTO blobs (name, blob, expires_at) VALUES (?, ?, ?)", name, blob, time.Now().Add(s.TTL))
 	return err
 }
 

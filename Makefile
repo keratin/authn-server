@@ -2,7 +2,7 @@ PKGS := $(shell glide nv)
 ORG := keratin
 PROJECT := authn-server
 NAME := $(ORG)/$(PROJECT)
-VERSION := 1.0.0
+VERSION := 1.0.1
 
 .PHONY: clean
 clean:
