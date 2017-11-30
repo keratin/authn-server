@@ -12,6 +12,8 @@ import (
 	"github.com/keratin/authn-server/data"
 )
 
+var VERSION string
+
 func main() {
 	var cmd string
 	if len(os.Args) == 1 {
@@ -38,7 +40,7 @@ func serve() {
 		panic(err)
 	}
 
-	fmt.Println(fmt.Sprintf("~*~ Keratin AuthN server is ready on %s (%d) ~*~", app.Config.AuthNURL, app.Config.ServerPort))
+	fmt.Println(fmt.Sprintf("~*~ Keratin AuthN server v%s is ready on %s (%d) ~*~", VERSION, app.Config.AuthNURL, app.Config.ServerPort))
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", app.Config.ServerPort), router(app)))
 }
 
