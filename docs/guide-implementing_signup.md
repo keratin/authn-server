@@ -32,6 +32,11 @@ process that submits with two API calls.
 > the data client-side (step 3) is important because it will significantly reduce the odds of this
 > happening.
 
+> NOTE:
+> If you are using emails as username (by setting [USERNAME_IS_EMAIL](config.md#username_is_email) to `true`) and you need the email for user profile as well then consider using either authn or your application as the source of truth. You can either:
+> * Use authn as the source of truth and use [Get Account](api.md#get-account) API to get the user's email when creating the user profile.
+> * Use your application as the source of truth and use the [Update Account](api.md#update) API to update the email in authn when creating the user profile.
+
 ### Backend
 
 7. Validate and save the user's AuthN `account_id` along with your other user profile fields.
