@@ -68,6 +68,7 @@ func (s *accountStore) Create(u string, p []byte) (*models.Account, error) {
 func (s *accountStore) Archive(id int) error {
 	account := s.accountsByID[id]
 	if account != nil {
+		delete(s.idByUsername, account.Username)
 		now := time.Now()
 		account.Username = ""
 		account.Password = []byte("")

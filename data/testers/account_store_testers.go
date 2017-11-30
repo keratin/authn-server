@@ -83,6 +83,12 @@ func testArchive(t *testing.T, store data.AccountStore) {
 	assert.Empty(t, after.Username)
 	assert.Empty(t, after.Password)
 	assert.NotEmpty(t, after.DeletedAt)
+
+	account2, err := store.Create("authn@keratin.tech", []byte("password"))
+	if assert.NoError(t, err) {
+		err = store.Archive(account2.ID)
+		assert.NoError(t, err)
+	}
 }
 
 func testRequireNewPassword(t *testing.T, store data.AccountStore) {
