@@ -13,7 +13,7 @@ func TestAccountStore(t *testing.T) {
 	require.NoError(t, err)
 	store := &mysql.AccountStore{db}
 	for _, tester := range testers.AccountStoreTesters {
-		tester(t, store)
 		db.MustExec("TRUNCATE accounts")
+		tester(t, store)
 	}
 }

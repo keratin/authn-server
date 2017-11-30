@@ -20,12 +20,15 @@ func (db *AccountStore) Find(id int) (*models.Account, error) {
 	} else if err != nil {
 		return nil, err
 	}
+	if account.DeletedAt != nil {
+		account.Username = ""
+	}
 	return &account, nil
 }
 
 func (db *AccountStore) FindByUsername(u string) (*models.Account, error) {
 	account := models.Account{}
-	err := db.Get(&account, "SELECT * FROM accounts WHERE username = ?", u)
+	err := db.Get(&account, "SELECT * FROM accounts WHERE username = ? AND deleted_at IS NULL", u)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
@@ -63,7 +66,7 @@ func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 }
 
 func (db *AccountStore) Archive(id int) error {
-	_, err := db.Exec("UPDATE accounts SET username = ?, password = ?, deleted_at = ? WHERE id = ?", "", "", time.Now(), id)
+	_, err := db.Exec("UPDATE accounts SET username = CONCAT('@', MD5(RAND())), password = ?, deleted_at = ? WHERE id = ?", "", time.Now(), id)
 	return err
 }
 

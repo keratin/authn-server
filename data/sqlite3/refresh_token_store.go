@@ -3,7 +3,6 @@ package sqlite3
 import (
 	"database/sql"
 	"encoding/hex"
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -95,7 +94,6 @@ func (s *RefreshTokenStore) FindAll(accountID int) ([]models.RefreshToken, error
 		if err != nil {
 			return []models.RefreshToken{}, err
 		}
-		fmt.Println(token)
 		tokens = append(tokens, models.RefreshToken(token))
 	}
 
