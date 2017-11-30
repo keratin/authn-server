@@ -80,6 +80,7 @@ migrate:
 # Cut a release of the current version.
 .PHONY: release
 release: test docker
+	docker push $(NAME):latest
 	docker tag $(NAME):latest $(NAME):$(VERSION)
 	docker push $(NAME):$(VERSION)
 	git tag v$(VERSION)
