@@ -121,7 +121,9 @@ Visibility: Private
     {
       "result": {
         "id": <id>,
-        "username": "..."
+        "username": "...",
+        "locked": false,
+        "deleted": false
       }
     }
 

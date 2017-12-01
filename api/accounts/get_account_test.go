@@ -49,10 +49,14 @@ func assertGetAccountResponse(t *testing.T, res *http.Response, acc *models.Acco
 	responseData := struct {
 		ID       int    `json:"id"`
 		Username string `json:"username"`
+		Locked   bool   `json:"locked"`
+		Deleted  bool   `json:"deleted_at"`
 	}{}
 	err := test.ExtractResult(res, &responseData)
 	assert.NoError(t, err)
 
 	assert.Equal(t, acc.Username, responseData.Username)
 	assert.Equal(t, acc.ID, responseData.ID)
+	assert.Equal(t, false, responseData.Locked)
+	assert.Equal(t, false, responseData.Deleted)
 }
