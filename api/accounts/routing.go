@@ -27,6 +27,10 @@ func Routes(app *api.App) []*route.HandledRoute {
 			SecuredWith(authentication).
 			Handle(postAccountsImport(app)),
 
+		route.Get("/accounts/{id:[0-9]+}").
+			SecuredWith(authentication).
+			Handle(getAccount(app)),
+
 		route.Patch("/accounts/{id:[0-9]+}").
 			SecuredWith(authentication).
 			Handle(patchAccount(app)),

@@ -9,6 +9,7 @@ title: Server API
 * Endpoints
   * Accounts
     * [Signup](#signup)
+    * [Get Account](#get-account)
     * [Update](#update)
     * [Username Availability](#username-availability)
     * [Lock Account](#lock-account)
@@ -102,6 +103,37 @@ Visibility: Public
 
 The reason for `FORMAT_INVALID` will depend on whether you've configured AuthN to validate usernames
 as email addresses.
+
+### Get Account
+
+Visibility: Private
+
+`GET /accounts/:id`
+
+| Params | Type | Notes |
+| ------ | ---- | ----- |
+| `id` | integer | available from the JWT `sub` claim |
+
+#### Success:
+
+    200 Ok
+
+    {
+      "result": {
+        "id": <id>,
+        "username": "..."
+      }
+    }
+
+#### Failure:
+
+    404 Not Found
+
+    {
+      "errors": [
+        {"field": "account", "message": "NOT_FOUND"}
+      ]
+    }
 
 ### Update
 
