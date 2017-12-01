@@ -10,7 +10,6 @@ import (
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
-	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/services"
 	"github.com/keratin/authn-server/tokens/identities"
 	"github.com/keratin/authn-server/tokens/sessions"
@@ -54,7 +53,7 @@ func AssertIDTokenResponse(t *testing.T, res *http.Response, keyStore data.KeySt
 	responseData := struct {
 		IDToken string `json:"id_token"`
 	}{}
-	err := extractResult(res, &responseData)
+	err := ExtractResult(res, &responseData)
 	assert.NoError(t, err)
 
 	tok, err := jwt.ParseSigned(responseData.IDToken)
@@ -66,25 +65,4 @@ func AssertIDTokenResponse(t *testing.T, res *http.Response, keyStore data.KeySt
 		// check that the JWT contains nice things
 		assert.Equal(t, cfg.AuthNURL.String(), claims.Issuer)
 	}
-}
-
-func AssertGetAccountResponse(t *testing.T, res *http.Response, acc *models.Account) {
-	// check that the response contains the expected json
-	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
-	responseData := struct {
-		ID       int    `json:"id"`
-		Username string `json:"username"`
-	}{}
-	err := extractResult(res, &responseData)
-	assert.NoError(t, err)
-
-	assert.Equal(t, acc.Username, responseData.Username)
-	assert.Equal(t, acc.ID, responseData.ID)
-}
-
-// extracts the value from inside a successful result envelope. must be provided
-// with `inner`, an empty struct that describes the expected (desired) shape of
-// what is inside the envelope.
-func extractResult(res *http.Response, inner interface{}) error {
-	return json.Unmarshal(ReadBody(res), &api.ServiceData{inner})
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/keratin/authn-server/api/accounts"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -38,6 +39,20 @@ func TestGetAccount(t *testing.T) {
 		res, err := client.Get(fmt.Sprintf("/accounts/%v", account.ID))
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.StatusCode)
-		test.AssertGetAccountResponse(t, res, account)
+		assertGetAccountResponse(t, res, account)
 	})
+}
+
+func assertGetAccountResponse(t *testing.T, res *http.Response, acc *models.Account) {
+	// check that the response contains the expected json
+	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
+	responseData := struct {
+		ID       int    `json:"id"`
+		Username string `json:"username"`
+	}{}
+	err := test.ExtractResult(res, &responseData)
+	assert.NoError(t, err)
+
+	assert.Equal(t, acc.Username, responseData.Username)
+	assert.Equal(t, acc.ID, responseData.ID)
 }
