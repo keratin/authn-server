@@ -25,7 +25,7 @@ vendor:
 .PHONY: build
 build: generate vendor
 	mkdir -p dist
-	CGO_ENABLED=1 go build -o dist/authn
+	CGO_ENABLED=1 go build -ldflags "-X main.VERSION=$(VERSION)" -o dist/authn
 
 .PHONY: build-builder
 build-builder:
@@ -46,7 +46,7 @@ server: vendor generate
 	docker-compose up -d redis
 	DATABASE_URL=sqlite3://localhost/dev \
 		REDIS_URL=redis://127.0.0.1:8701/11 \
-		go run main.go routing.go
+		go run -ldflags "-X main.VERSION=$(VERSION)" main.go routing.go
 
 # Run tests
 .PHONY: test
@@ -75,11 +75,12 @@ benchmarks:
 # Run migrations
 .PHONY: migrate
 migrate:
-	go run *.go migrate
+	go run -ldflags "-X main.VERSION=$(VERSION)" *.go migrate
 
 # Cut a release of the current version.
 .PHONY: release
 release: test docker
+	docker push $(NAME):latest
 	docker tag $(NAME):latest $(NAME):$(VERSION)
 	docker push $(NAME):$(VERSION)
 	git tag v$(VERSION)

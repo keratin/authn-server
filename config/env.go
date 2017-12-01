@@ -10,7 +10,7 @@ import (
 type ErrMissingEnvVar string
 
 func (name ErrMissingEnvVar) Error() string {
-	return "missing environment variable: " + string(name) + ". See https://github.com/keratin/authn/wiki/Server-Configuration for details"
+	return "missing environment variable: " + string(name)
 }
 
 func requireEnv(name string) (string, error) {
