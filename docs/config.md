@@ -11,7 +11,7 @@ title: Server Configuration
 * Password Policy: [`PASSWORD_POLICY_SCORE`](#password_policy_score) • [`BCRYPT_COST`](#bcrypt_cost)
 * Password Resets: [`APP_PASSWORD_RESET_URL`](#app_password_reset_url) • [`PASSWORD_RESET_TOKEN_TTL`](#password_reset_token_ttl) • [`APP_PASSWORD_CHANGED_URL`](#app_password_changed_url)
 * Stats: [`TIME_ZONE`](#time_zone) • [`DAILY_ACTIVES_RETENTION`](#daily_actives_retention) • [`WEEKLY_ACTIVES_RETENTION`](#weekly_actives_retention)
-* Operations: [`SENTRY_DSN`](#sentry_dsn)
+* Operations: [`SENTRY_DSN`](#sentry_dsn) • [`AIRBRAKE_CREDENTIALS`](#airbrake_credentials)
 
 ## Core Settings
 
@@ -269,3 +269,13 @@ Stats on weekly actives will be set to expire after this many weeks. No mechanis
 | Default | nil |
 
 Configures AuthN to report panics and unhandled errors to a Sentry backend.
+
+### `AIRBRAKE_CREDENTIALS`
+
+|           |     |
+| --------- | --- |
+| Required? | No |
+| Value | string |
+| Default | nil |
+
+Configures AuthN to report panics and unhandled errors to an Airbrake backend. The format is `projectID:projectKey`.
