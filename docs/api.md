@@ -28,6 +28,7 @@ title: Server API
     * [Service Configuration](#service-configuration)
     * [JSON Web Keys](#json-web-keys)
     * [Service Stats](#service-stats)
+    * [Health Check]($health-check)
 
 ## Visibility
 
@@ -560,3 +561,21 @@ Returns server stats (memory usage) and traffic stats (counts, timings) that may
     # HELP http_requests_total How many HTTP requests processed, partitioned by name and status code
     # TYPE http_requests_total counter
     http_requests_total{code="200",name="GET /health"} 97
+
+### Health Check
+
+Visibility: Public
+
+`GET /health`
+
+Returns a JSON hash with key health indicators. This is the intended endpoint for determining if the system is up.
+
+#### Success:
+
+    200 Ok
+
+    {
+      "http": true,
+      "db": true,
+      "redis": false
+    }
