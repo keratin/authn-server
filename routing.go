@@ -12,6 +12,7 @@ import (
 	"github.com/keratin/authn-server/api/passwords"
 	"github.com/keratin/authn-server/api/sessions"
 	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/ops"
 )
 
 func router(app *api.App) http.Handler {
@@ -31,7 +32,7 @@ func router(app *api.App) http.Handler {
 
 	session := api.Session(app)
 
-	return app.Reporter.PanicHandler(
+	return ops.PanicHandler(app.Reporter,
 		corsAdapter(
 			session(
 				gorilla.CombinedLoggingHandler(os.Stdout, r),
