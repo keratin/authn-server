@@ -14,9 +14,11 @@ import (
 	"strings"
 	"time"
 
+	raven "github.com/getsentry/raven-go"
 	// a .env file is extremely useful during development
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/ops"
 	"golang.org/x/crypto/pbkdf2"
 )
 
@@ -48,7 +50,7 @@ type Config struct {
 	StatisticsTimeZone     *time.Location
 	DailyActivesRetention  int
 	WeeklyActivesRetention int
-	SentryDSN              string
+	ErrorReporter          ops.ErrorReporter
 	ServerPort             int
 }
 
@@ -361,18 +363,12 @@ var configurers = []configurer{
 	// errors and panics will be reported asynchronously.
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("SENTRY_DSN"); ok {
-			c.SentryDSN = val
+			client, err := raven.New(val)
+			if err != nil {
+				return err
+			}
+			c.ErrorReporter = &ops.SentryReporter{Client: client}
 		}
-		return nil
-	},
-
-	func(c *Config) error {
-		c.UsernameMinLength = 3
-		return nil
-	},
-
-	func(c *Config) error {
-		c.SessionCookieName = "authn"
 		return nil
 	},
 

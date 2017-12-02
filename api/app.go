@@ -3,7 +3,6 @@ package api
 import (
 	"os"
 
-	raven "github.com/getsentry/raven-go"
 	"github.com/go-redis/redis"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
@@ -34,17 +33,6 @@ func NewApp() (*App, error) {
 	logrus.SetLevel(logrus.InfoLevel)
 	logrus.SetOutput(os.Stdout)
 
-	var reporter ops.ErrorReporter
-	if cfg.SentryDSN != "" {
-		c, err := raven.New(cfg.SentryDSN)
-		if err != nil {
-			return nil, errors.Wrap(err, "raven.New")
-		}
-		reporter = &ops.SentryReporter{Client: c}
-	} else {
-		reporter = &ops.LogReporter{}
-	}
-
 	db, err := data.NewDB(cfg.DatabaseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "data.NewDB")
@@ -63,12 +51,12 @@ func NewApp() (*App, error) {
 		return nil, errors.Wrap(err, "NewAccountStore")
 	}
 
-	tokenStore, err := data.NewRefreshTokenStore(db, redis, reporter, cfg.RefreshTokenTTL)
+	tokenStore, err := data.NewRefreshTokenStore(db, redis, cfg.ErrorReporter, cfg.RefreshTokenTTL)
 	if err != nil {
 		return nil, errors.Wrap(err, "NewRefreshTokenStore")
 	}
 
-	blobStore, err := data.NewBlobStore(cfg.AccessTokenTTL, redis, db, reporter)
+	blobStore, err := data.NewBlobStore(cfg.AccessTokenTTL, redis, db, cfg.ErrorReporter)
 	if err != nil {
 		return nil, errors.Wrap(err, "NewBlobStore")
 	}
@@ -79,7 +67,7 @@ func NewApp() (*App, error) {
 			data.NewEncryptedBlobStore(blobStore, cfg.DBEncryptionKey),
 			cfg.AccessTokenTTL,
 		)
-		err := m.Maintain(keyStore, reporter)
+		err := m.Maintain(keyStore, cfg.ErrorReporter)
 		if err != nil {
 			return nil, errors.Wrap(err, "Maintain")
 		}
@@ -106,6 +94,6 @@ func NewApp() (*App, error) {
 		RefreshTokenStore: tokenStore,
 		KeyStore:          keyStore,
 		Actives:           actives,
-		Reporter:          reporter,
+		Reporter:          cfg.ErrorReporter,
 	}, nil
 }
