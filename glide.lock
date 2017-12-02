@@ -1,6 +1,10 @@
-hash: 2c494641d330e16d311509951079f72ac08a45e8fe3d458bc68219bc9ef48ac1
-updated: 2017-11-10T12:14:21.042279-08:00
+hash: b50bda228102e6112c5e904de286d7244056dac84af07c0ca3a2e7d1db58f411
+updated: 2017-12-01T21:42:16.73365-08:00
 imports:
+- name: github.com/airbrake/gobrake
+  version: e14f0257ae15ed85ae113ea9dd0274401c4a1c13
+  subpackages:
+  - lrucache
 - name: github.com/beorn7/perks
   version: 4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9
   subpackages:
@@ -16,7 +20,7 @@ imports:
 - name: github.com/getsentry/raven-go
   version: d175f85701dfbf44cb0510114c9943e665e60907
 - name: github.com/go-redis/redis
-  version: d0f86971b5d61de9cebd2616b932acb7ba14d957
+  version: e5e021257bfc6d5fbf0beac33e30194311fb189f
   subpackages:
   - internal
   - internal/consistenthash
@@ -44,7 +48,7 @@ imports:
   subpackages:
   - autoload
 - name: github.com/mattn/go-sqlite3
-  version: 5160b48509cf5c877bc22c11c373f8c7738cdb38
+  version: ed69081a91fd053f17672236b0dd52ba7485e1a3
 - name: github.com/matttproud/golang_protobuf_extensions
   version: c12348ce28de40eed0136aa2b644d0ee0650e56c
   subpackages:

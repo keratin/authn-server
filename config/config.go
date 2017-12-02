@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/airbrake/gobrake"
 	raven "github.com/getsentry/raven-go"
 	// a .env file is extremely useful during development
 	_ "github.com/joho/godotenv/autoload"
@@ -368,6 +369,23 @@ var configurers = []configurer{
 				return err
 			}
 			c.ErrorReporter = &ops.SentryReporter{Client: client}
+		}
+		return nil
+	},
+
+	// AIRBRAKE_CREDENTIALS is a configuration string for the Airbrake error reporting backend. When
+	// provided, errors and panics will be reported asynchronously.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("AIRBRAKE_CREDENTIALS"); ok {
+			bits := strings.SplitN(val, ":", 2)
+			projectID, err := strconv.Atoi(bits[0])
+			if err != nil {
+				return err
+			}
+			projectKey := bits[1]
+
+			client := gobrake.NewNotifier(int64(projectID), projectKey)
+			c.ErrorReporter = &ops.AirbrakeReporter{Notifier: client}
 		}
 		return nil
 	},
