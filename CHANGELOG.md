@@ -2,6 +2,10 @@
 
 ## HEAD
 
+### Added
+
+* Log when rejecting a request for a missing or invalid Origin header [#34]
+
 ### Improved
 
 * Query optimizations on private admin endpoints.

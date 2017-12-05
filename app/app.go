@@ -31,7 +31,7 @@ type App struct {
 
 func NewApp(cfg *Config) (*App, error) {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
-	logrus.SetLevel(logrus.InfoLevel)
+	logrus.SetLevel(logrus.DebugLevel)
 	logrus.SetOutput(os.Stdout)
 
 	db, err := data.NewDB(cfg.DatabaseURL)
