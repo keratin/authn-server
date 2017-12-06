@@ -4,14 +4,15 @@ title: Server Configuration
 
 # Server Configuration
 
-* Core Settings: [`AUTHN_URL`](#authn_url) • [`APP_DOMAINS`](#app_domains) • [`HTTP_AUTH_USERNAME`](#http_auth_username) • [`HTTP_AUTH_PASSWORD`](#http_auth_password) • [`SECRET_KEY_BASE`](#secret_key_base) • [`PORT`](#port)
+* Core Settings: [`AUTHN_URL`](#authn_url) • [`APP_DOMAINS`](#app_domains) • [`HTTP_AUTH_USERNAME`](#http_auth_username) • [`HTTP_AUTH_PASSWORD`](#http_auth_password) • [`SECRET_KEY_BASE`](#secret_key_base)
+* Databases: [`DATABASE_URL`](#database_url) • [`REDIS_URL`](#redis_url)
 * Sessions:
 [`ACCESS_TOKEN_TTL`](#access_token_ttl) • [`REFRESH_TOKEN_TTL`](#refresh_token_ttl) • [`SESSION_KEY_SALT`](#session_key_salt) • [`DB_ENCRYPTION_KEY_SALT`](#db_encryption_key_salt) • [`RSA_PRIVATE_KEY`](#rsa_private_key)
 * Username Policy: [`USERNAME_IS_EMAIL`](#username_is_email) • [`EMAIL_USERNAME_DOMAINS`](#email_username_domains)
 * Password Policy: [`PASSWORD_POLICY_SCORE`](#password_policy_score) • [`BCRYPT_COST`](#bcrypt_cost)
 * Password Resets: [`APP_PASSWORD_RESET_URL`](#app_password_reset_url) • [`PASSWORD_RESET_TOKEN_TTL`](#password_reset_token_ttl) • [`APP_PASSWORD_CHANGED_URL`](#app_password_changed_url)
 * Stats: [`TIME_ZONE`](#time_zone) • [`DAILY_ACTIVES_RETENTION`](#daily_actives_retention) • [`WEEKLY_ACTIVES_RETENTION`](#weekly_actives_retention)
-* Operations: [`SENTRY_DSN`](#sentry_dsn) • [`AIRBRAKE_CREDENTIALS`](#airbrake_credentials)
+* Operations: [`PORT`](#port) • [`SENTRY_DSN`](#sentry_dsn) • [`AIRBRAKE_CREDENTIALS`](#airbrake_credentials)
 
 ## Core Settings
 
@@ -66,15 +67,36 @@ Any HMAC keys used by AuthN will be derived from this base value. Currently this
 
 This value is commonly a 64-byte string, and can be generated with [`SecureRandom.hex(64)`](http://ruby-doc.org/stdlib-2.3.3/libdoc/securerandom/rdoc/Random/Formatter.html#method-i-hex) or `bin/rake secret`. Some deployment systems (e.g. Heroku) can provision it automatically.
 
-### `PORT`
+## Databases
+
+### `DATABASE_URL`
+
+|           |    |
+| --------- | --- |
+| Required? | Yes |
+| Value | string |
+
+The database URL specifies the driver, host, port, database name, and connection credentials.
+
+Formats:
+
+* `sqlite3://local/db/authn` (note: SQLite3 ignores the host name and connects by path)
+* `mysql://username:password@host:port/database_name`
+
+### `REDIS_URL`
 
 |           |    |
 | --------- | --- |
 | Required? | No |
-| Value | integer |
-| Default | from AUTHN_URL |
+| Value | string |
 
-The PORT specifies where the AuthN server should bind. This may be different from the AUTHN_URL in scenarios with port mapping, as with load balancers and Docker containers.
+Redis is the preferred database for session refresh tokens, encrypted blobs, and active user stats.
+Currently the SQLite3 database is able to manage those functions in a limited deployment, but Redis
+is required when SQLite3 is not configured.
+
+Format:
+
+* `redis://username:password@host:port/database_number`
 
 ## Sessions
 
@@ -259,6 +281,16 @@ Stats on daily actives will be set to expire after this many days. No mechanism 
 Stats on weekly actives will be set to expire after this many weeks. No mechanism is provided for changing this TTL retroactively.
 
 ## Operations
+
+### `PORT`
+
+|           |    |
+| --------- | --- |
+| Required? | No |
+| Value | integer |
+| Default | from AUTHN_URL |
+
+The PORT specifies where the AuthN server should bind. This may be different from the AUTHN_URL in scenarios with port mapping, as with load balancers and Docker containers.
 
 ### `SENTRY_DSN`
 
