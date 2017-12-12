@@ -3,6 +3,7 @@ ORG := keratin
 PROJECT := authn-server
 NAME := $(ORG)/$(PROJECT)
 VERSION := 1.1.0
+MAIN := main.go routing.go
 
 .PHONY: clean
 clean:
@@ -17,7 +18,7 @@ generate:
 	go generate github.com/$(NAME)/api/views
 
 # Fetch dependencies
-vendor:
+vendor: generate
 	glide install
 	go install
 
@@ -46,7 +47,7 @@ server: vendor generate
 	docker-compose up -d redis
 	DATABASE_URL=sqlite3://localhost/dev \
 		REDIS_URL=redis://127.0.0.1:8701/11 \
-		go run -ldflags "-X main.VERSION=$(VERSION)" main.go routing.go
+		go run -ldflags "-X main.VERSION=$(VERSION)" $(MAIN)
 
 # Run tests
 .PHONY: test
@@ -75,7 +76,10 @@ benchmarks:
 # Run migrations
 .PHONY: migrate
 migrate:
-	go run -ldflags "-X main.VERSION=$(VERSION)" *.go migrate
+	docker-compose up -d redis
+	DATABASE_URL=sqlite3://localhost/dev \
+		REDIS_URL=redis://127.0.0.1:8701/11 \
+		go run -ldflags "-X main.VERSION=$(VERSION)" $(MAIN) migrate
 
 # Cut a release of the current version.
 .PHONY: release
