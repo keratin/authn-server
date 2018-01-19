@@ -40,7 +40,17 @@ func serve() {
 		panic(err)
 	}
 
-	fmt.Println(fmt.Sprintf("~*~ Keratin AuthN server v%s is ready on %s (%d) ~*~", VERSION, app.Config.AuthNURL, app.Config.ServerPort))
+	fmt.Println(fmt.Sprintf("~*~ Keratin AuthN v%s ~*~", VERSION))
+	fmt.Println(fmt.Sprintf("AUTHN_URL: %s", app.Config.AuthNURL))
+	fmt.Println(fmt.Sprintf("PORT: %d", app.Config.ServerPort))
+
+	if app.Config.PublicPort != 0 {
+		go func() {
+			fmt.Println(fmt.Sprintf("PUBLIC_PORT: %d", app.Config.PublicPort))
+			log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", app.Config.PublicPort), publicRouter(app)))
+		}()
+	}
+
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", app.Config.ServerPort), router(app)))
 }
 

@@ -29,6 +29,8 @@ AuthN requires:
 
 Ensure that all communication to AuthN happens with SSL.
 
+Configure [`PUBLIC_PORT`](config#public_port) and send all public traffic there.
+
 Give AuthN its own dedicated SQL and Redis databases and be sure that all database backups are
 strongly encrypted at rest. The credentials and accounts data encapsulated by AuthN should not be
 necessary for data warehousing or business intelligence, so try to minimize their exposure.

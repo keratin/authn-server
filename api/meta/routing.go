@@ -6,10 +6,18 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+func PublicRoutes(app *api.App) []*route.HandledRoute {
+	return []*route.HandledRoute{
+		route.Get("/health").
+			SecuredWith(route.Unsecured()).
+			Handle(getHealth(app)),
+	}
+}
+
 func Routes(app *api.App) []*route.HandledRoute {
 	authentication := route.BasicAuthSecurity(app.Config.AuthUsername, app.Config.AuthPassword, "Private AuthN Realm")
 
-	routes := []*route.HandledRoute{}
+	routes := PublicRoutes(app)
 
 	if app.Actives != nil {
 		routes = append(routes,
@@ -23,9 +31,6 @@ func Routes(app *api.App) []*route.HandledRoute {
 		route.Get("/").
 			SecuredWith(route.Unsecured()).
 			Handle(getRoot(app)),
-		route.Get("/health").
-			SecuredWith(route.Unsecured()).
-			Handle(getHealth(app)),
 		route.Get("/jwks").
 			SecuredWith(route.Unsecured()).
 			Handle(getJWKs(app)),

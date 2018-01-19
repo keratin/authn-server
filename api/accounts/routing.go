@@ -5,9 +5,8 @@ import (
 	"github.com/keratin/authn-server/lib/route"
 )
 
-func Routes(app *api.App) []*route.HandledRoute {
+func PublicRoutes(app *api.App) []*route.HandledRoute {
 	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
-	authentication := route.BasicAuthSecurity(app.Config.AuthUsername, app.Config.AuthPassword, "Private AuthN Realm")
 
 	routes := []*route.HandledRoute{}
 
@@ -21,6 +20,14 @@ func Routes(app *api.App) []*route.HandledRoute {
 				Handle(getAccountsAvailable(app)),
 		)
 	}
+
+	return routes
+}
+
+func Routes(app *api.App) []*route.HandledRoute {
+	authentication := route.BasicAuthSecurity(app.Config.AuthUsername, app.Config.AuthPassword, "Private AuthN Realm")
+
+	routes := PublicRoutes(app)
 
 	routes = append(routes,
 		route.Post("/accounts/import").

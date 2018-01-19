@@ -5,7 +5,7 @@ import (
 	"github.com/keratin/authn-server/lib/route"
 )
 
-func Routes(app *api.App) []*route.HandledRoute {
+func PublicRoutes(app *api.App) []*route.HandledRoute {
 	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
 
 	routes := []*route.HandledRoute{
@@ -23,4 +23,8 @@ func Routes(app *api.App) []*route.HandledRoute {
 	}
 
 	return routes
+}
+
+func Routes(app *api.App) []*route.HandledRoute {
+	return PublicRoutes(app)
 }

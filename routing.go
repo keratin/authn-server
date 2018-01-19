@@ -17,12 +17,25 @@ import (
 
 func router(app *api.App) http.Handler {
 	r := mux.NewRouter()
-
 	route.Attach(r, app.Config.MountedPath, meta.Routes(app)...)
 	route.Attach(r, app.Config.MountedPath, accounts.Routes(app)...)
 	route.Attach(r, app.Config.MountedPath, sessions.Routes(app)...)
 	route.Attach(r, app.Config.MountedPath, passwords.Routes(app)...)
 
+	return wrapRouter(r, app)
+}
+
+func publicRouter(app *api.App) http.Handler {
+	r := mux.NewRouter()
+	route.Attach(r, app.Config.MountedPath, meta.PublicRoutes(app)...)
+	route.Attach(r, app.Config.MountedPath, accounts.PublicRoutes(app)...)
+	route.Attach(r, app.Config.MountedPath, sessions.PublicRoutes(app)...)
+	route.Attach(r, app.Config.MountedPath, passwords.PublicRoutes(app)...)
+
+	return wrapRouter(r, app)
+}
+
+func wrapRouter(r *mux.Router, app *api.App) http.Handler {
 	corsAdapter := gorilla.CORS(
 		gorilla.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE"}),
 		gorilla.AllowCredentials(),
