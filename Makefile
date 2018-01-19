@@ -18,7 +18,8 @@ generate:
 	go generate github.com/$(NAME)/api/views
 
 # Fetch dependencies
-vendor: generate
+vendor:
+	make generate
 	glide install
 	go install
 
