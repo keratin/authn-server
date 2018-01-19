@@ -53,6 +53,7 @@ type Config struct {
 	WeeklyActivesRetention int
 	ErrorReporter          ops.ErrorReporter
 	ServerPort             int
+	PublicPort             int
 }
 
 var configurers = []configurer{
@@ -397,6 +398,17 @@ var configurers = []configurer{
 		val, err := lookupInt("PORT", defaultPort)
 		if err == nil {
 			c.ServerPort = val
+		}
+		return err
+	},
+
+	// PUBLIC_PORT is an extra local port the AuthN server listens to with only public routes. This
+	// is useful to avoid exposing admin routes to the public, since you can configure a proxy or
+	// load balancer to forward to only the appropriate port.
+	func(c *Config) error {
+		val, err := lookupInt("PUBLIC_PORT", 0)
+		if err == nil {
+			c.PublicPort = val
 		}
 		return err
 	},
