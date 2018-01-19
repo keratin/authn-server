@@ -12,7 +12,7 @@ title: Server Configuration
 * Password Policy: [`PASSWORD_POLICY_SCORE`](#password_policy_score) • [`BCRYPT_COST`](#bcrypt_cost)
 * Password Resets: [`APP_PASSWORD_RESET_URL`](#app_password_reset_url) • [`PASSWORD_RESET_TOKEN_TTL`](#password_reset_token_ttl) • [`APP_PASSWORD_CHANGED_URL`](#app_password_changed_url)
 * Stats: [`TIME_ZONE`](#time_zone) • [`DAILY_ACTIVES_RETENTION`](#daily_actives_retention) • [`WEEKLY_ACTIVES_RETENTION`](#weekly_actives_retention)
-* Operations: [`PORT`](#port) • [`SENTRY_DSN`](#sentry_dsn) • [`AIRBRAKE_CREDENTIALS`](#airbrake_credentials)
+* Operations: [`PORT`](#port) • [`PUBLIC_PORT`](#public_port) • [`SENTRY_DSN`](#sentry_dsn) • [`AIRBRAKE_CREDENTIALS`](#airbrake_credentials)
 
 ## Core Settings
 
@@ -291,6 +291,16 @@ Stats on weekly actives will be set to expire after this many weeks. No mechanis
 | Default | from AUTHN_URL |
 
 The PORT specifies where the AuthN server should bind. This may be different from the AUTHN_URL in scenarios with port mapping, as with load balancers and Docker containers.
+
+### `PUBLIC_PORT`
+
+|           |    |
+| --------- | --- |
+| Required? | No |
+| Value | integer |
+| Default | nil |
+
+Specifying PUBLIC_PORT instructs AuthN to bind on a second port with only public routes. This supports network configurations with separate public and private routing. The public load balancer can route to the public port without needing to create and maintain path- & method-based lists of allowed endpoints.
 
 ### `SENTRY_DSN`
 
