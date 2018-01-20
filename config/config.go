@@ -54,6 +54,7 @@ type Config struct {
 	ErrorReporter          ops.ErrorReporter
 	ServerPort             int
 	PublicPort             int
+	Proxied                bool
 }
 
 var configurers = []configurer{
@@ -409,6 +410,16 @@ var configurers = []configurer{
 		val, err := lookupInt("PUBLIC_PORT", 0)
 		if err == nil {
 			c.PublicPort = val
+		}
+		return err
+	},
+
+	// PROXIED is a flag that indicates AuthN is behind a proxy. When set, AuthN will read IP
+	// addresses from X-FORWARDED-FOR (and similar).
+	func(c *Config) error {
+		val, err := lookupBool("PROXIED", false)
+		if err == nil {
+			c.Proxied = val
 		}
 		return err
 	},

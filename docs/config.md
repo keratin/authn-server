@@ -12,7 +12,7 @@ title: Server Configuration
 * Password Policy: [`PASSWORD_POLICY_SCORE`](#password_policy_score) • [`BCRYPT_COST`](#bcrypt_cost)
 * Password Resets: [`APP_PASSWORD_RESET_URL`](#app_password_reset_url) • [`PASSWORD_RESET_TOKEN_TTL`](#password_reset_token_ttl) • [`APP_PASSWORD_CHANGED_URL`](#app_password_changed_url)
 * Stats: [`TIME_ZONE`](#time_zone) • [`DAILY_ACTIVES_RETENTION`](#daily_actives_retention) • [`WEEKLY_ACTIVES_RETENTION`](#weekly_actives_retention)
-* Operations: [`PORT`](#port) • [`PUBLIC_PORT`](#public_port) • [`SENTRY_DSN`](#sentry_dsn) • [`AIRBRAKE_CREDENTIALS`](#airbrake_credentials)
+* Operations: [`PORT`](#port) • [`PUBLIC_PORT`](#public_port) • [`PROXIED`](#proxied) • [`SENTRY_DSN`](#sentry_dsn) • [`AIRBRAKE_CREDENTIALS`](#airbrake_credentials)
 
 ## Core Settings
 
@@ -301,6 +301,16 @@ The PORT specifies where the AuthN server should bind. This may be different fro
 | Default | nil |
 
 Specifying PUBLIC_PORT instructs AuthN to bind on a second port with only public routes. This supports network configurations with separate public and private routing. The public load balancer can route to the public port without needing to create and maintain path- & method-based lists of allowed endpoints.
+
+### `PROXIED`
+
+|           |    |
+| --------- | --- |
+| Required? | No |
+| Value | boolean (`/^t|true|yes$/i`) |
+| Default | `false` |
+
+Specifying PROXIED allows AuthN to safely read common proxy headers like X-FORWARDED-FOR to determine the true client's IP address. This is currently useful for logging.
 
 ### `SENTRY_DSN`
 

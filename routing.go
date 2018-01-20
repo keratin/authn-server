@@ -36,20 +36,20 @@ func publicRouter(app *api.App) http.Handler {
 }
 
 func wrapRouter(r *mux.Router, app *api.App) http.Handler {
-	corsAdapter := gorilla.CORS(
+	stack := gorilla.CombinedLoggingHandler(os.Stdout, r)
+
+	stack = api.Session(app)(stack)
+
+	stack = gorilla.CORS(
 		gorilla.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE"}),
 		gorilla.AllowCredentials(),
 		gorilla.AllowedOrigins([]string{}), // see: https://github.com/gorilla/handlers/issues/117
 		gorilla.AllowedOriginValidator(api.OriginValidator(app.Config.ApplicationDomains)),
-	)
+	)(stack)
 
-	session := api.Session(app)
+	if app.Config.Proxied {
+		stack = gorilla.ProxyHeaders(stack)
+	}
 
-	return ops.PanicHandler(app.Reporter,
-		corsAdapter(
-			session(
-				gorilla.CombinedLoggingHandler(os.Stdout, r),
-			),
-		),
-	)
+	return ops.PanicHandler(app.Reporter, stack)
 }

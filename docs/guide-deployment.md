@@ -35,6 +35,12 @@ Give AuthN its own dedicated SQL and Redis databases and be sure that all databa
 strongly encrypted at rest. The credentials and accounts data encapsulated by AuthN should not be
 necessary for data warehousing or business intelligence, so try to minimize their exposure.
 
+## Configuration
+
+* [PORT](config.md#port)
+* [PUBLIC_PORT](config.md#public_port)
+* [PROXIED](config.md#proxied)
+
 ## Related Guides
 
 * [Deploying with Docker](guide-deploying_with_docker.md)
