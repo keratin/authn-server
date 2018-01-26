@@ -9,42 +9,52 @@ MAIN := main.go routing.go
 clean:
 	rm -rf vendor
 	rm -rf dist
-	rm -f authn
 	rm -f api/views/*.ego.go
 
-# Code generation (ego)
-.PHONY:
-generate:
-	go generate github.com/$(NAME)/api/views
+# Process .ego templates (skippable)
+EGOS := $(shell find . -name *.ego | sed -e s/.ego/.ego.go/)
+$(EGOS):
+	ego api/views
 
 # Fetch dependencies
-vendor:
-	make generate
+vendor: glide.yaml
 	glide install
 	go install
 
-# Build the project
-.PHONY: build
-build: generate vendor
-	mkdir -p dist
-	CGO_ENABLED=1 go build -ldflags "-X main.VERSION=$(VERSION)" -o dist/authn
-
-.PHONY: build-builder
-build-builder:
+# The Linux builder is a Docker container because that's the easiest way to get the toolchain for
+# CGO on a MacOS host.
+.PHONY: linux-builder
+linux-builder:
 	docker build -f Dockerfile.builder -t $(NAME)-builder .
 
-.PHONY: docker
-docker: build-builder
+# The Linux target is built using a special Docker image, because this Makefile assumes the host
+# machine is running MacOS.
+dist/linux/amd64/$(PROJECT): $(EGOS) vendor
+	make linux-builder
 	docker run --rm \
 		-v $(PWD):/go/src/github.com/$(NAME) \
 		-w /go/src/github.com/$(NAME) \
 		$(NAME)-builder \
-		make clean build
+		sh -c " \
+			GOOS=linux GOARCH=amd64 CGO_ENABLED=1 go build -ldflags '-X main.VERSION=$(VERSION)' -o '$@' \
+		"
+
+# The Darwin target is built using the host machine, which this Makefile assumes is running MacOS.
+dist/darwin/amd64/$(PROJECT): $(EGOS) vendor
+	GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go build -ldflags "-X main.VERSION=$(VERSION)" -o "$@"
+
+# The Docker target wraps the linux/amd64 binary
+.PHONY: dist/docker
+dist/docker: dist/linux/amd64/$(PROJECT)
 	docker build --tag $(NAME):latest .
+
+# Build all distributables
+.PHONY: dist
+dist: dist/docker dist/darwin/amd64/$(PROJECT) dist/linux/amd64/$(PROJECT)
 
 # Run the server
 .PHONY: server
-server: vendor generate
+server: $(EGOS) vendor
 	docker-compose up -d redis
 	DATABASE_URL=sqlite3://localhost/dev \
 		REDIS_URL=redis://127.0.0.1:8701/11 \
@@ -52,15 +62,15 @@ server: vendor generate
 
 # Run tests
 .PHONY: test
-test: vendor generate
+test: $(EGOS) vendor
 	docker-compose up -d redis mysql
 	TEST_REDIS_URL=redis://127.0.0.1:8701/12 \
 	  TEST_MYSQL_URL=mysql://root@127.0.0.1:8702/authnservertest \
 	  go test $(PKGS)
 
 # Run CI tests
-.PHONY: ci
-test-ci:
+.PHONY: test-ci
+test-ci: $(EGOS) vendor
 	TEST_REDIS_URL=redis://127.0.0.1/1 \
 	  TEST_MYSQL_URL=mysql://root@127.0.0.1/test \
 	  go test -race $(PKGS)
@@ -84,7 +94,7 @@ migrate:
 
 # Cut a release of the current version.
 .PHONY: release
-release: test docker
+release: test dist/docker
 	docker push $(NAME):latest
 	docker tag $(NAME):latest $(NAME):$(VERSION)
 	docker push $(NAME):$(VERSION)

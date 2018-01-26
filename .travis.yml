@@ -10,8 +10,6 @@ before_install:
   - sudo apt-get update -q
   - sudo apt-get install glide -y
   - go get github.com/benbjohnson/ego/cmd/ego
-install:
-  - make generate vendor
 script: make test-ci
 
 after_success:
