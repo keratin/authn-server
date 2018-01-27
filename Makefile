@@ -36,7 +36,7 @@ dist/linux/amd64/$(PROJECT): $(EGOS) vendor
 		-w /go/src/github.com/$(NAME) \
 		$(NAME)-builder \
 		sh -c " \
-			GOOS=linux GOARCH=amd64 CGO_ENABLED=1 go build -ldflags '-X main.VERSION=$(VERSION)' -o '$@' \
+			GOOS=linux GOARCH=amd64 CGO_ENABLED=1 go build -ldflags '-extldflags -static -X main.VERSION=$(VERSION)' -o '$@' \
 		"
 	bzip2 -c "$@" > dist/authn-linux64.bz2
 
