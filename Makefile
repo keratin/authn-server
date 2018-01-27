@@ -38,10 +38,12 @@ dist/linux/amd64/$(PROJECT): $(EGOS) vendor
 		sh -c " \
 			GOOS=linux GOARCH=amd64 CGO_ENABLED=1 go build -ldflags '-X main.VERSION=$(VERSION)' -o '$@' \
 		"
+	bzip2 -c "$@" > dist/authn-linux64.bz2
 
 # The Darwin target is built using the host machine, which this Makefile assumes is running MacOS.
 dist/darwin/amd64/$(PROJECT): $(EGOS) vendor
 	GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go build -ldflags "-X main.VERSION=$(VERSION)" -o "$@"
+	bzip2 -c "$@" > dist/authn-macos64.bz2
 
 # The Docker target wraps the linux/amd64 binary
 .PHONY: dist/docker
@@ -94,10 +96,11 @@ migrate:
 
 # Cut a release of the current version.
 .PHONY: release
-release: test dist/docker
+release: test dist
 	docker push $(NAME):latest
 	docker tag $(NAME):latest $(NAME):$(VERSION)
 	docker push $(NAME):$(VERSION)
 	git tag v$(VERSION)
 	git push --tags
 	open https://github.com/$(NAME)/releases/tag/v$(VERSION)
+	open dist
