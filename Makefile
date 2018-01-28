@@ -7,17 +7,18 @@ MAIN := main.go routing.go
 
 .PHONY: clean
 clean:
-	rm -rf vendor
+	rm -rf init
 	rm -rf dist
 	rm -f api/views/*.ego.go
 
 # Process .ego templates (skippable)
 EGOS := $(shell find . -name *.ego | sed -e s/.ego/.ego.go/)
 $(EGOS):
+	go get github.com/benbjohnson/ego/cmd/ego
 	ego api/views
 
 # Fetch dependencies
-vendor: glide.yaml
+init: $(EGOS)
 	glide install
 	go install
 
@@ -29,7 +30,7 @@ linux-builder:
 
 # The Linux target is built using a special Docker image, because this Makefile assumes the host
 # machine is running MacOS.
-dist/linux/amd64/$(PROJECT): $(EGOS) vendor
+dist/linux/amd64/$(PROJECT): init
 	make linux-builder
 	docker run --rm \
 		-v $(PWD):/go/src/github.com/$(NAME) \
@@ -41,7 +42,7 @@ dist/linux/amd64/$(PROJECT): $(EGOS) vendor
 	bzip2 -c "$@" > dist/authn-linux64.bz2
 
 # The Darwin target is built using the host machine, which this Makefile assumes is running MacOS.
-dist/darwin/amd64/$(PROJECT): $(EGOS) vendor
+dist/darwin/amd64/$(PROJECT): init
 	GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go build -ldflags "-X main.VERSION=$(VERSION)" -o "$@"
 	bzip2 -c "$@" > dist/authn-macos64.bz2
 
@@ -56,7 +57,7 @@ dist: dist/docker dist/darwin/amd64/$(PROJECT) dist/linux/amd64/$(PROJECT)
 
 # Run the server
 .PHONY: server
-server: $(EGOS) vendor
+server: init
 	docker-compose up -d redis
 	DATABASE_URL=sqlite3://localhost/dev \
 		REDIS_URL=redis://127.0.0.1:8701/11 \
@@ -64,7 +65,7 @@ server: $(EGOS) vendor
 
 # Run tests
 .PHONY: test
-test: $(EGOS) vendor
+test: init
 	docker-compose up -d redis mysql
 	TEST_REDIS_URL=redis://127.0.0.1:8701/12 \
 	  TEST_MYSQL_URL=mysql://root@127.0.0.1:8702/authnservertest \
@@ -72,7 +73,7 @@ test: $(EGOS) vendor
 
 # Run CI tests
 .PHONY: test-ci
-test-ci: $(EGOS) vendor
+test-ci: init
 	TEST_REDIS_URL=redis://127.0.0.1/1 \
 	  TEST_MYSQL_URL=mysql://root@127.0.0.1/test \
 	  go test -race $(PKGS)
