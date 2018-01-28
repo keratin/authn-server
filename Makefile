@@ -7,7 +7,7 @@ MAIN := main.go routing.go
 
 .PHONY: clean
 clean:
-	rm -rf init
+	rm -rf vendor
 	rm -rf dist
 	rm -f api/views/*.ego.go
 
