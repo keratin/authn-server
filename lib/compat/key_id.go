@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/pkg/errors"
-	jose "github.com/square/go-jose"
+	jose "gopkg.in/square/go-jose.v2"
 )
 
 // KeyID uses square/go-jose to extract the JWK thumbprint for a RSA public key.

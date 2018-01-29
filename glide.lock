@@ -1,8 +1,8 @@
-hash: b50bda228102e6112c5e904de286d7244056dac84af07c0ca3a2e7d1db58f411
-updated: 2017-12-01T21:42:16.73365-08:00
+hash: 985f637765c6385f97460e47f409ff51de08bec38ef1f7e6163b540eb514a2ea
+updated: 2018-01-28T09:32:59.037719-08:00
 imports:
 - name: github.com/airbrake/gobrake
-  version: e14f0257ae15ed85ae113ea9dd0274401c4a1c13
+  version: af5f88a1b97ed3070d78a7a8a854da8f7aef0322
   subpackages:
   - lrucache
 - name: github.com/beorn7/perks
@@ -20,7 +20,7 @@ imports:
 - name: github.com/getsentry/raven-go
   version: d175f85701dfbf44cb0510114c9943e665e60907
 - name: github.com/go-redis/redis
-  version: e5e021257bfc6d5fbf0beac33e30194311fb189f
+  version: 4021ace05686f632ff17fd824bbed229fc474cf8
   subpackages:
   - internal
   - internal/consistenthash
@@ -38,7 +38,7 @@ imports:
 - name: github.com/gorilla/handlers
   version: 90663712d74cb411cbef281bc1e08c19d1a76145
 - name: github.com/gorilla/mux
-  version: 7f08801859139f86dfafd1c296e2cba9a80d292e
+  version: 53c1911da2b537f792e7cafcb446b05ffe33b996
 - name: github.com/jmoiron/sqlx
   version: d9bd385d68c068f1fabb5057e3dedcbcbb039d0f
   subpackages:
@@ -48,7 +48,7 @@ imports:
   subpackages:
   - autoload
 - name: github.com/mattn/go-sqlite3
-  version: ed69081a91fd053f17672236b0dd52ba7485e1a3
+  version: 6c771bb9887719704b210e87e934f08be014bdb1
 - name: github.com/matttproud/golang_protobuf_extensions
   version: c12348ce28de40eed0136aa2b644d0ee0650e56c
   subpackages:
@@ -90,11 +90,11 @@ imports:
   subpackages:
   - xfs
 - name: github.com/sirupsen/logrus
-  version: f006c2ac4710855cf0f916dd6b77acf6b048dc6e
+  version: d682213848ed68c0a260ca37d6dd5ace8423f5ba
 - name: github.com/square/go-jose
   version: f8f38de21b4dcd69d0413faf231983f5fd6634b1
 - name: github.com/stretchr/testify
-  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
+  version: b91bfb9ebec76498946beb6af7c0230c7cc7ba6c
   subpackages:
   - assert
   - require
@@ -107,10 +107,6 @@ imports:
   - ed25519/internal/edwards25519
   - pbkdf2
   - ssh/terminal
-- name: golang.org/x/net
-  version: 5f8847ae0d0e90b6a9dc8148e7ad616874625171
-  subpackages:
-  - context
 - name: golang.org/x/sys
   version: 429f518978ab01db8bb6f44b66785088e7fba58b
   subpackages:
