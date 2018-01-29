@@ -18,7 +18,7 @@ $(EGOS):
 	ego api/views
 
 # Fetch dependencies
-init: $(EGOS)
+init: glide.yaml $(EGOS)
 	glide install
 	go install
 
