@@ -17,8 +17,10 @@ $(EGOS):
 	go get github.com/benbjohnson/ego/cmd/ego
 	ego api/views
 
+init: $(EGOS) vendor
+
 # Fetch dependencies
-init: glide.yaml $(EGOS)
+vendor: glide.yaml
 	glide install
 	go install
 
