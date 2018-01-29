@@ -9,7 +9,6 @@ before_install:
   - sudo add-apt-repository ppa:masterminds/glide -y
   - sudo apt-get update -q
   - sudo apt-get install glide -y
-  - go get github.com/benbjohnson/ego/cmd/ego
 script: make test-ci
 
 after_success:
