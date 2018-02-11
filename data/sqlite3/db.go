@@ -12,7 +12,7 @@ func NewDB(env string) (*sqlx.DB, error) {
 	// https://github.com/mattn/go-sqlite3/issues/274#issuecomment-232942571
 	// enable a busy timeout for concurrent load. keep it short. the busy timeout can be harmful
 	// under sustained load, but helpful during short bursts.
-	return sqlx.Connect("sqlite3", fmt.Sprintf("./%v.db?cache=shared&_busy_timeout=200", env))
+	return sqlx.Connect("sqlite3", fmt.Sprintf("%v?cache=shared&_busy_timeout=200", env))
 }
 
 func TestDB() (*sqlx.DB, error) {
