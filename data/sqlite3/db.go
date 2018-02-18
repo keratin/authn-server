@@ -2,6 +2,7 @@ package sqlite3
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
 	// load sqlite3 library with side effects
