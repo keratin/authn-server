@@ -66,9 +66,6 @@ func (m *KeyStoreRotater) Maintain(ks *RotatingKeyStore, r ops.ErrorReporter) er
 			return errors.Wrap(err, "generate")
 		}
 		ks.Rotate(newKey)
-
-		keyID, _ := compat.KeyID(newKey.Public())
-		log.WithFields(log.Fields{"keyID": keyID}).Info("current key generated")
 	}
 
 	go func() {
@@ -90,9 +87,6 @@ func (m *KeyStoreRotater) rotate(ks *RotatingKeyStore) error {
 		return errors.Wrap(err, "generate")
 	}
 	ks.Rotate(newKey)
-
-	keyID, _ := compat.KeyID(newKey.Public())
-	log.WithFields(log.Fields{"keyID": keyID}).Info("new key generated")
 
 	return nil
 }
@@ -131,6 +125,8 @@ func (m *KeyStoreRotater) generate() (*rsa.PrivateKey, error) {
 			return nil, err
 		}
 		if existingKey != nil {
+			keyID, _ := compat.KeyID(existingKey.Public())
+			log.WithFields(log.Fields{"keyID": keyID}).Info("key synchronized")
 			return existingKey, nil
 		}
 		// acquire write lock (global mutex)
@@ -150,6 +146,8 @@ func (m *KeyStoreRotater) generate() (*rsa.PrivateKey, error) {
 				return nil, err
 			}
 			// return the key
+			keyID, _ := compat.KeyID(key.Public())
+			log.WithFields(log.Fields{"keyID": keyID, "bucket": bucket}).Info("new key generated")
 			return key, nil
 		}
 
