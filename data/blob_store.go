@@ -27,9 +27,10 @@ func NewBlobStore(interval time.Duration, redis *redis.Client, db *sqlx.DB, repo
 	// the lifetime of a key should be slightly more than two intervals
 	ttl := interval*2 + 10*time.Second
 
-	// the write lock should be greater than the peak time necessary to generate and
-	// encrypt a key, plus send it back over the wire to redis.
-	lockTime := time.Duration(500) * time.Millisecond
+	// the write lock should be greater than the peak time necessary to generate and encrypt a key,
+	// plus send it back over the wire to redis. after this time has elapsed, any other authn server
+	// may get the lock and generate a competing key.
+	lockTime := time.Duration(1500) * time.Millisecond
 
 	if redis != nil {
 		return &dataRedis.BlobStore{
