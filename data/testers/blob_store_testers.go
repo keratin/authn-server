@@ -5,45 +5,34 @@ import (
 
 	"github.com/keratin/authn-server/data"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var BlobStoreTesters = []func(*testing.T, data.BlobStore){
-	testReadWrite,
-	testWriteLock,
+	testRead,
+	testWriteNX,
 }
 
-func testReadWrite(t *testing.T, bs data.BlobStore) {
+func testRead(t *testing.T, bs data.BlobStore) {
 	blob, err := bs.Read("unknown")
 	assert.NoError(t, err)
 	assert.Empty(t, blob)
 
-	err = bs.Write("blob", []byte("val"))
-	assert.NoError(t, err)
+	ok, err := bs.WriteNX("blob", []byte("val"))
+	require.NoError(t, err)
+	require.True(t, ok)
 
 	blob, err = bs.Read("blob")
 	assert.NoError(t, err)
 	assert.Equal(t, "val", string(blob))
 }
 
-func testWriteLock(t *testing.T, bs data.BlobStore) {
-	ok, err := bs.WLock("lockedKey")
+func testWriteNX(t *testing.T, bs data.BlobStore) {
+	set, err := bs.WriteNX("key", []byte("first"))
 	assert.NoError(t, err)
-	assert.True(t, ok)
+	assert.True(t, set)
 
-	// can't re-acquire, even with the same connection
-	ok, err = bs.WLock("lockedKey")
+	set, err = bs.WriteNX("key", []byte("second"))
 	assert.NoError(t, err)
-	assert.False(t, ok)
-
-	// write lock does not create findable blob
-	blob, err := bs.Read("lockedKey")
-	assert.NoError(t, err)
-	assert.Empty(t, blob)
-
-	// can't lock an existing key
-	err = bs.Write("existing", []byte("val"))
-	assert.NoError(t, err)
-	ok, err = bs.WLock("existing")
-	assert.NoError(t, err)
-	assert.False(t, ok)
+	assert.False(t, set)
 }

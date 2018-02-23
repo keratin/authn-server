@@ -14,8 +14,9 @@ func TestEncryptedBlobStore(t *testing.T) {
 	ebs := data.NewEncryptedBlobStore(bs, []byte("secretsecretsecretsecretsecret12"))
 	val := []byte("val")
 
-	err := ebs.Write("key", val)
+	ok, err := ebs.WriteNX("key", val)
 	assert.NoError(t, err)
+	assert.True(t, ok)
 
 	blob, err := bs.Read("key")
 	assert.NoError(t, err)
