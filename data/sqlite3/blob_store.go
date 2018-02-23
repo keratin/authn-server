@@ -31,19 +31,6 @@ func (s *BlobStore) Clean(reporter ops.ErrorReporter) {
 	}()
 }
 
-func (s *BlobStore) WLock(name string) (bool, error) {
-	_, err := s.DB.Exec("INSERT INTO blobs (name, blob, expires_at) VALUES (?, ?, ?)", name, placeholder, time.Now().Add(s.LockTime))
-	if i, ok := err.(sq3.Error); ok && i.ExtendedCode == sq3.ErrConstraintUnique {
-		return false, nil
-	}
-	return true, err
-}
-
-func (s *BlobStore) Write(name string, blob []byte) error {
-	_, err := s.DB.Exec("REPLACE INTO blobs (name, blob, expires_at) VALUES (?, ?, ?)", name, blob, time.Now().Add(s.TTL))
-	return err
-}
-
 func (s *BlobStore) Read(name string) ([]byte, error) {
 	var blob []byte
 	err := s.DB.QueryRow("SELECT blob FROM blobs WHERE name = ? AND blob != ? AND expires_at > ?", name, placeholder, time.Now()).Scan(&blob)
