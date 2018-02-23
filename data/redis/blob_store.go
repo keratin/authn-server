@@ -34,3 +34,7 @@ func (s *BlobStore) Read(name string) ([]byte, error) {
 	}
 	return []byte(blob), nil
 }
+
+func (s *BlobStore) WriteNX(name string, blob []byte) (bool, error) {
+	return s.Client.SetNX(name, blob, s.TTL).Result()
+}

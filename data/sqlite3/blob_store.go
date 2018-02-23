@@ -54,3 +54,14 @@ func (s *BlobStore) Read(name string) ([]byte, error) {
 	}
 	return blob, nil
 }
+
+func (s *BlobStore) WriteNX(name string, blob []byte) (bool, error) {
+	_, err := s.DB.Exec("INSERT INTO blobs (name, blob, expires_at) VALUES (?, ?, ?)", name, blob, time.Now().Add(s.TTL))
+	if i, ok := err.(sq3.Error); ok && i.ExtendedCode == sq3.ErrConstraintUnique {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}

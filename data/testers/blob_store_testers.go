@@ -10,6 +10,7 @@ import (
 var BlobStoreTesters = []func(*testing.T, data.BlobStore){
 	testReadWrite,
 	testWriteLock,
+	testWriteNX,
 }
 
 func testReadWrite(t *testing.T, bs data.BlobStore) {
@@ -46,4 +47,14 @@ func testWriteLock(t *testing.T, bs data.BlobStore) {
 	ok, err = bs.WLock("existing")
 	assert.NoError(t, err)
 	assert.False(t, ok)
+}
+
+func testWriteNX(t *testing.T, bs data.BlobStore) {
+	set, err := bs.WriteNX("key", []byte("first"))
+	assert.NoError(t, err)
+	assert.True(t, set)
+
+	set, err = bs.WriteNX("key", []byte("second"))
+	assert.NoError(t, err)
+	assert.False(t, set)
 }

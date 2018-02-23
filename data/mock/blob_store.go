@@ -44,3 +44,14 @@ func (bs *BlobStore) WLock(name string) (bool, error) {
 	}
 	return false, nil
 }
+
+func (bs *BlobStore) WriteNX(name string, blob []byte) (bool, error) {
+	bs.mutex.Lock()
+	defer bs.mutex.Unlock()
+
+	if bs.blobs[name] != nil {
+		return false, nil
+	}
+	bs.blobs[name] = blob
+	return true, nil
+}
