@@ -116,44 +116,33 @@ func (m *KeyStoreRotater) restore() ([]*rsa.PrivateKey, error) {
 // generate will create a new key and store it as an encrypted blob. It relies on a write lock to
 // coordinate with other AuthN servers.
 func (m *KeyStoreRotater) generate() (*rsa.PrivateKey, error) {
-	bucket := m.currentBucket()
-	keyName := fmt.Sprintf("rsa:%d", bucket)
-	for {
-		// check if another server has created it
-		existingKey, err := m.find(bucket)
-		if err != nil {
-			return nil, err
-		}
-		if existingKey != nil {
-			keyID, _ := compat.KeyID(existingKey.Public())
-			log.WithFields(log.Fields{"keyID": keyID}).Info("key synchronized")
-			return existingKey, nil
-		}
-		// acquire write lock (global mutex)
-		success, err := m.store.WLock(keyName)
-		if err != nil {
-			return nil, err
-		}
-		if success {
-			// create a new key
-			key, err := rsa.GenerateKey(rand.Reader, m.keyStrength)
-			if err != nil {
-				return nil, err
-			}
-			// store the key
-			err = m.store.Write(keyName, keyToBytes(key))
-			if err != nil {
-				return nil, err
-			}
-			// return the key
-			keyID, _ := compat.KeyID(key.Public())
-			log.WithFields(log.Fields{"keyID": keyID, "bucket": bucket}).Info("new key generated")
-			return key, nil
-		}
-
-		// wait and try again
-		time.Sleep(50 * time.Millisecond)
+	keyName := fmt.Sprintf("rsa:%d", m.currentBucket())
+	key, err := rsa.GenerateKey(rand.Reader, m.keyStrength)
+	if err != nil {
+		return nil, err
 	}
+
+	blob := keyToBytes(key)
+	ok, err := m.store.WriteNX(keyName, blob)
+	if err != nil {
+		return nil, err
+	}
+
+	if ok {
+		keyID, _ := compat.KeyID(key.Public())
+		log.WithFields(log.Fields{"keyID": keyID, "keyName": keyName}).Info("new key generated")
+	} else {
+		keyBlob, err := m.store.Read(keyName)
+		if err != nil {
+			return nil, err
+		}
+		key = bytesToKey(keyBlob)
+
+		keyID, _ := compat.KeyID(key.Public())
+		log.WithFields(log.Fields{"keyID": keyID}).Info("key synchronized")
+	}
+
+	return key, nil
 }
 
 // find will retrieve and deserialize/decrypt from the blob store
