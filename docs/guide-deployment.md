@@ -43,5 +43,6 @@ necessary for data warehousing or business intelligence, so try to minimize thei
 
 ## Related Guides
 
+* [High Availability](guide-high_availability.md)
 * [Deploying with Docker](guide-deploying_with_docker.md)
 * [Integrating AuthN with an API Gateway](guide-integrating_authn_with_an_api_gateway.md)
