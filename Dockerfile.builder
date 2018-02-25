@@ -1,5 +1,5 @@
-FROM golang:1.9-alpine
-ARG glide_version="v0.13.0"
+FROM golang:1.10-alpine
+ARG glide_version="v0.13.1"
 
 RUN apk update
 RUN apk add --no-cache ca-certificates openssl git make bash gcc musl-dev
