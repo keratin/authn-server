@@ -8,9 +8,10 @@ import "github.com/jmoiron/sqlx"
 // expected final complexity of this project, this is acceptable.
 func MigrateDB(db *sqlx.DB) error {
 	migrations := []func(db *sqlx.DB) error{
-		migration1,
-		migration2,
-		migration3,
+		createAccounts,
+		createRefreshTokens,
+		createBlobs,
+		createOauthAccounts,
 	}
 	for _, m := range migrations {
 		if err := m(db); err != nil {
@@ -20,7 +21,7 @@ func MigrateDB(db *sqlx.DB) error {
 	return nil
 }
 
-func migration1(db *sqlx.DB) error {
+func createAccounts(db *sqlx.DB) error {
 	_, err := db.Exec(`
         CREATE TABLE IF NOT EXISTS accounts (
             id INTEGER PRIMARY KEY,
@@ -37,7 +38,7 @@ func migration1(db *sqlx.DB) error {
 	return err
 }
 
-func migration2(db *sqlx.DB) error {
+func createRefreshTokens(db *sqlx.DB) error {
 	_, err := db.Exec(`
         CREATE TABLE IF NOT EXISTS refresh_tokens (
             token TEXT NOT NULL CONSTRAINT uniq UNIQUE,
@@ -48,13 +49,35 @@ func migration2(db *sqlx.DB) error {
 	return err
 }
 
-func migration3(db *sqlx.DB) error {
+func createBlobs(db *sqlx.DB) error {
 	_, err := db.Exec(`
         CREATE TABLE IF NOT EXISTS blobs (
             name TEXT NOT NULL CONSTRAINT uniq UNIQUE,
             blob BLOB NOT NULL,
             expires_at DATETIME NOT NULL
         )
+    `)
+	return err
+}
+
+func createOauthAccounts(db *sqlx.DB) error {
+	_, err := db.Exec(`
+        CREATE TABLE IF NOT EXISTS oauth_accounts (
+            id INTEGER PRIMARY KEY,
+            account_id INTEGER,
+            provider TEXT NOT NULL,
+            provider_id TEXT NOT NULL,
+            access_token TEXT NOT NULL,
+            created_at DATETIME NOT NULL,
+            updated_at DATETIME NOT NULL,
+            UNIQUE(provider_id, provider)
+        )
+    `)
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec(`
+        CREATE INDEX IF NOT EXISTS oauth_accounts_by_account_id ON oauth_accounts (account_id)
     `)
 	return err
 }
