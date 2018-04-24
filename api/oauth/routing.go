@@ -6,16 +6,22 @@ import (
 )
 
 func PublicRoutes(app *api.App) []*route.HandledRoute {
-	// originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
+	// TODO: originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
 
-	return []*route.HandledRoute{
-		route.Get("/oauth/{provider}").
-			SecuredWith(route.Unsecured()).
-			Handle(startOauth(app)),
-		route.Get("/oauth/{provider}/return").
-			SecuredWith(route.Unsecured()).
-			Handle(completeOauth(app)),
+	var routes []*route.HandledRoute
+
+	for providerName := range app.OauthProviders {
+		routes = append(routes,
+			route.Get("/oauth/"+providerName).
+				SecuredWith(route.Unsecured()).
+				Handle(startOauth(app, providerName)),
+			route.Get("/oauth/"+providerName+"/return").
+				SecuredWith(route.Unsecured()).
+				Handle(completeOauth(app, providerName)),
+		)
 	}
+
+	return routes
 }
 
 func Routes(app *api.App) []*route.HandledRoute {

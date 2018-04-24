@@ -6,6 +6,7 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
+	"github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -24,6 +25,7 @@ type App struct {
 	KeyStore          data.KeyStore
 	Actives           data.Actives
 	Reporter          ops.ErrorReporter
+	OauthProviders    map[string]oauth.Provider
 }
 
 func NewApp() (*App, error) {
@@ -86,6 +88,10 @@ func NewApp() (*App, error) {
 		)
 	}
 
+	oauthProviders := map[string]oauth.Provider{
+		"google": &oauth.Google{},
+	}
+
 	return &App{
 		DbCheck:           func() bool { return db.Ping() == nil },
 		RedisCheck:        func() bool { return redis != nil && redis.Ping().Err() == nil },
@@ -95,5 +101,6 @@ func NewApp() (*App, error) {
 		KeyStore:          keyStore,
 		Actives:           actives,
 		Reporter:          cfg.ErrorReporter,
+		OauthProviders:    oauthProviders,
 	}, nil
 }

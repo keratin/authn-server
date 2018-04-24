@@ -6,41 +6,35 @@ import (
 
 	"github.com/keratin/authn-server/services"
 
-	"github.com/gorilla/mux"
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/lib/route"
 )
 
 // TODO: implement nonces
 // TODO: add configuration ENV
-func completeOauth(app *api.App) http.HandlerFunc {
+func completeOauth(app *api.App, providerName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fail := func(err error) {
 			app.Reporter.ReportRequestError(err, r)
 			http.Redirect(w, r, "http://localhost:9999/TODO/FAILURE", http.StatusSeeOther)
 		}
 
-		providerName := mux.Vars(r)["provider"]
-		provider, err := getProvider(providerName)
-		if err != nil {
-			fail(err)
-			return
-		}
+		provider := app.OauthProviders[providerName]
 
 		// TODO: consume csrf nonce
 
-		tok, err := provider.config().Exchange(context.TODO(), r.FormValue("code"))
+		tok, err := provider.Config().Exchange(context.TODO(), r.FormValue("code"))
 		if err != nil {
 			fail(err)
 			return
 		}
-		user, err := provider.userInfo(tok)
+		user, err := provider.UserInfo(tok)
 		if err != nil {
 			fail(err)
 			return
 		}
 
-		account, err := app.AccountStore.FindByOauthAccount(providerName, user.id)
+		account, err := app.AccountStore.FindByOauthAccount(providerName, user.ID)
 		if err != nil {
 			fail(err)
 			return
@@ -48,7 +42,7 @@ func completeOauth(app *api.App) http.HandlerFunc {
 
 		// it's new! what to do?
 		if account != nil {
-			account, err = app.AccountStore.FindByUsername(user.email)
+			account, err = app.AccountStore.FindByUsername(user.Email)
 			if err != nil {
 				fail(err)
 				return
@@ -66,12 +60,12 @@ func completeOauth(app *api.App) http.HandlerFunc {
 
 			// looks like a new signup!
 			// TODO: if there is an existing session, then attach this oauth account to it.
-			account, err = services.AccountCreator(app.AccountStore, app.Config, user.email, "")
+			account, err = services.AccountCreator(app.AccountStore, app.Config, user.Email, "")
 			if err != nil {
 				fail(err)
 				return
 			}
-			app.AccountStore.AddOauthAccount(account.ID, providerName, user.id, tok.AccessToken)
+			app.AccountStore.AddOauthAccount(account.ID, providerName, user.ID, tok.AccessToken)
 		}
 
 		// clean up any existing session
