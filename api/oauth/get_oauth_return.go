@@ -11,16 +11,8 @@ import (
 	"github.com/keratin/authn-server/lib/route"
 )
 
-// TODO: create database table for service identities (service name, service id, access token, refresh token)
-// TODO: implement AccountStore updates
 // TODO: implement nonces
 // TODO: add configuration ENV
-// TODO: delete oauth accounts when deleting account
-// TODO: is oauth2.NoContext deprecated?
-//
-// TODO: how does the app get a token it can use for api calls with the scopes it has defined? do we
-//       need to save the current oauth token to the database? probably in whatever table contains
-//       the provider identities per account.
 func completeOauth(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fail := func(err error) {
@@ -73,7 +65,7 @@ func completeOauth(app *api.App) http.HandlerFunc {
 			}
 
 			// looks like a new signup!
-			// TODO: but wait, what if there's an existing session? do we add an oauth account to it?
+			// TODO: if there is an existing session, then attach this oauth account to it.
 			account, err = services.AccountCreator(app.AccountStore, app.Config, user.email, "")
 			if err != nil {
 				fail(err)
