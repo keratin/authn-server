@@ -23,11 +23,15 @@ import (
 //       the provider identities per account.
 func completeOauth(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		fail := func(err error) {
+			app.Reporter.ReportRequestError(err, r)
+			http.Redirect(w, r, "http://localhost:9999/TODO/FAILURE", http.StatusSeeOther)
+		}
+
 		providerName := mux.Vars(r)["provider"]
 		provider, err := getProvider(providerName)
 		if err != nil {
-			app.Reporter.ReportRequestError(err, r)
-			http.Redirect(w, r, "http://localhost:9999/TODO/FAILURE", http.StatusSeeOther)
+			fail(err)
 			return
 		}
 
@@ -35,21 +39,18 @@ func completeOauth(app *api.App) http.HandlerFunc {
 
 		tok, err := provider.config().Exchange(context.TODO(), r.FormValue("code"))
 		if err != nil {
-			app.Reporter.ReportRequestError(err, r)
-			http.Redirect(w, r, "http://localhost:9999/TODO/FAILURE", http.StatusSeeOther)
+			fail(err)
 			return
 		}
 		user, err := provider.userInfo(tok)
 		if err != nil {
-			app.Reporter.ReportRequestError(err, r)
-			http.Redirect(w, r, "http://localhost:9999/TODO/FAILURE", http.StatusSeeOther)
+			fail(err)
 			return
 		}
 
 		account, err := app.AccountStore.FindByOauthAccount(providerName, user.id)
 		if err != nil {
-			app.Reporter.ReportRequestError(err, r)
-			http.Redirect(w, r, "http://localhost:9999/TODO/FAILURE", http.StatusSeeOther)
+			fail(err)
 			return
 		}
 
@@ -57,8 +58,7 @@ func completeOauth(app *api.App) http.HandlerFunc {
 		if account != nil {
 			account, err = app.AccountStore.FindByUsername(user.email)
 			if err != nil {
-				app.Reporter.ReportRequestError(err, r)
-				http.Redirect(w, r, "http://localhost:9999/TODO/FAILURE", http.StatusSeeOther)
+				fail(err)
 				return
 			}
 
@@ -68,8 +68,7 @@ func completeOauth(app *api.App) http.HandlerFunc {
 				//       otherwise abort. we don't want an account takeover attack where someone
 				//       signs up with a victim's email (unverified) and waits for the victim to
 				//       connect with oauth.
-				app.Reporter.ReportRequestError(err, r)
-				http.Redirect(w, r, "http://localhost:9999/TODO/FAILURE", http.StatusSeeOther)
+				fail(err)
 				return
 			}
 
@@ -77,8 +76,7 @@ func completeOauth(app *api.App) http.HandlerFunc {
 			// TODO: but wait, what if there's an existing session? do we add an oauth account to it?
 			account, err = services.AccountCreator(app.AccountStore, app.Config, user.email, "")
 			if err != nil {
-				app.Reporter.ReportRequestError(err, r)
-				http.Redirect(w, r, "http://localhost:9999/TODO/FAILURE", http.StatusSeeOther)
+				fail(err)
 				return
 			}
 			app.AccountStore.AddOauthAccount(account.ID, providerName, user.id, tok.AccessToken)

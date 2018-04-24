@@ -9,9 +9,15 @@ import (
 
 func startOauth(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		fail := func(err error) {
+			app.Reporter.ReportRequestError(err, r)
+			http.Redirect(w, r, "http://localhost:9999/TODO/FAILURE", http.StatusSeeOther)
+		}
+
 		provider, err := getProvider(mux.Vars(r)["provider"])
 		if err != nil {
-			panic(err) // TODO: redirect back to frontend instead
+			fail(err)
+			return
 		}
 
 		nonce := "TODO"
