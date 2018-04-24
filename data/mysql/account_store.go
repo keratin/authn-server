@@ -100,7 +100,11 @@ func (db *AccountStore) GetOauthAccounts(accountID int) ([]*models.OauthAccount,
 }
 
 func (db *AccountStore) Archive(id int) error {
-	_, err := db.Exec("UPDATE accounts SET username = CONCAT('@', MD5(RAND())), password = ?, deleted_at = ? WHERE id = ?", "", time.Now(), id)
+	_, err := db.Exec("DELETE FROM oauth_accounts WHERE account_id = ?", id)
+	if err != nil {
+		return err
+	}
+	_, err = db.Exec("UPDATE accounts SET username = CONCAT('@', MD5(RAND())), password = ?, deleted_at = ? WHERE id = ?", "", time.Now(), id)
 	return err
 }
 

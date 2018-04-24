@@ -13,6 +13,7 @@ var AccountStoreTesters = []func(*testing.T, data.AccountStore){
 	testFindByUsername,
 	testLockAndUnlock,
 	testArchive,
+	testArchiveWithOauth,
 	testRequireNewPassword,
 	testSetPassword,
 	testAddOauthAccount,
@@ -91,6 +92,20 @@ func testArchive(t *testing.T, store data.AccountStore) {
 		err = store.Archive(account2.ID)
 		assert.NoError(t, err)
 	}
+}
+
+func testArchiveWithOauth(t *testing.T, store data.AccountStore) {
+	account, err := store.Create("authn@keratin.tech", []byte("password"))
+	require.NoError(t, err)
+	err = store.AddOauthAccount(account.ID, "PROVIDER", "PROVIDERID", "token")
+	require.NoError(t, err)
+
+	err = store.Archive(account.ID)
+	require.NoError(t, err)
+
+	found, err := store.FindByOauthAccount("PROVIDER", "PROVIDERID")
+	require.NoError(t, err)
+	assert.Empty(t, found)
 }
 
 func testRequireNewPassword(t *testing.T, store data.AccountStore) {

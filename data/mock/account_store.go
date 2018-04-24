@@ -111,7 +111,13 @@ func (s *accountStore) Archive(id int) error {
 		account.Username = ""
 		account.Password = []byte("")
 		account.DeletedAt = &now
+
+		for _, oauthAccount := range s.oauthAccountsByID[account.ID] {
+			delete(s.idByOauthID, oauthAccount.Provider+"|"+oauthAccount.ProviderID)
+		}
+		delete(s.oauthAccountsByID, account.ID)
 	}
+
 	return nil
 }
 
