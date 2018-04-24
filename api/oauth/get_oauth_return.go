@@ -1,11 +1,10 @@
 package oauth
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/keratin/authn-server/services"
-
-	"golang.org/x/oauth2"
 
 	"github.com/gorilla/mux"
 	"github.com/keratin/authn-server/api"
@@ -34,7 +33,7 @@ func completeOauth(app *api.App) http.HandlerFunc {
 
 		// TODO: consume csrf nonce
 
-		tok, err := provider.config().Exchange(oauth2.NoContext, r.FormValue("code"))
+		tok, err := provider.config().Exchange(context.TODO(), r.FormValue("code"))
 		if err != nil {
 			app.Reporter.ReportRequestError(err, r)
 			http.Redirect(w, r, "http://localhost:9999/TODO/FAILURE", http.StatusSeeOther)

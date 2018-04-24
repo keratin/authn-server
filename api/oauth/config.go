@@ -1,6 +1,7 @@
 package oauth
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -37,7 +38,7 @@ func (g *google) config() *oauth2.Config {
 }
 
 func (g *google) userInfo(t *oauth2.Token) (*userInfo, error) {
-	client := g.config().Client(oauth2.NoContext, t)
+	client := g.config().Client(context.TODO(), t)
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json")
 	if err != nil {
 		return nil, err
