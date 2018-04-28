@@ -1,5 +1,5 @@
-hash: 985f637765c6385f97460e47f409ff51de08bec38ef1f7e6163b540eb514a2ea
-updated: 2018-04-17T13:11:42.044986-07:00
+hash: fddf5b7ebb3a1563452340ea00f7e5cb8e8edcc3a2cd79f33714995ae155b5ca
+updated: 2018-04-28T11:57:53.450994+03:00
 imports:
 - name: github.com/airbrake/gobrake
   version: 86e9575e4d8889507ff8be9f3ab626be824c823e
@@ -49,6 +49,10 @@ imports:
   version: a79fa1e548e2c689c241d10173efd51e5d689d5b
   subpackages:
   - autoload
+- name: github.com/lib/pq
+  version: d34b9ff171c21ad295489235aec8b6626023cd04
+  subpackages:
+  - oid
 - name: github.com/mattn/go-sqlite3
   version: 6c771bb9887719704b210e87e934f08be014bdb1
 - name: github.com/matttproud/golang_protobuf_extensions
