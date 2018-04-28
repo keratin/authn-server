@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/keratin/authn-server/services"
+	"github.com/pkg/errors"
 
 	"github.com/keratin/authn-server/api"
-	"github.com/keratin/authn-server/lib/route"
 )
 
 // TODO: implement nonces
@@ -25,26 +25,26 @@ func completeOauth(app *api.App, providerName string) http.HandlerFunc {
 
 		tok, err := provider.Config().Exchange(context.TODO(), r.FormValue("code"))
 		if err != nil {
-			fail(err)
+			fail(errors.Wrap(err, "Exchange"))
 			return
 		}
 		user, err := provider.UserInfo(tok)
 		if err != nil {
-			fail(err)
+			fail(errors.Wrap(err, "userInfo"))
 			return
 		}
 
 		account, err := app.AccountStore.FindByOauthAccount(providerName, user.ID)
 		if err != nil {
-			fail(err)
+			fail(errors.Wrap(err, "FindByOauthAccount"))
 			return
 		}
 
 		// it's new! what to do?
-		if account != nil {
+		if account == nil {
 			account, err = app.AccountStore.FindByUsername(user.Email)
 			if err != nil {
-				fail(err)
+				fail(errors.Wrap(err, "FindByUsername"))
 				return
 			}
 
@@ -54,15 +54,15 @@ func completeOauth(app *api.App, providerName string) http.HandlerFunc {
 				//       otherwise abort. we don't want an account takeover attack where someone
 				//       signs up with a victim's email (unverified) and waits for the victim to
 				//       connect with oauth.
-				fail(err)
+				fail(errors.Wrap(err, "TODO: account exists"))
 				return
 			}
 
 			// looks like a new signup!
 			// TODO: if there is an existing session, then attach this oauth account to it.
-			account, err = services.AccountCreator(app.AccountStore, app.Config, user.Email, "")
+			account, err = services.AccountCreator(app.AccountStore, app.Config, user.Email, "TODO: random")
 			if err != nil {
-				fail(err)
+				fail(errors.Wrap(err, "AccountCreator"))
 				return
 			}
 			app.AccountStore.AddOauthAccount(account.ID, providerName, user.ID, tok.AccessToken)
@@ -75,9 +75,10 @@ func completeOauth(app *api.App, providerName string) http.HandlerFunc {
 		}
 
 		// identityToken is not returned in this flow. it must be fetched by the frontend as a resumed session.
-		sessionToken, _, err := api.NewSession(app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, account.ID, route.MatchedDomain(r))
+		sessionToken, _, err := api.NewSession(app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, account.ID, &app.Config.ApplicationDomains[0])
 		if err != nil {
-			panic(err)
+			fail(errors.Wrap(err, "NewSession"))
+			return
 		}
 
 		// Return the signed session in a cookie

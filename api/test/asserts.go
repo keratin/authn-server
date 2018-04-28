@@ -66,3 +66,10 @@ func AssertIDTokenResponse(t *testing.T, res *http.Response, keyStore data.KeySt
 		assert.Equal(t, cfg.AuthNURL.String(), claims.Issuer)
 	}
 }
+
+func AssertRedirect(t *testing.T, res *http.Response, location string) bool {
+	assert.Equal(t, http.StatusSeeOther, res.StatusCode)
+	loc, err := res.Location()
+	require.NoError(t, err)
+	return assert.Equal(t, location, loc.String())
+}

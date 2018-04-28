@@ -29,6 +29,7 @@ func TestWebhookSender(t *testing.T) {
 			w.WriteHeader(http.StatusNotFound)
 		}
 	}))
+	defer remoteApp.Close()
 	serverURL, err := url.Parse(remoteApp.URL)
 	require.NoError(t, err)
 
