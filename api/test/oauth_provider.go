@@ -26,8 +26,8 @@ func ProviderApp(w http.ResponseWriter, r *http.Request) {
 			"expires_in":    3600,
 		})
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(j)
 		w.WriteHeader(http.StatusOK)
+		w.Write(j)
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 	}

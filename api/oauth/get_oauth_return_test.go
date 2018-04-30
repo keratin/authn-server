@@ -49,11 +49,14 @@ func TestGetOauthReturn(t *testing.T) {
 	})
 
 	t.Run("connect new identity with existing email", func(t *testing.T) {
-		app.AccountStore.Create("existing@keratin.tech", []byte("password"))
-		res, err := client.Get("/oauth/test/return?code=existing@keratin.tech")
+		account, err := app.AccountStore.Create("existing@keratin.tech", []byte("password"))
 		require.NoError(t, err)
-		test.AssertRedirect(t, res, "http://localhost:9999/TODO/FAILURE")
-		// TODO: should succeed if session exists
+		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
+		res, err := client.WithCookie(session).Get("/oauth/test/return?code=existing@keratin.tech")
+		require.NoError(t, err)
+		if test.AssertRedirect(t, res, "http://localhost:9999/TODO/SUCCESS") {
+			test.AssertSession(t, app.Config, res.Cookies())
+		}
 	})
 
 	t.Run("log in to existing identity", func(t *testing.T) {
