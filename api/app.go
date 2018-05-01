@@ -88,8 +88,9 @@ func NewApp() (*App, error) {
 		)
 	}
 
-	oauthProviders := map[string]oauth.Provider{
-		"google": &oauth.Google{},
+	oauthProviders := map[string]oauth.Provider{}
+	if cfg.GoogleOauthCredentials != nil {
+		oauthProviders["google"] = *oauth.NewGoogleProvider(cfg.GoogleOauthCredentials)
 	}
 
 	return &App{

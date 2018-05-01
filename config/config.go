@@ -18,6 +18,7 @@ import (
 	raven "github.com/getsentry/raven-go"
 	// a .env file is extremely useful during development
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
 	"golang.org/x/crypto/pbkdf2"
@@ -55,6 +56,7 @@ type Config struct {
 	ServerPort             int
 	PublicPort             int
 	Proxied                bool
+	GoogleOauthCredentials *oauth.Credentials
 }
 
 var configurers = []configurer{
@@ -422,6 +424,19 @@ var configurers = []configurer{
 			c.Proxied = val
 		}
 		return err
+	},
+
+	// GOOGLE_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
+	// AuthN will enable routes for Google OAuth signin.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("GOOGLE_OAUTH_CREDENTIALS"); ok {
+			credentials, err := oauth.NewCredentials(val)
+			if err == nil {
+				c.GoogleOauthCredentials = credentials
+			}
+			return err
+		}
+		return nil
 	},
 }
 
