@@ -16,7 +16,7 @@ import (
 // TODO: implement nonce or state check
 // TODO: add return URL configuration
 // TODO: add configuration ENVs
-func completeOauth(app *api.App, providerName string) http.HandlerFunc {
+func getOauthReturn(app *api.App, providerName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fail := func(err error) {
 			app.Reporter.ReportRequestError(err, r)

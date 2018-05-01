@@ -6,7 +6,7 @@ import (
 	"github.com/keratin/authn-server/api"
 )
 
-func startOauth(app *api.App, providerName string) http.HandlerFunc {
+func getOauth(app *api.App, providerName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		provider := app.OauthProviders[providerName]
 
