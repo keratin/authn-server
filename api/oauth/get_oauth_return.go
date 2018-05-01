@@ -48,7 +48,7 @@ func getOauthReturn(app *api.App, providerName string) http.HandlerFunc {
 
 		// TODO: consume csrf nonce
 
-		tok, err := provider.Config().Exchange(context.TODO(), r.FormValue("code"))
+		tok, err := provider.Config("TODO").Exchange(context.TODO(), r.FormValue("code"))
 		if err != nil {
 			fail(errors.Wrap(err, "Exchange"))
 			return

@@ -11,20 +11,21 @@ import (
 
 	"github.com/keratin/authn-server/api/oauth"
 	"github.com/keratin/authn-server/api/test"
+	oauthlib "github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/lib/route"
 )
 
 func TestGetOauthReturn(t *testing.T) {
 	// start a fake oauth provider
-	providerServer := httptest.NewServer(http.HandlerFunc(test.ProviderApp))
+	providerServer := httptest.NewServer(test.ProviderApp())
 	defer providerServer.Close()
 
 	// configure a client for the fake oauth provider
-	providerClient := test.NewOauthProvider(providerServer)
+	providerClient := oauthlib.NewTestProvider(providerServer)
 
 	// configure and start the authn test server
 	app := test.App()
-	app.OauthProviders["test"] = providerClient
+	app.OauthProviders["test"] = *providerClient
 	server := test.Server(app, oauth.Routes(app))
 	defer server.Close()
 

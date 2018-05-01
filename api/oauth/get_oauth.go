@@ -11,7 +11,8 @@ func getOauth(app *api.App, providerName string) http.HandlerFunc {
 		provider := app.OauthProviders[providerName]
 
 		nonce := "TODO"
+		returnURL := "TODO/oauth/" + providerName + "/return" // needs mounted path
 
-		http.Redirect(w, r, provider.Config().AuthCodeURL(nonce), http.StatusSeeOther)
+		http.Redirect(w, r, provider.Config(returnURL).AuthCodeURL(nonce), http.StatusSeeOther)
 	}
 }
