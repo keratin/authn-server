@@ -48,7 +48,7 @@ func TestGetOauthReturn(t *testing.T) {
 	t.Run("sign up new identity with new email", func(t *testing.T) {
 		res, err := client.Get("/oauth/test/return?code=something&state=" + state)
 		require.NoError(t, err)
-		if !test.AssertRedirect(t, res, "http://localhost:9999/TODO/SUCCESS") {
+		if !test.AssertRedirect(t, res, "https://localhost:9999/return") {
 			return
 		}
 		test.AssertSession(t, app.Config, res.Cookies())
@@ -66,7 +66,7 @@ func TestGetOauthReturn(t *testing.T) {
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 		res, err := client.WithCookie(session).Get("/oauth/test/return?code=existing@keratin.tech&state=" + state)
 		require.NoError(t, err)
-		if test.AssertRedirect(t, res, "http://localhost:9999/TODO/SUCCESS") {
+		if test.AssertRedirect(t, res, "https://localhost:9999/return") {
 			test.AssertSession(t, app.Config, res.Cookies())
 		}
 	})
@@ -81,7 +81,7 @@ func TestGetOauthReturn(t *testing.T) {
 		// back as id and email.
 		res, err := client.Get("/oauth/test/return?code=REGISTEREDID&state=" + state)
 		require.NoError(t, err)
-		if test.AssertRedirect(t, res, "http://localhost:9999/TODO/SUCCESS") {
+		if test.AssertRedirect(t, res, "https://localhost:9999/return") {
 			test.AssertSession(t, app.Config, res.Cookies())
 		}
 	})
@@ -91,7 +91,7 @@ func TestGetOauthReturn(t *testing.T) {
 		require.NoError(t, err)
 		res, err := client.Get("/oauth/test/return?code=collision@keratin.tech&state=" + state)
 		require.NoError(t, err)
-		test.AssertRedirect(t, res, "http://localhost:9999/TODO/FAILURE")
+		test.AssertRedirect(t, res, "https://localhost:9999/return?status=failed")
 	})
 
 	t.Run("connect new identity with current session that is already linked", func(t *testing.T) {
@@ -101,19 +101,19 @@ func TestGetOauthReturn(t *testing.T) {
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 		res, err := client.WithCookie(session).Get("/oauth/test/return?code=linked@keratin.tech&state=" + state)
 		require.NoError(t, err)
-		test.AssertRedirect(t, res, "http://localhost:9999/TODO/FAILURE")
+		test.AssertRedirect(t, res, "https://localhost:9999/return?status=failed")
 	})
 
 	t.Run("without nonce cookie", func(t *testing.T) {
 		client := route.NewClient(server.URL)
 		res, err := client.Get("/oauth/test/return?code=something&state=" + state)
 		require.NoError(t, err)
-		test.AssertRedirect(t, res, "http://localhost:9999/TODO/FAILURE")
+		test.AssertRedirect(t, res, "http://test.com")
 	})
 
 	t.Run("with tampered state", func(t *testing.T) {
 		res, err := client.Get("/oauth/test/return?code=something&state=TAMPERED")
 		require.NoError(t, err)
-		test.AssertRedirect(t, res, "http://localhost:9999/TODO/FAILURE")
+		test.AssertRedirect(t, res, "http://test.com")
 	})
 }

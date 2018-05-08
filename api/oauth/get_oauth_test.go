@@ -31,7 +31,7 @@ func TestGetOauth(t *testing.T) {
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
 
 	t.Run("when provider is configured", func(t *testing.T) {
-		res, err := client.Get("/oauth/test")
+		res, err := client.Get("/oauth/test?redirect_uri=http://test.com/finish")
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusSeeOther, res.StatusCode)
 		assert.NotNil(t, test.ReadCookie(res.Cookies(), app.Config.OAuthCookieName))
@@ -45,5 +45,11 @@ func TestGetOauth(t *testing.T) {
 		res, err := client.Get("/oauth/unknown")
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusNotFound, res.StatusCode)
+	})
+
+	t.Run("unknown redirect domain", func(t *testing.T) {
+		res, err := client.Get("/oauth/test?redirect_uri=http://evil.com")
+		require.NoError(t, err)
+		test.AssertRedirect(t, res, "http://test.com")
 	})
 }

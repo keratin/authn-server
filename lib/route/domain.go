@@ -69,3 +69,14 @@ func (d *Domain) String() string {
 	}
 	return d.Hostname + ":" + d.Port
 }
+
+// URL converts a Domain into a URL
+func (d *Domain) URL() url.URL {
+	if d.Port == "80" {
+		return url.URL{Scheme: "http", Host: d.Hostname}
+	}
+	if d.Port == "443" {
+		return url.URL{Scheme: "https", Host: d.Hostname}
+	}
+	return url.URL{Scheme: "http", Host: d.String()}
+}

@@ -3,7 +3,9 @@ package oauth
 import (
 	"context"
 	"net/http"
+	"net/url"
 
+	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/oauth"
 
@@ -14,16 +16,46 @@ import (
 	"github.com/keratin/authn-server/api"
 )
 
-// TODO: implement nonce or state check
-// TODO: add return URL configuration
-// TODO: add configuration ENVs
+func getState(cfg *config.Config, r *http.Request) (*oauth.Claims, error) {
+	nonce, err := r.Cookie(cfg.OAuthCookieName)
+	if err != nil {
+		return nil, errors.Wrap(err, "Cookie")
+	}
+	state, err := oauth.Parse(r.FormValue("state"), cfg, nonce.Value)
+	if err != nil {
+		return nil, errors.Wrap(err, "Parse")
+	}
+	return state, err
+}
+
+func redirectFailure(w http.ResponseWriter, r *http.Request, destination string) {
+	url, _ := url.Parse(destination)
+	query := url.Query()
+	query.Add("status", "failed")
+	url.RawQuery = query.Encode()
+	http.Redirect(w, r, url.String(), http.StatusSeeOther)
+}
+
 func getOauthReturn(app *api.App, providerName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fail := func(err error) {
-			app.Reporter.ReportRequestError(err, r)
-			http.Redirect(w, r, "http://localhost:9999/TODO/FAILURE", http.StatusSeeOther)
+		provider := app.OauthProviders[providerName]
+
+		// verify the state and nonce
+		state, err := getState(app.Config, r)
+		if err != nil {
+			app.Reporter.ReportRequestError(errors.Wrap(err, "getState"), r)
+			failsafe := app.Config.ApplicationDomains[0].URL()
+			http.Redirect(w, r, failsafe.String(), http.StatusSeeOther)
+			return
 		}
 
+		// fail handler
+		fail := func(err error) {
+			app.Reporter.ReportRequestError(err, r)
+			redirectFailure(w, r, state.Destination)
+		}
+
+		// success handler
 		succeed := func(account *models.Account) {
 			// clean up any existing session
 			err := api.RevokeSession(app.RefreshTokenStore, app.Config, r)
@@ -42,21 +74,7 @@ func getOauthReturn(app *api.App, providerName string) http.HandlerFunc {
 			api.SetSession(app.Config, w, sessionToken)
 
 			// redirect back to frontend (success or failure)
-			http.Redirect(w, r, "http://localhost:9999/TODO/SUCCESS", http.StatusSeeOther)
-		}
-
-		provider := app.OauthProviders[providerName]
-
-		// verify the state and nonce
-		nonce, err := r.Cookie(app.Config.OAuthCookieName)
-		if err != nil {
-			fail(errors.Wrap(err, "Cookie"))
-			return
-		}
-		_, err = oauth.Parse(r.FormValue("state"), app.Config, nonce.Value)
-		if err != nil {
-			fail(errors.Wrap(err, "Parse"))
-			return
+			http.Redirect(w, r, state.Destination, http.StatusSeeOther)
 		}
 
 		// exchange code for tokens and user info
