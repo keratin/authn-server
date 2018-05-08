@@ -29,6 +29,7 @@ func App() *api.App {
 		SessionSigningKey:     []byte("TestKey"),
 		AuthNURL:              authnURL,
 		SessionCookieName:     "authn",
+		OAuthCookieName:       "authn-oauth-nonce",
 		ApplicationDomains:    []route.Domain{{Hostname: "test.com"}},
 		PasswordMinComplexity: 2,
 		AppPasswordResetURL:   &url.URL{Scheme: "https", Host: "app.example.com"},

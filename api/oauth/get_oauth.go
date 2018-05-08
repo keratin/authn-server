@@ -25,7 +25,7 @@ func getOauth(app *api.App, providerName string) http.HandlerFunc {
 			return
 		}
 		http.SetCookie(w, &http.Cookie{
-			Name:     "authn-oauth-nonce",
+			Name:     app.Config.OAuthCookieName,
 			Value:    string(nonce),
 			Path:     app.Config.MountedPath,
 			Secure:   app.Config.ForceSSL,

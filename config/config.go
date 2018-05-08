@@ -37,6 +37,7 @@ type Config struct {
 	RedisURL               *url.URL
 	DatabaseURL            *url.URL
 	SessionCookieName      string
+	OAuthCookieName        string
 	SessionSigningKey      []byte
 	ResetSigningKey        []byte
 	DBEncryptionKey        []byte

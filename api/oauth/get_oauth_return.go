@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/keratin/authn-server/models"
+	"github.com/keratin/authn-server/tokens/oauth"
 
 	"github.com/keratin/authn-server/lib"
 	"github.com/keratin/authn-server/services"
@@ -46,8 +47,19 @@ func getOauthReturn(app *api.App, providerName string) http.HandlerFunc {
 
 		provider := app.OauthProviders[providerName]
 
-		// TODO: consume csrf nonce
+		// verify the state and nonce
+		nonce, err := r.Cookie(app.Config.OAuthCookieName)
+		if err != nil {
+			fail(errors.Wrap(err, "Cookie"))
+			return
+		}
+		_, err = oauth.Parse(r.FormValue("state"), app.Config, nonce.Value)
+		if err != nil {
+			fail(errors.Wrap(err, "Parse"))
+			return
+		}
 
+		// exchange code for tokens and user info
 		tok, err := provider.Config("TODO").Exchange(context.TODO(), r.FormValue("code"))
 		if err != nil {
 			fail(errors.Wrap(err, "Exchange"))

@@ -13,6 +13,7 @@ import (
 	"github.com/keratin/authn-server/api/test"
 	oauthlib "github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/lib/route"
+	oauthtoken "github.com/keratin/authn-server/tokens/oauth"
 )
 
 func TestGetOauthReturn(t *testing.T) {
@@ -30,17 +31,27 @@ func TestGetOauthReturn(t *testing.T) {
 	defer server.Close()
 
 	// configure a client for the authn test server
-	client := route.NewClient(server.URL)
+	nonce := "rand123"
+	client := route.NewClient(server.URL).WithCookie(&http.Cookie{
+		Name:  app.Config.OAuthCookieName,
+		Value: nonce,
+	})
 	http.DefaultClient.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 		return http.ErrUseLastResponse
 	}
 
+	token, err := oauthtoken.New(app.Config, nonce, "https://localhost:9999/return")
+	require.NoError(t, err)
+	state, err := token.Sign(app.Config.OAuthSigningKey)
+	require.NoError(t, err)
+
 	t.Run("sign up new identity with new email", func(t *testing.T) {
-		res, err := client.Get("/oauth/test/return?code=something")
+		res, err := client.Get("/oauth/test/return?code=something&state=" + state)
 		require.NoError(t, err)
-		if test.AssertRedirect(t, res, "http://localhost:9999/TODO/SUCCESS") {
-			test.AssertSession(t, app.Config, res.Cookies())
+		if !test.AssertRedirect(t, res, "http://localhost:9999/TODO/SUCCESS") {
+			return
 		}
+		test.AssertSession(t, app.Config, res.Cookies())
 
 		// creates an account
 		account, err := app.AccountStore.FindByOauthAccount("test", "something")
@@ -53,7 +64,7 @@ func TestGetOauthReturn(t *testing.T) {
 		account, err := app.AccountStore.Create("existing@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
-		res, err := client.WithCookie(session).Get("/oauth/test/return?code=existing@keratin.tech")
+		res, err := client.WithCookie(session).Get("/oauth/test/return?code=existing@keratin.tech&state=" + state)
 		require.NoError(t, err)
 		if test.AssertRedirect(t, res, "http://localhost:9999/TODO/SUCCESS") {
 			test.AssertSession(t, app.Config, res.Cookies())
@@ -68,7 +79,7 @@ func TestGetOauthReturn(t *testing.T) {
 
 		// codes don't normally specify the id, but our test provider is set up to reflect the code
 		// back as id and email.
-		res, err := client.Get("/oauth/test/return?code=REGISTEREDID")
+		res, err := client.Get("/oauth/test/return?code=REGISTEREDID&state=" + state)
 		require.NoError(t, err)
 		if test.AssertRedirect(t, res, "http://localhost:9999/TODO/SUCCESS") {
 			test.AssertSession(t, app.Config, res.Cookies())
@@ -78,7 +89,7 @@ func TestGetOauthReturn(t *testing.T) {
 	t.Run("email collision", func(t *testing.T) {
 		_, err := app.AccountStore.Create("collision@keratin.tech", []byte("password"))
 		require.NoError(t, err)
-		res, err := client.Get("/oauth/test/return?code=collision@keratin.tech")
+		res, err := client.Get("/oauth/test/return?code=collision@keratin.tech&state=" + state)
 		require.NoError(t, err)
 		test.AssertRedirect(t, res, "http://localhost:9999/TODO/FAILURE")
 	})
@@ -88,7 +99,20 @@ func TestGetOauthReturn(t *testing.T) {
 		require.NoError(t, err)
 		app.AccountStore.AddOauthAccount(account.ID, "test", "PREVIOUSID", "TOKEN")
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
-		res, err := client.WithCookie(session).Get("/oauth/test/return?code=linked@keratin.tech")
+		res, err := client.WithCookie(session).Get("/oauth/test/return?code=linked@keratin.tech&state=" + state)
+		require.NoError(t, err)
+		test.AssertRedirect(t, res, "http://localhost:9999/TODO/FAILURE")
+	})
+
+	t.Run("without nonce cookie", func(t *testing.T) {
+		client := route.NewClient(server.URL)
+		res, err := client.Get("/oauth/test/return?code=something&state=" + state)
+		require.NoError(t, err)
+		test.AssertRedirect(t, res, "http://localhost:9999/TODO/FAILURE")
+	})
+
+	t.Run("with tampered state", func(t *testing.T) {
+		res, err := client.Get("/oauth/test/return?code=something&state=TAMPERED")
 		require.NoError(t, err)
 		test.AssertRedirect(t, res, "http://localhost:9999/TODO/FAILURE")
 	})

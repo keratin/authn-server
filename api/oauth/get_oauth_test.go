@@ -34,7 +34,7 @@ func TestGetOauth(t *testing.T) {
 		res, err := client.Get("/oauth/test")
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusSeeOther, res.StatusCode)
-		assert.NotNil(t, test.ReadCookie(res.Cookies(), "authn-oauth-nonce"))
+		assert.NotNil(t, test.ReadCookie(res.Cookies(), app.Config.OAuthCookieName))
 
 		location, err := res.Location()
 		require.NoError(t, err)
