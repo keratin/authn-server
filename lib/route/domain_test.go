@@ -56,4 +56,13 @@ func TestDomain(t *testing.T) {
 		assert.Equal(t, "host", hDomain.String())
 		assert.Equal(t, "host:port", hpDomain.String())
 	})
+
+	t.Run("FindDomain", func(t *testing.T) {
+		domain := route.ParseDomain("example.com:443")
+		domains := []route.Domain{domain}
+		assert.Equal(t, domain, *route.FindDomain("https://example.com", domains))
+		assert.Nil(t, route.FindDomain("http://example.com", domains))
+		assert.Nil(t, route.FindDomain("https://example.com:9100", domains))
+		assert.Nil(t, route.FindDomain("https://www.example.com", domains))
+	})
 }

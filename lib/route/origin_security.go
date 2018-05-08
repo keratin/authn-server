@@ -3,7 +3,6 @@ package route
 import (
 	"context"
 	"net/http"
-	"net/url"
 )
 
 type matchedDomainKey int
@@ -17,19 +16,13 @@ type matchedDomainKey int
 func OriginSecurity(domains []Domain) SecurityHandler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			url, err := url.Parse(r.Header.Get("Origin"))
-			if err != nil {
-				panic(err)
-			}
+			domain := FindDomain(r.Header.Get("Origin"), domains)
+			if domain != nil {
+				ctx := r.Context()
+				ctx = context.WithValue(ctx, matchedDomainKey(0), domain)
 
-			for _, d := range domains {
-				if d.Matches(url) {
-					ctx := r.Context()
-					ctx = context.WithValue(ctx, matchedDomainKey(0), &d)
-
-					h.ServeHTTP(w, r.WithContext(ctx))
-					return
-				}
+				h.ServeHTTP(w, r.WithContext(ctx))
+				return
 			}
 
 			w.WriteHeader(http.StatusForbidden)

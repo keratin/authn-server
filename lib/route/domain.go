@@ -21,6 +21,21 @@ func ParseDomain(domain string) Domain {
 	return Domain{Hostname: pieces[0], Port: pieces[1]}
 }
 
+// FindDomain returns a matching domain if the given string is a URL that matches
+func FindDomain(str string, domains []Domain) *Domain {
+	originURL, err := url.Parse(str)
+	if err != nil {
+		return nil
+	}
+
+	for _, d := range domains {
+		if d.Matches(originURL) {
+			return &d
+		}
+	}
+	return nil
+}
+
 // Matches will compare the Domain against a given URL. The Hostname must always be a perfect match,
 // and if Port is specified (non-blank) then it must also match. The common ports 80 and 443 will be
 // satisfied by http and https schemes, respectively.
