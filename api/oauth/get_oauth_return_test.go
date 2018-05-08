@@ -86,9 +86,21 @@ func TestGetOauthReturn(t *testing.T) {
 		}
 	})
 
+	t.Run("log in to locked identity", func(t *testing.T) {
+		account, err := app.AccountStore.Create("locked@keratin.tech", []byte("password"))
+		require.NoError(t, err)
+		err = app.AccountStore.Lock(account.ID)
+		require.NoError(t, err)
+
+		res, err := client.Get("/oauth/test/return?code=locked@keratin.tech&state=" + state)
+		require.NoError(t, err)
+		test.AssertRedirect(t, res, "https://localhost:9999/return?status=failed")
+	})
+
 	t.Run("email collision", func(t *testing.T) {
 		_, err := app.AccountStore.Create("collision@keratin.tech", []byte("password"))
 		require.NoError(t, err)
+
 		res, err := client.Get("/oauth/test/return?code=collision@keratin.tech&state=" + state)
 		require.NoError(t, err)
 		test.AssertRedirect(t, res, "https://localhost:9999/return?status=failed")
@@ -98,6 +110,7 @@ func TestGetOauthReturn(t *testing.T) {
 		account, err := app.AccountStore.Create("linked@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 		app.AccountStore.AddOauthAccount(account.ID, "test", "PREVIOUSID", "TOKEN")
+
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 		res, err := client.WithCookie(session).Get("/oauth/test/return?code=linked@keratin.tech&state=" + state)
 		require.NoError(t, err)

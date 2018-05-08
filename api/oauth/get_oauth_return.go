@@ -97,6 +97,10 @@ func getOauthReturn(app *api.App, providerName string) http.HandlerFunc {
 			return
 		}
 		if linkedAccount != nil {
+			if linkedAccount.Locked {
+				fail(errors.New("account locked"))
+				return
+			}
 			succeed(linkedAccount)
 			return
 		}
