@@ -40,6 +40,7 @@ type Config struct {
 	SessionSigningKey      []byte
 	ResetSigningKey        []byte
 	DBEncryptionKey        []byte
+	OAuthSigningKey        []byte
 	ResetTokenTTL          time.Duration
 	IdentitySigningKey     *rsa.PrivateKey
 	AuthNURL               *url.URL
@@ -110,6 +111,7 @@ var configurers = []configurer{
 			c.SessionSigningKey = derive([]byte(val), "session-key-salt")
 			c.ResetSigningKey = derive([]byte(val), "password-reset-token-key-salt")
 			c.DBEncryptionKey = derive([]byte(val), "db-encryption-key-salt")[:32]
+			c.OAuthSigningKey = derive([]byte(val), "oauth-key-salt")
 		}
 		return err
 	},
