@@ -54,7 +54,7 @@ func getOauth(app *api.App, providerName string) http.HandlerFunc {
 		}
 		state, err := stateToken.Sign(app.Config.OAuthSigningKey)
 
-		returnURL := "TODO/oauth/" + providerName + "/return" // needs mounted path
+		returnURL := app.Config.AuthNURL.String() + "/oauth/" + providerName + "/return"
 		http.Redirect(w, r, provider.Config(returnURL).AuthCodeURL(state), http.StatusSeeOther)
 	}
 }

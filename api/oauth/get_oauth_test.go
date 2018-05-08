@@ -39,6 +39,7 @@ func TestGetOauth(t *testing.T) {
 		location, err := res.Location()
 		require.NoError(t, err)
 		require.NotEmpty(t, location.Query().Get("state"))
+		require.Equal(t, "https://authn.example.com/oauth/test/return", location.Query().Get("redirect_uri"))
 	})
 
 	t.Run("unknown provider", func(t *testing.T) {
