@@ -34,6 +34,11 @@ func TestGetOauth(t *testing.T) {
 		res, err := client.Get("/oauth/test")
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusSeeOther, res.StatusCode)
+		assert.NotNil(t, test.ReadCookie(res.Cookies(), "authn-oauth-nonce"))
+
+		location, err := res.Location()
+		require.NoError(t, err)
+		require.NotEmpty(t, location.Query().Get("state"))
 	})
 
 	t.Run("unknown provider", func(t *testing.T) {

@@ -34,16 +34,10 @@ func AssertErrors(t *testing.T, res *http.Response, expected services.FieldError
 }
 
 func AssertSession(t *testing.T, cfg *config.Config, cookies []*http.Cookie) {
-	var session string
-	for _, cookie := range cookies {
-		if cookie.Name == cfg.SessionCookieName {
-			session = cookie.Value
-			break
-		}
-	}
+	session := ReadCookie(cookies, cfg.SessionCookieName)
 	require.NotEmpty(t, session)
 
-	_, err := sessions.Parse(session, cfg)
+	_, err := sessions.Parse(session.Value, cfg)
 	assert.NoError(t, err)
 }
 

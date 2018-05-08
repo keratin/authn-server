@@ -23,3 +23,13 @@ func ReadBody(res *http.Response) []byte {
 func ExtractResult(res *http.Response, inner interface{}) error {
 	return json.Unmarshal(ReadBody(res), &api.ServiceData{inner})
 }
+
+// ReadCookie gets a cookie by name.
+func ReadCookie(cookies []*http.Cookie, name string) *http.Cookie {
+	for _, cookie := range cookies {
+		if cookie.Name == name {
+			return cookie
+		}
+	}
+	return nil
+}
