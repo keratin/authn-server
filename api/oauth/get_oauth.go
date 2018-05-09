@@ -1,6 +1,7 @@
 package oauth
 
 import (
+	"encoding/base64"
 	"errors"
 	"net/http"
 	"time"
@@ -32,11 +33,12 @@ func getOauth(app *api.App, providerName string) http.HandlerFunc {
 		}
 
 		// set nonce in a secured cookie
-		nonce, err := lib.GenerateToken()
+		bytes, err := lib.GenerateToken()
 		if err != nil {
 			fail(err)
 			return
 		}
+		nonce := base64.StdEncoding.EncodeToString(bytes)
 		http.SetCookie(w, &http.Cookie{
 			Name:     app.Config.OAuthCookieName,
 			Value:    string(nonce),
