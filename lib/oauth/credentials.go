@@ -17,7 +17,7 @@ func NewCredentials(credentials string) (*Credentials, error) {
 	if strings.Count(credentials, ":") != 1 {
 		return nil, errors.New("Credentials must be in the format `id:string`")
 	}
-	strs := strings.SplitN(credentials, ":", 1)
+	strs := strings.SplitN(credentials, ":", 2)
 	return &Credentials{
 		ID:     strs[0],
 		Secret: strs[1],
