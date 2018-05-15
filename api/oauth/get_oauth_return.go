@@ -6,6 +6,7 @@ import (
 	"net/url"
 
 	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/oauth"
 
@@ -111,23 +112,12 @@ func getOauthReturn(app *api.App, providerName string) http.HandlerFunc {
 		// Require a session with an account that has no other identity from this provider.
 		sessionAccountID := api.GetSessionAccountID(r)
 		if sessionAccountID != 0 {
-			sessionAccountIdentities, err := app.AccountStore.GetOauthAccounts(sessionAccountID)
-			if err != nil {
-				fail(errors.Wrap(err, "GetOauthAccounts"))
+			err = app.AccountStore.AddOauthAccount(sessionAccountID, providerName, providerUser.ID, tok.AccessToken)
+			if err != nil && !data.IsUniquenessError(err) {
+				fail(errors.Wrap(err, "AddOauthAccount"))
 				return
 			}
-			sessionAccountHasExistingIdentity := false
-			for _, i := range sessionAccountIdentities {
-				if i.Provider == providerName {
-					sessionAccountHasExistingIdentity = true
-				}
-			}
-			if !sessionAccountHasExistingIdentity {
-				err = app.AccountStore.AddOauthAccount(sessionAccountID, providerName, providerUser.ID, tok.AccessToken)
-				if err != nil {
-					fail(errors.Wrap(err, "AddOauthAccount"))
-					return
-				}
+			if !data.IsUniquenessError(err) {
 				sessionAccount, err := app.AccountStore.Find(sessionAccountID)
 				if err != nil {
 					fail(errors.Wrap(err, "Find"))
