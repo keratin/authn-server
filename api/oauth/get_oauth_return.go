@@ -94,6 +94,7 @@ func getOauthReturn(app *api.App, providerName string) http.HandlerFunc {
 
 		// LOGGING IN
 		// Require a previously linked account.
+		// Expected failures: account is locked
 		linkedAccount, err := app.AccountStore.FindByOauthAccount(providerName, providerUser.ID)
 		if err != nil {
 			fail(errors.Wrap(err, "FindByOauthAccount"))
@@ -110,26 +111,30 @@ func getOauthReturn(app *api.App, providerName string) http.HandlerFunc {
 
 		// CONNECTING ACCOUNTS
 		// Require a session with an account that has no other identity from this provider.
+		// Expected failures: session is linked
 		sessionAccountID := api.GetSessionAccountID(r)
 		if sessionAccountID != 0 {
 			err = app.AccountStore.AddOauthAccount(sessionAccountID, providerName, providerUser.ID, tok.AccessToken)
-			if err != nil && !data.IsUniquenessError(err) {
-				fail(errors.Wrap(err, "AddOauthAccount"))
-				return
-			}
-			if !data.IsUniquenessError(err) {
-				sessionAccount, err := app.AccountStore.Find(sessionAccountID)
-				if err != nil {
-					fail(errors.Wrap(err, "Find"))
-					return
+			if err != nil {
+				if data.IsUniquenessError(err) {
+					fail(errors.New("session conflict"))
+				} else {
+					fail(errors.Wrap(err, "AddOauthAccount"))
 				}
-				succeed(sessionAccount)
 				return
 			}
+			sessionAccount, err := app.AccountStore.Find(sessionAccountID)
+			if err != nil {
+				fail(errors.Wrap(err, "Find"))
+				return
+			}
+			succeed(sessionAccount)
+			return
 		}
 
 		// SIGNING UP
 		// Require a unique email (username)
+		// Expected failures: non-unique username
 		rand, err := lib.GenerateToken()
 		if err != nil {
 			fail(errors.Wrap(err, "GenerateToken"))

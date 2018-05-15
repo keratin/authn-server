@@ -63,8 +63,8 @@ func TestGetOauthReturn(t *testing.T) {
 	t.Run("connect new identity with current session", func(t *testing.T) {
 		account, err := app.AccountStore.Create("existing@keratin.tech", []byte("password"))
 		require.NoError(t, err)
-
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
+
 		res, err := client.WithCookie(session).Get("/oauth/test/return?code=existing@keratin.tech&state=" + state)
 		require.NoError(t, err)
 		if test.AssertRedirect(t, res, "https://localhost:9999/return") {
@@ -76,9 +76,9 @@ func TestGetOauthReturn(t *testing.T) {
 		account, err := app.AccountStore.Create("linked@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 		app.AccountStore.AddOauthAccount(account.ID, "test", "PREVIOUSID", "TOKEN")
-
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
-		res, err := client.WithCookie(session).Get("/oauth/test/return?code=linked@keratin.tech&state=" + state)
+
+		res, err := client.WithCookie(session).Get("/oauth/test/return?code=linked+alias@keratin.tech&state=" + state)
 		require.NoError(t, err)
 		test.AssertRedirect(t, res, "https://localhost:9999/return?status=failed")
 	})
