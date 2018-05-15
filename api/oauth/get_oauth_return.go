@@ -48,6 +48,7 @@ func getOauthReturn(app *api.App, providerName string) http.HandlerFunc {
 			http.Redirect(w, r, failsafe.String(), http.StatusSeeOther)
 			return
 		}
+		http.SetCookie(w, nonceCookie(app.Config, ""))
 
 		// fail handler
 		fail := func(err error) {
