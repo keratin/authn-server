@@ -83,6 +83,11 @@ func (s *accountStore) AddOauthAccount(accountID int, provider string, providerI
 	if s.idByOauthID[p] != 0 {
 		return Error{ErrNotUnique}
 	}
+	for _, oa := range s.oauthAccountsByID[accountID] {
+		if oa.Provider == provider {
+			return Error{ErrNotUnique}
+		}
+	}
 
 	now := time.Now()
 	oauthAccount := &models.OauthAccount{

@@ -168,6 +168,11 @@ func testAddOauthAccount(t *testing.T, store data.AccountStore) {
 	assert.Equal(t, "TOKEN", found[0].AccessToken)
 	assert.NotEmpty(t, found[0].CreatedAt)
 	assert.NotEmpty(t, found[0].UpdatedAt)
+
+	err = store.AddOauthAccount(account.ID, "OAUTHPROVIDER", "PROVIDERID2", "TOKEN")
+	if err == nil || !data.IsUniquenessError(err) {
+		t.Errorf("expected uniqueness error, got %T %v", err, err)
+	}
 }
 
 func testFindByOauthAccount(t *testing.T, store data.AccountStore) {

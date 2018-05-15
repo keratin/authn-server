@@ -70,7 +70,8 @@ func createOauthAccounts(db *sqlx.DB) error {
             access_token TEXT NOT NULL,
             created_at DATETIME NOT NULL,
             updated_at DATETIME NOT NULL,
-            UNIQUE(provider_id, provider)
+            UNIQUE(provider_id, provider),
+            UNIQUE(account_id, provider)
         )
     `)
 	if err != nil {

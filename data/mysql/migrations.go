@@ -50,7 +50,7 @@ func createOauthAccounts(db *sqlx.DB) error {
             updated_at DATETIME NOT NULL,
             PRIMARY KEY (id),
             UNIQUE KEY index_oauth_accounts_by_identity (provider_id, provider),
-            KEY index_oauth_accounts_by_account_id (account_id)
+            UNIQUE KEY index_oauth_accounts_by_account_id (account_id, provider)
         )
     `)
 	return err
