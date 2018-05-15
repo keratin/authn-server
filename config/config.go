@@ -90,7 +90,11 @@ var configurers = []configurer{
 				return ErrMissingEnvVar("AUTHN_URL")
 			}
 			c.AuthNURL = val
-			c.MountedPath = val.Path
+			if val.Path == "" {
+				c.MountedPath = "/"
+			} else {
+				c.MountedPath = val.Path
+			}
 			c.ForceSSL = val.Scheme == "https"
 		}
 		return err
