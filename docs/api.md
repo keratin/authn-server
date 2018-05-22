@@ -24,6 +24,9 @@ title: Server API
     * [Request Password Reset](#request-password-reset)
     * [Change Password](#change-password)
     * [Expire Password](#expire-password)
+  * OAuth
+    * [Begin OAuth](#begin-oauth)
+    * [OAuth Return URL](#oauth-return)
   * Other
     * [Service Configuration](#service-configuration)
     * [JSON Web Keys](#json-web-keys)
@@ -475,6 +478,57 @@ Revokes all of the user's current sessions and flags the account for a required 
         {"field": "account", "message": "NOT_FOUND"}
       ]
     }
+
+### OAuth
+
+OAuth endpoints are enabled for a supported provider when that provider's credentials are [configured](config.md#oauth-clients).
+
+#### Begin OAuth
+
+Visibility: Public
+
+`GET /oauth/:providerName`
+
+| Params | Type | Notes |
+| ------ | ---- | ----- |
+| `providerName` | string | * google |
+| `redirect_uri` | URL | Return URL after OAuth. Must be in your application's domain. |
+
+Redirect a user to this URL when you want to authenticate them with OAuth, and include a `redirect_uri` where you want them to return when they're done. From here, a user will proceed to the OAuth provider and back to AuthN's [OAuth Return](#oauth-return) endpoint (as configured with the provider).
+
+#### Success:
+
+    304 See Other
+    Location: (OAuth provider)
+
+#### Failure:
+
+    304 See Other
+    Location: (redirect URI)
+
+#### OAuth Return
+
+Visibility: Public
+
+`GET /oauth/:providerName/return`
+
+| Params | Type | Notes |
+| ------ | ---- | ----- |
+| `providerName` | string | * google |
+
+This is the return URL that must be registered with a provider when provisioning credentials. From here, a user will proceed to the `redirect_uri` specified at the [Begin OAuth](#begin-oauth) step.
+
+If the OAuth process failed, the redirect will have `status=failed` appended to the URL.
+
+#### Success:
+
+    304 See Other
+    Location: (redirect URI)
+
+#### Failure:
+
+    304 See Other
+    Location: (redirect URI with status=failed)
 
 ### Service Configuration
 
