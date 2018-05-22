@@ -4,33 +4,13 @@ import (
 	"encoding/base64"
 	"errors"
 	"net/http"
-	"time"
 
-	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/lib"
 	"github.com/keratin/authn-server/lib/route"
 
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/tokens/oauth"
 )
-
-func nonceCookie(cfg *config.Config, val string) *http.Cookie {
-	var maxAge int
-	if val == "" {
-		maxAge = -1
-	} else {
-		maxAge = int(time.Hour.Seconds())
-	}
-
-	return &http.Cookie{
-		Name:     cfg.OAuthCookieName,
-		Value:    val,
-		Path:     cfg.MountedPath,
-		Secure:   cfg.ForceSSL,
-		HttpOnly: true,
-		MaxAge:   maxAge,
-	}
-}
 
 func getOauth(app *api.App, providerName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
