@@ -1,20 +1,20 @@
 package ops
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"time"
 )
 
-// LogReporter is an ErrorReporter that prints to a log (currently STDOUT)
+// LogReporter is an ErrorReporter that prints to the log (likely STDOUT)
 type LogReporter struct{}
 
-// ReportError reports some error information to STDOUT. The printed details are not robust.
+// ReportError logs error information. The printed details are not robust.
 func (r *LogReporter) ReportError(err error) {
-	fmt.Printf("[%v] %v\n", time.Now(), err)
+	log.Printf("[%v] %v\n", time.Now(), err)
 }
 
-// ReportRequestError reports some error information to STDOUT. The printed details are not robust.
+// ReportRequestError logs error information. The printed details are not robust.
 func (r *LogReporter) ReportRequestError(err error, req *http.Request) {
-	fmt.Printf("[%v][%v %v] %v\n", time.Now(), req.Method, req.URL, err)
+	log.Printf("[%v][%v %v] %v\n", time.Now(), req.Method, req.URL, err)
 }
