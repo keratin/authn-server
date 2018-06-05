@@ -59,6 +59,7 @@ type Config struct {
 	PublicPort             int
 	Proxied                bool
 	GoogleOauthCredentials *oauth.Credentials
+	GitHubOauthCredentials *oauth.Credentials
 }
 
 var configurers = []configurer{
@@ -440,6 +441,19 @@ var configurers = []configurer{
 			credentials, err := oauth.NewCredentials(val)
 			if err == nil {
 				c.GoogleOauthCredentials = credentials
+			}
+			return err
+		}
+		return nil
+	},
+
+	// GITHUB_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
+	// AuthN will enable routes for GitHub OAuth signin.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("GITHUB_OAUTH_CREDENTIALS"); ok {
+			credentials, err := oauth.NewCredentials(val)
+			if err == nil {
+				c.GitHubOauthCredentials = credentials
 			}
 			return err
 		}
