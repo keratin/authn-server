@@ -7,7 +7,16 @@ import "github.com/jmoiron/sqlx"
 // determines which steps have run and which steps must still be run. Given the
 // expected final complexity of this project, this is acceptable.
 func MigrateDB(db *sqlx.DB) error {
-	return migrateAccounts(db)
+	migrations := []func(db *sqlx.DB) error{
+		migrateAccounts,
+		createOauthAccounts,
+	}
+	for _, m := range migrations {
+		if err := m(db); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 func migrateAccounts(db *sqlx.DB) error {
 	_, err := db.Exec(`
@@ -21,6 +30,23 @@ func migrateAccounts(db *sqlx.DB) error {
             created_at timestamptz NOT NULL,
             updated_at timestamptz NOT NULL,
             deleted_at timestamptz DEFAULT NULL
+        )
+    `)
+	return err
+}
+
+func createOauthAccounts(db *sqlx.DB) error {
+	_, err := db.Exec(`
+        CREATE TABLE IF NOT EXISTS oauth_accounts (
+            id SERIAL PRIMARY KEY,
+            account_id INTEGER NOT NULL,
+            provider TEXT NOT NULL,
+            provider_id TEXT NOT NULL,
+            access_token TEXT NOT NULL,
+            created_at timestamptz NOT NULL,
+            updated_at timestamptz NOT NULL,
+            UNIQUE (provider_id, provider),
+            UNIQUE (account_id, provider)
         )
     `)
 	return err
