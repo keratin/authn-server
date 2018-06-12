@@ -16,6 +16,7 @@
 * [Forgotten Passwords](guide-implementing_forgotten_passwords.md)
 * [Change Password](guide-implementing_change_password.md)
 * [Logout](guide-implementing_logout.md)
+* [OAuth](guide-implementing_oauth.md)
 
 ## Other Guides:
 

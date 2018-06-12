@@ -8,6 +8,7 @@ import (
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
 )
@@ -28,6 +29,7 @@ func App() *api.App {
 		SessionSigningKey:     []byte("TestKey"),
 		AuthNURL:              authnURL,
 		SessionCookieName:     "authn",
+		OAuthCookieName:       "authn-oauth-nonce",
 		ApplicationDomains:    []route.Domain{{Hostname: "test.com"}},
 		PasswordMinComplexity: 2,
 		AppPasswordResetURL:   &url.URL{Scheme: "https", Host: "app.example.com"},
@@ -41,5 +43,6 @@ func App() *api.App {
 		RefreshTokenStore: mock.NewRefreshTokenStore(),
 		Actives:           mock.NewActives(),
 		Reporter:          &ops.LogReporter{},
+		OauthProviders:    map[string]oauth.Provider{},
 	}
 }

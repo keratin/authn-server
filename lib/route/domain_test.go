@@ -57,6 +57,24 @@ func TestDomain(t *testing.T) {
 		assert.Equal(t, "host:port", hpDomain.String())
 	})
 
+	t.Run("URL", func(t *testing.T) {
+		testCases := []struct {
+			domain route.Domain
+			url    string
+		}{
+			{route.Domain{Hostname: "example.com"}, "http://example.com"},
+			{route.Domain{Hostname: "example.com", Port: "80"}, "http://example.com"},
+			{route.Domain{Hostname: "example.com", Port: "8080"}, "http://example.com:8080"},
+			{route.Domain{Hostname: "localhost", Port: "3000"}, "http://localhost:3000"},
+			{route.Domain{Hostname: "example.com", Port: "443"}, "https://example.com"},
+		}
+
+		for _, tc := range testCases {
+			url := tc.domain.URL()
+			assert.Equal(t, tc.url, url.String())
+		}
+	})
+
 	t.Run("FindDomain", func(t *testing.T) {
 		domain := route.ParseDomain("example.com:443")
 		domains := []route.Domain{domain}

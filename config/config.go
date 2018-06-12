@@ -18,43 +18,49 @@ import (
 	raven "github.com/getsentry/raven-go"
 	// a .env file is extremely useful during development
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
 	"golang.org/x/crypto/pbkdf2"
 )
 
 type Config struct {
-	AppPasswordResetURL    *url.URL
-	AppPasswordChangedURL  *url.URL
-	ApplicationDomains     []route.Domain
-	BcryptCost             int
-	UsernameIsEmail        bool
-	UsernameMinLength      int
-	UsernameDomains        []string
-	PasswordMinComplexity  int
-	RefreshTokenTTL        time.Duration
-	RedisURL               *url.URL
-	DatabaseURL            *url.URL
-	SessionCookieName      string
-	SessionSigningKey      []byte
-	ResetSigningKey        []byte
-	DBEncryptionKey        []byte
-	ResetTokenTTL          time.Duration
-	IdentitySigningKey     *rsa.PrivateKey
-	AuthNURL               *url.URL
-	ForceSSL               bool
-	MountedPath            string
-	AccessTokenTTL         time.Duration
-	AuthUsername           string
-	AuthPassword           string
-	EnableSignup           bool
-	StatisticsTimeZone     *time.Location
-	DailyActivesRetention  int
-	WeeklyActivesRetention int
-	ErrorReporter          ops.ErrorReporter
-	ServerPort             int
-	PublicPort             int
-	Proxied                bool
+	AppPasswordResetURL      *url.URL
+	AppPasswordChangedURL    *url.URL
+	ApplicationDomains       []route.Domain
+	BcryptCost               int
+	UsernameIsEmail          bool
+	UsernameMinLength        int
+	UsernameDomains          []string
+	PasswordMinComplexity    int
+	RefreshTokenTTL          time.Duration
+	RedisURL                 *url.URL
+	DatabaseURL              *url.URL
+	SessionCookieName        string
+	OAuthCookieName          string
+	SessionSigningKey        []byte
+	ResetSigningKey          []byte
+	DBEncryptionKey          []byte
+	OAuthSigningKey          []byte
+	ResetTokenTTL            time.Duration
+	IdentitySigningKey       *rsa.PrivateKey
+	AuthNURL                 *url.URL
+	ForceSSL                 bool
+	MountedPath              string
+	AccessTokenTTL           time.Duration
+	AuthUsername             string
+	AuthPassword             string
+	EnableSignup             bool
+	StatisticsTimeZone       *time.Location
+	DailyActivesRetention    int
+	WeeklyActivesRetention   int
+	ErrorReporter            ops.ErrorReporter
+	ServerPort               int
+	PublicPort               int
+	Proxied                  bool
+	GoogleOauthCredentials   *oauth.Credentials
+	GitHubOauthCredentials   *oauth.Credentials
+	FacebookOauthCredentials *oauth.Credentials
 }
 
 var configurers = []configurer{
@@ -86,7 +92,11 @@ var configurers = []configurer{
 				return ErrMissingEnvVar("AUTHN_URL")
 			}
 			c.AuthNURL = val
-			c.MountedPath = val.Path
+			if val.Path == "" {
+				c.MountedPath = "/"
+			} else {
+				c.MountedPath = val.Path
+			}
 			c.ForceSSL = val.Scheme == "https"
 		}
 		return err
@@ -108,6 +118,7 @@ var configurers = []configurer{
 			c.SessionSigningKey = derive([]byte(val), "session-key-salt")
 			c.ResetSigningKey = derive([]byte(val), "password-reset-token-key-salt")
 			c.DBEncryptionKey = derive([]byte(val), "db-encryption-key-salt")[:32]
+			c.OAuthSigningKey = derive([]byte(val), "oauth-key-salt")
 		}
 		return err
 	},
@@ -422,6 +433,45 @@ var configurers = []configurer{
 			c.Proxied = val
 		}
 		return err
+	},
+
+	// GOOGLE_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
+	// AuthN will enable routes for Google OAuth signin.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("GOOGLE_OAUTH_CREDENTIALS"); ok {
+			credentials, err := oauth.NewCredentials(val)
+			if err == nil {
+				c.GoogleOauthCredentials = credentials
+			}
+			return err
+		}
+		return nil
+	},
+
+	// GITHUB_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
+	// AuthN will enable routes for GitHub OAuth signin.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("GITHUB_OAUTH_CREDENTIALS"); ok {
+			credentials, err := oauth.NewCredentials(val)
+			if err == nil {
+				c.GitHubOauthCredentials = credentials
+			}
+			return err
+		}
+		return nil
+	},
+
+	// FACEBOOK_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
+	// AuthN will enable routes for Facebook OAuth signin.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("FACEBOOK_OAUTH_CREDENTIALS"); ok {
+			credentials, err := oauth.NewCredentials(val)
+			if err == nil {
+				c.FacebookOauthCredentials = credentials
+			}
+			return err
+		}
+		return nil
 	},
 }
 
