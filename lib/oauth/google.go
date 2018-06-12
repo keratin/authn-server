@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 
 	"golang.org/x/oauth2"
-	_google "golang.org/x/oauth2/google"
+	"golang.org/x/oauth2/google"
 )
 
 // NewGoogleProvider returns a AuthN integration for Google OAuth
@@ -15,7 +15,7 @@ func NewGoogleProvider(credentials *Credentials) *Provider {
 		ClientID:     credentials.ID,
 		ClientSecret: credentials.Secret,
 		Scopes:       []string{"email"},
-		Endpoint:     _google.Endpoint,
+		Endpoint:     google.Endpoint,
 	}
 
 	return &Provider{
@@ -28,16 +28,6 @@ func NewGoogleProvider(credentials *Credentials) *Provider {
 			}
 			defer resp.Body.Close()
 
-			// {
-			//   "id": "1234567890",
-			//   "email": "user@example.com",
-			//   "verified_email": true,
-			//   "name": "Example User",
-			//   "given_name": "Example",
-			//   "family_name": "User",
-			//   "link": "https://plus.google.com/1234567890",
-			//   "picture": "https://lh6.googleusercontent.com/path/to/photo.jpg"
-			// }
 			body, err := ioutil.ReadAll(resp.Body)
 			if err != nil {
 				return nil, err
