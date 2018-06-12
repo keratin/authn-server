@@ -2,7 +2,7 @@ PKGS := $(shell glide nv)
 ORG := keratin
 PROJECT := authn-server
 NAME := $(ORG)/$(PROJECT)
-VERSION := 1.3.0
+VERSION := 1.4.0
 MAIN := main.go routing.go
 
 .PHONY: clean
