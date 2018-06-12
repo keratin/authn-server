@@ -34,4 +34,5 @@ import:
 - package: github.com/felixge/httpsnoop
 - package: github.com/airbrake/gobrake
   version: ^3.4.0
+- package: github.com/lib/pq
 - package: golang.org/x/oauth2

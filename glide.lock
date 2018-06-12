@@ -1,5 +1,5 @@
-hash: 883308afb90cc58a36a3670922f80867c94bd488159c5f88fe63d0d31b21ce6e
-updated: 2018-04-17T13:16:15.690613-07:00
+hash: fddf5b7ebb3a1563452340ea00f7e5cb8e8edcc3a2cd79f33714995ae155b5ca
+updated: 2018-04-28T11:57:53.450994+03:00
 imports:
 - name: cloud.google.com/go
   version: d19004dbbee5cbd888271fd9c7a958eef17cef92
@@ -53,6 +53,10 @@ imports:
   version: a79fa1e548e2c689c241d10173efd51e5d689d5b
   subpackages:
   - autoload
+- name: github.com/lib/pq
+  version: d34b9ff171c21ad295489235aec8b6626023cd04
+  subpackages:
+  - oid
 - name: github.com/mattn/go-sqlite3
   version: 6c771bb9887719704b210e87e934f08be014bdb1
 - name: github.com/matttproud/golang_protobuf_extensions

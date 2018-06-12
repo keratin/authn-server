@@ -3,6 +3,7 @@ go:
   - 1.x
 services:
   - mysql
+  - postgresql
   - redis-server
 
 before_install:
