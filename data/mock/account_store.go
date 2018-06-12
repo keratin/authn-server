@@ -18,14 +18,18 @@ func (err Error) Error() string {
 const ErrNotUnique = iota
 
 type accountStore struct {
-	accountsByID map[int]*models.Account
-	idByUsername map[string]int
+	accountsByID      map[int]*models.Account
+	idByUsername      map[string]int
+	oauthAccountsByID map[int][]*models.OauthAccount
+	idByOauthID       map[string]int
 }
 
 func NewAccountStore() *accountStore {
 	return &accountStore{
-		accountsByID: make(map[int]*models.Account),
-		idByUsername: make(map[string]int),
+		accountsByID:      make(map[int]*models.Account),
+		oauthAccountsByID: make(map[int][]*models.OauthAccount),
+		idByUsername:      make(map[string]int),
+		idByOauthID:       make(map[string]int),
 	}
 }
 
@@ -39,6 +43,15 @@ func (s *accountStore) Find(id int) (*models.Account, error) {
 
 func (s *accountStore) FindByUsername(u string) (*models.Account, error) {
 	id := s.idByUsername[u]
+	if id == 0 {
+		return nil, nil
+	}
+
+	return dupAccount(*s.accountsByID[id]), nil
+}
+
+func (s *accountStore) FindByOauthAccount(provider string, providerID string) (*models.Account, error) {
+	id := s.idByOauthID[provider+"|"+providerID]
 	if id == 0 {
 		return nil, nil
 	}
@@ -65,6 +78,36 @@ func (s *accountStore) Create(u string, p []byte) (*models.Account, error) {
 	return dupAccount(acc), nil
 }
 
+func (s *accountStore) AddOauthAccount(accountID int, provider string, providerID string, tok string) error {
+	p := provider + "|" + providerID
+	if s.idByOauthID[p] != 0 {
+		return Error{ErrNotUnique}
+	}
+	for _, oa := range s.oauthAccountsByID[accountID] {
+		if oa.Provider == provider {
+			return Error{ErrNotUnique}
+		}
+	}
+
+	now := time.Now()
+	oauthAccount := &models.OauthAccount{
+		AccountID:   accountID,
+		Provider:    provider,
+		ProviderID:  providerID,
+		AccessToken: tok,
+		CreatedAt:   now,
+		UpdatedAt:   now,
+	}
+	s.oauthAccountsByID[accountID] = append(s.oauthAccountsByID[accountID], oauthAccount)
+
+	s.idByOauthID[p] = accountID
+	return nil
+}
+
+func (s *accountStore) GetOauthAccounts(accountID int) ([]*models.OauthAccount, error) {
+	return s.oauthAccountsByID[accountID], nil
+}
+
 func (s *accountStore) Archive(id int) error {
 	account := s.accountsByID[id]
 	if account != nil {
@@ -73,7 +116,13 @@ func (s *accountStore) Archive(id int) error {
 		account.Username = ""
 		account.Password = []byte("")
 		account.DeletedAt = &now
+
+		for _, oauthAccount := range s.oauthAccountsByID[account.ID] {
+			delete(s.idByOauthID, oauthAccount.Provider+"|"+oauthAccount.ProviderID)
+		}
+		delete(s.oauthAccountsByID, account.ID)
 	}
+
 	return nil
 }
 

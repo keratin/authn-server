@@ -14,6 +14,7 @@ func TestAccountStore(t *testing.T) {
 	store := &mysql.AccountStore{db}
 	for _, tester := range testers.AccountStoreTesters {
 		db.MustExec("TRUNCATE accounts")
+		db.MustExec("TRUNCATE oauth_accounts")
 		tester(t, store)
 	}
 }

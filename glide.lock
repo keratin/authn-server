@@ -1,6 +1,10 @@
 hash: fddf5b7ebb3a1563452340ea00f7e5cb8e8edcc3a2cd79f33714995ae155b5ca
 updated: 2018-04-28T11:57:53.450994+03:00
 imports:
+- name: cloud.google.com/go
+  version: d19004dbbee5cbd888271fd9c7a958eef17cef92
+  subpackages:
+  - compute/metadata
 - name: github.com/airbrake/gobrake
   version: 86e9575e4d8889507ff8be9f3ab626be824c823e
   subpackages:
@@ -113,10 +117,34 @@ imports:
   - ed25519/internal/edwards25519
   - pbkdf2
   - ssh/terminal
+- name: golang.org/x/net
+  version: 5f8847ae0d0e90b6a9dc8148e7ad616874625171
+  subpackages:
+  - context
+  - context/ctxhttp
+- name: golang.org/x/oauth2
+  version: 6881fee410a5daf86371371f9ad451b95e168b71
+  subpackages:
+  - google
+  - internal
+  - jws
+  - jwt
 - name: golang.org/x/sys
   version: 429f518978ab01db8bb6f44b66785088e7fba58b
   subpackages:
   - unix
+- name: google.golang.org/appengine
+  version: 0a24098c0ec68416ec050f567f75df563d6b231e
+  subpackages:
+  - internal
+  - internal/app_identity
+  - internal/base
+  - internal/datastore
+  - internal/log
+  - internal/modules
+  - internal/remote_api
+  - internal/urlfetch
+  - urlfetch
 - name: gopkg.in/square/go-jose.v2
   version: 76dd09796242edb5b897103a75df2645c028c960
   subpackages:

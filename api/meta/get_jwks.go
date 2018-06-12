@@ -6,7 +6,7 @@ import (
 	"github.com/keratin/authn-server/lib/compat"
 
 	"github.com/keratin/authn-server/api"
-	jose "github.com/square/go-jose"
+	jose "gopkg.in/square/go-jose.v2"
 )
 
 func getJWKs(app *api.App) http.HandlerFunc {

@@ -9,6 +9,7 @@ import (
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/api/accounts"
 	"github.com/keratin/authn-server/api/meta"
+	"github.com/keratin/authn-server/api/oauth"
 	"github.com/keratin/authn-server/api/passwords"
 	"github.com/keratin/authn-server/api/sessions"
 	"github.com/keratin/authn-server/lib/route"
@@ -21,6 +22,7 @@ func router(app *api.App) http.Handler {
 	route.Attach(r, app.Config.MountedPath, accounts.Routes(app)...)
 	route.Attach(r, app.Config.MountedPath, sessions.Routes(app)...)
 	route.Attach(r, app.Config.MountedPath, passwords.Routes(app)...)
+	route.Attach(r, app.Config.MountedPath, oauth.Routes(app)...)
 
 	return wrapRouter(r, app)
 }
@@ -31,6 +33,7 @@ func publicRouter(app *api.App) http.Handler {
 	route.Attach(r, app.Config.MountedPath, accounts.PublicRoutes(app)...)
 	route.Attach(r, app.Config.MountedPath, sessions.PublicRoutes(app)...)
 	route.Attach(r, app.Config.MountedPath, passwords.PublicRoutes(app)...)
+	route.Attach(r, app.Config.MountedPath, oauth.PublicRoutes(app)...)
 
 	return wrapRouter(r, app)
 }

@@ -34,16 +34,10 @@ func AssertErrors(t *testing.T, res *http.Response, expected services.FieldError
 }
 
 func AssertSession(t *testing.T, cfg *config.Config, cookies []*http.Cookie) {
-	var session string
-	for _, cookie := range cookies {
-		if cookie.Name == cfg.SessionCookieName {
-			session = cookie.Value
-			break
-		}
-	}
+	session := ReadCookie(cookies, cfg.SessionCookieName)
 	require.NotEmpty(t, session)
 
-	_, err := sessions.Parse(session, cfg)
+	_, err := sessions.Parse(session.Value, cfg)
 	assert.NoError(t, err)
 }
 
@@ -65,4 +59,11 @@ func AssertIDTokenResponse(t *testing.T, res *http.Response, keyStore data.KeySt
 		// check that the JWT contains nice things
 		assert.Equal(t, cfg.AuthNURL.String(), claims.Issuer)
 	}
+}
+
+func AssertRedirect(t *testing.T, res *http.Response, location string) bool {
+	assert.Equal(t, http.StatusSeeOther, res.StatusCode)
+	loc, err := res.Location()
+	require.NoError(t, err)
+	return assert.Equal(t, location, loc.String())
 }

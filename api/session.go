@@ -7,6 +7,7 @@ import (
 
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/sessions"
+	"github.com/pkg/errors"
 )
 
 type sessionKey int
@@ -23,13 +24,13 @@ func Session(app *App) func(http.Handler) http.Handler {
 					if err == http.ErrNoCookie {
 						return
 					} else if err != nil {
-						app.Reporter.ReportRequestError(err, r)
+						app.Reporter.ReportRequestError(errors.Wrap(err, "Cookie"), r)
 						return
 					}
 
 					session, err = sessions.Parse(cookie.Value, app.Config)
 					if err != nil {
-						app.Reporter.ReportRequestError(err, r)
+						app.Reporter.ReportRequestError(errors.Wrap(err, "Parse"), r)
 					}
 				})
 
@@ -48,7 +49,7 @@ func Session(app *App) func(http.Handler) http.Handler {
 
 					accountID, err = app.RefreshTokenStore.Find(models.RefreshToken(session.Subject))
 					if err != nil {
-						app.Reporter.ReportRequestError(err, r)
+						app.Reporter.ReportRequestError(errors.Wrap(err, "Find"), r)
 					}
 				})
 
