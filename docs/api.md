@@ -516,7 +516,8 @@ Visibility: Public
 | ------ | ---- | ----- |
 | `providerName` | string |
 * google
-* github |
+* github
+* facebook |
 
 This is the return URL that must be registered with a provider when provisioning credentials. From here, a user will proceed to the `redirect_uri` specified at the [Begin OAuth](#begin-oauth) step.
 

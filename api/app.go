@@ -95,6 +95,9 @@ func NewApp() (*App, error) {
 	if cfg.GitHubOauthCredentials != nil {
 		oauthProviders["github"] = *oauth.NewGitHubProvider(cfg.GitHubOauthCredentials)
 	}
+	if cfg.FacebookOauthCredentials != nil {
+		oauthProviders["facebook"] = *oauth.NewFacebookProvider(cfg.FacebookOauthCredentials)
+	}
 
 	return &App{
 		DbCheck:           func() bool { return db.Ping() == nil },

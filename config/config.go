@@ -25,41 +25,42 @@ import (
 )
 
 type Config struct {
-	AppPasswordResetURL    *url.URL
-	AppPasswordChangedURL  *url.URL
-	ApplicationDomains     []route.Domain
-	BcryptCost             int
-	UsernameIsEmail        bool
-	UsernameMinLength      int
-	UsernameDomains        []string
-	PasswordMinComplexity  int
-	RefreshTokenTTL        time.Duration
-	RedisURL               *url.URL
-	DatabaseURL            *url.URL
-	SessionCookieName      string
-	OAuthCookieName        string
-	SessionSigningKey      []byte
-	ResetSigningKey        []byte
-	DBEncryptionKey        []byte
-	OAuthSigningKey        []byte
-	ResetTokenTTL          time.Duration
-	IdentitySigningKey     *rsa.PrivateKey
-	AuthNURL               *url.URL
-	ForceSSL               bool
-	MountedPath            string
-	AccessTokenTTL         time.Duration
-	AuthUsername           string
-	AuthPassword           string
-	EnableSignup           bool
-	StatisticsTimeZone     *time.Location
-	DailyActivesRetention  int
-	WeeklyActivesRetention int
-	ErrorReporter          ops.ErrorReporter
-	ServerPort             int
-	PublicPort             int
-	Proxied                bool
-	GoogleOauthCredentials *oauth.Credentials
-	GitHubOauthCredentials *oauth.Credentials
+	AppPasswordResetURL      *url.URL
+	AppPasswordChangedURL    *url.URL
+	ApplicationDomains       []route.Domain
+	BcryptCost               int
+	UsernameIsEmail          bool
+	UsernameMinLength        int
+	UsernameDomains          []string
+	PasswordMinComplexity    int
+	RefreshTokenTTL          time.Duration
+	RedisURL                 *url.URL
+	DatabaseURL              *url.URL
+	SessionCookieName        string
+	OAuthCookieName          string
+	SessionSigningKey        []byte
+	ResetSigningKey          []byte
+	DBEncryptionKey          []byte
+	OAuthSigningKey          []byte
+	ResetTokenTTL            time.Duration
+	IdentitySigningKey       *rsa.PrivateKey
+	AuthNURL                 *url.URL
+	ForceSSL                 bool
+	MountedPath              string
+	AccessTokenTTL           time.Duration
+	AuthUsername             string
+	AuthPassword             string
+	EnableSignup             bool
+	StatisticsTimeZone       *time.Location
+	DailyActivesRetention    int
+	WeeklyActivesRetention   int
+	ErrorReporter            ops.ErrorReporter
+	ServerPort               int
+	PublicPort               int
+	Proxied                  bool
+	GoogleOauthCredentials   *oauth.Credentials
+	GitHubOauthCredentials   *oauth.Credentials
+	FacebookOauthCredentials *oauth.Credentials
 }
 
 var configurers = []configurer{
@@ -454,6 +455,19 @@ var configurers = []configurer{
 			credentials, err := oauth.NewCredentials(val)
 			if err == nil {
 				c.GitHubOauthCredentials = credentials
+			}
+			return err
+		}
+		return nil
+	},
+
+	// FACEBOOK_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
+	// AuthN will enable routes for Facebook OAuth signin.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("FACEBOOK_OAUTH_CREDENTIALS"); ok {
+			credentials, err := oauth.NewCredentials(val)
+			if err == nil {
+				c.FacebookOauthCredentials = credentials
 			}
 			return err
 		}

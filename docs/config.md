@@ -8,7 +8,7 @@ title: Server Configuration
 * Databases: [`DATABASE_URL`](#database_url) • [`REDIS_URL`](#redis_url)
 * Sessions:
 [`ACCESS_TOKEN_TTL`](#access_token_ttl) • [`REFRESH_TOKEN_TTL`](#refresh_token_ttl) • [`SESSION_KEY_SALT`](#session_key_salt) • [`DB_ENCRYPTION_KEY_SALT`](#db_encryption_key_salt) • [`RSA_PRIVATE_KEY`](#rsa_private_key)
-* OAuth Clients: [`GITHUB_OAUTH_CREDENTIALS`](#github_oauth_credentials) • [`GOOGLE_OAUTH_CREDENTIALS`](#google_oauth_credentials)
+* OAuth Clients: [`FACEBOOK_OAUTH_CREDENTIALS`](#facebook_oauth_credentials) • [`GITHUB_OAUTH_CREDENTIALS`](#github_oauth_credentials) • [`GOOGLE_OAUTH_CREDENTIALS`](#google_oauth_credentials)
 * Username Policy: [`USERNAME_IS_EMAIL`](#username_is_email) • [`EMAIL_USERNAME_DOMAINS`](#email_username_domains)
 * Password Policy: [`PASSWORD_POLICY_SCORE`](#password_policy_score) • [`BCRYPT_COST`](#bcrypt_cost)
 * Password Resets: [`APP_PASSWORD_RESET_URL`](#app_password_reset_url) • [`PASSWORD_RESET_TOKEN_TTL`](#password_reset_token_ttl) • [`APP_PASSWORD_CHANGED_URL`](#app_password_changed_url)
@@ -166,6 +166,16 @@ When configuring OAuth you will need to know your AuthN server's return URL. You
 or
 
 * `https://www.example.com/authn/oauth/google/return`
+
+### `FACEBOOK_OAUTH_CREDENTIALS`
+
+|           |    |
+| --------- | --- |
+| Required? | No |
+| Value | AppID:AppSecret |
+| Default | nil |
+
+Create a Facebook app at https://developers.facebook.com and enable the Facebook Login product. In the Quickstart, enter [AuthN's OAuth Return](api.md#oauth-return) as the Site URL. Then switch over to Settings and find the App ID and Secret. Join those together with a `:` and provide them to AuthN as a single variable.
 
 ### `GITHUB_OAUTH_CREDENTIALS`
 
