@@ -12,7 +12,7 @@ application it may be compiled for any target architecture and run as a daemon.
 
 AuthN requires:
 
-* A SQL database (currently supports MySQL and Sqlite3) ([submit a request](https://github.com/keratin/authn-server/issues))
+* A SQL database (currently supports PostgreSQL, MySQL, & Sqlite3) ([submit a request](https://github.com/keratin/authn-server/issues))
 * A Redis server for session tokens, ephemeral data, and activity metrics.
 * Network routing from your application's clients.
 * Network routing to/from your application, for secure back-channel API communication.

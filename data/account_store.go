@@ -3,6 +3,8 @@ package data
 import (
 	"fmt"
 
+	"github.com/keratin/authn-server/data/postgres"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/keratin/authn-server/data/mysql"
 	"github.com/keratin/authn-server/data/sqlite3"
@@ -30,6 +32,8 @@ func NewAccountStore(db *sqlx.DB) (AccountStore, error) {
 		return &sqlite3.AccountStore{DB: db}, nil
 	case "mysql":
 		return &mysql.AccountStore{DB: db}, nil
+	case "postgres":
+		return &postgres.AccountStore{DB: db}, nil
 	default:
 		return nil, fmt.Errorf("unsupported driver: %v", db.DriverName())
 	}

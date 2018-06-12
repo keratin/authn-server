@@ -83,6 +83,7 @@ Formats:
 
 * `sqlite3://local/db/authn` (note: SQLite3 ignores the host name and connects by path)
 * `mysql://username:password@host:port/database_name`
+* `postgres://username:password@host:port/database_name`
 
 ### `REDIS_URL`
 
