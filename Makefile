@@ -72,7 +72,7 @@ test: init
 	TEST_REDIS_URL=redis://127.0.0.1:8701/12 \
 	  TEST_MYSQL_URL=mysql://root@127.0.0.1:8702/authnservertest \
 	  TEST_POSTGRES_URL=postgres://postgres@127.0.0.1/postgres?sslmode=disable \
-	  go test $(PKGS)
+	  go test -race $(PKGS)
 
 # Run CI tests
 .PHONY: test-ci
@@ -80,7 +80,7 @@ test-ci: init
 	TEST_REDIS_URL=redis://127.0.0.1/1 \
 	  TEST_MYSQL_URL=mysql://root@127.0.0.1/test \
 	  TEST_POSTGRES_URL=postgres://postgres@127.0.0.1/postgres?sslmode=disable \
-	  go test -covermode=count -coverprofile=coverage.out -race $(PKGS)
+	  go test -covermode=count -coverprofile=coverage.out $(PKGS)
 
 # Run benchmarks
 .PHONY: benchmarks
