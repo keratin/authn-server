@@ -76,6 +76,7 @@ func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer result.Close()
 	result.Next()
 	var id int64
 	err = result.Scan(&id)
