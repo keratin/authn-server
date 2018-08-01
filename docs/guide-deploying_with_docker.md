@@ -21,7 +21,7 @@ docker run -it --rm \
   --publish 8080:3000 \
   -e AUTHN_URL=localhost:8080 \
   -e APP_DOMAINS=localhost \
-  -e DATABASE_URL=sqlite3:db/demo.sqlite3 \
+  -e DATABASE_URL=sqlite3://:memory:?mode=memory\&cache=shared \
   -e SECRET_KEY_BASE=changeme \
   -e HTTP_AUTH_USERNAME=hello \
   -e HTTP_AUTH_PASSWORD=world \
