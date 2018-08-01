@@ -3,6 +3,8 @@ package testers
 import (
 	"testing"
 
+	"database/sql"
+
 	"github.com/keratin/authn-server/data"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -18,6 +20,18 @@ var AccountStoreTesters = []func(*testing.T, data.AccountStore){
 	testSetPassword,
 	testAddOauthAccount,
 	testFindByOauthAccount,
+}
+
+type hasStats interface {
+	Stats() sql.DBStats
+}
+
+func getOpenConnectionCount(store data.AccountStore) int {
+	if st, ok := store.(hasStats); ok {
+		return st.Stats().OpenConnections
+	} else {
+		return 1
+	}
 }
 
 func testCreate(t *testing.T, store data.AccountStore) {
@@ -36,6 +50,9 @@ func testCreate(t *testing.T, store data.AccountStore) {
 	if !data.IsUniquenessError(err) {
 		t.Errorf("expected uniqueness error, got %T %v", err, err)
 	}
+
+	// Assert that db connections are released to pool
+	assert.Equal(t, 1, getOpenConnectionCount(store))
 }
 
 func testFindByUsername(t *testing.T, store data.AccountStore) {
@@ -49,6 +66,9 @@ func testFindByUsername(t *testing.T, store data.AccountStore) {
 	account, err = store.FindByUsername("authn@keratin.tech")
 	assert.NoError(t, err)
 	assert.NotNil(t, account)
+
+	// Assert that db connections are released to pool
+	assert.Equal(t, 1, getOpenConnectionCount(store))
 }
 
 func testLockAndUnlock(t *testing.T, store data.AccountStore) {
@@ -70,6 +90,9 @@ func testLockAndUnlock(t *testing.T, store data.AccountStore) {
 	require.NoError(t, err)
 	require.NotEmpty(t, after2)
 	assert.False(t, after2.Locked)
+
+	// Assert that db connections are released to pool
+	assert.Equal(t, 1, getOpenConnectionCount(store))
 }
 
 func testArchive(t *testing.T, store data.AccountStore) {
@@ -92,6 +115,9 @@ func testArchive(t *testing.T, store data.AccountStore) {
 		err = store.Archive(account2.ID)
 		assert.NoError(t, err)
 	}
+
+	// Assert that db connections are released to pool
+	assert.Equal(t, 1, getOpenConnectionCount(store))
 }
 
 func testArchiveWithOauth(t *testing.T, store data.AccountStore) {
@@ -106,6 +132,9 @@ func testArchiveWithOauth(t *testing.T, store data.AccountStore) {
 	found, err := store.FindByOauthAccount("PROVIDER", "PROVIDERID")
 	require.NoError(t, err)
 	assert.Empty(t, found)
+
+	// Assert that db connections are released to pool
+	assert.Equal(t, 1, getOpenConnectionCount(store))
 }
 
 func testRequireNewPassword(t *testing.T, store data.AccountStore) {
@@ -119,6 +148,9 @@ func testRequireNewPassword(t *testing.T, store data.AccountStore) {
 	after, err := store.Find(account.ID)
 	require.NoError(t, err)
 	assert.True(t, after.RequireNewPassword)
+
+	// Assert that db connections are released to pool
+	assert.Equal(t, 1, getOpenConnectionCount(store))
 }
 
 func testSetPassword(t *testing.T, store data.AccountStore) {
@@ -135,6 +167,9 @@ func testSetPassword(t *testing.T, store data.AccountStore) {
 	assert.Equal(t, []byte("new"), after.Password)
 	assert.False(t, after.RequireNewPassword)
 	assert.NotEqual(t, account.PasswordChangedAt, after.PasswordChangedAt)
+
+	// Assert that db connections are released to pool
+	assert.Equal(t, 1, getOpenConnectionCount(store))
 }
 
 func testUpdateUsername(t *testing.T, store data.AccountStore) {
@@ -147,6 +182,9 @@ func testUpdateUsername(t *testing.T, store data.AccountStore) {
 	after, err := store.Find(account.ID)
 	require.NoError(t, err)
 	assert.Equal(t, "new", after.Username)
+
+	// Assert that db connections are released to pool
+	assert.Equal(t, 1, getOpenConnectionCount(store))
 }
 
 func testAddOauthAccount(t *testing.T, store data.AccountStore) {
@@ -173,6 +211,9 @@ func testAddOauthAccount(t *testing.T, store data.AccountStore) {
 	if err == nil || !data.IsUniquenessError(err) {
 		t.Errorf("expected uniqueness error, got %T %v", err, err)
 	}
+
+	// Assert that db connections are released to pool
+	assert.Equal(t, 1, getOpenConnectionCount(store))
 }
 
 func testFindByOauthAccount(t *testing.T, store data.AccountStore) {
@@ -196,4 +237,7 @@ func testFindByOauthAccount(t *testing.T, store data.AccountStore) {
 	found, err = store.FindByOauthAccount("OAUTHPROVIDER", "PROVIDERID")
 	assert.NoError(t, err)
 	assert.Equal(t, account.ID, found.ID)
+
+	// Assert that db connections are released to pool
+	assert.Equal(t, 1, getOpenConnectionCount(store))
 }
