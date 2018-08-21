@@ -26,3 +26,4 @@
 * [Restrict Signups to a Specific Domain](guide-restrict_signups_by_domain.md)
 * [Make Sessions Timeout from Inactivity](guide-make_sessions_timeout_from_inactivity.md)
 * [Migrating an Existing Application](guide-migrating_an_existing_application.md)
+* [Confirm Password for Critical Actions](guide-reverify-password.md)
