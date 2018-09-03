@@ -1,15 +1,14 @@
 language: go
 go:
-  - 1.x
+  - 1.11.x
 services:
   - mysql
   - postgresql
   - redis-server
+env:
+  - GO111MODULE=on
 
 before_install:
-  - sudo add-apt-repository ppa:masterminds/glide -y
-  - sudo apt-get update -q
-  - sudo apt-get install glide -y
   - go get golang.org/x/tools/cmd/cover
   - go get github.com/mattn/goveralls
 script: make test-ci

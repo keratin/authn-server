@@ -1,4 +1,3 @@
-PKGS := $(shell glide nv)
 ORG := keratin
 PROJECT := authn-server
 NAME := $(ORG)/$(PROJECT)
@@ -7,17 +6,11 @@ MAIN := main.go routing.go
 
 .PHONY: clean
 clean:
-	rm -rf vendor
 	rm -rf dist
 
 init: vendor
 	which -s ego || go get github.com/benbjohnson/ego/cmd/ego
 	ego api/views
-
-# Fetch dependencies
-vendor: glide.yaml
-	glide install
-	go install
 
 # The Linux builder is a Docker container because that's the easiest way to get the toolchain for
 # CGO on a MacOS host.
@@ -67,7 +60,7 @@ test: init
 	TEST_REDIS_URL=redis://127.0.0.1:8701/12 \
 	  TEST_MYSQL_URL=mysql://root@127.0.0.1:8702/authnservertest \
 	  TEST_POSTGRES_URL=postgres://postgres@127.0.0.1/postgres?sslmode=disable \
-	  go test -race $(PKGS)
+	  go test -race ./...
 
 # Run CI tests
 .PHONY: test-ci
@@ -75,7 +68,7 @@ test-ci: init
 	TEST_REDIS_URL=redis://127.0.0.1/1 \
 	  TEST_MYSQL_URL=mysql://root@127.0.0.1/test \
 	  TEST_POSTGRES_URL=postgres://postgres@127.0.0.1/postgres?sslmode=disable \
-	  go test -covermode=count -coverprofile=coverage.out $(PKGS)
+	  go test -covermode=count -coverprofile=coverage.out ./...
 
 # Run benchmarks
 .PHONY: benchmarks

@@ -36,10 +36,9 @@ Welcome! Please familiarize yourself with the [CONTRIBUTING](CONTRIBUTING.md) do
 
 Here's how the dev environment works:
 
-1. Install [Glide](https://github.com/Masterminds/glide#install).
-2. Run `make init` to set up the dependencies
-3. Install Docker and docker-compose.
-4. Run `make test` to ensure a clean build
+1. `go get github.com/keratin/authn-server`
+2. Install Docker and docker-compose.
+3. Run `make test` to ensure a clean build
 
 To run a dev server:
 
