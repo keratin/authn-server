@@ -8,7 +8,7 @@ MAIN := main.go routing.go
 clean:
 	rm -rf dist
 
-init: vendor
+init:
 	which -s ego || go get github.com/benbjohnson/ego/cmd/ego
 	ego api/views
 
