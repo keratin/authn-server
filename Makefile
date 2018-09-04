@@ -9,15 +9,10 @@ MAIN := main.go routing.go
 clean:
 	rm -rf vendor
 	rm -rf dist
-	rm -f api/views/*.ego.go
 
-# Process .ego templates (skippable)
-EGOS := $(shell find . -name *.ego | sed -e s/.ego/.ego.go/)
-$(EGOS):
-	go get github.com/benbjohnson/ego/cmd/ego
+init: vendor
+	which -s ego || go get github.com/benbjohnson/ego/cmd/ego
 	ego api/views
-
-init: $(EGOS) vendor
 
 # Fetch dependencies
 vendor: glide.yaml
