@@ -12,6 +12,7 @@ import (
 	"github.com/keratin/authn-server/data"
 )
 
+// VERSION is a value injected at build time with ldflags
 var VERSION string
 
 func main() {
@@ -22,10 +23,17 @@ func main() {
 		cmd = os.Args[1]
 	}
 
+	cfg, err := config.ReadEnv()
+	if err != nil {
+		fmt.Println(err)
+		fmt.Println("\nsee: https://github.com/keratin/authn-server/blob/master/docs/config.md")
+		return
+	}
+
 	if cmd == "server" {
-		serve()
+		serve(cfg)
 	} else if cmd == "migrate" {
-		migrate()
+		migrate(cfg)
 	} else {
 		os.Stderr.WriteString(fmt.Sprintf("unexpected invocation\n"))
 		usage()
@@ -33,29 +41,28 @@ func main() {
 	}
 }
 
-func serve() {
-	// set up connections and configuration
-	app, err := api.NewApp()
+func serve(cfg *config.Config) {
+	app, err := api.NewApp(cfg)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return
 	}
 
 	fmt.Println(fmt.Sprintf("~*~ Keratin AuthN v%s ~*~", VERSION))
-	fmt.Println(fmt.Sprintf("AUTHN_URL: %s", app.Config.AuthNURL))
-	fmt.Println(fmt.Sprintf("PORT: %d", app.Config.ServerPort))
+	fmt.Println(fmt.Sprintf("AUTHN_URL: %s", cfg.AuthNURL))
+	fmt.Println(fmt.Sprintf("PORT: %d", cfg.ServerPort))
 
-	if app.Config.PublicPort != 0 {
+	if cfg.PublicPort != 0 {
 		go func() {
-			fmt.Println(fmt.Sprintf("PUBLIC_PORT: %d", app.Config.PublicPort))
-			log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", app.Config.PublicPort), publicRouter(app)))
+			fmt.Println(fmt.Sprintf("PUBLIC_PORT: %d", cfg.PublicPort))
+			log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", cfg.PublicPort), publicRouter(app)))
 		}()
 	}
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", app.Config.ServerPort), router(app)))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", cfg.ServerPort), router(app)))
 }
 
-func migrate() {
-	cfg := config.ReadEnv()
+func migrate(cfg *config.Config) {
 	fmt.Println("Running migrations.")
 	err := data.MigrateDB(cfg.DatabaseURL)
 	if err != nil {

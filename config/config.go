@@ -16,6 +16,7 @@ import (
 
 	"github.com/airbrake/gobrake"
 	raven "github.com/getsentry/raven-go"
+
 	// a .env file is extremely useful during development
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/keratin/authn-server/lib/oauth"
@@ -24,6 +25,8 @@ import (
 	"golang.org/x/crypto/pbkdf2"
 )
 
+// Config is the full list of configuration settings for AuthN. It is typically populated by reading
+// environment variables.
 type Config struct {
 	AppPasswordResetURL      *url.URL
 	AppPasswordChangedURL    *url.URL
@@ -475,13 +478,10 @@ var configurers = []configurer{
 	},
 }
 
-func ReadEnv() *Config {
-	config, err := configure(configurers)
-	if err != nil {
-		panic(err)
-	}
-
-	return config
+// ReadEnv returns a Config struct from environment variables. It returns errors when a variable is
+// malformatted or missing but required.
+func ReadEnv() (*Config, error) {
+	return configure(configurers)
 }
 
 // 20k iterations of PBKDF2 HMAC SHA-256
