@@ -123,6 +123,7 @@ var configurers = []configurer{
 		if err == nil {
 			c.SessionSigningKey = derive([]byte(val), "session-key-salt")
 			c.ResetSigningKey = derive([]byte(val), "password-reset-token-key-salt")
+      c.PasswordlessTokenSigningKey = derive([]byte(val), "passwordless-token-key-salt")
 			c.DBEncryptionKey = derive([]byte(val), "db-encryption-key-salt")[:32]
 			c.OAuthSigningKey = derive([]byte(val), "oauth-key-salt")
 		}
@@ -247,6 +248,19 @@ var configurers = []configurer{
 		ttl, err := lookupInt("PASSWORD_RESET_TOKEN_TTL", 1800)
 		if err == nil {
 			c.ResetTokenTTL = time.Duration(ttl) * time.Second
+		}
+		return err
+	},
+
+  // PASSWORDLESS_TOKEN_TTL determines how long a passwordless token (as JWT)
+	// will be valid from when it is generated. These tokens should not live much
+	// longer than it takes for an attentive user to act in a reasonably expedient
+	// manner. If a user loses control of a password reset token, they will lose
+	// control of their account.
+	func(c *Config) error {
+		ttl, err := lookupInt("PASSWORDLESS_TOKEN_TTL", 1800)
+		if err == nil {
+			c.PasswordlessTokenTTL = time.Duration(ttl) * time.Second
 		}
 		return err
 	},
