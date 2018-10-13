@@ -28,42 +28,45 @@ import (
 // Config is the full list of configuration settings for AuthN. It is typically populated by reading
 // environment variables.
 type Config struct {
-	AppPasswordResetURL      *url.URL
-	AppPasswordChangedURL    *url.URL
-	ApplicationDomains       []route.Domain
-	BcryptCost               int
-	UsernameIsEmail          bool
-	UsernameMinLength        int
-	UsernameDomains          []string
-	PasswordMinComplexity    int
-	RefreshTokenTTL          time.Duration
-	RedisURL                 *url.URL
-	DatabaseURL              *url.URL
-	SessionCookieName        string
-	OAuthCookieName          string
-	SessionSigningKey        []byte
-	ResetSigningKey          []byte
-	DBEncryptionKey          []byte
-	OAuthSigningKey          []byte
-	ResetTokenTTL            time.Duration
-	IdentitySigningKey       *rsa.PrivateKey
-	AuthNURL                 *url.URL
-	ForceSSL                 bool
-	MountedPath              string
-	AccessTokenTTL           time.Duration
-	AuthUsername             string
-	AuthPassword             string
-	EnableSignup             bool
-	StatisticsTimeZone       *time.Location
-	DailyActivesRetention    int
-	WeeklyActivesRetention   int
-	ErrorReporter            ops.ErrorReporter
-	ServerPort               int
-	PublicPort               int
-	Proxied                  bool
-	GoogleOauthCredentials   *oauth.Credentials
-	GitHubOauthCredentials   *oauth.Credentials
-	FacebookOauthCredentials *oauth.Credentials
+  AppPasswordlessTokenURL     *url.URL
+  PasswordlessTokenTTL        time.Duration
+  PasswordlessTokenSigningKey []byte
+	AppPasswordResetURL         *url.URL
+	AppPasswordChangedURL       *url.URL
+	ApplicationDomains          []route.Domain
+	BcryptCost                  int
+	UsernameIsEmail             bool
+	UsernameMinLength           int
+	UsernameDomains             []string
+	PasswordMinComplexity       int
+	RefreshTokenTTL             time.Duration
+	RedisURL                    *url.URL
+	DatabaseURL                 *url.URL
+	SessionCookieName           string
+	OAuthCookieName             string
+	SessionSigningKey           []byte
+	ResetSigningKey             []byte
+	DBEncryptionKey            []byte
+	OAuthSigningKey            []byte
+	ResetTokenTTL              time.Duration
+	IdentitySigningKey         *rsa.PrivateKey
+	AuthNURL                   *url.URL
+	ForceSSL                   bool
+	MountedPath                string
+	AccessTokenTTL             time.Duration
+	AuthUsername               string
+	AuthPassword               string
+	EnableSignup               bool
+	StatisticsTimeZone         *time.Location
+	DailyActivesRetention      int
+	WeeklyActivesRetention     int
+	ErrorReporter              ops.ErrorReporter
+	ServerPort                 int
+	PublicPort                 int
+	Proxied                    bool
+	GoogleOauthCredentials     *oauth.Credentials
+	GitHubOauthCredentials     *oauth.Credentials
+	FacebookOauthCredentials   *oauth.Credentials
 }
 
 var configurers = []configurer{
@@ -317,6 +320,20 @@ var configurers = []configurer{
 		val, err := lookupURL("APP_PASSWORD_RESET_URL")
 		if err == nil && val != nil {
 			c.AppPasswordResetURL = val
+		}
+		return err
+	},
+
+  // APP_PASSWORDLESS_TOKEN_URL is an endpoint that will be notified when an account
+	// has requested a passwordless token. The endpoint is expected to deliver an email
+	// with the given passwordless token, then respond with a 2xx HTTP status.
+	//
+	// For security, this URL should specify https and include a basic auth username
+	// and password.
+	func(c *Config) error {
+		val, err := lookupURL("APP_PASSWORDLESS_TOKEN_URL")
+		if err == nil && val != nil {
+			c.AppPasswordlessTokenURL = val
 		}
 		return err
 	},

@@ -25,15 +25,16 @@ func App() *api.App {
 	}
 
 	cfg := config.Config{
-		BcryptCost:            4,
-		SessionSigningKey:     []byte("TestKey"),
-		AuthNURL:              authnURL,
-		SessionCookieName:     "authn",
-		OAuthCookieName:       "authn-oauth-nonce",
-		ApplicationDomains:    []route.Domain{{Hostname: "test.com"}},
-		PasswordMinComplexity: 2,
-		AppPasswordResetURL:   &url.URL{Scheme: "https", Host: "app.example.com"},
-		EnableSignup:          true,
+		BcryptCost:              4,
+		SessionSigningKey:       []byte("TestKey"),
+		AuthNURL:                authnURL,
+		SessionCookieName:       "authn",
+		OAuthCookieName:         "authn-oauth-nonce",
+		ApplicationDomains:      []route.Domain{{Hostname: "test.com"}},
+		PasswordMinComplexity:   2,
+		AppPasswordResetURL:     &url.URL{Scheme: "https", Host: "app.example.com"},
+    AppPasswordlessTokenURL: &url.URL{Scheme: "https", Host: "app.example.com"},
+		EnableSignup:            true,
 	}
 
 	return &api.App{
