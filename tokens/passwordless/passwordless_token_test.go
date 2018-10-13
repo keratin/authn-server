@@ -3,9 +3,6 @@ package passwordless_test
 import (
 	"net/url"
 	"testing"
-	"time"
-
-	jwt "gopkg.in/square/go-jose.v2/jwt"
 
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/tokens/passwordless"
@@ -42,7 +39,7 @@ func TestPasswordlessToken(t *testing.T) {
 	t.Run("parsing with a different key", func(t *testing.T) {
 		oldCfg := config.Config{
 			AuthNURL:                    cfg.AuthNURL,
-      PasswordlessTokenSigningKey: []byte("key-a-reno"),
+      PasswordlessTokenSigningKey: []byte("old-a-reno"),
   		PasswordlessTokenTTL:        cfg.PasswordlessTokenTTL,
 		}
 		token, err := passwordless.New(&oldCfg, accountID)
