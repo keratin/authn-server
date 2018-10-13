@@ -1,4 +1,4 @@
-package passwordsless
+package passwordless
 
 import (
 	"net/http"
