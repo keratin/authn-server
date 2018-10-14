@@ -12,6 +12,7 @@ title: Server Configuration
 * Username Policy: [`USERNAME_IS_EMAIL`](#username_is_email) • [`EMAIL_USERNAME_DOMAINS`](#email_username_domains)
 * Password Policy: [`PASSWORD_POLICY_SCORE`](#password_policy_score) • [`BCRYPT_COST`](#bcrypt_cost)
 * Password Resets: [`APP_PASSWORD_RESET_URL`](#app_password_reset_url) • [`PASSWORD_RESET_TOKEN_TTL`](#password_reset_token_ttl) • [`APP_PASSWORD_CHANGED_URL`](#app_password_changed_url)
+* Passwordless: [`APP_PASSWORDLESS_TOKEN_URL`](#app_passwordless_token_url) • [`PASSWORDLESS_TOKEN_TTL`](#passwordless_token_ttl)
 * Stats: [`TIME_ZONE`](#time_zone) • [`DAILY_ACTIVES_RETENTION`](#daily_actives_retention) • [`WEEKLY_ACTIVES_RETENTION`](#weekly_actives_retention)
 * Operations: [`PORT`](#port) • [`PUBLIC_PORT`](#public_port) • [`PROXIED`](#proxied) • [`SENTRY_DSN`](#sentry_dsn) • [`AIRBRAKE_CREDENTIALS`](#airbrake_credentials)
 
@@ -289,6 +290,28 @@ Specifies the amount of time a user has to complete a password reset process. Af
 | Default | nil |
 
 Must be provided to enable notifications of password changes. This URL must respond to `POST`, should expect to receive an `account_id` param, and is expected to deliver an email confirmation.
+
+## Passwordless
+
+### `APP_PASSWORDLESS_TOKEN_URL`
+
+|           |    |
+| --------- | --- |
+| Required? | No |
+| Value | URL |
+| Default | nil |
+
+Must be provided to enable passwordless token. This URL must respond to `POST`, should expect to receive `account_id` and `token` params, and is expected to deliver the `token` to the specified `account_id`.
+
+### `PASSWORDLESS_TOKEN_TTL`
+
+|           |    |
+| --------- | --- |
+| Required? | No |
+| Value | seconds |
+| Default | 1800 (30.minutes) |
+
+Specifies the amount of time a user has to complete a passwordless process. After this period of time, the passwordless token will no longer be accepted.
 
 ## Stats
 
