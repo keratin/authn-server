@@ -8,7 +8,11 @@ import (
 func PublicRoutes(app *api.App) []*route.HandledRoute {
 	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
 
-  routes := []*route.HandledRoute{}
+  routes := []*route.HandledRoute{
+		route.Post("/passwordless/login").
+			SecuredWith(originSecurity).
+			Handle(postPasswordlessLogin(app)),
+	}
 
 	if app.Config.AppPasswordlessTokenURL != nil {
 		routes = append(routes,
