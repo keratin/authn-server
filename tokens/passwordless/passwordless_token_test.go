@@ -39,8 +39,8 @@ func TestPasswordlessToken(t *testing.T) {
 	t.Run("parsing with a different key", func(t *testing.T) {
 		oldCfg := config.Config{
 			AuthNURL:                    cfg.AuthNURL,
-      PasswordlessTokenSigningKey: []byte("old-a-reno"),
-  		PasswordlessTokenTTL:        cfg.PasswordlessTokenTTL,
+			PasswordlessTokenSigningKey: []byte("old-a-reno"),
+			PasswordlessTokenTTL:        cfg.PasswordlessTokenTTL,
 		}
 		token, err := passwordless.New(&oldCfg, accountID)
 		require.NoError(t, err)

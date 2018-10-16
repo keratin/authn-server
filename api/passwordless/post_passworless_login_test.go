@@ -57,7 +57,7 @@ func TestPostPasswordlessLogin(t *testing.T) {
 
 		// invoking the endpoint
 		res, err := client.PostForm("/passwordless/login", url.Values{
-			"token":    []string{tokenStr},
+			"token": []string{tokenStr},
 		})
 		require.NoError(t, err)
 
@@ -68,7 +68,7 @@ func TestPostPasswordlessLogin(t *testing.T) {
 	t.Run("invalid passwordless token", func(t *testing.T) {
 		// invoking the endpoint
 		res, err := client.PostForm("/passwordless/login", url.Values{
-			"token":    []string{"invalid"},
+			"token": []string{"invalid"},
 		})
 		require.NoError(t, err)
 
@@ -85,7 +85,7 @@ func TestPostPasswordlessLogin(t *testing.T) {
 		// given a session
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 
-    // given a passwordless token
+		// given a passwordless token
 		token, err := passwordless_token.New(app.Config, account.ID)
 		require.NoError(t, err)
 		tokenStr, err := token.Sign(app.Config.PasswordlessTokenSigningKey)
@@ -93,7 +93,7 @@ func TestPostPasswordlessLogin(t *testing.T) {
 
 		// invoking the endpoint
 		res, err := client.WithCookie(session).PostForm("/passwordless/login", url.Values{
-			"token":    []string{tokenStr},
+			"token": []string{tokenStr},
 		})
 		require.NoError(t, err)
 

@@ -14,7 +14,7 @@ import (
 const scope = "passwordless"
 
 type Claims struct {
-	Scope string          `json:"scope"`
+	Scope string `json:"scope"`
 	jwt.Claims
 }
 

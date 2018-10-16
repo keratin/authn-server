@@ -29,7 +29,7 @@ func TestPasswordlessTokenSender(t *testing.T) {
 	serverURL, err := url.Parse(remoteApp.URL)
 	require.NoError(t, err)
 
-	authNURL        := &url.URL{Scheme: "https", Host: "authn.example.com"}
+	authNURL := &url.URL{Scheme: "https", Host: "authn.example.com"}
 	passwordlessURL := &url.URL{Scheme: "http", Host: serverURL.Host, Path: "/passwordless", User: url.UserPassword("user", "pass")}
 
 	invoke := func(account *models.Account) error {

@@ -28,9 +28,9 @@ import (
 // Config is the full list of configuration settings for AuthN. It is typically populated by reading
 // environment variables.
 type Config struct {
-  AppPasswordlessTokenURL     *url.URL
-  PasswordlessTokenTTL        time.Duration
-  PasswordlessTokenSigningKey []byte
+	AppPasswordlessTokenURL     *url.URL
+	PasswordlessTokenTTL        time.Duration
+	PasswordlessTokenSigningKey []byte
 	AppPasswordResetURL         *url.URL
 	AppPasswordChangedURL       *url.URL
 	ApplicationDomains          []route.Domain
@@ -46,27 +46,27 @@ type Config struct {
 	OAuthCookieName             string
 	SessionSigningKey           []byte
 	ResetSigningKey             []byte
-	DBEncryptionKey            []byte
-	OAuthSigningKey            []byte
-	ResetTokenTTL              time.Duration
-	IdentitySigningKey         *rsa.PrivateKey
-	AuthNURL                   *url.URL
-	ForceSSL                   bool
-	MountedPath                string
-	AccessTokenTTL             time.Duration
-	AuthUsername               string
-	AuthPassword               string
-	EnableSignup               bool
-	StatisticsTimeZone         *time.Location
-	DailyActivesRetention      int
-	WeeklyActivesRetention     int
-	ErrorReporter              ops.ErrorReporter
-	ServerPort                 int
-	PublicPort                 int
-	Proxied                    bool
-	GoogleOauthCredentials     *oauth.Credentials
-	GitHubOauthCredentials     *oauth.Credentials
-	FacebookOauthCredentials   *oauth.Credentials
+	DBEncryptionKey             []byte
+	OAuthSigningKey             []byte
+	ResetTokenTTL               time.Duration
+	IdentitySigningKey          *rsa.PrivateKey
+	AuthNURL                    *url.URL
+	ForceSSL                    bool
+	MountedPath                 string
+	AccessTokenTTL              time.Duration
+	AuthUsername                string
+	AuthPassword                string
+	EnableSignup                bool
+	StatisticsTimeZone          *time.Location
+	DailyActivesRetention       int
+	WeeklyActivesRetention      int
+	ErrorReporter               ops.ErrorReporter
+	ServerPort                  int
+	PublicPort                  int
+	Proxied                     bool
+	GoogleOauthCredentials      *oauth.Credentials
+	GitHubOauthCredentials      *oauth.Credentials
+	FacebookOauthCredentials    *oauth.Credentials
 }
 
 var configurers = []configurer{
@@ -123,7 +123,7 @@ var configurers = []configurer{
 		if err == nil {
 			c.SessionSigningKey = derive([]byte(val), "session-key-salt")
 			c.ResetSigningKey = derive([]byte(val), "password-reset-token-key-salt")
-      c.PasswordlessTokenSigningKey = derive([]byte(val), "passwordless-token-key-salt")
+			c.PasswordlessTokenSigningKey = derive([]byte(val), "passwordless-token-key-salt")
 			c.DBEncryptionKey = derive([]byte(val), "db-encryption-key-salt")[:32]
 			c.OAuthSigningKey = derive([]byte(val), "oauth-key-salt")
 		}
@@ -252,7 +252,7 @@ var configurers = []configurer{
 		return err
 	},
 
-  // PASSWORDLESS_TOKEN_TTL determines how long a passwordless token (as JWT)
+	// PASSWORDLESS_TOKEN_TTL determines how long a passwordless token (as JWT)
 	// will be valid from when it is generated. These tokens should not live much
 	// longer than it takes for an attentive user to act in a reasonably expedient
 	// manner. If a user loses control of a password reset token, they will lose
@@ -338,7 +338,7 @@ var configurers = []configurer{
 		return err
 	},
 
-  // APP_PASSWORDLESS_TOKEN_URL is an endpoint that will be notified when an account
+	// APP_PASSWORDLESS_TOKEN_URL is an endpoint that will be notified when an account
 	// has requested a passwordless token. The endpoint is expected to deliver an email
 	// with the given passwordless token, then respond with a 2xx HTTP status.
 	//

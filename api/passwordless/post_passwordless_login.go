@@ -9,19 +9,19 @@ import (
 )
 
 func postPasswordlessLogin(app *api.App) http.HandlerFunc {
-  return func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		var accountID int
 		if r.FormValue("token") != "" {
-  			accountID, err = services.PasswordlessTokenVerifier(
+			accountID, err = services.PasswordlessTokenVerifier(
 				app.AccountStore,
 				app.Reporter,
 				app.Config,
 				r.FormValue("token"),
 			)
 		} else {
-      w.WriteHeader(http.StatusUnauthorized)
-      return
+			w.WriteHeader(http.StatusUnauthorized)
+			return
 		}
 
 		if err != nil {
