@@ -16,7 +16,7 @@ init:
 # CGO on a MacOS host.
 .PHONY: linux-builder
 linux-builder:
-	docker build -f Dockerfile.builder -t $(NAME)-builder .
+	docker build -f Dockerfile.linux -t $(NAME)-linux-builder .
 
 # The Linux target is built using a special Docker image, because this Makefile assumes the host
 # machine is running MacOS.
@@ -25,7 +25,7 @@ dist/linux/amd64/$(PROJECT): init
 	docker run --rm \
 		-v $(PWD):/go/src/github.com/$(NAME) \
 		-w /go/src/github.com/$(NAME) \
-		$(NAME)-builder \
+		$(NAME)-linux-builder \
 		sh -c " \
 			GOOS=linux GOARCH=amd64 CGO_ENABLED=1 go build -ldflags '-extldflags -static -X main.VERSION=$(VERSION)' -o '$@' \
 		"
@@ -36,6 +36,10 @@ dist/darwin/amd64/$(PROJECT): init
 	GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go build -ldflags "-X main.VERSION=$(VERSION)" -o "$@"
 	bzip2 -c "$@" > dist/authn-macos64.bz2
 
+# The Windows target is built using a MacOS host machine with `brew install mingw-w64`
+dist/windows/amd64/$(PROJECT): init
+	GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -ldflags '-X main.VERSION=$(VERSION)' -o '$@'
+
 # The Docker target wraps the linux/amd64 binary
 .PHONY: dist/docker
 dist/docker: dist/linux/amd64/$(PROJECT)
@@ -43,7 +47,7 @@ dist/docker: dist/linux/amd64/$(PROJECT)
 
 # Build all distributables
 .PHONY: dist
-dist: dist/docker dist/darwin/amd64/$(PROJECT) dist/linux/amd64/$(PROJECT)
+dist: dist/docker dist/darwin/amd64/$(PROJECT) dist/linux/amd64/$(PROJECT) dist/windows/amd64/$(PROJECT)
 
 # Run the server
 .PHONY: server
