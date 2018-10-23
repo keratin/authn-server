@@ -62,7 +62,8 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - AUTHN_URL=http://authn:3000
       - APP_DOMAINS=localhost
-      - SECRET_KEY_BASE
+      - SECRET_KEY_BASE  
+    command: sh -c "./authn migrate && echo 'starting server, migrations finished' && ./authn server"
     depends_on:
       - redis
       - db
