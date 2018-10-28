@@ -1,8 +1,4 @@
----
-title: Synchronize Emails
-tags:
-  - guides
----
+# Synchronize Emails
 
 If your application uses emails as usernames, then you're likely to end up with email fields in both
 your user profile data and your AuthN account data. The email exists in both places so that AuthN

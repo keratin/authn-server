@@ -1,8 +1,4 @@
----
-title: OAuth
-tags:
-  - guides
----
+# OAuth
 
 AuthN integrates the OAuth 2.0 protocol so that you may log users in with any supported OAuth
 provider. This integration creates standard AuthN accounts that may additionally have passwords for

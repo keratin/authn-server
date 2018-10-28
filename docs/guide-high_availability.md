@@ -1,9 +1,4 @@
----
-title: AuthN Deployment
-tags:
-  - guides
-  - deployment
----
+# High Availability
 
 AuthN is ready for a high availability deployment with multiple instances. AuthN servers coordinate
 with each other to synchronize their active keys so they can verify each others' tokens.

@@ -1,8 +1,4 @@
----
-title: Logout
-tags:
-  - guides
----
+# Logout
 
 Most of your users will probably disappear when they close the application, but sometimes they will
 want to cleanly log out. The AuthN client library will take care of cleaning up its sessions (the

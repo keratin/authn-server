@@ -1,10 +1,4 @@
----
-title: Migrating an Existing Application
-tags:
-  - guides
----
-
-# Guide: Migrating an Existing Application
+# Migrating an Existing Application
 
 The general strategy for migrating to Keratin AuthN is four steps:
 

@@ -1,7 +1,3 @@
----
-title: Server Configuration
----
-
 # Server Configuration
 
 * Core Settings: [`AUTHN_URL`](#authn_url) • [`APP_DOMAINS`](#app_domains) • [`HTTP_AUTH_USERNAME`](#http_auth_username) • [`HTTP_AUTH_PASSWORD`](#http_auth_password) • [`SECRET_KEY_BASE`](#secret_key_base)

@@ -1,8 +1,4 @@
----
-title: Forgotten Passwords
-tags:
-  - guides
----
+# Reset Passwords
 
 When a user forgets their password, the best solution is to send them an email containing a link
 that allows them to create a new one. AuthN ensures that the forgotten password process does not

@@ -1,10 +1,4 @@
----
-title: Make Sessions Timeout from Inactivity
-tags:
-  - guides
----
-
-# Guide: Make Sessions Timeout from Inactivity
+# Inactive Session Timeout
 
 The Keratin AuthN setup involves two sessions: one between the user and your application, and another between the user and AuthN.
 
