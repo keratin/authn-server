@@ -1,4 +1,3 @@
-
 * **Implementation**
   * [OAuth](guide-implementing_oauth.md)
   * [Signup](guide-implementing_signup.md)
