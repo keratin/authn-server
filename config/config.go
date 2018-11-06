@@ -255,7 +255,7 @@ var configurers = []configurer{
 	// PASSWORDLESS_TOKEN_TTL determines how long a passwordless token (as JWT)
 	// will be valid from when it is generated. These tokens should not live much
 	// longer than it takes for an attentive user to act in a reasonably expedient
-	// manner. If a user loses control of a password reset token, they will lose
+	// manner. If a user loses control of a passwordless token, they will lose
 	// control of their account.
 	func(c *Config) error {
 		ttl, err := lookupInt("PASSWORDLESS_TOKEN_TTL", 1800)
