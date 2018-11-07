@@ -1,4 +1,4 @@
-package passwordless
+package sessions
 
 import (
 	"net/http"
@@ -7,7 +7,7 @@ import (
 	"github.com/keratin/authn-server/services"
 )
 
-func getPasswordlessToken(app *api.App) http.HandlerFunc {
+func getSessionToken(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		account, err := app.AccountStore.FindByUsername(r.FormValue("username"))
 		if err != nil {

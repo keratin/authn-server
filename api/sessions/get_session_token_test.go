@@ -1,19 +1,19 @@
-package passwordless_test
+package sessions_test
 
 import (
 	"net/http"
 	"testing"
 
-	"github.com/keratin/authn-server/api/passwordless"
+	"github.com/keratin/authn-server/api/sessions"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetPasswordlessToken(t *testing.T) {
+func TestGetSessionToken(t *testing.T) {
 	app := test.App()
-	server := test.Server(app, passwordless.Routes(app))
+	server := test.Server(app, sessions.Routes(app))
 	defer server.Close()
 
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
@@ -22,7 +22,7 @@ func TestGetPasswordlessToken(t *testing.T) {
 		_, err := app.AccountStore.Create("known@keratin.tech", []byte("pwd"))
 		require.NoError(t, err)
 
-		res, err := client.Get("/passwordless/token?username=known@keratin.tech")
+		res, err := client.Get("/session/token?username=known@keratin.tech")
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.StatusCode)
 
@@ -30,7 +30,7 @@ func TestGetPasswordlessToken(t *testing.T) {
 	})
 
 	t.Run("unknown account", func(t *testing.T) {
-		res, err := client.Get("/passwordless/token?username=unknown@keratin.tech")
+		res, err := client.Get("/session/token?username=unknown@keratin.tech")
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.StatusCode)
 	})

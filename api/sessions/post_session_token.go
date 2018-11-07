@@ -1,4 +1,4 @@
-package passwordless
+package sessions
 
 import (
 	"net/http"
@@ -8,21 +8,17 @@ import (
 	"github.com/keratin/authn-server/services"
 )
 
-func postPasswordlessLogin(app *api.App) http.HandlerFunc {
+func postSessionToken(app *api.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		var accountID int
-		if r.FormValue("token") != "" {
-			accountID, err = services.PasswordlessTokenVerifier(
-				app.AccountStore,
-				app.Reporter,
-				app.Config,
-				r.FormValue("token"),
-			)
-		} else {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
+
+		accountID, err = services.PasswordlessTokenVerifier(
+			app.AccountStore,
+			app.Reporter,
+			app.Config,
+			r.FormValue("token"),
+		)
 
 		if err != nil {
 			if fe, ok := err.(services.FieldErrors); ok {

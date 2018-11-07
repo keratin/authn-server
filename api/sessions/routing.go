@@ -8,7 +8,7 @@ import (
 func PublicRoutes(app *api.App) []*route.HandledRoute {
 	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
 
-	return []*route.HandledRoute{
+	routes := []*route.HandledRoute{
 		route.Post("/session").
 			SecuredWith(originSecurity).
 			Handle(postSession(app)),
@@ -20,7 +20,21 @@ func PublicRoutes(app *api.App) []*route.HandledRoute {
 		route.Get("/session/refresh").
 			SecuredWith(originSecurity).
 			Handle(getSessionRefresh(app)),
+
+		route.Post("/session/token").
+			SecuredWith(originSecurity).
+			Handle(postSessionToken(app)),
 	}
+
+	if app.Config.AppPasswordlessTokenURL != nil {
+		routes = append(routes,
+			route.Get("/session/token").
+				SecuredWith(originSecurity).
+				Handle(getSessionToken(app)),
+		)
+	}
+
+	return routes
 }
 
 func Routes(app *api.App) []*route.HandledRoute {

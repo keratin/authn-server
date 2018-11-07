@@ -1,4 +1,4 @@
-package passwordless_test
+package sessions_test
 
 import (
 	"net/http"
@@ -7,21 +7,21 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/keratin/authn-server/api/passwordless"
 	"github.com/keratin/authn-server/api/test"
+	apiSessions "github.com/keratin/authn-server/api/sessions"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/services"
-	passwordless_token "github.com/keratin/authn-server/tokens/passwordless"
+	"github.com/keratin/authn-server/tokens/passwordless"
 	"github.com/keratin/authn-server/tokens/sessions"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestPostPasswordlessLogin(t *testing.T) {
+func TestPostSessionToken(t *testing.T) {
 	app := test.App()
-	server := test.Server(app, passwordless.Routes(app))
+	server := test.Server(app, apiSessions.Routes(app))
 	defer server.Close()
 
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
@@ -50,13 +50,13 @@ func TestPostPasswordlessLogin(t *testing.T) {
 		require.NoError(t, err)
 
 		// given a passwordless token
-		token, err := passwordless_token.New(app.Config, account.ID)
+		token, err := passwordless.New(app.Config, account.ID)
 		require.NoError(t, err)
 		tokenStr, err := token.Sign(app.Config.PasswordlessTokenSigningKey)
 		require.NoError(t, err)
 
 		// invoking the endpoint
-		res, err := client.PostForm("/passwordless/login", url.Values{
+		res, err := client.PostForm("/session/token", url.Values{
 			"token": []string{tokenStr},
 		})
 		require.NoError(t, err)
@@ -67,7 +67,7 @@ func TestPostPasswordlessLogin(t *testing.T) {
 
 	t.Run("invalid passwordless token", func(t *testing.T) {
 		// invoking the endpoint
-		res, err := client.PostForm("/passwordless/login", url.Values{
+		res, err := client.PostForm("/session/token", url.Values{
 			"token": []string{"invalid"},
 		})
 		require.NoError(t, err)
@@ -86,13 +86,13 @@ func TestPostPasswordlessLogin(t *testing.T) {
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 
 		// given a passwordless token
-		token, err := passwordless_token.New(app.Config, account.ID)
+		token, err := passwordless.New(app.Config, account.ID)
 		require.NoError(t, err)
 		tokenStr, err := token.Sign(app.Config.PasswordlessTokenSigningKey)
 		require.NoError(t, err)
 
 		// invoking the endpoint
-		res, err := client.WithCookie(session).PostForm("/passwordless/login", url.Values{
+		res, err := client.WithCookie(session).PostForm("/session/token", url.Values{
 			"token": []string{tokenStr},
 		})
 		require.NoError(t, err)
