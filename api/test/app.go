@@ -33,7 +33,7 @@ func App() *api.App {
 		ApplicationDomains:      []route.Domain{{Hostname: "test.com"}},
 		PasswordMinComplexity:   2,
 		AppPasswordResetURL:     &url.URL{Scheme: "https", Host: "app.example.com"},
-    AppPasswordlessTokenURL: &url.URL{Scheme: "https", Host: "app.example.com"},
+		AppPasswordlessTokenURL: &url.URL{Scheme: "https", Host: "app.example.com"},
 		EnableSignup:            true,
 	}
 
