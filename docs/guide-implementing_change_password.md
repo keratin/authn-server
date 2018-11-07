@@ -1,8 +1,4 @@
----
-title: Change Password
-tags:
-  - guides
----
+# Change Password
 
 Your users will sometimes want to change their passwords while they are logged in. Easy!
 

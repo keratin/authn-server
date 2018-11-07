@@ -1,9 +1,4 @@
----
-title: AuthN Deployment
-tags:
-  - guides
-  - deployment
----
+# Deployment
 
 AuthN may be deployed to suit your needs. Currently it is provided in a Docker image, but as a Go
 application it may be compiled for any target architecture and run as a daemon.

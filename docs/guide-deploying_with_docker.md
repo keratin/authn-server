@@ -1,17 +1,9 @@
----
-title: AuthN Deployment
-tags:
-  - guides
-  - deployment
----
-
-
-## Docker
+# Docker
 
 The Docker image is tagged with release versions like `keratin/authn-server:0.9.0`. Please do not
 rely on the `:latest` tag, as it is not guaranteed to reflect the newest stable version.
 
-### Daemon
+## Daemon
 
 You can run the AuthN Docker image as a daemon. Here's the quickest way to get it running with
 minimal dependencies:
@@ -30,7 +22,7 @@ docker run -it --rm \
   sh -c "./authn migrate && ./authn server"
 ```
 
-### Compose
+## Compose
 
 If your application development is also Dockerized, you should consider a docker-compose.yml that
 will coordinate all of its service dependencies. This is your development version of ECS or
@@ -62,8 +54,7 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - AUTHN_URL=http://authn:3000
       - APP_DOMAINS=localhost
-      - SECRET_KEY_BASE  
-    command: sh -c "./authn migrate && echo 'starting server, migrations finished' && ./authn server"
+      - SECRET_KEY_BASE
     depends_on:
       - redis
       - db

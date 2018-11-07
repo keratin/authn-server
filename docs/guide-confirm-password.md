@@ -1,8 +1,4 @@
----
-title: Confirm Password for Critical Actions
-tags:
-  - guides
----
+# Password Confirmation
 
 Your application may have critical actions that require confirming the user's password. You can
 implement this by checking the `auth_time` claim of the user's access token.

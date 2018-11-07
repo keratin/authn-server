@@ -1,8 +1,4 @@
----
-title: Signup
-tags:
-  - guides
----
+# Signup
 
 AuthN takes care of account data (username, password) and leaves the remaining user profile data to
 your application. This means that signup is a two-step process. If that inspires you to create a

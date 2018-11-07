@@ -1,10 +1,4 @@
----
-title: Displaying a Password Strength Meter
-tags:
-  - guides
----
-
-# Guide: Displaying a Password Strength Meter
+# Password Strength Meter
 
 AuthN uses a cross-platform password strength algorithm called [zxcvbn](https://blogs.dropbox.com/tech/2012/04/zxcvbn-realistic-password-strength-estimation/) with a default minimum strength score of `2`. This means you can predict in real-time how a password will validate and provide the user with early feedback.
 

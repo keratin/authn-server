@@ -1,8 +1,4 @@
----
-title: Restrict Signups by Domain
-tags:
-  - guides
----
+# Single Domain Signups
 
 If you wish to ensure that all users are part of the same organization, restricting signups to a
 single domain and verifying email addresses is a good pattern.
