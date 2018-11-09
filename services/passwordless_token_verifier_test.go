@@ -66,6 +66,22 @@ func TestPasswordlessTokenVerifier(t *testing.T) {
 		assert.Equal(t, services.FieldErrors{{"account", "LOCKED"}}, err)
 	})
 
+	t.Run("logging in account after require a passwordless token", func(t *testing.T) {
+		account, err := accountStore.Create("account@keratin.tech", []byte("old"))
+		require.NoError(t, err)
+
+		token := newToken(account.ID)
+
+		err = invoke(token)
+		require.NoError(t, err)
+
+		err = services.LastLoginUpdater(accountStore, account.ID)
+		require.NoError(t, err)
+
+		err = invoke(token)
+		assert.Equal(t, services.FieldErrors{{"token", services.ErrInvalidOrExpired}}, err)
+	})
+
 	t.Run("with an unknown account", func(t *testing.T) {
 		token := newToken(0)
 		err := invoke(token)

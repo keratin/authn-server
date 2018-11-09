@@ -32,6 +32,8 @@ func PasswordlessTokenVerifier(store data.AccountStore, r ops.ErrorReporter, cfg
 		return 0, FieldErrors{{"account", ErrLocked}}
 	} else if account.Archived() {
 		return 0, FieldErrors{{"account", ErrLocked}}
+	} else if account.LastLoginAt.Sub(claims.IssuedAt.Time()) > 0 {
+		return 0, FieldErrors{{"token", ErrInvalidOrExpired}}
 	}
 
 	return account.ID, nil

@@ -24,6 +24,7 @@ type AccountStore interface {
 	RequireNewPassword(id int) error
 	SetPassword(id int, p []byte) error
 	UpdateUsername(id int, u string) error
+	SetLastLogin(id int) error
 }
 
 func NewAccountStore(db *sqlx.DB) (AccountStore, error) {

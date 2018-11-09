@@ -28,6 +28,7 @@ func createAccounts(db *sqlx.DB) error {
             locked TINYINT(1) NOT NULL DEFAULT '0',
             require_new_password TINYINT(1) NOT NULL DEFAULT '0',
             password_changed_at DATETIME DEFAULT NULL,
+            last_login_at DATETIME DEFAULT NULL,
             created_at DATETIME NOT NULL,
             updated_at DATETIME NOT NULL,
             deleted_at DATETIME DEFAULT NULL,

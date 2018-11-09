@@ -9,6 +9,7 @@ type Account struct {
 	Locked             bool
 	RequireNewPassword bool       `db:"require_new_password"`
 	PasswordChangedAt  time.Time  `db:"password_changed_at"`
+	LastLoginAt        time.Time  `db:"last_login_at"`
 	CreatedAt          time.Time  `db:"created_at"`
 	UpdatedAt          time.Time  `db:"updated_at"`
 	DeletedAt          *time.Time `db:"deleted_at"`

@@ -57,10 +57,11 @@ func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 		PasswordChangedAt: now,
 		CreatedAt:         now,
 		UpdatedAt:         now,
+		LastLoginAt:       now,
 	}
 
 	result, err := db.NamedExec(
-		"INSERT INTO accounts (username, password, locked, require_new_password, password_changed_at, created_at, updated_at) VALUES (:username, :password, :locked, :require_new_password, :password_changed_at, :created_at, :updated_at)",
+		"INSERT INTO accounts (username, password, locked, require_new_password, password_changed_at, created_at, updated_at, last_login_at) VALUES (:username, :password, :locked, :require_new_password, :password_changed_at, :created_at, :updated_at, :last_login_at)",
 		account,
 	)
 	if err != nil {
@@ -130,5 +131,10 @@ func (db *AccountStore) SetPassword(id int, p []byte) error {
 
 func (db *AccountStore) UpdateUsername(id int, u string) error {
 	_, err := db.Exec("UPDATE accounts SET username = ?, updated_at = ? WHERE id = ?", u, time.Now(), id)
+	return err
+}
+
+func (db *AccountStore) SetLastLogin(id int) error {
+	_, err := db.Exec("UPDATE accounts SET last_login_at = ? WHERE id = ?", time.Now(), id)
 	return err
 }

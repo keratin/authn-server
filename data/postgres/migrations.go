@@ -27,6 +27,7 @@ func migrateAccounts(db *sqlx.DB) error {
             locked boolean NOT NULL DEFAULT false,
             require_new_password boolean NOT NULL DEFAULT false,
             password_changed_at timestamptz DEFAULT NULL,
+            last_login_at timestamptz DEFAULT NULL,
             created_at timestamptz NOT NULL,
             updated_at timestamptz NOT NULL,
             deleted_at timestamptz DEFAULT NULL

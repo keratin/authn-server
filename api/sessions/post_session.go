@@ -31,7 +31,7 @@ func postSession(app *api.App) http.HandlerFunc {
 			app.Reporter.ReportRequestError(err, r)
 		}
 
-		sessionToken, identityToken, err := api.NewSession(app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, account.ID, route.MatchedDomain(r))
+		sessionToken, identityToken, err := api.NewSession(app.AccountStore, app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, account.ID, route.MatchedDomain(r))
 		if err != nil {
 			panic(err)
 		}

@@ -30,6 +30,7 @@ func createAccounts(db *sqlx.DB) error {
             locked BOOLEAN NOT NULL,
             require_new_password BOOLEAN NOT NULL,
             password_changed_at DATETIME NOT NULL,
+            last_login_at DATETIME NOT NULL,
             created_at DATETIME NOT NULL,
             updated_at DATETIME NOT NULL,
             deleted_at DATETIME

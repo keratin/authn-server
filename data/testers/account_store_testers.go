@@ -241,3 +241,18 @@ func testFindByOauthAccount(t *testing.T, store data.AccountStore) {
 	// Assert that db connections are released to pool
 	assert.Equal(t, 1, getOpenConnectionCount(store))
 }
+
+func testSetLastLogin(t *testing.T, store data.AccountStore) {
+	account, err := store.Create("old", []byte("old"))
+	require.NoError(t, err)
+
+	err = store.SetLastLogin(account.ID)
+	require.NoError(t, err)
+
+	after, err := store.Find(account.ID)
+	require.NoError(t, err)
+	assert.NotEqual(t, nil, after.LastLoginAt)
+
+	// Assert that db connections are released to pool
+	assert.Equal(t, 1, getOpenConnectionCount(store))
+}
