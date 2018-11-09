@@ -1,8 +1,4 @@
----
-title: Restrict Signups by Invitation
-tags:
-  - guides
----
+# Invitation-Only Signups
 
 AuthN does not have invitation codes built in, but you can use account locking to ensure that only
 invited users gain access to your application.

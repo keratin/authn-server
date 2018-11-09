@@ -1,7 +1,3 @@
----
-title: Server API
----
-
 # Server API
 
 * [Visibility](#visibility)

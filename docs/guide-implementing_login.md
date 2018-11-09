@@ -1,8 +1,4 @@
----
-title: Login
-tags:
-  - guides
----
+# Login
 
 When a user logs in with AuthN, they establish two sessions: one with your app that expires
 periodically, and another with AuthN that can be used to refresh the app session. These are called

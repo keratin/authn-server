@@ -1,29 +1,47 @@
-## Documentation:
+# Introduction
 
-* [Server API](api.md)
-* [Server Configuration](config.md)
+AuthN is an accounts microservice. It's what you get when you treat passwords like credit cards.
 
-## Deployment Guides:
+An AuthN account is a login identity: username/password, plus optional connected OAuth identities.
 
-* [Deployment](guide-deployment.md)
-* [Deploying with Docker](guide-deploying_with_docker.md)
-* [Integrating with an API Gateway](guide-integrating_authn_with_an_api_gateway.md)
+## Why?
 
-## Implementation Guides:
+* **Stability:** Your application changes every day. Authentication does not.
+* **Stack:** Your application is written in a language that encourages moving quickly and fixing
+  things later.
+* **Security:** Your application's security perimeter depends on the code your team writes and the
+  code your team finds.
+* **Architecture:** Your application may be small now, but when it grows up you want to be ready.
 
-* [Signup](guide-implementing_signup.md)
-* [Login](guide-implementing_login.md)
-* [Forgotten Passwords](guide-implementing_forgotten_passwords.md)
-* [Change Password](guide-implementing_change_password.md)
-* [Logout](guide-implementing_logout.md)
-* [OAuth](guide-implementing_oauth.md)
+## Users and Accounts
 
-## Other Guides:
+AuthN manages accounts. When an account logs in, your application receives a token containing the
+account's ID. You can save that account ID into your users table along with any other bits of data
+that you need like names, time zones, and newsletter preferences.
 
-* [Synchronize Emails](guide-synchronize_emails.md)
-* [Displaying a Password Strength Meter](guide-displaying_a_password_strength_meter.md)
-* [Restrict Signups by Invitation](guide-restrict_signups_by_invitation.md)
-* [Restrict Signups to a Specific Domain](guide-restrict_signups_by_domain.md)
-* [Make Sessions Timeout from Inactivity](guide-make_sessions_timeout_from_inactivity.md)
-* [Migrating an Existing Application](guide-migrating_an_existing_application.md)
-* [Confirm Password for Critical Actions](guide-reverify-password.md)
+Integrating AuthN tokens into a typical Ruby on Rails controller with the
+[authn-rb client](https://github.com/keratin/authn-rb) requires only a few lines:
+
+```ruby
+class ApplicationController
+  private
+
+  def logged_in?
+    !! current_user
+  end
+
+  def current_user
+    @current_user ||= current_account_id && User.find_by_account_id(current_account_id)
+  end
+
+  # if your authn-js client is configured to use localstorage then `cookies[:authn]` may
+  # need to be replaced by something like `request.headers['Authorization']`
+  def current_account_id
+    Keratin::AuthN.subject_from(cookies[:authn])
+  end
+
+  def bearer_token
+    (request.headers['Authorization'] || '').sub(/^Bearer /, '')
+  end
+end
+```

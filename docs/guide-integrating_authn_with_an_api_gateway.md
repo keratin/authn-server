@@ -1,11 +1,4 @@
----
-title: Integrating AuthN with an API Gateway
-tags:
-  - guides
-  - deployment
----
-
-# Guide: Integrating AuthN with an API Gateway
+# Integrating with an API Gateway
 
 An API Gateway is sometimes used in a services architecture to control access and route requests to backend services. The concept is broad enough that it may be as simple as a request router -- managing service discovery so your clients don't have to -- or may take additional responsibilities like authentication, authorization, and throttling.
 
