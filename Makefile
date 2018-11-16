@@ -3,6 +3,7 @@ PROJECT := authn-server
 NAME := $(ORG)/$(PROJECT)
 VERSION := 1.5.0
 MAIN := main.go routing.go
+GATEWAY_SRC:= $(shell go list -f '{{ .Dir }}' -m github.com/grpc-ecosystem/grpc-gateway)
 
 .PHONY: clean
 clean:
@@ -101,3 +102,24 @@ release: test dist
 	git push --tags
 	open https://github.com/$(NAME)/releases/tag/v$(VERSION)
 	open dist
+
+.PHONY: generate-grpc
+generate-grpc:
+	protoc -I=./grpc -I=vendor -I=$(GATEWAY_SRC)/third_party/googleapis --gogoslick_out=\
+	Mgoogle/api/annotations.proto=github.com/gogo/googleapis/google/api,\
+	Mgoogle/protobuf/any.proto=github.com/gogo/protobuf/types,\
+	Mgoogle/protobuf/duration.proto=github.com/gogo/protobuf/types,\
+	Mgoogle/protobuf/empty.proto=github.com/gogo/protobuf/types,\
+	Mgoogle/protobuf/struct.proto=github.com/gogo/protobuf/types,\
+	Mgoogle/protobuf/timestamp.proto=github.com/gogo/protobuf/types,\
+	Mgoogle/protobuf/wrappers.proto=github.com/gogo/protobuf/types,plugins=grpc:./grpc \
+	--grpc-gateway_out=\
+	Mgoogle/protobuf/timestamp.proto=github.com/gogo/protobuf/types,\
+	Mgoogle/protobuf/duration.proto=github.com/gogo/protobuf/types,\
+	Mgoogle/protobuf/empty.proto=github.com/gogo/protobuf/types,\
+	Mgoogle/api/annotations.proto=github.com/gogo/googleapis/google/api,\
+	Mgoogle/protobuf/field_mask.proto=github.com/gogo/protobuf/types:./grpc \
+	grpc/authn.proto
+	# Workaround for https://github.com/grpc-ecosystem/grpc-gateway/issues/229.
+	sed -i.bak "s/empty.Empty/types.Empty/g" grpc/authn.pb.gw.go && rm grpc/authn.pb.gw.go.bak
+	sed -i.bak "s/empty.Empty/types.Empty/g" grpc/authn.pb.go && rm grpc/authn.pb.go.bak

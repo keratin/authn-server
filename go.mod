@@ -1,9 +1,7 @@
 module github.com/keratin/authn-server
 
 require (
-	cloud.google.com/go v0.0.0-20180417120045-d19004dbbee5 // indirect
 	github.com/airbrake/gobrake v3.5.0+incompatible
-	github.com/benbjohnson/ego v0.3.0 // indirect
 	github.com/beorn7/perks v0.0.0-20160804104726-4c0e84591b9a // indirect
 	github.com/certifi/gocertifi v0.0.0-20170727155124-3fd9e1adb12b // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -12,10 +10,13 @@ require (
 	github.com/getsentry/raven-go v0.0.0-20170614100719-d175f85701df
 	github.com/go-redis/redis v6.10.2+incompatible
 	github.com/go-sql-driver/mysql v1.3.0
-	github.com/golang/protobuf v0.0.0-20171021043952-1643683e1b54 // indirect
+	github.com/gogo/googleapis v1.1.0
+	github.com/gogo/protobuf v1.1.1
+	github.com/golang/protobuf v1.2.0
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/handlers v1.3.0
 	github.com/gorilla/mux v1.6.1
+	github.com/grpc-ecosystem/grpc-gateway v1.5.1
 	github.com/hpcloud/tail v1.0.0 // indirect
 	github.com/jmoiron/sqlx v0.0.0-20170430194603-d9bd385d68c0
 	github.com/joho/godotenv v1.2.0
@@ -34,12 +35,9 @@ require (
 	github.com/sirupsen/logrus v1.0.5
 	github.com/stretchr/testify v1.2.1
 	golang.org/x/crypto v0.0.0-20170619204222-adbae1b6b6fb
-	golang.org/x/net v0.0.0-20170624000434-5f8847ae0d0e // indirect
-	golang.org/x/oauth2 v0.0.0-20180416194528-6881fee410a5
-	golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f // indirect
-	golang.org/x/sys v0.0.0-20170922123423-429f518978ab // indirect
-	golang.org/x/text v0.3.0 // indirect
-	google.golang.org/appengine v0.0.0-20180405220334-0a24098c0ec6 // indirect
+	golang.org/x/net v0.0.0-20180826012351-8a410e7b638d
+	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
+	google.golang.org/grpc v1.16.0
 	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2 // indirect

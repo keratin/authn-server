@@ -1,0 +1,246 @@
+syntax = "proto3";
+
+package grpc;
+option go_package = "grpc";
+
+import "google/protobuf/empty.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+
+message SignupRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message SignupResponse {
+  string id_token = 1 [ (gogoproto.jsontag) = "id_token" ];
+}
+
+message SignupResponseEnvelope { SignupResponse result = 1; }
+
+message GetAccountRequest { string id = 1; }
+
+message GetAccountResponse {
+  int64 id = 1;
+  string username = 2;
+  bool locked = 3;
+  bool deleted = 4;
+}
+
+message GetAccountResponseEnvelope { GetAccountResponse result = 1; }
+
+message UpdateAccountRequest {
+  string id = 1;
+  string username = 2;
+}
+
+message IsUsernameAvailableRequest { string username = 1; }
+message IsUsernameAvailableResponseEnvelope {
+  bool result = 1 [ (gogoproto.jsontag) = "result" ];
+}
+
+message LockAccountRequest { string id = 1; }
+
+message UnlockAccountRequest { string id = 1; }
+
+message ArchiveAccountRequest { string id = 1; }
+
+message ImportAccountRequst {
+  string username = 1;
+  string password = 2;
+  bool locked = 3;
+}
+message ImportAccountResponse { int64 id = 1 [ (gogoproto.jsontag) = "id" ]; }
+
+message ImportAccountResponseEnvelope { ImportAccountResponse result = 1; }
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message PasswordResetRequest { string username = 1; }
+
+message ChangePasswordRequest {
+  string password = 1;
+  string token = 2;
+  string currentPassword = 3;
+}
+
+message ExpirePasswordRequest { string id = 1; }
+
+message BeginOAuthRequest {
+  string providerName = 1;
+  string redirectURI = 2;
+}
+message BeginOAuthResponse { string provider = 1; }
+
+message OAuthReturnRequest { string providerName = 1; }
+message OAuthReturnResponse { string redirect = 1; }
+
+message Configuration {
+  string issuer = 1;
+  repeated string response_types_supported = 2;
+  repeated string subject_types_supported = 3;
+  repeated string id_token_signing_alg_values_supported = 4;
+  repeated string claims_supported = 5;
+  string jwks_uri = 6;
+}
+message ServiceStatsResponse {}
+
+message HealthCheckResponse {
+  bool http = 1;
+  bool db = 2;
+  bool redis = 3;
+}
+
+message Key {
+  string use = 1;
+  repeated string alg = 2;
+  string kty = 3;
+  string kid = 4;
+  string e = 5;
+  string n = 6;
+}
+message JWKSResponse { repeated Key keys = 1; }
+
+service AuthN {
+
+  rpc Signup(SignupRequest) returns (SignupResponseEnvelope) {
+    option (google.api.http) = {
+      post : "/accounts",
+      body : "*"
+    };
+  }
+
+  rpc GetAccount(GetAccountRequest) returns (GetAccountResponseEnvelope) {
+    option (google.api.http) = {
+      get : "/accounts/{id}",
+    };
+  }
+
+  rpc UpdateAccount(UpdateAccountRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put : "/accounts/{id}",
+      body : "username"
+    };
+  }
+
+  rpc IsUsernameAvailable(IsUsernameAvailableRequest)
+      returns (IsUsernameAvailableResponseEnvelope) {
+    option (google.api.http) = {
+      get : "/accounts/available"
+    };
+  }
+
+  rpc LockAccount(LockAccountRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put : "/accounts/{id}/lock"
+    };
+  }
+
+  rpc UnlockAcount(UnlockAccountRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put : "/accounts/{id}/unlock"
+    };
+  }
+
+  rpc ArchiveAccount(ArchiveAccountRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete : "/accounts/{id}"
+    };
+  }
+
+  rpc ImportAccount(ImportAccountRequst)
+      returns (ImportAccountResponseEnvelope) {
+
+    option (google.api.http) = {
+      post : "/accounts/import",
+      body : "*"
+    };
+  }
+
+  rpc Login(LoginRequest) returns (SignupResponse) {
+
+    option (google.api.http) = {
+      post : "/session",
+      body : "*"
+    };
+  }
+
+  rpc RefreshSession(google.protobuf.Empty) returns (SignupResponse) {
+
+    option (google.api.http) = {
+      get : "/session"
+    };
+  }
+
+  rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty) {
+
+    option (google.api.http) = {
+      delete : "/session"
+    };
+  }
+
+  rpc RequestPasswordReset(PasswordResetRequest)
+      returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      get : "/password/reset"
+    };
+  }
+
+  rpc ChangePassword(ChangePasswordRequest) returns (SignupResponse) {
+    option (google.api.http) = {
+      post : "/password",
+      body : "*"
+    };
+  }
+
+  rpc ExpirePassword(ExpirePasswordRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put : "/accounts/{id}/expire_password"
+    };
+  }
+
+  rpc BeginOAuth(BeginOAuthRequest) returns (BeginOAuthResponse) {
+    option (google.api.http) = {
+      get : "/oauth/{providerName}"
+    };
+  }
+
+  rpc OAuthReturn(OAuthReturnRequest) returns (OAuthReturnResponse) {
+    option (google.api.http) = {
+      get : "/oauth/{providerName}/return"
+    };
+  }
+
+  rpc ServiceConfiguration(google.protobuf.Empty) returns (Configuration) {
+    option (google.api.http) = {
+      get : "/configuration"
+    };
+  }
+
+  rpc JWKS(google.protobuf.Empty) returns (JWKSResponse) {
+    option (google.api.http) = {
+      get : "/jwks"
+    };
+  }
+
+  rpc ServiceStats(google.protobuf.Empty) returns (ServiceStatsResponse) {
+    option (google.api.http) = {
+      get : "/stats"
+    };
+  }
+
+  rpc ServerStats(google.protobuf.Empty) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      get : "/metrics"
+    };
+  }
+
+  rpc HealthCheck(google.protobuf.Empty) returns (HealthCheckResponse) {
+    option (google.api.http) = {
+      get : "/health"
+    };
+  }
+}
