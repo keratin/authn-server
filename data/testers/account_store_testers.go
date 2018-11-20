@@ -18,6 +18,7 @@ var AccountStoreTesters = []func(*testing.T, data.AccountStore){
 	testArchiveWithOauth,
 	testRequireNewPassword,
 	testSetPassword,
+	testUpdateUsername,
 	testAddOauthAccount,
 	testFindByOauthAccount,
 }
@@ -173,6 +174,9 @@ func testSetPassword(t *testing.T, store data.AccountStore) {
 }
 
 func testUpdateUsername(t *testing.T, store data.AccountStore) {
+	other, err := store.Create("other", []byte("other"))
+	require.NoError(t, err)
+
 	account, err := store.Create("old", []byte("old"))
 	require.NoError(t, err)
 
@@ -182,6 +186,11 @@ func testUpdateUsername(t *testing.T, store data.AccountStore) {
 	after, err := store.Find(account.ID)
 	require.NoError(t, err)
 	assert.Equal(t, "new", after.Username)
+
+	err = store.UpdateUsername(account.ID, other.Username)
+	if err == nil || !data.IsUniquenessError(err) {
+		t.Errorf("expected uniqueness error, got %T %v", err, err)
+	}
 
 	// Assert that db connections are released to pool
 	assert.Equal(t, 1, getOpenConnectionCount(store))
