@@ -24,5 +24,13 @@ func AccountUpdater(store data.AccountStore, cfg *config.Config, accountID int, 
 		return FieldErrors{*fieldError}
 	}
 
-	return store.UpdateUsername(accountID, username)
+	err = store.UpdateUsername(accountID, username)
+	if err != nil {
+		if data.IsUniquenessError(err) {
+			return FieldErrors{{"username", ErrTaken}}
+		}
+
+		return errors.Wrap(err, "UpdateUsername")
+	}
+	return nil
 }

@@ -166,10 +166,15 @@ func (s *accountStore) SetPassword(id int, p []byte) error {
 }
 
 func (s *accountStore) UpdateUsername(id int, u string) error {
+	if s.idByUsername[u] != 0 {
+		return Error{ErrNotUnique}
+	}
+
 	account := s.accountsByID[id]
 	if account != nil {
 		account.Username = u
 		account.UpdatedAt = time.Now()
+		s.idByUsername[u] = account.ID
 	}
 	return nil
 }

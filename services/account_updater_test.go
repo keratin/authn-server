@@ -37,6 +37,19 @@ func TestAccountUpdater(t *testing.T) {
 		})
 	})
 
+	t.Run("username taken", func(t *testing.T) {
+		cfg := &config.Config{
+			UsernameIsEmail:   false,
+			UsernameMinLength: 3,
+		}
+
+		other, err := accountStore.Create("other", []byte("secret"))
+		require.NoError(t, err)
+
+		err = services.AccountUpdater(accountStore, cfg, existing.ID, other.Username)
+		assert.Equal(t, services.FieldErrors{{"username", services.ErrTaken}}, err)
+	})
+
 	t.Run("string usernames", func(t *testing.T) {
 		cfg := &config.Config{
 			UsernameIsEmail:   false,
