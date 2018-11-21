@@ -57,7 +57,6 @@ func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 		PasswordChangedAt: now,
 		CreatedAt:         now,
 		UpdatedAt:         now,
-		LastLoginAt:       now,
 	}
 
 	result, err := db.NamedExec(

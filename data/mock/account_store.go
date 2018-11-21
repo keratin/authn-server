@@ -177,7 +177,8 @@ func (s *accountStore) UpdateUsername(id int, u string) error {
 func (s *accountStore) SetLastLogin(id int) error {
 	account := s.accountsByID[id]
 	if account != nil {
-		account.LastLoginAt = time.Now()
+		now := time.Now()
+		account.LastLoginAt = &now
 	}
 	return nil
 }

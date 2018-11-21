@@ -12,6 +12,7 @@ func MigrateDB(db *sqlx.DB) error {
 		createRefreshTokens,
 		createBlobs,
 		createOauthAccounts,
+		createAccountLastLoginAtField,
 	}
 	for _, m := range migrations {
 		if err := m(db); err != nil {
@@ -30,7 +31,6 @@ func createAccounts(db *sqlx.DB) error {
             locked BOOLEAN NOT NULL,
             require_new_password BOOLEAN NOT NULL,
             password_changed_at DATETIME NOT NULL,
-            last_login_at DATETIME NOT NULL,
             created_at DATETIME NOT NULL,
             updated_at DATETIME NOT NULL,
             deleted_at DATETIME
@@ -80,6 +80,13 @@ func createOauthAccounts(db *sqlx.DB) error {
 	}
 	_, err = db.Exec(`
         CREATE INDEX IF NOT EXISTS oauth_accounts_by_account_id ON oauth_accounts (account_id)
+    `)
+	return err
+}
+
+func createAccountLastLoginAtField(db *sqlx.DB) error {
+	_, err := db.Exec(`
+        ALTER TABLE accounts ADD last_login_at DATETIME
     `)
 	return err
 }

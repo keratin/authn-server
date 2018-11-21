@@ -10,6 +10,7 @@ func MigrateDB(db *sqlx.DB) error {
 	migrations := []func(db *sqlx.DB) error{
 		migrateAccounts,
 		createOauthAccounts,
+		createAccountLastLoginAtField,
 	}
 	for _, m := range migrations {
 		if err := m(db); err != nil {
@@ -27,7 +28,6 @@ func migrateAccounts(db *sqlx.DB) error {
             locked boolean NOT NULL DEFAULT false,
             require_new_password boolean NOT NULL DEFAULT false,
             password_changed_at timestamptz DEFAULT NULL,
-            last_login_at timestamptz DEFAULT NULL,
             created_at timestamptz NOT NULL,
             updated_at timestamptz NOT NULL,
             deleted_at timestamptz DEFAULT NULL
@@ -49,6 +49,13 @@ func createOauthAccounts(db *sqlx.DB) error {
             UNIQUE (provider_id, provider),
             UNIQUE (account_id, provider)
         )
+    `)
+	return err
+}
+
+func createAccountLastLoginAtField(db *sqlx.DB) error {
+	_, err := db.Exec(`
+        ALTER TABLE accounts ADD COLUMN IF NOT EXISTS last_login_at timestamptz DEFAULT NULL
     `)
 	return err
 }
