@@ -20,6 +20,7 @@ var AccountStoreTesters = []func(*testing.T, data.AccountStore){
 	testSetPassword,
 	testAddOauthAccount,
 	testFindByOauthAccount,
+	testSetLastLogin,
 }
 
 type hasStats interface {
