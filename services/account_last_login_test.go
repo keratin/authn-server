@@ -27,7 +27,7 @@ func TestLastLoginUpdater(t *testing.T) {
 
 	t.Run("unknown account", func(t *testing.T) {
 		accountStore := mock.NewAccountStore()
-		errs := services.LastLoginUpdater(accountStore, 123456789)
-		assert.Equal(t, services.FieldErrors{{"account", services.ErrNotFound}}, errs)
+		err := services.LastLoginUpdater(accountStore, 123456789)
+		assert.Equal(t, services.FieldErrors{{"account", services.ErrNotFound}}, err)
 	})
 }
