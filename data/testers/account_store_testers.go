@@ -256,8 +256,9 @@ func testSetLastLogin(t *testing.T, store data.AccountStore) {
 	account, err := store.Create("old", []byte("old"))
 	require.NoError(t, err)
 
-	err = store.SetLastLogin(account.ID)
+	rowsIsAffected, err := store.SetLastLogin(account.ID)
 	require.NoError(t, err)
+	require.Equal(t, true, rowsIsAffected)
 
 	after, err := store.Find(account.ID)
 	require.NoError(t, err)

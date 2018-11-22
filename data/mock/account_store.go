@@ -179,13 +179,14 @@ func (s *accountStore) UpdateUsername(id int, u string) error {
 	return nil
 }
 
-func (s *accountStore) SetLastLogin(id int) error {
+func (s *accountStore) SetLastLogin(id int) (bool, error) {
 	account := s.accountsByID[id]
 	if account != nil {
 		now := time.Now()
 		account.LastLoginAt = &now
+		return true, nil
 	}
-	return nil
+	return false, nil
 }
 
 // i think this works? i want to avoid accidentally giving callers the ability
