@@ -2,6 +2,8 @@
 
 ## HEAD
 
+## 1.5.0
+
 ### Added
 
 * Passwordless Logins (aka Magic Links) [#71] - @etruta
@@ -11,6 +13,10 @@
 ### Changed
 
 * Improved printing for configuration errors
+
+### Fixed
+
+* Uncaught uniqueness violation in `PATCH /account/:id`
 
 ## 1.4.1
 
