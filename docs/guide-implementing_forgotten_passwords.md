@@ -26,6 +26,7 @@ class AuthnController < ApplicationController
   def password_reset
     @user = User.find_by_account_id(params[:account_id])
     AccountMailer.password_reset(@user, params[:token]).deliver_later
+    head :ok
   end
 end
 ```

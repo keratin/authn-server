@@ -5,6 +5,7 @@
   * [Logout](guide-implementing_logout.md)
   * [Reset Passwords](guide-implementing_forgotten_passwords.md)
   * [Change Password](guide-implementing_change_password.md)
+  * [Passwordless Login](guide-implementing_passwordless_logins.md)
 
 * **Common Patterns**
   * [Synchronize Emails](guide-synchronize_emails.md)
