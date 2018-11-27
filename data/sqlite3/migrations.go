@@ -12,6 +12,7 @@ func MigrateDB(db *sqlx.DB) error {
 		createRefreshTokens,
 		createBlobs,
 		createOauthAccounts,
+		createAccountLastLoginAtField,
 	}
 	for _, m := range migrations {
 		if err := m(db); err != nil {
@@ -79,6 +80,13 @@ func createOauthAccounts(db *sqlx.DB) error {
 	}
 	_, err = db.Exec(`
         CREATE INDEX IF NOT EXISTS oauth_accounts_by_account_id ON oauth_accounts (account_id)
+    `)
+	return err
+}
+
+func createAccountLastLoginAtField(db *sqlx.DB) error {
+	_, err := db.Exec(`
+        ALTER TABLE accounts ADD last_login_at DATETIME
     `)
 	return err
 }

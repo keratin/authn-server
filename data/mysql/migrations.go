@@ -1,6 +1,7 @@
 package mysql
 
 import "github.com/jmoiron/sqlx"
+import "github.com/go-sql-driver/mysql"
 
 // MigrateDB is committed to doing the work necessary to converge the database
 // in a safe, production-grade fashion. This will mean conditional logic as it
@@ -10,6 +11,7 @@ func MigrateDB(db *sqlx.DB) error {
 	migrations := []func(db *sqlx.DB) error{
 		createAccounts,
 		createOauthAccounts,
+		createAccountLastLoginAtField,
 	}
 	for _, m := range migrations {
 		if err := m(db); err != nil {
@@ -53,5 +55,17 @@ func createOauthAccounts(db *sqlx.DB) error {
             UNIQUE KEY index_oauth_accounts_by_account_id (account_id, provider)
         )
     `)
+	return err
+}
+
+func createAccountLastLoginAtField(db *sqlx.DB) error {
+	_, err := db.Exec(`
+        ALTER TABLE accounts ADD last_login_at DATETIME DEFAULT NULL
+    `)
+	if mysqlError, ok := err.(*mysql.MySQLError); ok {
+		if mysqlError.Number == 1060 { // 1060 = Duplicate column name
+			err = nil
+		}
+	}
 	return err
 }

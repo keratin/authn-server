@@ -21,6 +21,7 @@ var AccountStoreTesters = []func(*testing.T, data.AccountStore){
 	testUpdateUsername,
 	testAddOauthAccount,
 	testFindByOauthAccount,
+	testSetLastLogin,
 }
 
 type hasStats interface {
@@ -246,6 +247,22 @@ func testFindByOauthAccount(t *testing.T, store data.AccountStore) {
 	found, err = store.FindByOauthAccount("OAUTHPROVIDER", "PROVIDERID")
 	assert.NoError(t, err)
 	assert.Equal(t, account.ID, found.ID)
+
+	// Assert that db connections are released to pool
+	assert.Equal(t, 1, getOpenConnectionCount(store))
+}
+
+func testSetLastLogin(t *testing.T, store data.AccountStore) {
+	account, err := store.Create("old", []byte("old"))
+	require.NoError(t, err)
+
+	rowsIsAffected, err := store.SetLastLogin(account.ID)
+	require.NoError(t, err)
+	require.Equal(t, true, rowsIsAffected)
+
+	after, err := store.Find(account.ID)
+	require.NoError(t, err)
+	assert.NotEqual(t, nil, after.LastLoginAt)
 
 	// Assert that db connections are released to pool
 	assert.Equal(t, 1, getOpenConnectionCount(store))

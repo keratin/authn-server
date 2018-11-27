@@ -9,10 +9,11 @@ import (
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/identities"
 	"github.com/keratin/authn-server/tokens/sessions"
+	"github.com/keratin/authn-server/services"
 	"github.com/pkg/errors"
 )
 
-func NewSession(refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore, actives data.Actives, cfg *config.Config, accountID int, authorizedAudience *route.Domain) (string, string, error) {
+func NewSession(store data.AccountStore, refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore, actives data.Actives, cfg *config.Config, accountID int, authorizedAudience *route.Domain) (string, string, error) {
 	session, err := sessions.New(refreshTokenStore, cfg, accountID, authorizedAudience.String())
 	if err != nil {
 		return "", "", errors.Wrap(err, "New")
@@ -26,6 +27,11 @@ func NewSession(refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore
 	identityToken, err := IdentityForSession(keyStore, actives, cfg, session, accountID, authorizedAudience)
 	if err != nil {
 		return "", "", errors.Wrap(err, "IdentityForSession")
+	}
+
+	err = services.LastLoginUpdater(store, accountID)
+	if err != nil {
+		return "", "", errors.Wrap(err, "UpdateLastLoginAt")
 	}
 
 	return sessionToken, identityToken, nil

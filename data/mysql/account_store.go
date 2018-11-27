@@ -132,3 +132,9 @@ func (db *AccountStore) UpdateUsername(id int, u string) error {
 	_, err := db.Exec("UPDATE accounts SET username = ?, updated_at = ? WHERE id = ?", u, time.Now(), id)
 	return err
 }
+
+func (db *AccountStore) SetLastLogin(id int) (bool, error) {
+	result, err := db.Exec("UPDATE accounts SET last_login_at = ? WHERE id = ?", time.Now(), id)
+	count, err := result.RowsAffected()
+	return count > 0, err
+}
