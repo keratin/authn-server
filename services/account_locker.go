@@ -14,16 +14,5 @@ func AccountLocker(store data.AccountStore, tokenStore data.RefreshTokenStore, a
 		return FieldErrors{{"account", ErrNotFound}}
 	}
 
-	tokens, err := tokenStore.FindAll(accountID)
-	if err != nil {
-		return errors.Wrap(err, "FindAll")
-	}
-	for _, token := range tokens {
-		err = tokenStore.Revoke(token)
-		if err != nil {
-			return errors.Wrap(err, "Revoke")
-		}
-	}
-
-	return nil
+	return LogoutAccount(tokenStore, accountID)
 }
