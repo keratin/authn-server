@@ -22,6 +22,14 @@ func PasswordSetter(store data.AccountStore, r ops.ErrorReporter, cfg *config.Co
 		return errors.Wrap(err, "GenerateFromPassword")
 	}
 
+	affected, err := store.SetPassword(accountID, hash)
+	if err != nil {
+		return errors.Wrap(err, "SetPassword")
+	}
+	if !affected {
+		return FieldErrors{{"account", ErrNotFound}}
+	}
+
 	if cfg.AppPasswordChangedURL != nil {
 		go func() {
 			err := WebhookSender(cfg.AppPasswordChangedURL, &url.Values{
@@ -33,5 +41,5 @@ func PasswordSetter(store data.AccountStore, r ops.ErrorReporter, cfg *config.Co
 		}()
 	}
 
-	return store.SetPassword(accountID, hash)
+	return nil
 }

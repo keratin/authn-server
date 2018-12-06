@@ -41,7 +41,7 @@ func TestPasswordChanger(t *testing.T) {
 	t.Run("it resets RequireNoPassword", func(t *testing.T) {
 		expired, err := factory("expired@keratin.tech", "old")
 		require.NoError(t, err)
-		err = accountStore.RequireNewPassword(expired.ID)
+		_, err = accountStore.RequireNewPassword(expired.ID)
 		require.NoError(t, err)
 
 		err = invoke(expired.ID, "old", "0a0b0c0d0e0f")
@@ -61,7 +61,7 @@ func TestPasswordChanger(t *testing.T) {
 	t.Run("with a locked account", func(t *testing.T) {
 		lockedAccount, err := factory("locked@keratin.tech", "old")
 		require.NoError(t, err)
-		err = accountStore.Lock(lockedAccount.ID)
+		_, err = accountStore.Lock(lockedAccount.ID)
 		require.NoError(t, err)
 
 		err = invoke(lockedAccount.ID, "old", "0ab0c0d0e0f")

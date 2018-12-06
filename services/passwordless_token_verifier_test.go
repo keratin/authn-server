@@ -45,7 +45,7 @@ func TestPasswordlessTokenVerifier(t *testing.T) {
 	t.Run("on an archived account", func(t *testing.T) {
 		archived, err := accountStore.Create("archived@keratin.tech", []byte("old"))
 		require.NoError(t, err)
-		err = accountStore.Archive(archived.ID)
+		_, err = accountStore.Archive(archived.ID)
 		require.NoError(t, err)
 
 		token := newToken(archived.ID)
@@ -57,7 +57,7 @@ func TestPasswordlessTokenVerifier(t *testing.T) {
 	t.Run("on a locked account", func(t *testing.T) {
 		locked, err := accountStore.Create("locked@keratin.tech", []byte("old"))
 		require.NoError(t, err)
-		err = accountStore.Lock(locked.ID)
+		_, err = accountStore.Lock(locked.ID)
 		require.NoError(t, err)
 
 		token := newToken(locked.ID)

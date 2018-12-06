@@ -43,7 +43,7 @@ func AccountImporter(store data.AccountStore, cfg *config.Config, username strin
 
 	if locked {
 		acc.Locked = true
-		err = store.Lock(acc.ID)
+		_, err := store.Lock(acc.ID)
 		if err != nil {
 			return nil, errors.Wrap(err, "Lock")
 		}

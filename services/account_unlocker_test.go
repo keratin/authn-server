@@ -14,7 +14,7 @@ func TestAccountUnlocker(t *testing.T) {
 
 	lockedAccount, err := store.Create("locked@keratin.tech", []byte("password"))
 	require.NoError(t, err)
-	err = store.Lock(lockedAccount.ID)
+	_, err = store.Lock(lockedAccount.ID)
 	require.NoError(t, err)
 
 	unlockedAccount, err := store.Create("unlocked@keratin.tech", []byte("password"))

@@ -30,7 +30,7 @@ func TestAccountLocker(t *testing.T) {
 	t.Run("locked account", func(t *testing.T) {
 		account, err := accountStore.Create("locked@keratin.tech", []byte("password"))
 		require.NoError(t, err)
-		err = accountStore.Lock(account.ID)
+		_, err = accountStore.Lock(account.ID)
 		require.NoError(t, err)
 
 		errs := services.AccountLocker(accountStore, refreshStore, account.ID)

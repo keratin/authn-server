@@ -37,7 +37,7 @@ func TestIdentityReconciler(t *testing.T) {
 		require.NoError(t, err)
 		err = store.AddOauthAccount(acct.ID, "testProvider", "234", "TOKEN")
 		require.NoError(t, err)
-		err = store.Lock(acct.ID)
+		_, err = store.Lock(acct.ID)
 		require.NoError(t, err)
 
 		found, err := services.IdentityReconciler(store, cfg, "testProvider", &oauth.UserInfo{ID: "234", Email: "linkedlocked@test.com"}, &oauth2.Token{}, 0)

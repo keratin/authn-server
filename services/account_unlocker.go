@@ -6,13 +6,13 @@ import (
 )
 
 func AccountUnlocker(store data.AccountStore, accountID int) error {
-	account, err := store.Find(accountID)
+	affected, err := store.Unlock(accountID)
 	if err != nil {
-		return errors.Wrap(err, "Find")
+		return errors.Wrap(err, "Unlock")
 	}
-	if account == nil {
+	if !affected {
 		return FieldErrors{{"account", ErrNotFound}}
 	}
 
-	return store.Unlock(account.ID)
+	return nil
 }

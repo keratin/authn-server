@@ -101,7 +101,7 @@ func TestGetOauthReturn(t *testing.T) {
 	t.Run("log in to locked identity", func(t *testing.T) {
 		account, err := app.AccountStore.Create("locked@keratin.tech", []byte("password"))
 		require.NoError(t, err)
-		err = app.AccountStore.Lock(account.ID)
+		_, err = app.AccountStore.Lock(account.ID)
 		require.NoError(t, err)
 
 		res, err := client.Get("/oauth/test/return?code=locked@keratin.tech&state=" + state)

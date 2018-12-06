@@ -99,42 +99,49 @@ func (db *AccountStore) GetOauthAccounts(accountID int) ([]*models.OauthAccount,
 	return accounts, err
 }
 
-func (db *AccountStore) Archive(id int) error {
+func (db *AccountStore) Archive(id int) (bool, error) {
 	_, err := db.Exec("DELETE FROM oauth_accounts WHERE account_id = ?", id)
 	if err != nil {
-		return err
+		return false, err
 	}
-	_, err = db.Exec("UPDATE accounts SET username = '@'||HEX(RANDOMBLOB(16)), password = ?, deleted_at = ? WHERE id = ?", "", time.Now(), id)
-	return err
+	result, err := db.Exec("UPDATE accounts SET username = '@'||HEX(RANDOMBLOB(16)), password = ?, deleted_at = ? WHERE id = ?", "", time.Now(), id)
+	return ok(result, err)
 }
 
-func (db *AccountStore) Lock(id int) error {
-	_, err := db.Exec("UPDATE accounts SET locked = ?, updated_at = ? WHERE id = ?", true, time.Now(), id)
-	return err
+func (db *AccountStore) Lock(id int) (bool, error) {
+	result, err := db.Exec("UPDATE accounts SET locked = ?, updated_at = ? WHERE id = ?", true, time.Now(), id)
+	return ok(result, err)
 }
 
-func (db *AccountStore) Unlock(id int) error {
-	_, err := db.Exec("UPDATE accounts SET locked = ?, updated_at = ? WHERE id = ?", false, time.Now(), id)
-	return err
+func (db *AccountStore) Unlock(id int) (bool, error) {
+	result, err := db.Exec("UPDATE accounts SET locked = ?, updated_at = ? WHERE id = ?", false, time.Now(), id)
+	return ok(result, err)
 }
 
-func (db *AccountStore) RequireNewPassword(id int) error {
-	_, err := db.Exec("UPDATE accounts SET require_new_password = ?, updated_at = ? WHERE id = ?", true, time.Now(), id)
-	return err
+func (db *AccountStore) RequireNewPassword(id int) (bool, error) {
+	result, err := db.Exec("UPDATE accounts SET require_new_password = ?, updated_at = ? WHERE id = ?", true, time.Now(), id)
+	return ok(result, err)
 }
 
-func (db *AccountStore) SetPassword(id int, p []byte) error {
-	_, err := db.Exec("UPDATE accounts SET password = ?, require_new_password = ?, password_changed_at = ?, updated_at = ? WHERE id = ?", p, false, time.Now(), time.Now(), id)
-	return err
+func (db *AccountStore) SetPassword(id int, p []byte) (bool, error) {
+	result, err := db.Exec("UPDATE accounts SET password = ?, require_new_password = ?, password_changed_at = ?, updated_at = ? WHERE id = ?", p, false, time.Now(), time.Now(), id)
+	return ok(result, err)
 }
 
-func (db *AccountStore) UpdateUsername(id int, u string) error {
-	_, err := db.Exec("UPDATE accounts SET username = ?, updated_at = ? WHERE id = ?", u, time.Now(), id)
-	return err
+func (db *AccountStore) UpdateUsername(id int, u string) (bool, error) {
+	result, err := db.Exec("UPDATE accounts SET username = ?, updated_at = ? WHERE id = ?", u, time.Now(), id)
+	return ok(result, err)
 }
 
 func (db *AccountStore) SetLastLogin(id int) (bool, error) {
 	result, err := db.Exec("UPDATE accounts SET last_login_at = ? WHERE id = ?", time.Now(), id)
+	return ok(result, err)
+}
+
+func ok(result sql.Result, err error) (bool, error) {
+	if err != nil {
+		return false, err
+	}
 	count, err := result.RowsAffected()
 	return count > 0, err
 }

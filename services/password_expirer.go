@@ -6,17 +6,12 @@ import (
 )
 
 func PasswordExpirer(store data.AccountStore, tokenStore data.RefreshTokenStore, accountID int) error {
-	account, err := store.Find(accountID)
-	if err != nil {
-		return errors.Wrap(err, "Find")
-	}
-	if account == nil {
-		return FieldErrors{{"account", ErrNotFound}}
-	}
-
-	err = store.RequireNewPassword(accountID)
+	affected, err := store.RequireNewPassword(accountID)
 	if err != nil {
 		return errors.Wrap(err, "RequireNewPassword")
+	}
+	if !affected {
+		return FieldErrors{{"account", ErrNotFound}}
 	}
 
 	tokens, err := tokenStore.FindAll(accountID)

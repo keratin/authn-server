@@ -26,7 +26,7 @@ func TestPasswordSetter(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("sets password", func(t *testing.T) {
-		err = accountStore.RequireNewPassword(account.ID)
+		_, err = accountStore.RequireNewPassword(account.ID)
 		require.NoError(t, err)
 
 		err := invoke(account.ID, "0a0b0c0d0e0f0")

@@ -18,12 +18,12 @@ type AccountStore interface {
 	FindByOauthAccount(p string, pid string) (*models.Account, error)
 	AddOauthAccount(id int, p string, pid string, tok string) error
 	GetOauthAccounts(id int) ([]*models.OauthAccount, error)
-	Archive(id int) error
-	Lock(id int) error
-	Unlock(id int) error
-	RequireNewPassword(id int) error
-	SetPassword(id int, p []byte) error
-	UpdateUsername(id int, u string) error
+	Archive(id int) (bool, error)
+	Lock(id int) (bool, error)
+	Unlock(id int) (bool, error)
+	RequireNewPassword(id int) (bool, error)
+	SetPassword(id int, p []byte) (bool, error)
+	UpdateUsername(id int, u string) (bool, error)
 	SetLastLogin(id int) (bool, error)
 }
 

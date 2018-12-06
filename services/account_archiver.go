@@ -6,11 +6,11 @@ import (
 )
 
 func AccountArchiver(store data.AccountStore, tokenStore data.RefreshTokenStore, accountID int) error {
-	account, err := store.Find(accountID)
+	affected, err := store.Archive(accountID)
 	if err != nil {
-		return errors.Wrap(err, "Find")
+		return errors.Wrap(err, "Archive")
 	}
-	if account == nil {
+	if !affected {
 		return FieldErrors{{"account", ErrNotFound}}
 	}
 
@@ -25,5 +25,5 @@ func AccountArchiver(store data.AccountStore, tokenStore data.RefreshTokenStore,
 		}
 	}
 
-	return store.Archive(account.ID)
+	return nil
 }

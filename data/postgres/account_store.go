@@ -61,14 +61,14 @@ func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 
 	result, err := db.NamedQuery(
 		`INSERT INTO accounts (
-			username, 
-			password, 
-			locked, 
-			require_new_password, 
-			password_changed_at, 
-			created_at, 
+			username,
+			password,
+			locked,
+			require_new_password,
+			password_changed_at,
+			created_at,
 			updated_at
-		) 
+		)
 		VALUES (:username, :password, :locked, :require_new_password, :password_changed_at, :created_at, :updated_at)
 		RETURNING id`,
 		account,
@@ -111,56 +111,63 @@ func (db *AccountStore) GetOauthAccounts(accountID int) ([]*models.OauthAccount,
 	return accounts, err
 }
 
-func (db *AccountStore) Archive(id int) error {
+func (db *AccountStore) Archive(id int) (bool, error) {
 	_, err := db.Exec("DELETE FROM oauth_accounts WHERE account_id = $1", id)
 	if err != nil {
-		return err
+		return false, err
 	}
-	_, err = db.Exec(`
+	result, err := db.Exec(`
 		UPDATE accounts
 		SET
 			username = CONCAT('@', MD5(RANDOM()::TEXT)),
 			password = $1,
 			deleted_at = $2
 		WHERE id = $3`, "", time.Now(), id)
-	return err
+	return ok(result, err)
 }
 
-func (db *AccountStore) Lock(id int) error {
-	_, err := db.Exec("UPDATE accounts SET locked = $1, updated_at = $2 WHERE id = $3", true, time.Now(), id)
-	return err
+func (db *AccountStore) Lock(id int) (bool, error) {
+	result, err := db.Exec("UPDATE accounts SET locked = $1, updated_at = $2 WHERE id = $3", true, time.Now(), id)
+	return ok(result, err)
 }
 
-func (db *AccountStore) Unlock(id int) error {
-	_, err := db.Exec("UPDATE accounts SET locked = $1, updated_at = $2 WHERE id = $3", false, time.Now(), id)
-	return err
+func (db *AccountStore) Unlock(id int) (bool, error) {
+	result, err := db.Exec("UPDATE accounts SET locked = $1, updated_at = $2 WHERE id = $3", false, time.Now(), id)
+	return ok(result, err)
 }
 
-func (db *AccountStore) RequireNewPassword(id int) error {
-	_, err := db.Exec("UPDATE accounts SET require_new_password = $1, updated_at = $2 WHERE id = $3", true, time.Now(), id)
-	return err
+func (db *AccountStore) RequireNewPassword(id int) (bool, error) {
+	result, err := db.Exec("UPDATE accounts SET require_new_password = $1, updated_at = $2 WHERE id = $3", true, time.Now(), id)
+	return ok(result, err)
 }
 
-func (db *AccountStore) SetPassword(id int, p []byte) error {
-	_, err := db.Exec(`
-		UPDATE accounts 
+func (db *AccountStore) SetPassword(id int, p []byte) (bool, error) {
+	result, err := db.Exec(`
+		UPDATE accounts
 		SET
 			password = $1,
 			require_new_password = $2,
-			password_changed_at = $3, 
+			password_changed_at = $3,
 			updated_at = $4
-		WHERE 
+		WHERE
 			id = $5`, p, false, time.Now(), time.Now(), id)
-	return err
+	return ok(result, err)
 }
 
-func (db *AccountStore) UpdateUsername(id int, u string) error {
-	_, err := db.Exec("UPDATE accounts SET username = $1, updated_at = $2 WHERE id = $3", u, time.Now(), id)
-	return err
+func (db *AccountStore) UpdateUsername(id int, u string) (bool, error) {
+	result, err := db.Exec("UPDATE accounts SET username = $1, updated_at = $2 WHERE id = $3", u, time.Now(), id)
+	return ok(result, err)
 }
 
 func (db *AccountStore) SetLastLogin(id int) (bool, error) {
 	result, err := db.Exec("UPDATE accounts SET last_login_at = $1 WHERE id = $2", time.Now(), id)
+	return ok(result, err)
+}
+
+func ok(result sql.Result, err error) (bool, error) {
+	if err != nil {
+		return false, err
+	}
 	count, err := result.RowsAffected()
 	return count > 0, err
 }

@@ -78,14 +78,16 @@ func testLockAndUnlock(t *testing.T, store data.AccountStore) {
 	require.NoError(t, err)
 	require.False(t, account.Locked)
 
-	err = store.Lock(account.ID)
+	ok, err := store.Lock(account.ID)
+	assert.True(t, ok)
 	require.NoError(t, err)
 
 	after, err := store.Find(account.ID)
 	require.NoError(t, err)
 	assert.True(t, after.Locked)
 
-	err = store.Unlock(account.ID)
+	ok, err = store.Unlock(account.ID)
+	assert.True(t, ok)
 	require.NoError(t, err)
 
 	after2, err := store.Find(account.ID)
@@ -102,7 +104,8 @@ func testArchive(t *testing.T, store data.AccountStore) {
 	require.NoError(t, err)
 	require.Empty(t, account.DeletedAt)
 
-	err = store.Archive(account.ID)
+	ok, err := store.Archive(account.ID)
+	assert.True(t, ok)
 	require.NoError(t, err)
 
 	after, err := store.Find(account.ID)
@@ -114,7 +117,8 @@ func testArchive(t *testing.T, store data.AccountStore) {
 
 	account2, err := store.Create("authn@keratin.tech", []byte("password"))
 	if assert.NoError(t, err) {
-		err = store.Archive(account2.ID)
+		ok, err = store.Archive(account2.ID)
+		assert.True(t, ok)
 		assert.NoError(t, err)
 	}
 
@@ -128,7 +132,8 @@ func testArchiveWithOauth(t *testing.T, store data.AccountStore) {
 	err = store.AddOauthAccount(account.ID, "PROVIDER", "PROVIDERID", "token")
 	require.NoError(t, err)
 
-	err = store.Archive(account.ID)
+	ok, err := store.Archive(account.ID)
+	assert.True(t, ok)
 	require.NoError(t, err)
 
 	found, err := store.FindByOauthAccount("PROVIDER", "PROVIDERID")
@@ -144,7 +149,8 @@ func testRequireNewPassword(t *testing.T, store data.AccountStore) {
 	require.NoError(t, err)
 	require.False(t, account.RequireNewPassword)
 
-	err = store.RequireNewPassword(account.ID)
+	ok, err := store.RequireNewPassword(account.ID)
+	assert.True(t, ok)
 	require.NoError(t, err)
 
 	after, err := store.Find(account.ID)
@@ -158,10 +164,12 @@ func testRequireNewPassword(t *testing.T, store data.AccountStore) {
 func testSetPassword(t *testing.T, store data.AccountStore) {
 	account, err := store.Create("authn@keratin.tech", []byte("old"))
 	require.NoError(t, err)
-	err = store.RequireNewPassword(account.ID)
+	ok, err := store.RequireNewPassword(account.ID)
+	require.True(t, ok)
 	require.NoError(t, err)
 
-	err = store.SetPassword(account.ID, []byte("new"))
+	ok, err = store.SetPassword(account.ID, []byte("new"))
+	assert.True(t, ok)
 	require.NoError(t, err)
 
 	after, err := store.Find(account.ID)
@@ -181,17 +189,23 @@ func testUpdateUsername(t *testing.T, store data.AccountStore) {
 	account, err := store.Create("old", []byte("old"))
 	require.NoError(t, err)
 
-	err = store.UpdateUsername(account.ID, "new")
+	ok, err := store.UpdateUsername(account.ID, "new")
+	assert.True(t, ok)
 	require.NoError(t, err)
 
 	after, err := store.Find(account.ID)
 	require.NoError(t, err)
 	assert.Equal(t, "new", after.Username)
 
-	err = store.UpdateUsername(account.ID, other.Username)
+	ok, err = store.UpdateUsername(account.ID, other.Username)
+	assert.False(t, ok)
 	if err == nil || !data.IsUniquenessError(err) {
 		t.Errorf("expected uniqueness error, got %T %v", err, err)
 	}
+
+	// "changing" to existing username
+	ok, err = store.UpdateUsername(account.ID, "new")
+	require.NoError(t, err)
 
 	// Assert that db connections are released to pool
 	assert.Equal(t, 1, getOpenConnectionCount(store))

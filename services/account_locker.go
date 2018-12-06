@@ -6,11 +6,11 @@ import (
 )
 
 func AccountLocker(store data.AccountStore, tokenStore data.RefreshTokenStore, accountID int) error {
-	account, err := store.Find(accountID)
+	affected, err := store.Lock(accountID)
 	if err != nil {
-		return errors.Wrap(err, "Find")
+		return errors.Wrap(err, "Lock")
 	}
-	if account == nil {
+	if !affected {
 		return FieldErrors{{"account", ErrNotFound}}
 	}
 
@@ -25,5 +25,5 @@ func AccountLocker(store data.AccountStore, tokenStore data.RefreshTokenStore, a
 		}
 	}
 
-	return store.Lock(account.ID)
+	return nil
 }

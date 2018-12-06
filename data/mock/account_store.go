@@ -108,85 +108,98 @@ func (s *accountStore) GetOauthAccounts(accountID int) ([]*models.OauthAccount, 
 	return s.oauthAccountsByID[accountID], nil
 }
 
-func (s *accountStore) Archive(id int) error {
+func (s *accountStore) Archive(id int) (bool, error) {
 	account := s.accountsByID[id]
-	if account != nil {
-		delete(s.idByUsername, account.Username)
-		now := time.Now()
-		account.Username = ""
-		account.Password = []byte("")
-		account.DeletedAt = &now
-
-		for _, oauthAccount := range s.oauthAccountsByID[account.ID] {
-			delete(s.idByOauthID, oauthAccount.Provider+"|"+oauthAccount.ProviderID)
-		}
-		delete(s.oauthAccountsByID, account.ID)
+	if account == nil {
+		return false, nil
 	}
 
-	return nil
+	delete(s.idByUsername, account.Username)
+	now := time.Now()
+	account.Username = ""
+	account.Password = []byte("")
+	account.DeletedAt = &now
+
+	for _, oauthAccount := range s.oauthAccountsByID[account.ID] {
+		delete(s.idByOauthID, oauthAccount.Provider+"|"+oauthAccount.ProviderID)
+	}
+	delete(s.oauthAccountsByID, account.ID)
+
+	return true, nil
 }
 
-func (s *accountStore) Lock(id int) error {
+func (s *accountStore) Lock(id int) (bool, error) {
 	account := s.accountsByID[id]
-	if account != nil {
-		account.Locked = true
-		account.UpdatedAt = time.Now()
+	if account == nil {
+		return false, nil
 	}
-	return nil
+
+	account.Locked = true
+	account.UpdatedAt = time.Now()
+	return true, nil
 }
 
-func (s *accountStore) Unlock(id int) error {
+func (s *accountStore) Unlock(id int) (bool, error) {
 	account := s.accountsByID[id]
-	if account != nil {
-		account.Locked = false
-		account.UpdatedAt = time.Now()
+	if account == nil {
+		return false, nil
 	}
-	return nil
+
+	account.Locked = false
+	account.UpdatedAt = time.Now()
+	return true, nil
 }
 
-func (s *accountStore) RequireNewPassword(id int) error {
+func (s *accountStore) RequireNewPassword(id int) (bool, error) {
 	account := s.accountsByID[id]
-	if account != nil {
-		account.RequireNewPassword = true
-		account.UpdatedAt = time.Now()
+	if account == nil {
+		return false, nil
 	}
-	return nil
+
+	account.RequireNewPassword = true
+	account.UpdatedAt = time.Now()
+	return true, nil
 }
 
-func (s *accountStore) SetPassword(id int, p []byte) error {
+func (s *accountStore) SetPassword(id int, p []byte) (bool, error) {
 	account := s.accountsByID[id]
-	if account != nil {
-		now := time.Now()
-		account.Password = p
-		account.RequireNewPassword = false
-		account.PasswordChangedAt = now
-		account.UpdatedAt = now
+	if account == nil {
+		return false, nil
 	}
-	return nil
+
+	now := time.Now()
+	account.Password = p
+	account.RequireNewPassword = false
+	account.PasswordChangedAt = now
+	account.UpdatedAt = now
+	return true, nil
 }
 
-func (s *accountStore) UpdateUsername(id int, u string) error {
-	if s.idByUsername[u] != 0 {
-		return Error{ErrNotUnique}
+func (s *accountStore) UpdateUsername(id int, u string) (bool, error) {
+	account := s.accountsByID[id]
+	if account == nil {
+		return false, nil
 	}
 
-	account := s.accountsByID[id]
-	if account != nil {
-		account.Username = u
-		account.UpdatedAt = time.Now()
-		s.idByUsername[u] = account.ID
+	if s.idByUsername[u] != 0 && s.idByUsername[u] != id {
+		return false, Error{ErrNotUnique}
 	}
-	return nil
+
+	account.Username = u
+	account.UpdatedAt = time.Now()
+	s.idByUsername[u] = account.ID
+	return true, nil
 }
 
 func (s *accountStore) SetLastLogin(id int) (bool, error) {
 	account := s.accountsByID[id]
-	if account != nil {
-		now := time.Now()
-		account.LastLoginAt = &now
-		return true, nil
+	if account == nil {
+		return false, nil
 	}
-	return false, nil
+
+	now := time.Now()
+	account.LastLoginAt = &now
+	return true, nil
 }
 
 // i think this works? i want to avoid accidentally giving callers the ability
