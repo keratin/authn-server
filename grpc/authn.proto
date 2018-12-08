@@ -18,41 +18,11 @@ message SignupResponse {
 
 message SignupResponseEnvelope { SignupResponse result = 1; }
 
-message GetAccountRequest { string id = 1; }
-
-message GetAccountResponse {
-  int64 id = 1;
-  string username = 2;
-  bool locked = 3;
-  bool deleted = 4;
-}
-
-message GetAccountResponseEnvelope { GetAccountResponse result = 1; }
-
-message UpdateAccountRequest {
-  string id = 1;
-  string username = 2;
-}
 
 message IsUsernameAvailableRequest { string username = 1; }
 message IsUsernameAvailableResponseEnvelope {
   bool result = 1 [ (gogoproto.jsontag) = "result" ];
 }
-
-message LockAccountRequest { string id = 1; }
-
-message UnlockAccountRequest { string id = 1; }
-
-message ArchiveAccountRequest { string id = 1; }
-
-message ImportAccountRequst {
-  string username = 1;
-  string password = 2;
-  bool locked = 3;
-}
-message ImportAccountResponse { int64 id = 1 [ (gogoproto.jsontag) = "id" ]; }
-
-message ImportAccountResponseEnvelope { ImportAccountResponse result = 1; }
 
 message LoginRequest {
   string username = 1;
@@ -67,7 +37,6 @@ message ChangePasswordRequest {
   string currentPassword = 3;
 }
 
-message ExpirePasswordRequest { string id = 1; }
 
 message BeginOAuthRequest {
   string providerName = 1;
@@ -86,7 +55,6 @@ message Configuration {
   repeated string claims_supported = 5;
   string jwks_uri = 6;
 }
-message ServiceStatsResponse {}
 
 message HealthCheckResponse {
   bool http = 1;
@@ -104,25 +72,12 @@ message Key {
 }
 message JWKSResponse { repeated Key keys = 1; }
 
-service AuthN {
+service PublicAuthN {
 
   rpc Signup(SignupRequest) returns (SignupResponseEnvelope) {
     option (google.api.http) = {
       post : "/accounts",
       body : "*"
-    };
-  }
-
-  rpc GetAccount(GetAccountRequest) returns (GetAccountResponseEnvelope) {
-    option (google.api.http) = {
-      get : "/accounts/{id}",
-    };
-  }
-
-  rpc UpdateAccount(UpdateAccountRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      put : "/accounts/{id}",
-      body : "username"
     };
   }
 
@@ -133,35 +88,7 @@ service AuthN {
     };
   }
 
-  rpc LockAccount(LockAccountRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      put : "/accounts/{id}/lock"
-    };
-  }
-
-  rpc UnlockAcount(UnlockAccountRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      put : "/accounts/{id}/unlock"
-    };
-  }
-
-  rpc ArchiveAccount(ArchiveAccountRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      delete : "/accounts/{id}"
-    };
-  }
-
-  rpc ImportAccount(ImportAccountRequst)
-      returns (ImportAccountResponseEnvelope) {
-
-    option (google.api.http) = {
-      post : "/accounts/import",
-      body : "*"
-    };
-  }
-
   rpc Login(LoginRequest) returns (SignupResponse) {
-
     option (google.api.http) = {
       post : "/session",
       body : "*"
@@ -169,14 +96,12 @@ service AuthN {
   }
 
   rpc RefreshSession(google.protobuf.Empty) returns (SignupResponse) {
-
     option (google.api.http) = {
       get : "/session"
     };
   }
 
   rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty) {
-
     option (google.api.http) = {
       delete : "/session"
     };
@@ -193,12 +118,6 @@ service AuthN {
     option (google.api.http) = {
       post : "/password",
       body : "*"
-    };
-  }
-
-  rpc ExpirePassword(ExpirePasswordRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      put : "/accounts/{id}/expire_password"
     };
   }
 
@@ -223,18 +142,6 @@ service AuthN {
   rpc JWKS(google.protobuf.Empty) returns (JWKSResponse) {
     option (google.api.http) = {
       get : "/jwks"
-    };
-  }
-
-  rpc ServiceStats(google.protobuf.Empty) returns (ServiceStatsResponse) {
-    option (google.api.http) = {
-      get : "/stats"
-    };
-  }
-
-  rpc ServerStats(google.protobuf.Empty) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      get : "/metrics"
     };
   }
 

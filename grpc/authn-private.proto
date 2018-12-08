@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package grpc;
+option go_package = "grpc";
+
+import "google/protobuf/empty.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+
+message GetAccountRequest { string id = 1; }
+
+message GetAccountResponse {
+  int64 id = 1;
+  string username = 2;
+  bool locked = 3;
+  bool deleted = 4;
+}
+
+message GetAccountResponseEnvelope { GetAccountResponse result = 1; }
+
+message UpdateAccountRequest {
+  string id = 1;
+  string username = 2;
+}
+
+
+message LockAccountRequest { string id = 1; }
+
+message UnlockAccountRequest { string id = 1; }
+
+message ArchiveAccountRequest { string id = 1; }
+
+message ImportAccountRequst {
+  string username = 1;
+  string password = 2;
+  bool locked = 3;
+}
+message ImportAccountResponse { int64 id = 1 [ (gogoproto.jsontag) = "id" ]; }
+
+message ImportAccountResponseEnvelope { ImportAccountResponse result = 1; }
+
+
+message ExpirePasswordRequest { string id = 1; }
+
+message ServiceStatsResponse {
+    message active_stats {
+        map<string, int64> daily = 1;
+        map<string, int64> weekly = 2;
+        map<string, int64> monthly = 3;
+    }
+    active_stats actives = 1;
+}
+
+service AdminAuthN {
+
+  rpc GetAccount(GetAccountRequest) returns (GetAccountResponseEnvelope) {
+    option (google.api.http) = {
+      get : "/accounts/{id}",
+    };
+  }
+
+  rpc UpdateAccount(UpdateAccountRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put : "/accounts/{id}",
+      body : "username"
+    };
+  }
+
+  rpc LockAccount(LockAccountRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put : "/accounts/{id}/lock"
+    };
+  }
+
+  rpc UnlockAcount(UnlockAccountRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put : "/accounts/{id}/unlock"
+    };
+  }
+
+  rpc ArchiveAccount(ArchiveAccountRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete : "/accounts/{id}"
+    };
+  }
+
+  rpc ImportAccount(ImportAccountRequst)
+      returns (ImportAccountResponseEnvelope) {
+    option (google.api.http) = {
+      post : "/accounts/import",
+      body : "*"
+    };
+  }
+
+  rpc ExpirePassword(ExpirePasswordRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put : "/accounts/{id}/expire_password"
+    };
+  }
+
+  rpc ServiceStats(google.protobuf.Empty) returns (ServiceStatsResponse) {
+    option (google.api.http) = {
+      get : "/stats"
+    };
+  }
+}

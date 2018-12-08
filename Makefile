@@ -119,7 +119,9 @@ generate-grpc:
 	Mgoogle/protobuf/empty.proto=github.com/gogo/protobuf/types,\
 	Mgoogle/api/annotations.proto=github.com/gogo/googleapis/google/api,\
 	Mgoogle/protobuf/field_mask.proto=github.com/gogo/protobuf/types:./grpc \
-	grpc/authn.proto
-	# Workaround for https://github.com/grpc-ecosystem/grpc-gateway/issues/229.
+	grpc/authn.proto grpc/authn-private.proto
+	# Workaround for https://github.com/grpc-ecosystem/grpc-gateway/issues/229
 	sed -i.bak "s/empty.Empty/types.Empty/g" grpc/authn.pb.gw.go && rm grpc/authn.pb.gw.go.bak
 	sed -i.bak "s/empty.Empty/types.Empty/g" grpc/authn.pb.go && rm grpc/authn.pb.go.bak
+	sed -i.bak "s/empty.Empty/types.Empty/g" grpc/authn-private.pb.gw.go && rm grpc/authn-private.pb.gw.go.bak
+	sed -i.bak "s/empty.Empty/types.Empty/g" grpc/authn-private.pb.go && rm grpc/authn-private.pb.go.bak
