@@ -2,6 +2,10 @@
 
 ## HEAD
 
+### Improved
+
+* Query optimizations on private admin endpoints.
+
 ## 1.5.0
 
 ### Added
