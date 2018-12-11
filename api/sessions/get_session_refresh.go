@@ -1,11 +1,11 @@
 package sessions
 
 import (
+	"github.com/keratin/authn-server/services"
 	"net/http"
 
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/lib/route"
-	"github.com/keratin/authn-server/models"
 	"github.com/pkg/errors"
 )
 
@@ -18,15 +18,10 @@ func getSessionRefresh(app *api.App) http.HandlerFunc {
 			return
 		}
 
-		// refresh the refresh token
-		session := api.GetSession(r)
-		err := app.RefreshTokenStore.Touch(models.RefreshToken(session.Subject), accountID)
-		if err != nil {
-			panic(errors.Wrap(err, "Touch"))
-		}
-
-		// generate the requested identity token
-		identityToken, err := api.IdentityForSession(app.KeyStore, app.Actives, app.Config, session, accountID, route.MatchedDomain(r))
+		identityToken, err := services.SessionRefresher(
+			app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, app.Reporter,
+			api.GetSession(r), accountID, route.MatchedDomain(r),
+		)
 		if err != nil {
 			panic(errors.Wrap(err, "IdentityForSession"))
 		}

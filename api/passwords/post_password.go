@@ -45,12 +45,10 @@ func postPassword(app *api.App) http.HandlerFunc {
 			panic(err)
 		}
 
-		err = api.RevokeSession(app.RefreshTokenStore, app.Config, r)
-		if err != nil {
-			app.Reporter.ReportRequestError(err, r)
-		}
-
-		sessionToken, identityToken, err := api.NewSession(app.AccountStore, app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, accountID, route.MatchedDomain(r))
+		sessionToken, identityToken, err := services.SessionCreator(
+			app.AccountStore, app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, app.Reporter,
+			accountID, route.MatchedDomain(r), api.GetRefreshToken(r),
+		)
 		if err != nil {
 			panic(err)
 		}
