@@ -4,14 +4,14 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/tokens/passwordless"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestPasswordlessToken(t *testing.T) {
-	cfg := &config.Config{
+	cfg := &app.Config{
 		AuthNURL:                    &url.URL{Scheme: "https", Host: "authn.example.com"},
 		PasswordlessTokenSigningKey: []byte("key-a-reno"),
 		PasswordlessTokenTTL:        3600,
@@ -37,7 +37,7 @@ func TestPasswordlessToken(t *testing.T) {
 	})
 
 	t.Run("parsing with a different key", func(t *testing.T) {
-		oldCfg := config.Config{
+		oldCfg := app.Config{
 			AuthNURL:                    cfg.AuthNURL,
 			PasswordlessTokenSigningKey: []byte("old-a-reno"),
 			PasswordlessTokenTTL:        cfg.PasswordlessTokenTTL,
@@ -51,7 +51,7 @@ func TestPasswordlessToken(t *testing.T) {
 	})
 
 	t.Run("parsing with an unknown issuer and audience", func(t *testing.T) {
-		oldCfg := config.Config{
+		oldCfg := app.Config{
 			AuthNURL:                    &url.URL{Scheme: "https", Host: "unknown.com"},
 			PasswordlessTokenSigningKey: cfg.PasswordlessTokenSigningKey,
 			PasswordlessTokenTTL:        cfg.PasswordlessTokenTTL,

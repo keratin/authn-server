@@ -4,11 +4,12 @@ import (
 	"net/http"
 
 	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/services"
 )
 
-func postSession(app *api.App) http.HandlerFunc {
+func postSession(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Check the password
 		account, err := services.CredentialsVerifier(

@@ -3,7 +3,7 @@ package services_test
 import (
 	"crypto/rand"
 	"crypto/rsa"
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
@@ -15,7 +15,7 @@ import (
 )
 
 func TestSessionCreator(t *testing.T) {
-	cfg := &config.Config{
+	cfg := &app.Config{
 		AuthNURL: &url.URL{Scheme: "http", Host: "authn.example.com"},
 	}
 	rsaKey, err := rsa.GenerateKey(rand.Reader, 512)

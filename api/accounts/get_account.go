@@ -6,10 +6,11 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/services"
 )
 
-func getAccount(app *api.App) http.HandlerFunc {
+func getAccount(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(mux.Vars(r)["id"])
 		if err != nil {

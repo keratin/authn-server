@@ -4,9 +4,10 @@ import (
 	"net/http"
 
 	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 )
 
-func getConfiguration(app *api.App) http.HandlerFunc {
+func getConfiguration(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		api.WriteJSON(w, http.StatusOK, map[string]interface{}{
 			"issuer":                                app.Config.AuthNURL.String(),

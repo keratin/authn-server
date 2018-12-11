@@ -5,10 +5,11 @@ import (
 	"regexp"
 
 	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/services"
 )
 
-func postAccountsImport(app *api.App) http.HandlerFunc {
+func postAccountsImport(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		locked, err := regexp.MatchString("^(?i:t|true|yes)$", r.FormValue("locked"))
 		if err != nil {

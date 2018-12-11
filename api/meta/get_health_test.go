@@ -5,19 +5,18 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/api/meta"
 	"github.com/keratin/authn-server/api/test"
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestGetHealth(t *testing.T) {
-	app := &api.App{
+	app := &app.App{
 		DbCheck:    func() bool { return true },
 		RedisCheck: func() bool { return true },
-		Config:     &config.Config{},
+		Config:     &app.Config{},
 	}
 	server := test.Server(app, meta.Routes(app))
 	defer server.Close()

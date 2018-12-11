@@ -3,11 +3,11 @@ package sessions
 import (
 	"net/http"
 
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/services"
 )
 
-func getSessionToken(app *api.App) http.HandlerFunc {
+func getSessionToken(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		account, err := app.AccountStore.FindByUsername(r.FormValue("username"))
 		if err != nil {

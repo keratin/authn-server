@@ -6,10 +6,11 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/services"
 )
 
-func patchAccountUnlock(app *api.App) http.HandlerFunc {
+func patchAccountUnlock(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(mux.Vars(r)["id"])
 		if err != nil {

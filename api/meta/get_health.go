@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 )
 
 type health struct {
@@ -12,7 +13,7 @@ type health struct {
 	Redis bool `json:"redis"`
 }
 
-func getHealth(app *api.App) http.HandlerFunc {
+func getHealth(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		h := health{
 			HTTP:  true,

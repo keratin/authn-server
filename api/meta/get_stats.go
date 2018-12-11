@@ -4,9 +4,10 @@ import (
 	"net/http"
 
 	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 )
 
-func getStats(app *api.App) http.HandlerFunc {
+func getStats(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		daily, err := app.Actives.ActivesByDay()
 		if err != nil {

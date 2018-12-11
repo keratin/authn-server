@@ -7,17 +7,16 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/api/meta"
 	"github.com/keratin/authn-server/api/test"
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestGetConfiguration(t *testing.T) {
-	app := &api.App{
-		Config: &config.Config{
+	app := &app.App{
+		Config: &app.Config{
 			AuthNURL: &url.URL{Scheme: "https", Host: "authn.example.com", Path: "/foo"},
 		},
 	}

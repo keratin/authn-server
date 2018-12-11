@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"net/http"
 
-	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/api/views"
+	"github.com/keratin/authn-server/app"
 )
 
-func getRoot(app *api.App) http.HandlerFunc {
+func getRoot(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var buf bytes.Buffer
 		views.Root(&buf)

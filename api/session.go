@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/sessions"
 	"github.com/pkg/errors"
@@ -13,7 +14,7 @@ import (
 type sessionKey int
 type accountIDKey int
 
-func Session(app *App) func(http.Handler) http.Handler {
+func Session(app *app.App) func(http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			var session *sessions.Claims

@@ -1,4 +1,4 @@
-package config
+package app
 
 import (
 	"net/url"

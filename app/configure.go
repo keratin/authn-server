@@ -1,4 +1,4 @@
-package config
+package app
 
 import "github.com/keratin/authn-server/ops"
 

@@ -3,11 +3,11 @@ package api
 import (
 	"net/http"
 
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/models"
 )
 
-func SetSession(cfg *config.Config, w http.ResponseWriter, val string) {
+func SetSession(cfg *app.Config, w http.ResponseWriter, val string) {
 	cookie := &http.Cookie{
 		Name:     cfg.SessionCookieName,
 		Value:    val,

@@ -3,14 +3,14 @@ package services
 import (
 	"strings"
 
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/models"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func AccountCreator(store data.AccountStore, cfg *config.Config, username string, password string) (*models.Account, error) {
+func AccountCreator(store data.AccountStore, cfg *app.Config, username string, password string) (*models.Account, error) {
 	username = strings.TrimSpace(username)
 
 	errs := FieldErrors{}

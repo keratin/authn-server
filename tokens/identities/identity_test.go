@@ -10,7 +10,7 @@ import (
 
 	jose "gopkg.in/square/go-jose.v2"
 
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/tokens/identities"
 	"github.com/keratin/authn-server/tokens/sessions"
@@ -20,7 +20,7 @@ import (
 
 func TestIdentityClaims(t *testing.T) {
 	store := mock.NewRefreshTokenStore()
-	cfg := config.Config{
+	cfg := app.Config{
 		AuthNURL:          &url.URL{Scheme: "http", Host: "authn.example.com"},
 		SessionSigningKey: []byte("key-a-reno"),
 	}

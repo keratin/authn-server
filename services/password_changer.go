@@ -1,14 +1,14 @@
 package services
 
 import (
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func PasswordChanger(store data.AccountStore, r ops.ErrorReporter, cfg *config.Config, id int, currentPassword string, password string) error {
+func PasswordChanger(store data.AccountStore, r ops.ErrorReporter, cfg *app.Config, id int, currentPassword string, password string) error {
 	account, err := store.Find(id)
 	if err != nil {
 		return errors.Wrap(err, "Find")

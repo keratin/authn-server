@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	zxcvbn "github.com/nbutton23/zxcvbn-go"
 )
 
@@ -37,7 +37,7 @@ func (es FieldErrors) Error() string {
 	return strings.Join(buf, ", ")
 }
 
-func passwordValidator(cfg *config.Config, password string) *fieldError {
+func passwordValidator(cfg *app.Config, password string) *fieldError {
 	if password == "" {
 		return &fieldError{"password", ErrMissing}
 	}
@@ -56,7 +56,7 @@ func passwordValidator(cfg *config.Config, password string) *fieldError {
 	return nil
 }
 
-func usernameValidator(cfg *config.Config, username string) *fieldError {
+func usernameValidator(cfg *app.Config, username string) *fieldError {
 	if cfg.UsernameIsEmail {
 		if !isEmail(username) {
 			return &fieldError{"username", ErrFormatInvalid}

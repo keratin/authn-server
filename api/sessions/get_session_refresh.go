@@ -1,15 +1,16 @@
 package sessions
 
 import (
-	"github.com/keratin/authn-server/services"
 	"net/http"
 
 	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/services"
 	"github.com/pkg/errors"
 )
 
-func getSessionRefresh(app *api.App) http.HandlerFunc {
+func getSessionRefresh(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// check for valid session with live token
 		accountID := api.GetSessionAccountID(r)

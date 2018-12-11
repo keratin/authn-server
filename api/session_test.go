@@ -8,7 +8,7 @@ import (
 
 	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/api/test"
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
@@ -17,8 +17,8 @@ import (
 )
 
 func TestSession(t *testing.T) {
-	app := &api.App{
-		Config: &config.Config{
+	testApp := &app.App{
+		Config: &app.Config{
 			SessionCookieName:  "authn-test",
 			SessionSigningKey:  []byte("drinkme"),
 			AuthNURL:           &url.URL{Scheme: "http", Host: "authn.example.com"},
@@ -30,7 +30,7 @@ func TestSession(t *testing.T) {
 
 	t.Run("valid session", func(t *testing.T) {
 		accountID := 60090
-		session := test.CreateSession(app.RefreshTokenStore, app.Config, accountID)
+		session := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, accountID)
 
 		handler := func(w http.ResponseWriter, r *http.Request) {
 			assert.NotEmpty(t, api.GetSession(r))
@@ -38,7 +38,7 @@ func TestSession(t *testing.T) {
 
 			w.WriteHeader(http.StatusOK)
 		}
-		server := httptest.NewServer(api.Session(app)(http.HandlerFunc(handler)))
+		server := httptest.NewServer(api.Session(testApp)(http.HandlerFunc(handler)))
 		defer server.Close()
 
 		client := route.NewClient(server.URL).WithCookie(session)
@@ -48,14 +48,14 @@ func TestSession(t *testing.T) {
 	})
 
 	t.Run("invalid session", func(t *testing.T) {
-		oldConfig := &config.Config{
-			SessionCookieName:  app.Config.SessionCookieName,
+		oldConfig := &app.Config{
+			SessionCookieName:  testApp.Config.SessionCookieName,
 			SessionSigningKey:  []byte("previouskey"),
-			AuthNURL:           app.Config.AuthNURL,
-			ApplicationDomains: app.Config.ApplicationDomains,
+			AuthNURL:           testApp.Config.AuthNURL,
+			ApplicationDomains: testApp.Config.ApplicationDomains,
 		}
 		accountID := 52444
-		session := test.CreateSession(app.RefreshTokenStore, oldConfig, accountID)
+		session := test.CreateSession(testApp.RefreshTokenStore, oldConfig, accountID)
 
 		handler := func(w http.ResponseWriter, r *http.Request) {
 			assert.Empty(t, api.GetSession(r))
@@ -63,7 +63,7 @@ func TestSession(t *testing.T) {
 
 			w.WriteHeader(http.StatusOK)
 		}
-		server := httptest.NewServer(api.Session(app)(http.HandlerFunc(handler)))
+		server := httptest.NewServer(api.Session(testApp)(http.HandlerFunc(handler)))
 		defer server.Close()
 
 		client := route.NewClient(server.URL).WithCookie(session)
@@ -74,8 +74,8 @@ func TestSession(t *testing.T) {
 
 	t.Run("revoked session", func(t *testing.T) {
 		accountID := 10001
-		session := test.CreateSession(app.RefreshTokenStore, app.Config, accountID)
-		test.RevokeSession(app.RefreshTokenStore, app.Config, session)
+		session := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, accountID)
+		test.RevokeSession(testApp.RefreshTokenStore, testApp.Config, session)
 
 		handler := func(w http.ResponseWriter, r *http.Request) {
 			assert.NotEmpty(t, api.GetSession(r))
@@ -83,7 +83,7 @@ func TestSession(t *testing.T) {
 
 			w.WriteHeader(http.StatusOK)
 		}
-		server := httptest.NewServer(api.Session(app)(http.HandlerFunc(handler)))
+		server := httptest.NewServer(api.Session(testApp)(http.HandlerFunc(handler)))
 		defer server.Close()
 
 		client := route.NewClient(server.URL).WithCookie(session)
@@ -99,7 +99,7 @@ func TestSession(t *testing.T) {
 
 			w.WriteHeader(http.StatusOK)
 		}
-		server := httptest.NewServer(api.Session(app)(http.HandlerFunc(handler)))
+		server := httptest.NewServer(api.Session(testApp)(http.HandlerFunc(handler)))
 		defer server.Close()
 
 		client := route.NewClient(server.URL)

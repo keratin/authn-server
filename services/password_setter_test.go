@@ -3,7 +3,7 @@ package services_test
 import (
 	"testing"
 
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/ops"
 	"github.com/keratin/authn-server/services"
@@ -13,7 +13,7 @@ import (
 
 func TestPasswordSetter(t *testing.T) {
 	accountStore := mock.NewAccountStore()
-	cfg := &config.Config{
+	cfg := &app.Config{
 		BcryptCost:            4,
 		PasswordMinComplexity: 1,
 	}

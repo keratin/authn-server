@@ -11,13 +11,13 @@ import (
 	"github.com/keratin/authn-server/services"
 	"golang.org/x/oauth2"
 
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data/mock"
 )
 
 func TestIdentityReconciler(t *testing.T) {
 	store := mock.NewAccountStore()
-	cfg := &config.Config{}
+	cfg := &app.Config{}
 
 	t.Run("linked account", func(t *testing.T) {
 		acct, err := store.Create("linked@test.com", []byte("password"))

@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/ops"
 	"github.com/keratin/authn-server/services"
@@ -15,7 +15,7 @@ import (
 
 func TestPasswordlessTokenVerifier(t *testing.T) {
 	accountStore := mock.NewAccountStore()
-	cfg := &config.Config{
+	cfg := &app.Config{
 		AuthNURL:                    &url.URL{Scheme: "http", Host: "authn.example.com"},
 		BcryptCost:                  4,
 		PasswordMinComplexity:       1,

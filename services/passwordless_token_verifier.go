@@ -5,13 +5,13 @@ import (
 
 	"github.com/keratin/authn-server/ops"
 
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/tokens/passwordless"
 	"github.com/pkg/errors"
 )
 
-func PasswordlessTokenVerifier(store data.AccountStore, r ops.ErrorReporter, cfg *config.Config, token string) (int, error) {
+func PasswordlessTokenVerifier(store data.AccountStore, r ops.ErrorReporter, cfg *app.Config, token string) (int, error) {
 	claims, err := passwordless.Parse(token, cfg)
 	if err != nil {
 		return 0, FieldErrors{{"token", ErrInvalidOrExpired}}

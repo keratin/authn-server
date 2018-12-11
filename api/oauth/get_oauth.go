@@ -8,11 +8,11 @@ import (
 	"github.com/keratin/authn-server/lib"
 	"github.com/keratin/authn-server/lib/route"
 
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/tokens/oauth"
 )
 
-func getOauth(app *api.App, providerName string) http.HandlerFunc {
+func getOauth(app *app.App, providerName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		provider := app.OauthProviders[providerName]
 

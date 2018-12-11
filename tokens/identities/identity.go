@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/compat"
 	"github.com/keratin/authn-server/tokens/sessions"
 	"github.com/pkg/errors"
@@ -39,7 +39,7 @@ func (c *Claims) Sign(rsaKey *rsa.PrivateKey) (string, error) {
 	return jwt.Signed(signer).Claims(c).CompactSerialize()
 }
 
-func New(cfg *config.Config, session *sessions.Claims, accountID int, audience string) *Claims {
+func New(cfg *app.Config, session *sessions.Claims, accountID int, audience string) *Claims {
 	return &Claims{
 		AuthTime: session.IssuedAt,
 		Claims: jwt.Claims{

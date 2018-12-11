@@ -1,11 +1,11 @@
 package oauth
 
 import (
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
 )
 
-func PublicRoutes(app *api.App) []*route.HandledRoute {
+func PublicRoutes(app *app.App) []*route.HandledRoute {
 
 	var routes []*route.HandledRoute
 
@@ -23,6 +23,6 @@ func PublicRoutes(app *api.App) []*route.HandledRoute {
 	return routes
 }
 
-func Routes(app *api.App) []*route.HandledRoute {
+func Routes(app *app.App) []*route.HandledRoute {
 	return PublicRoutes(app)
 }

@@ -7,8 +7,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/keratin/authn-server/api"
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data"
 )
 
@@ -23,7 +22,7 @@ func main() {
 		cmd = os.Args[1]
 	}
 
-	cfg, err := config.ReadEnv()
+	cfg, err := app.ReadEnv()
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("\nsee: https://github.com/keratin/authn-server/blob/master/docs/config.md")
@@ -41,8 +40,8 @@ func main() {
 	}
 }
 
-func serve(cfg *config.Config) {
-	app, err := api.NewApp(cfg)
+func serve(cfg *app.Config) {
+	app, err := app.NewApp(cfg)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -62,7 +61,7 @@ func serve(cfg *config.Config) {
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", cfg.ServerPort), router(app)))
 }
 
-func migrate(cfg *config.Config) {
+func migrate(cfg *app.Config) {
 	fmt.Println("Running migrations.")
 	err := data.MigrateDB(cfg.DatabaseURL)
 	if err != nil {

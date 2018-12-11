@@ -3,12 +3,12 @@ package services
 import (
 	"strings"
 
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data"
 	"github.com/pkg/errors"
 )
 
-func AccountUpdater(store data.AccountStore, cfg *config.Config, accountID int, username string) error {
+func AccountUpdater(store data.AccountStore, cfg *app.Config, accountID int, username string) error {
 	username = strings.TrimSpace(username)
 
 	fieldError := usernameValidator(cfg, username)

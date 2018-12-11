@@ -3,7 +3,7 @@ package services_test
 import (
 	"crypto/rand"
 	"crypto/rsa"
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
@@ -19,7 +19,7 @@ func TestSessionRefresher(t *testing.T) {
 	rsaKey, err := rsa.GenerateKey(rand.Reader, 512)
 	require.NoError(t, err)
 	keyStore := mock.NewKeyStore(rsaKey)
-	cfg := &config.Config{
+	cfg := &app.Config{
 		AuthNURL: &url.URL{Scheme: "http", Host: "authn.example.com"},
 	}
 	refreshStore := mock.NewRefreshTokenStore()

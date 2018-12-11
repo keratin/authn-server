@@ -5,15 +5,14 @@ import (
 	"crypto/rsa"
 	"net/url"
 
-	"github.com/keratin/authn-server/api"
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
 )
 
-func App() *api.App {
+func App() *app.App {
 	authnURL, err := url.Parse("https://authn.example.com")
 	if err != nil {
 		panic(err)
@@ -24,7 +23,7 @@ func App() *api.App {
 		panic(err)
 	}
 
-	cfg := config.Config{
+	cfg := app.Config{
 		BcryptCost:              4,
 		SessionSigningKey:       []byte("TestKey"),
 		AuthNURL:                authnURL,
@@ -37,7 +36,7 @@ func App() *api.App {
 		EnableSignup:            true,
 	}
 
-	return &api.App{
+	return &app.App{
 		Config:            &cfg,
 		KeyStore:          mock.NewKeyStore(weakKey),
 		AccountStore:      mock.NewAccountStore(),

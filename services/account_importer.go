@@ -5,7 +5,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/models"
 	"github.com/pkg/errors"
@@ -13,7 +13,7 @@ import (
 
 var bcryptPattern = regexp.MustCompile(`\A\$2[ayb]\$[0-9]{2}\$[A-Za-z0-9\.\/]{53}\z`)
 
-func AccountImporter(store data.AccountStore, cfg *config.Config, username string, password string, locked bool) (*models.Account, error) {
+func AccountImporter(store data.AccountStore, cfg *app.Config, username string, password string, locked bool) (*models.Account, error) {
 	if username == "" {
 		return nil, FieldErrors{{"username", ErrMissing}}
 	}

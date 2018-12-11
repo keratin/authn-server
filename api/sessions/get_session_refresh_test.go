@@ -6,10 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/keratin/authn-server/api"
 	apiSessions "github.com/keratin/authn-server/api/sessions"
 	"github.com/keratin/authn-server/api/test"
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/data/redis"
 	"github.com/keratin/authn-server/data/sqlite3"
@@ -30,13 +29,13 @@ func BenchmarkGetSessionRefresh(b *testing.B) {
 	}
 
 	b.Run("mock    store", func(b *testing.B) {
-		app := test.App()
-		server := test.Server(app, apiSessions.Routes(app))
+		testApp := test.App()
+		server := test.Server(testApp, apiSessions.Routes(testApp))
 		defer server.Close()
-		app.RefreshTokenStore = mock.NewRefreshTokenStore()
+		testApp.RefreshTokenStore = mock.NewRefreshTokenStore()
 		client := route.NewClient(server.URL).
-			Referred(&app.Config.ApplicationDomains[0]).
-			WithCookie(test.CreateSession(app.RefreshTokenStore, app.Config, 12345))
+			Referred(&testApp.Config.ApplicationDomains[0]).
+			WithCookie(test.CreateSession(testApp.RefreshTokenStore, testApp.Config, 12345))
 
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
@@ -51,13 +50,13 @@ func BenchmarkGetSessionRefresh(b *testing.B) {
 	sqlite3.MigrateDB(sqliteDB)
 
 	b.Run("sqlite3 store", func(b *testing.B) {
-		app := test.App()
-		server := test.Server(app, apiSessions.Routes(app))
+		testApp := test.App()
+		server := test.Server(testApp, apiSessions.Routes(testApp))
 		defer server.Close()
-		app.RefreshTokenStore = &sqlite3.RefreshTokenStore{sqliteDB, time.Hour}
+		testApp.RefreshTokenStore = &sqlite3.RefreshTokenStore{sqliteDB, time.Hour}
 		client := route.NewClient(server.URL).
-			Referred(&app.Config.ApplicationDomains[0]).
-			WithCookie(test.CreateSession(app.RefreshTokenStore, app.Config, 12345))
+			Referred(&testApp.Config.ApplicationDomains[0]).
+			WithCookie(test.CreateSession(testApp.RefreshTokenStore, testApp.Config, 12345))
 
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
@@ -71,13 +70,13 @@ func BenchmarkGetSessionRefresh(b *testing.B) {
 	}
 
 	b.Run("redis   store", func(b *testing.B) {
-		app := test.App()
-		server := test.Server(app, apiSessions.Routes(app))
+		testApp := test.App()
+		server := test.Server(testApp, apiSessions.Routes(testApp))
 		defer server.Close()
-		app.RefreshTokenStore = &redis.RefreshTokenStore{redisDB, time.Hour}
+		testApp.RefreshTokenStore = &redis.RefreshTokenStore{redisDB, time.Hour}
 		client := route.NewClient(server.URL).
-			Referred(&app.Config.ApplicationDomains[0]).
-			WithCookie(test.CreateSession(app.RefreshTokenStore, app.Config, 12345))
+			Referred(&testApp.Config.ApplicationDomains[0]).
+			WithCookie(test.CreateSession(testApp.RefreshTokenStore, testApp.Config, 12345))
 
 		b.ResetTimer()
 		for i := 0; i < b.N; i++ {
@@ -87,25 +86,25 @@ func BenchmarkGetSessionRefresh(b *testing.B) {
 }
 
 func TestGetSessionRefreshSuccess(t *testing.T) {
-	app := test.App()
-	server := test.Server(app, apiSessions.Routes(app))
+	testApp := test.App()
+	server := test.Server(testApp, apiSessions.Routes(testApp))
 	defer server.Close()
 
 	accountID := 82594
-	existingSession := test.CreateSession(app.RefreshTokenStore, app.Config, accountID)
+	existingSession := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, accountID)
 
-	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0]).WithCookie(existingSession)
+	client := route.NewClient(server.URL).Referred(&testApp.Config.ApplicationDomains[0]).WithCookie(existingSession)
 	res, err := client.Get("/session/refresh")
 	require.NoError(t, err)
 
 	if assert.Equal(t, http.StatusCreated, res.StatusCode) {
-		test.AssertIDTokenResponse(t, res, app.KeyStore, app.Config)
+		test.AssertIDTokenResponse(t, res, testApp.KeyStore, testApp.Config)
 	}
 }
 
 func TestGetSessionRefreshFailure(t *testing.T) {
-	app := &api.App{
-		Config: &config.Config{
+	testApp := &app.App{
+		Config: &app.Config{
 			AuthNURL:           &url.URL{Scheme: "https", Path: "www.example.com"},
 			SessionCookieName:  "authn-test",
 			SessionSigningKey:  []byte("good"),
@@ -114,7 +113,7 @@ func TestGetSessionRefreshFailure(t *testing.T) {
 		RefreshTokenStore: mock.NewRefreshTokenStore(),
 		Reporter:          &ops.LogReporter{},
 	}
-	server := test.Server(app, apiSessions.Routes(app))
+	server := test.Server(testApp, apiSessions.Routes(testApp))
 	defer server.Close()
 
 	testCases := []struct {
@@ -124,22 +123,22 @@ func TestGetSessionRefreshFailure(t *testing.T) {
 		// cookie with the wrong signature
 		{[]byte("wrong"), true},
 		// cookie with a revoked refresh token
-		{app.Config.SessionSigningKey, false},
+		{testApp.Config.SessionSigningKey, false},
 	}
 
 	for idx, tc := range testCases {
-		tcCfg := &config.Config{
-			AuthNURL:           app.Config.AuthNURL,
-			SessionCookieName:  app.Config.SessionCookieName,
+		tcCfg := &app.Config{
+			AuthNURL:           testApp.Config.AuthNURL,
+			SessionCookieName:  testApp.Config.SessionCookieName,
 			SessionSigningKey:  tc.signingKey,
 			ApplicationDomains: []route.Domain{{Hostname: "test.com"}},
 		}
-		existingSession := test.CreateSession(app.RefreshTokenStore, tcCfg, idx+100)
+		existingSession := test.CreateSession(testApp.RefreshTokenStore, tcCfg, idx+100)
 		if !tc.liveToken {
-			test.RevokeSession(app.RefreshTokenStore, app.Config, existingSession)
+			test.RevokeSession(testApp.RefreshTokenStore, testApp.Config, existingSession)
 		}
 
-		client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0]).WithCookie(existingSession)
+		client := route.NewClient(server.URL).Referred(&testApp.Config.ApplicationDomains[0]).WithCookie(existingSession)
 		res, err := client.Get("/session/refresh")
 		require.NoError(t, err)
 

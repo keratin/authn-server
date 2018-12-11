@@ -4,14 +4,14 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/passwordless"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
-func PasswordlessTokenSender(cfg *config.Config, account *models.Account) error {
+func PasswordlessTokenSender(cfg *app.Config, account *models.Account) error {
 	if account == nil || account.Locked {
 		return nil
 	}

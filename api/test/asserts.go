@@ -8,7 +8,7 @@ import (
 	jwt "gopkg.in/square/go-jose.v2/jwt"
 
 	"github.com/keratin/authn-server/api"
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/services"
 	"github.com/keratin/authn-server/tokens/identities"
@@ -33,7 +33,7 @@ func AssertErrors(t *testing.T, res *http.Response, expected services.FieldError
 	assert.Equal(t, string(j), string(ReadBody(res)))
 }
 
-func AssertSession(t *testing.T, cfg *config.Config, cookies []*http.Cookie) {
+func AssertSession(t *testing.T, cfg *app.Config, cookies []*http.Cookie) {
 	session := ReadCookie(cookies, cfg.SessionCookieName)
 	require.NotEmpty(t, session)
 
@@ -41,7 +41,7 @@ func AssertSession(t *testing.T, cfg *config.Config, cookies []*http.Cookie) {
 	assert.NoError(t, err)
 }
 
-func AssertIDTokenResponse(t *testing.T, res *http.Response, keyStore data.KeyStore, cfg *config.Config) {
+func AssertIDTokenResponse(t *testing.T, res *http.Response, keyStore data.KeyStore, cfg *app.Config) {
 	// check that the response contains the expected json
 	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
 	responseData := struct {

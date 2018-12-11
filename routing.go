@@ -12,11 +12,12 @@ import (
 	"github.com/keratin/authn-server/api/oauth"
 	"github.com/keratin/authn-server/api/passwords"
 	"github.com/keratin/authn-server/api/sessions"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
 )
 
-func router(app *api.App) http.Handler {
+func router(app *app.App) http.Handler {
 	r := mux.NewRouter()
 	route.Attach(r, app.Config.MountedPath, meta.Routes(app)...)
 	route.Attach(r, app.Config.MountedPath, accounts.Routes(app)...)
@@ -27,7 +28,7 @@ func router(app *api.App) http.Handler {
 	return wrapRouter(r, app)
 }
 
-func publicRouter(app *api.App) http.Handler {
+func publicRouter(app *app.App) http.Handler {
 	r := mux.NewRouter()
 	route.Attach(r, app.Config.MountedPath, meta.PublicRoutes(app)...)
 	route.Attach(r, app.Config.MountedPath, accounts.PublicRoutes(app)...)
@@ -38,7 +39,7 @@ func publicRouter(app *api.App) http.Handler {
 	return wrapRouter(r, app)
 }
 
-func wrapRouter(r *mux.Router, app *api.App) http.Handler {
+func wrapRouter(r *mux.Router, app *app.App) http.Handler {
 	stack := gorilla.CombinedLoggingHandler(os.Stdout, r)
 
 	stack = api.Session(app)(stack)

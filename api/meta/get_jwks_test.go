@@ -7,10 +7,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/api/meta"
 	"github.com/keratin/authn-server/api/test"
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -19,9 +18,9 @@ import (
 func TestGetJWKs(t *testing.T) {
 	rsaKey, err := rsa.GenerateKey(rand.Reader, 512)
 	require.NoError(t, err)
-	app := &api.App{
+	app := &app.App{
 		KeyStore: mock.NewKeyStore(rsaKey),
-		Config:   &config.Config{},
+		Config:   &app.Config{},
 	}
 
 	server := test.Server(app, meta.Routes(app))
@@ -38,9 +37,9 @@ func TestGetJWKs(t *testing.T) {
 
 func BenchmarkGetJWKs(b *testing.B) {
 	rsaKey, _ := rsa.GenerateKey(rand.Reader, 2048)
-	app := &api.App{
+	app := &app.App{
 		KeyStore: mock.NewKeyStore(rsaKey),
-		Config:   &config.Config{},
+		Config:   &app.Config{},
 	}
 
 	server := test.Server(app, meta.Routes(app))

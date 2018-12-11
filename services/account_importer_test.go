@@ -5,7 +5,7 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/services"
 	"github.com/stretchr/testify/assert"
@@ -17,7 +17,7 @@ var bcrypted = []byte("$2a$10$W5AiL6r4XBrZHc3NEcMUC.xj52oYl6YQw6YpTP1OkjFLmWfOk7
 
 func TestAccountImporter(t *testing.T) {
 	accountStore := mock.NewAccountStore()
-	cfg := &config.Config{
+	cfg := &app.Config{
 		BcryptCost: 4,
 	}
 

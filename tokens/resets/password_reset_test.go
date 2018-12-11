@@ -7,14 +7,14 @@ import (
 
 	jwt "gopkg.in/square/go-jose.v2/jwt"
 
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/tokens/resets"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestPasswordResetToken(t *testing.T) {
-	cfg := &config.Config{
+	cfg := &app.Config{
 		AuthNURL:        &url.URL{Scheme: "https", Host: "authn.example.com"},
 		ResetSigningKey: []byte("key-a-reno"),
 		RefreshTokenTTL: 3600,
@@ -42,7 +42,7 @@ func TestPasswordResetToken(t *testing.T) {
 	})
 
 	t.Run("parsing with a different key", func(t *testing.T) {
-		oldCfg := config.Config{
+		oldCfg := app.Config{
 			AuthNURL:        cfg.AuthNURL,
 			ResetSigningKey: []byte("old-a-reno"),
 			RefreshTokenTTL: cfg.RefreshTokenTTL,
@@ -56,7 +56,7 @@ func TestPasswordResetToken(t *testing.T) {
 	})
 
 	t.Run("parsing with an unknown issuer and audience", func(t *testing.T) {
-		oldCfg := config.Config{
+		oldCfg := app.Config{
 			AuthNURL:        &url.URL{Scheme: "https", Host: "unknown.com"},
 			ResetSigningKey: cfg.ResetSigningKey,
 			RefreshTokenTTL: cfg.RefreshTokenTTL,

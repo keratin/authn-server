@@ -6,10 +6,11 @@ import (
 	"github.com/keratin/authn-server/lib/compat"
 
 	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 	jose "gopkg.in/square/go-jose.v2"
 )
 
-func getJWKs(app *api.App) http.HandlerFunc {
+func getJWKs(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		keys := []jose.JSONWebKey{}
 		for _, key := range app.KeyStore.Keys() {

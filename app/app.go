@@ -1,10 +1,9 @@
-package api
+package app
 
 import (
 	"os"
 
 	"github.com/go-redis/redis"
-	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/ops"
@@ -19,7 +18,7 @@ type pinger func() bool
 type App struct {
 	DbCheck           pinger
 	RedisCheck        pinger
-	Config            *config.Config
+	Config            *Config
 	AccountStore      data.AccountStore
 	RefreshTokenStore data.RefreshTokenStore
 	KeyStore          data.KeyStore
@@ -28,7 +27,7 @@ type App struct {
 	OauthProviders    map[string]oauth.Provider
 }
 
-func NewApp(cfg *config.Config) (*App, error) {
+func NewApp(cfg *Config) (*App, error) {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.SetLevel(logrus.InfoLevel)
 	logrus.SetOutput(os.Stdout)

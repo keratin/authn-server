@@ -6,7 +6,7 @@ import (
 
 	apiSessions "github.com/keratin/authn-server/api/sessions"
 	"github.com/keratin/authn-server/api/test"
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/tokens/sessions"
@@ -15,21 +15,21 @@ import (
 )
 
 func TestDeleteSessionSuccess(t *testing.T) {
-	app := test.App()
-	server := test.Server(app, apiSessions.Routes(app))
+	testApp := test.App()
+	server := test.Server(testApp, apiSessions.Routes(testApp))
 	defer server.Close()
 
 	accountID := 514628
-	session := test.CreateSession(app.RefreshTokenStore, app.Config, accountID)
+	session := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, accountID)
 
 	// token exists
-	claims, err := sessions.Parse(session.Value, app.Config)
+	claims, err := sessions.Parse(session.Value, testApp.Config)
 	require.NoError(t, err)
-	id, err := app.RefreshTokenStore.Find(models.RefreshToken(claims.Subject))
+	id, err := testApp.RefreshTokenStore.Find(models.RefreshToken(claims.Subject))
 	require.NoError(t, err)
 	assert.NotEmpty(t, id)
 
-	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0]).WithCookie(session)
+	client := route.NewClient(server.URL).Referred(&testApp.Config.ApplicationDomains[0]).WithCookie(session)
 	res, err := client.Delete("/session")
 	require.NoError(t, err)
 
@@ -37,25 +37,25 @@ func TestDeleteSessionSuccess(t *testing.T) {
 	assert.Equal(t, http.StatusOK, res.StatusCode)
 
 	// token no longer exists
-	id, err = app.RefreshTokenStore.Find(models.RefreshToken(claims.Subject))
+	id, err = testApp.RefreshTokenStore.Find(models.RefreshToken(claims.Subject))
 	require.NoError(t, err)
 	assert.Empty(t, id)
 }
 
 func TestDeleteSessionFailure(t *testing.T) {
-	app := test.App()
-	server := test.Server(app, apiSessions.Routes(app))
+	testApp := test.App()
+	server := test.Server(testApp, apiSessions.Routes(testApp))
 	defer server.Close()
 
-	badCfg := &config.Config{
-		AuthNURL:           app.Config.AuthNURL,
-		SessionCookieName:  app.Config.SessionCookieName,
+	badCfg := &app.Config{
+		AuthNURL:           testApp.Config.AuthNURL,
+		SessionCookieName:  testApp.Config.SessionCookieName,
 		SessionSigningKey:  []byte("wrong"),
-		ApplicationDomains: app.Config.ApplicationDomains,
+		ApplicationDomains: testApp.Config.ApplicationDomains,
 	}
-	session := test.CreateSession(app.RefreshTokenStore, badCfg, 123)
+	session := test.CreateSession(testApp.RefreshTokenStore, badCfg, 123)
 
-	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0]).WithCookie(session)
+	client := route.NewClient(server.URL).Referred(&testApp.Config.ApplicationDomains[0]).WithCookie(session)
 	res, err := client.Delete("/session")
 	require.NoError(t, err)
 
@@ -64,11 +64,11 @@ func TestDeleteSessionFailure(t *testing.T) {
 }
 
 func TestDeleteSessionWithoutSession(t *testing.T) {
-	app := test.App()
-	server := test.Server(app, apiSessions.Routes(app))
+	testApp := test.App()
+	server := test.Server(testApp, apiSessions.Routes(testApp))
 	defer server.Close()
 
-	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
+	client := route.NewClient(server.URL).Referred(&testApp.Config.ApplicationDomains[0])
 	res, err := client.Delete("/session")
 	require.NoError(t, err)
 
