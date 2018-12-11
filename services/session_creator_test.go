@@ -6,6 +6,7 @@ import (
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/ops"
 	"github.com/keratin/authn-server/services"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -22,6 +23,7 @@ func TestSessionCreator(t *testing.T) {
 	keyStore := mock.NewKeyStore(rsaKey)
 	refreshStore := mock.NewRefreshTokenStore()
 	accountStore := mock.NewAccountStore()
+	reporter := &ops.LogReporter{}
 
 	audience := &route.Domain{"authn.example.com", "8080"}
 	account, err := accountStore.Create("existing", []byte("secret"))
@@ -29,7 +31,7 @@ func TestSessionCreator(t *testing.T) {
 
 	t.Run("tracks last login while generating tokens", func(t *testing.T) {
 		identityToken, refreshToken, err := services.SessionCreator(
-			accountStore, refreshStore, keyStore, nil, cfg,
+			accountStore, refreshStore, keyStore, nil, cfg, reporter,
 			account.ID, audience, nil,
 		)
 		assert.NoError(t, err)
@@ -44,7 +46,7 @@ func TestSessionCreator(t *testing.T) {
 	t.Run("tracks actives", func(t *testing.T) {
 		activesStore := mock.NewActives()
 		_, _, err := services.SessionCreator(
-			accountStore, refreshStore, keyStore, activesStore, cfg,
+			accountStore, refreshStore, keyStore, activesStore, cfg, reporter,
 			account.ID, audience, nil,
 		)
 
@@ -58,7 +60,7 @@ func TestSessionCreator(t *testing.T) {
 		require.NoError(t, err)
 
 		_, _, err = services.SessionCreator(
-			accountStore, refreshStore, keyStore, nil, cfg,
+			accountStore, refreshStore, keyStore, nil, cfg, reporter,
 			account.ID, audience, &token,
 		)
 		assert.NoError(t, err)

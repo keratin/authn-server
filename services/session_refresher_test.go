@@ -6,6 +6,7 @@ import (
 	"github.com/keratin/authn-server/config"
 	"github.com/keratin/authn-server/data/mock"
 	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/ops"
 	"github.com/keratin/authn-server/services"
 	"github.com/keratin/authn-server/tokens/sessions"
 	"github.com/stretchr/testify/assert"
@@ -22,6 +23,7 @@ func TestSessionRefresher(t *testing.T) {
 		AuthNURL: &url.URL{Scheme: "http", Host: "authn.example.com"},
 	}
 	refreshStore := mock.NewRefreshTokenStore()
+	reporter := &ops.LogReporter{}
 
 	accountID := 0
 	audience := &route.Domain{"authn.example.com", "8080"}
@@ -32,7 +34,7 @@ func TestSessionRefresher(t *testing.T) {
 		activesStore := mock.NewActives()
 
 		identityToken, err := services.SessionRefresher(
-			refreshStore, keyStore, activesStore, cfg,
+			refreshStore, keyStore, activesStore, cfg, reporter,
 			session, accountID, audience,
 		)
 		assert.NoError(t, err)
@@ -45,7 +47,7 @@ func TestSessionRefresher(t *testing.T) {
 
 	t.Run("ignores actives when not configured", func(t *testing.T) {
 		identityToken, err := services.SessionRefresher(
-			refreshStore, keyStore, nil, cfg,
+			refreshStore, keyStore, nil, cfg, reporter,
 			session, accountID, audience,
 		)
 		assert.NoError(t, err)

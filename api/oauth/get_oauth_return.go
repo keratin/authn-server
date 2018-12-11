@@ -54,7 +54,7 @@ func getOauthReturn(app *api.App, providerName string) http.HandlerFunc {
 
 		// identityToken is not returned in this flow. it must be imported by the frontend like a SSO session.
 		sessionToken, _, err := services.SessionCreator(
-			app.AccountStore, app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config,
+			app.AccountStore, app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, app.Reporter,
 			account.ID, &app.Config.ApplicationDomains[0], api.GetRefreshToken(r),
 		)
 		if err != nil {

@@ -19,7 +19,7 @@ func getSessionRefresh(app *api.App) http.HandlerFunc {
 		}
 
 		identityToken, err := services.SessionRefresher(
-			app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config,
+			app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, app.Reporter,
 			api.GetSession(r), accountID, route.MatchedDomain(r),
 		)
 		if err != nil {

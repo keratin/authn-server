@@ -30,7 +30,7 @@ func postSessionToken(app *api.App) http.HandlerFunc {
 		}
 
 		sessionToken, identityToken, err := services.SessionCreator(
-			app.AccountStore, app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config,
+			app.AccountStore, app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, app.Reporter,
 			accountID, route.MatchedDomain(r), api.GetRefreshToken(r),
 		)
 		if err != nil {

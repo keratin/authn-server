@@ -5,20 +5,21 @@ import (
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/models"
+	"github.com/keratin/authn-server/ops"
 	"github.com/keratin/authn-server/tokens/identities"
 	"github.com/keratin/authn-server/tokens/sessions"
 	"github.com/pkg/errors"
 )
 
 func SessionRefresher(
-	refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore, actives data.Actives, cfg *config.Config,
+	refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore, actives data.Actives, cfg *config.Config, reporter ops.ErrorReporter,
 	session *sessions.Claims, accountID int, audience *route.Domain,
 ) (string, error) {
 	// track actives
 	if actives != nil {
 		err := actives.Track(accountID)
 		if err != nil {
-			// TODO: report error
+			reporter.ReportError(errors.Wrap(err, "Track"))
 		}
 	}
 
