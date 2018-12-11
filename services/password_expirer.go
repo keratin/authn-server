@@ -14,5 +14,5 @@ func PasswordExpirer(store data.AccountStore, tokenStore data.RefreshTokenStore,
 		return FieldErrors{{"account", ErrNotFound}}
 	}
 
-	return LogoutAccount(tokenStore, accountID)
+	return SessionBatchEnder(tokenStore, accountID)
 }

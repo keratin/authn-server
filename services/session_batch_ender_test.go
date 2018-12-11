@@ -8,12 +8,12 @@ import (
 	"testing"
 )
 
-func TestLogoutAccount(t *testing.T) {
+func TestSessionBatchEnder(t *testing.T) {
 	store := mock.NewRefreshTokenStore()
 
 	t.Run("revoking nothing", func(t *testing.T) {
 		id := 123
-		err := services.LogoutAccount(store, id)
+		err := services.SessionBatchEnder(store, id)
 		assert.NoError(t, err)
 	})
 
@@ -26,7 +26,7 @@ func TestLogoutAccount(t *testing.T) {
 		require.NoError(t, err)
 		require.Len(t, found, 1)
 
-		err = services.LogoutAccount(store, id)
+		err = services.SessionBatchEnder(store, id)
 		assert.NoError(t, err)
 
 		found, err = store.FindAll(id)

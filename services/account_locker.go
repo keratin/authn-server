@@ -14,5 +14,5 @@ func AccountLocker(store data.AccountStore, tokenStore data.RefreshTokenStore, a
 		return FieldErrors{{"account", ErrNotFound}}
 	}
 
-	return LogoutAccount(tokenStore, accountID)
+	return SessionBatchEnder(tokenStore, accountID)
 }

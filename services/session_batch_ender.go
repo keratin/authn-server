@@ -4,7 +4,7 @@ import (
 	"github.com/keratin/authn-server/data"
 )
 
-func LogoutAccount(store data.RefreshTokenStore, accountID int) error {
+func SessionBatchEnder(store data.RefreshTokenStore, accountID int) error {
 	tokens, err := store.FindAll(accountID)
 	if err != nil {
 		return err
