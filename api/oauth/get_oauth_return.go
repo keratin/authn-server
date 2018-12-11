@@ -52,14 +52,11 @@ func getOauthReturn(app *api.App, providerName string) http.HandlerFunc {
 			return
 		}
 
-		// clean up any existing session
-		err = api.RevokeSession(app.RefreshTokenStore, app.Config, r)
-		if err != nil {
-			app.Reporter.ReportRequestError(err, r)
-		}
-
 		// identityToken is not returned in this flow. it must be imported by the frontend like a SSO session.
-		sessionToken, _, err := api.NewSession(app.AccountStore, app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, account.ID, &app.Config.ApplicationDomains[0])
+		sessionToken, _, err := services.SessionCreator(
+			app.AccountStore, app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config,
+			account.ID, &app.Config.ApplicationDomains[0], api.GetRefreshToken(r),
+		)
 		if err != nil {
 			fail(errors.Wrap(err, "NewSession"))
 			return
