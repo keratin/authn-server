@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/api/util"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/services"
 )
@@ -25,14 +25,14 @@ func postAccountsImport(app *app.App) http.HandlerFunc {
 		)
 		if err != nil {
 			if fe, ok := err.(services.FieldErrors); ok {
-				api.WriteErrors(w, fe)
+				util.WriteErrors(w, fe)
 				return
 			}
 
 			panic(err)
 		}
 
-		api.WriteData(w, http.StatusCreated, map[string]int{
+		util.WriteData(w, http.StatusCreated, map[string]int{
 			"id": account.ID,
 		})
 	}

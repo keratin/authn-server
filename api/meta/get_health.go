@@ -3,7 +3,7 @@ package meta
 import (
 	"net/http"
 
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/api/util"
 	"github.com/keratin/authn-server/app"
 )
 
@@ -21,6 +21,6 @@ func getHealth(app *app.App) http.HandlerFunc {
 			Db:    app.DbCheck(),
 		}
 
-		api.WriteJSON(w, http.StatusOK, h)
+		util.WriteJSON(w, http.StatusOK, h)
 	}
 }

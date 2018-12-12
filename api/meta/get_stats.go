@@ -3,7 +3,7 @@ package meta
 import (
 	"net/http"
 
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/api/util"
 	"github.com/keratin/authn-server/app"
 )
 
@@ -34,7 +34,7 @@ func getStats(app *app.App) http.HandlerFunc {
 			Monthly: monthly,
 		}
 
-		api.WriteJSON(w, http.StatusOK, map[string]interface{}{
+		util.WriteJSON(w, http.StatusOK, map[string]interface{}{
 			"actives": actives,
 		})
 	}

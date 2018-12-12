@@ -3,7 +3,7 @@ package accounts
 import (
 	"net/http"
 
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/api/util"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/services"
 )
@@ -16,9 +16,9 @@ func getAccountsAvailable(app *app.App) http.HandlerFunc {
 		}
 
 		if account == nil {
-			api.WriteData(w, http.StatusOK, true)
+			util.WriteData(w, http.StatusOK, true)
 		} else {
-			api.WriteErrors(w, services.FieldErrors{{"username", services.ErrTaken}})
+			util.WriteErrors(w, services.FieldErrors{{"username", services.ErrTaken}})
 		}
 	}
 }

@@ -3,7 +3,7 @@ package sessions
 import (
 	"net/http"
 
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/api/util"
 	"github.com/keratin/authn-server/api/sessionz"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
@@ -24,7 +24,7 @@ func postSessionToken(app *app.App) http.HandlerFunc {
 
 		if err != nil {
 			if fe, ok := err.(services.FieldErrors); ok {
-				api.WriteErrors(w, fe)
+				util.WriteErrors(w, fe)
 				return
 			}
 
@@ -43,7 +43,7 @@ func postSessionToken(app *app.App) http.HandlerFunc {
 		sessionz.Set(app.Config, w, sessionToken)
 
 		// Return the signed identity token in the body
-		api.WriteData(w, http.StatusCreated, map[string]string{
+		util.WriteData(w, http.StatusCreated, map[string]string{
 			"id_token": identityToken,
 		})
 	}

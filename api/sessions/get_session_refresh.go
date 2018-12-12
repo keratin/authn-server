@@ -3,7 +3,7 @@ package sessions
 import (
 	"net/http"
 
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/api/util"
 	"github.com/keratin/authn-server/api/sessionz"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
@@ -28,7 +28,7 @@ func getSessionRefresh(app *app.App) http.HandlerFunc {
 			panic(errors.Wrap(err, "IdentityForSession"))
 		}
 
-		api.WriteData(w, http.StatusCreated, map[string]string{
+		util.WriteData(w, http.StatusCreated, map[string]string{
 			"id_token": identityToken,
 		})
 	}

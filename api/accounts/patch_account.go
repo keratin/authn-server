@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/api/util"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/services"
 )
@@ -14,7 +14,7 @@ func patchAccount(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(mux.Vars(r)["id"])
 		if err != nil {
-			api.WriteNotFound(w, "account")
+			util.WriteNotFound(w, "account")
 			return
 		}
 
@@ -22,9 +22,9 @@ func patchAccount(app *app.App) http.HandlerFunc {
 		if err != nil {
 			if fe, ok := err.(services.FieldErrors); ok {
 				if fe[0].Message == services.ErrNotFound {
-					api.WriteNotFound(w, "account")
+					util.WriteNotFound(w, "account")
 				} else {
-					api.WriteErrors(w, fe)
+					util.WriteErrors(w, fe)
 				}
 				return
 			}

@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/api/util"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/services"
 )
@@ -14,14 +14,14 @@ func deleteAccount(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(mux.Vars(r)["id"])
 		if err != nil {
-			api.WriteNotFound(w, "account")
+			util.WriteNotFound(w, "account")
 			return
 		}
 
 		err = services.AccountArchiver(app.AccountStore, app.RefreshTokenStore, id)
 		if err != nil {
 			if _, ok := err.(services.FieldErrors); ok {
-				api.WriteNotFound(w, "account")
+				util.WriteNotFound(w, "account")
 				return
 			}
 
