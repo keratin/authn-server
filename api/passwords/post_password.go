@@ -10,7 +10,7 @@ import (
 	"github.com/keratin/authn-server/services"
 )
 
-func postPassword(app *app.App) http.HandlerFunc {
+func PostPassword(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		var accountID int

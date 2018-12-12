@@ -10,7 +10,7 @@ import (
 	"github.com/keratin/authn-server/services"
 )
 
-func postAccount(app *app.App) http.HandlerFunc {
+func PostAccount(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Create the account
 		account, err := services.AccountCreator(

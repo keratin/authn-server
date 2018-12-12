@@ -10,7 +10,7 @@ import (
 	"github.com/keratin/authn-server/services"
 )
 
-func patchAccountExpirePassword(app *app.App) http.HandlerFunc {
+func PatchAccountExpirePassword(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(mux.Vars(r)["id"])
 		if err != nil {

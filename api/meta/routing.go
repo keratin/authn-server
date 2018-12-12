@@ -10,7 +10,7 @@ func PublicRoutes(app *app.App) []*route.HandledRoute {
 	return []*route.HandledRoute{
 		route.Get("/health").
 			SecuredWith(route.Unsecured()).
-			Handle(getHealth(app)),
+			Handle(GetHealth(app)),
 	}
 }
 
@@ -23,20 +23,20 @@ func Routes(app *app.App) []*route.HandledRoute {
 		routes = append(routes,
 			route.Get("/stats").
 				SecuredWith(authentication).
-				Handle(getStats(app)),
+				Handle(GetStats(app)),
 		)
 	}
 
 	routes = append(routes,
 		route.Get("/").
 			SecuredWith(route.Unsecured()).
-			Handle(getRoot(app)),
+			Handle(GetRoot(app)),
 		route.Get("/jwks").
 			SecuredWith(route.Unsecured()).
-			Handle(getJWKs(app)),
+			Handle(GetJWKs(app)),
 		route.Get("/configuration").
 			SecuredWith(route.Unsecured()).
-			Handle(getConfiguration(app)),
+			Handle(GetConfiguration(app)),
 		route.Get("/metrics").
 			SecuredWith(authentication).
 			Handle(promhttp.Handler()),

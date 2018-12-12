@@ -13,10 +13,10 @@ func PublicRoutes(app *app.App) []*route.HandledRoute {
 		routes = append(routes,
 			route.Get("/oauth/"+providerName).
 				SecuredWith(route.Unsecured()).
-				Handle(getOauth(app, providerName)),
+				Handle(GetOauth(app, providerName)),
 			route.Get("/oauth/"+providerName+"/return").
 				SecuredWith(route.Unsecured()).
-				Handle(getOauthReturn(app, providerName)),
+				Handle(GetOauthReturn(app, providerName)),
 		)
 	}
 

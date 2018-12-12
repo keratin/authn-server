@@ -11,14 +11,14 @@ func PublicRoutes(app *app.App) []*route.HandledRoute {
 	routes := []*route.HandledRoute{
 		route.Post("/password").
 			SecuredWith(originSecurity).
-			Handle(postPassword(app)),
+			Handle(PostPassword(app)),
 	}
 
 	if app.Config.AppPasswordResetURL != nil {
 		routes = append(routes,
 			route.Get("/password/reset").
 				SecuredWith(originSecurity).
-				Handle(getPasswordReset(app)),
+				Handle(GetPasswordReset(app)),
 		)
 	}
 

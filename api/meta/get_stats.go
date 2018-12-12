@@ -7,7 +7,7 @@ import (
 	"github.com/keratin/authn-server/app"
 )
 
-func getStats(app *app.App) http.HandlerFunc {
+func GetStats(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		daily, err := app.Actives.ActivesByDay()
 		if err != nil {

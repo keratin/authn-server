@@ -7,7 +7,7 @@ import (
 	"github.com/keratin/authn-server/services"
 )
 
-func getPasswordReset(app *app.App) http.HandlerFunc {
+func GetPasswordReset(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		account, err := app.AccountStore.FindByUsername(r.FormValue("username"))
 		if err != nil {

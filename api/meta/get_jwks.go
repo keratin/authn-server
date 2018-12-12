@@ -10,7 +10,7 @@ import (
 	jose "gopkg.in/square/go-jose.v2"
 )
 
-func getJWKs(app *app.App) http.HandlerFunc {
+func GetJWKs(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		keys := []jose.JSONWebKey{}
 		for _, key := range app.KeyStore.Keys() {

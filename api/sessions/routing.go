@@ -11,26 +11,26 @@ func PublicRoutes(app *app.App) []*route.HandledRoute {
 	routes := []*route.HandledRoute{
 		route.Post("/session").
 			SecuredWith(originSecurity).
-			Handle(postSession(app)),
+			Handle(PostSession(app)),
 
 		route.Delete("/session").
 			SecuredWith(originSecurity).
-			Handle(deleteSession(app)),
+			Handle(DeleteSession(app)),
 
 		route.Get("/session/refresh").
 			SecuredWith(originSecurity).
-			Handle(getSessionRefresh(app)),
+			Handle(GetSessionRefresh(app)),
 	}
 
 	if app.Config.AppPasswordlessTokenURL != nil {
 		routes = append(routes,
 			route.Get("/session/token").
 				SecuredWith(originSecurity).
-				Handle(getSessionToken(app)),
+				Handle(GetSessionToken(app)),
 
 			route.Post("/session/token").
 				SecuredWith(originSecurity).
-				Handle(postSessionToken(app)),
+				Handle(PostSessionToken(app)),
 		)
 	}
 

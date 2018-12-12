@@ -11,7 +11,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func getSessionRefresh(app *app.App) http.HandlerFunc {
+func GetSessionRefresh(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// check for valid session with live token
 		accountID := sessionz.GetAccountID(r)

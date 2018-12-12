@@ -8,7 +8,7 @@ import (
 	"github.com/keratin/authn-server/app"
 )
 
-func getRoot(app *app.App) http.HandlerFunc {
+func GetRoot(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var buf bytes.Buffer
 		views.Root(&buf)

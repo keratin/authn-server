@@ -8,7 +8,7 @@ import (
 	"github.com/keratin/authn-server/services"
 )
 
-func deleteSession(app *app.App) http.HandlerFunc {
+func DeleteSession(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := services.SessionEnder(app.RefreshTokenStore, sessionz.GetRefreshToken(r))
 		if err != nil {

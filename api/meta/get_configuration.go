@@ -7,7 +7,7 @@ import (
 	"github.com/keratin/authn-server/app"
 )
 
-func getConfiguration(app *app.App) http.HandlerFunc {
+func GetConfiguration(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		util.WriteJSON(w, http.StatusOK, map[string]interface{}{
 			"issuer":                                app.Config.AuthNURL.String(),

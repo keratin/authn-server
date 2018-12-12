@@ -14,10 +14,10 @@ func PublicRoutes(app *app.App) []*route.HandledRoute {
 		routes = append(routes,
 			route.Post("/accounts").
 				SecuredWith(originSecurity).
-				Handle(postAccount(app)),
+				Handle(PostAccount(app)),
 			route.Get("/accounts/available").
 				SecuredWith(originSecurity).
-				Handle(getAccountsAvailable(app)),
+				Handle(GetAccountsAvailable(app)),
 		)
 	}
 
@@ -32,31 +32,31 @@ func Routes(app *app.App) []*route.HandledRoute {
 	routes = append(routes,
 		route.Post("/accounts/import").
 			SecuredWith(authentication).
-			Handle(postAccountsImport(app)),
+			Handle(PostAccountsImport(app)),
 
 		route.Get("/accounts/{id:[0-9]+}").
 			SecuredWith(authentication).
-			Handle(getAccount(app)),
+			Handle(GetAccount(app)),
 
 		route.Patch("/accounts/{id:[0-9]+}").
 			SecuredWith(authentication).
-			Handle(patchAccount(app)),
+			Handle(PatchAccount(app)),
 
 		route.Patch("/accounts/{id:[0-9]+}/lock").
 			SecuredWith(authentication).
-			Handle(patchAccountLock(app)),
+			Handle(PatchAccountLock(app)),
 
 		route.Patch("/accounts/{id:[0-9]+}/unlock").
 			SecuredWith(authentication).
-			Handle(patchAccountUnlock(app)),
+			Handle(PatchAccountUnlock(app)),
 
 		route.Patch("/accounts/{id:[0-9]+}/expire_password").
 			SecuredWith(authentication).
-			Handle(patchAccountExpirePassword(app)),
+			Handle(PatchAccountExpirePassword(app)),
 
 		route.Delete("/accounts/{id:[0-9]+}").
 			SecuredWith(authentication).
-			Handle(deleteAccount(app)),
+			Handle(DeleteAccount(app)),
 	)
 
 	return routes
