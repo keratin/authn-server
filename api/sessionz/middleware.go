@@ -1,4 +1,4 @@
-package api
+package sessionz
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 type sessionKey int
 type accountIDKey int
 
-func Session(app *app.App) func(http.Handler) http.Handler {
+func Middleware(app *app.App) func(http.Handler) http.Handler {
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			var session *sessions.Claims
@@ -64,20 +64,4 @@ func Session(app *app.App) func(http.Handler) http.Handler {
 			h.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
-}
-
-func GetSession(r *http.Request) *sessions.Claims {
-	fn, ok := r.Context().Value(sessionKey(0)).(func() *sessions.Claims)
-	if ok {
-		return fn()
-	}
-	return nil
-}
-
-func GetSessionAccountID(r *http.Request) int {
-	fn, ok := r.Context().Value(accountIDKey(0)).(func() int)
-	if ok {
-		return fn()
-	}
-	return 0
 }

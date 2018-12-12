@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/api/sessionz"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/services"
@@ -13,7 +14,7 @@ import (
 func getSessionRefresh(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// check for valid session with live token
-		accountID := api.GetSessionAccountID(r)
+		accountID := sessionz.GetAccountID(r)
 		if accountID == 0 {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
@@ -21,7 +22,7 @@ func getSessionRefresh(app *app.App) http.HandlerFunc {
 
 		identityToken, err := services.SessionRefresher(
 			app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, app.Reporter,
-			api.GetSession(r), accountID, route.MatchedDomain(r),
+			sessionz.Get(r), accountID, route.MatchedDomain(r),
 		)
 		if err != nil {
 			panic(errors.Wrap(err, "IdentityForSession"))

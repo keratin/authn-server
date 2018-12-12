@@ -4,12 +4,11 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/keratin/authn-server/services"
-
 	"github.com/pkg/errors"
 
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/api/sessionz"
 	"github.com/keratin/authn-server/app"
+	"github.com/keratin/authn-server/services"
 )
 
 func getOauthReturn(app *app.App, providerName string) http.HandlerFunc {
@@ -46,7 +45,7 @@ func getOauthReturn(app *app.App, providerName string) http.HandlerFunc {
 		}
 
 		// attempt to reconcile oauth identity information into an authn account
-		sessionAccountID := api.GetSessionAccountID(r)
+		sessionAccountID := sessionz.GetAccountID(r)
 		account, err := services.IdentityReconciler(app.AccountStore, app.Config, providerName, providerUser, tok, sessionAccountID)
 		if err != nil {
 			fail(err)
@@ -56,7 +55,7 @@ func getOauthReturn(app *app.App, providerName string) http.HandlerFunc {
 		// identityToken is not returned in this flow. it must be imported by the frontend like a SSO session.
 		sessionToken, _, err := services.SessionCreator(
 			app.AccountStore, app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, app.Reporter,
-			account.ID, &app.Config.ApplicationDomains[0], api.GetRefreshToken(r),
+			account.ID, &app.Config.ApplicationDomains[0], sessionz.GetRefreshToken(r),
 		)
 		if err != nil {
 			fail(errors.Wrap(err, "NewSession"))
@@ -64,7 +63,7 @@ func getOauthReturn(app *app.App, providerName string) http.HandlerFunc {
 		}
 
 		// Return the signed session in a cookie
-		api.SetSession(app.Config, w, sessionToken)
+		sessionz.Set(app.Config, w, sessionToken)
 
 		// redirect back to frontend (success or failure)
 		http.Redirect(w, r, state.Destination, http.StatusSeeOther)

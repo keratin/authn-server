@@ -1,4 +1,4 @@
-package api_test
+package sessionz_test
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/api/sessionz"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data/mock"
@@ -33,12 +33,12 @@ func TestSession(t *testing.T) {
 		session := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, accountID)
 
 		handler := func(w http.ResponseWriter, r *http.Request) {
-			assert.NotEmpty(t, api.GetSession(r))
-			assert.Equal(t, accountID, api.GetSessionAccountID(r))
+			assert.NotEmpty(t, sessionz.Get(r))
+			assert.Equal(t, accountID, sessionz.GetAccountID(r))
 
 			w.WriteHeader(http.StatusOK)
 		}
-		server := httptest.NewServer(api.Session(testApp)(http.HandlerFunc(handler)))
+		server := httptest.NewServer(sessionz.Middleware(testApp)(http.HandlerFunc(handler)))
 		defer server.Close()
 
 		client := route.NewClient(server.URL).WithCookie(session)
@@ -58,12 +58,12 @@ func TestSession(t *testing.T) {
 		session := test.CreateSession(testApp.RefreshTokenStore, oldConfig, accountID)
 
 		handler := func(w http.ResponseWriter, r *http.Request) {
-			assert.Empty(t, api.GetSession(r))
-			assert.Empty(t, api.GetSessionAccountID(r))
+			assert.Empty(t, sessionz.Get(r))
+			assert.Empty(t, sessionz.GetAccountID(r))
 
 			w.WriteHeader(http.StatusOK)
 		}
-		server := httptest.NewServer(api.Session(testApp)(http.HandlerFunc(handler)))
+		server := httptest.NewServer(sessionz.Middleware(testApp)(http.HandlerFunc(handler)))
 		defer server.Close()
 
 		client := route.NewClient(server.URL).WithCookie(session)
@@ -78,12 +78,12 @@ func TestSession(t *testing.T) {
 		test.RevokeSession(testApp.RefreshTokenStore, testApp.Config, session)
 
 		handler := func(w http.ResponseWriter, r *http.Request) {
-			assert.NotEmpty(t, api.GetSession(r))
-			assert.Empty(t, api.GetSessionAccountID(r))
+			assert.NotEmpty(t, sessionz.Get(r))
+			assert.Empty(t, sessionz.GetAccountID(r))
 
 			w.WriteHeader(http.StatusOK)
 		}
-		server := httptest.NewServer(api.Session(testApp)(http.HandlerFunc(handler)))
+		server := httptest.NewServer(sessionz.Middleware(testApp)(http.HandlerFunc(handler)))
 		defer server.Close()
 
 		client := route.NewClient(server.URL).WithCookie(session)
@@ -94,12 +94,12 @@ func TestSession(t *testing.T) {
 
 	t.Run("missing session", func(t *testing.T) {
 		handler := func(w http.ResponseWriter, r *http.Request) {
-			assert.Empty(t, api.GetSession(r))
-			assert.Empty(t, api.GetSessionAccountID(r))
+			assert.Empty(t, sessionz.Get(r))
+			assert.Empty(t, sessionz.GetAccountID(r))
 
 			w.WriteHeader(http.StatusOK)
 		}
-		server := httptest.NewServer(api.Session(testApp)(http.HandlerFunc(handler)))
+		server := httptest.NewServer(sessionz.Middleware(testApp)(http.HandlerFunc(handler)))
 		defer server.Close()
 
 		client := route.NewClient(server.URL)

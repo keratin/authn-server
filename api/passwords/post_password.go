@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/api/sessionz"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/services"
@@ -22,7 +23,7 @@ func postPassword(app *app.App) http.HandlerFunc {
 				r.FormValue("password"),
 			)
 		} else {
-			accountID = api.GetSessionAccountID(r)
+			accountID = sessionz.GetAccountID(r)
 			if accountID == 0 {
 				w.WriteHeader(http.StatusUnauthorized)
 				return
@@ -48,14 +49,14 @@ func postPassword(app *app.App) http.HandlerFunc {
 
 		sessionToken, identityToken, err := services.SessionCreator(
 			app.AccountStore, app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, app.Reporter,
-			accountID, route.MatchedDomain(r), api.GetRefreshToken(r),
+			accountID, route.MatchedDomain(r), sessionz.GetRefreshToken(r),
 		)
 		if err != nil {
 			panic(err)
 		}
 
 		// Return the signed session in a cookie
-		api.SetSession(app.Config, w, sessionToken)
+		sessionz.Set(app.Config, w, sessionToken)
 
 		// Return the signed identity token in the body
 		api.WriteData(w, http.StatusCreated, map[string]string{

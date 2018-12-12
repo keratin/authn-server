@@ -12,6 +12,7 @@ import (
 	"github.com/keratin/authn-server/api/oauth"
 	"github.com/keratin/authn-server/api/passwords"
 	"github.com/keratin/authn-server/api/sessions"
+	"github.com/keratin/authn-server/api/sessionz"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
@@ -42,7 +43,7 @@ func publicRouter(app *app.App) http.Handler {
 func wrapRouter(r *mux.Router, app *app.App) http.Handler {
 	stack := gorilla.CombinedLoggingHandler(os.Stdout, r)
 
-	stack = api.Session(app)(stack)
+	stack = sessionz.Middleware(app)(stack)
 
 	stack = gorilla.CORS(
 		gorilla.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE"}),
