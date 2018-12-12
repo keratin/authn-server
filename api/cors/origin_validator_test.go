@@ -1,16 +1,16 @@
-package api_test
+package cors_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/api/cors"
 	"github.com/keratin/authn-server/lib/route"
 )
 
 func TestOriginValidator(t *testing.T) {
-	validator := api.OriginValidator([]route.Domain{
+	validator := cors.OriginValidator([]route.Domain{
 		route.ParseDomain("example.com:443"),
 	})
 

@@ -6,8 +6,8 @@ import (
 
 	gorilla "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/api/accounts"
+	"github.com/keratin/authn-server/api/cors"
 	"github.com/keratin/authn-server/api/meta"
 	"github.com/keratin/authn-server/api/oauth"
 	"github.com/keratin/authn-server/api/passwords"
@@ -42,15 +42,8 @@ func publicRouter(app *app.App) http.Handler {
 
 func wrapRouter(r *mux.Router, app *app.App) http.Handler {
 	stack := gorilla.CombinedLoggingHandler(os.Stdout, r)
-
 	stack = sessionz.Middleware(app)(stack)
-
-	stack = gorilla.CORS(
-		gorilla.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE"}),
-		gorilla.AllowCredentials(),
-		gorilla.AllowedOrigins([]string{}), // see: https://github.com/gorilla/handlers/issues/117
-		gorilla.AllowedOriginValidator(api.OriginValidator(app.Config.ApplicationDomains)),
-	)(stack)
+	stack = cors.Middleware(app)(stack)
 
 	if app.Config.Proxied {
 		stack = gorilla.ProxyHeaders(stack)

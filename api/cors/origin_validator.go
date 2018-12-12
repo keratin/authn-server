@@ -1,4 +1,4 @@
-package api
+package cors
 
 import (
 	"github.com/keratin/authn-server/lib/route"
