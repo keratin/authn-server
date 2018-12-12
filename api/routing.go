@@ -1,10 +1,10 @@
-package main
+package api
 
 import (
 	"net/http"
 	"os"
 
-	gorilla "github.com/gorilla/handlers"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/keratin/authn-server/api/accounts"
 	"github.com/keratin/authn-server/api/cors"
@@ -41,12 +41,12 @@ func publicRouter(app *app.App) http.Handler {
 }
 
 func wrapRouter(r *mux.Router, app *app.App) http.Handler {
-	stack := gorilla.CombinedLoggingHandler(os.Stdout, r)
+	stack := handlers.CombinedLoggingHandler(os.Stdout, r)
 	stack = sessionz.Middleware(app)(stack)
 	stack = cors.Middleware(app)(stack)
 
 	if app.Config.Proxied {
-		stack = gorilla.ProxyHeaders(stack)
+		stack = handlers.ProxyHeaders(stack)
 	}
 
 	return ops.PanicHandler(app.Reporter, stack)

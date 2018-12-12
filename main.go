@@ -2,13 +2,11 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net/http"
-	"os"
-	"path"
-
+	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data"
+	"os"
+	"path"
 )
 
 // VERSION is a value injected at build time with ldflags
@@ -50,15 +48,11 @@ func serve(cfg *app.Config) {
 	fmt.Println(fmt.Sprintf("~*~ Keratin AuthN v%s ~*~", VERSION))
 	fmt.Println(fmt.Sprintf("AUTHN_URL: %s", cfg.AuthNURL))
 	fmt.Println(fmt.Sprintf("PORT: %d", cfg.ServerPort))
-
-	if cfg.PublicPort != 0 {
-		go func() {
-			fmt.Println(fmt.Sprintf("PUBLIC_PORT: %d", cfg.PublicPort))
-			log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", cfg.PublicPort), publicRouter(app)))
-		}()
+	if app.Config.PublicPort != 0 {
+		fmt.Println(fmt.Sprintf("PUBLIC_PORT: %d", app.Config.PublicPort))
 	}
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", cfg.ServerPort), router(app)))
+	api.Server(app)
 }
 
 func migrate(cfg *app.Config) {
