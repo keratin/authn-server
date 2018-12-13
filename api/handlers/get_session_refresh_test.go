@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	apiSessions "github.com/keratin/authn-server/api/sessions"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data/mock"
@@ -30,7 +29,7 @@ func BenchmarkGetSessionRefresh(b *testing.B) {
 
 	b.Run("mock    store", func(b *testing.B) {
 		testApp := test.App()
-		server := test.Server(testApp, apiSessions.Routes(testApp))
+		server := test.Server(testApp)
 		defer server.Close()
 		testApp.RefreshTokenStore = mock.NewRefreshTokenStore()
 		client := route.NewClient(server.URL).
@@ -51,7 +50,7 @@ func BenchmarkGetSessionRefresh(b *testing.B) {
 
 	b.Run("sqlite3 store", func(b *testing.B) {
 		testApp := test.App()
-		server := test.Server(testApp, apiSessions.Routes(testApp))
+		server := test.Server(testApp)
 		defer server.Close()
 		testApp.RefreshTokenStore = &sqlite3.RefreshTokenStore{sqliteDB, time.Hour}
 		client := route.NewClient(server.URL).
@@ -71,7 +70,7 @@ func BenchmarkGetSessionRefresh(b *testing.B) {
 
 	b.Run("redis   store", func(b *testing.B) {
 		testApp := test.App()
-		server := test.Server(testApp, apiSessions.Routes(testApp))
+		server := test.Server(testApp)
 		defer server.Close()
 		testApp.RefreshTokenStore = &redis.RefreshTokenStore{redisDB, time.Hour}
 		client := route.NewClient(server.URL).
@@ -87,7 +86,7 @@ func BenchmarkGetSessionRefresh(b *testing.B) {
 
 func TestGetSessionRefreshSuccess(t *testing.T) {
 	testApp := test.App()
-	server := test.Server(testApp, apiSessions.Routes(testApp))
+	server := test.Server(testApp)
 	defer server.Close()
 
 	accountID := 82594
@@ -113,7 +112,7 @@ func TestGetSessionRefreshFailure(t *testing.T) {
 		RefreshTokenStore: mock.NewRefreshTokenStore(),
 		Reporter:          &ops.LogReporter{},
 	}
-	server := test.Server(testApp, apiSessions.Routes(testApp))
+	server := test.Server(testApp)
 	defer server.Close()
 
 	testCases := []struct {

@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/keratin/authn-server/api/sessionz"
+	"github.com/keratin/authn-server/api/sessions"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/services"
@@ -29,14 +29,14 @@ func PostAccount(app *app.App) http.HandlerFunc {
 
 		sessionToken, identityToken, err := services.SessionCreator(
 			app.AccountStore, app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, app.Reporter,
-			account.ID, route.MatchedDomain(r), sessionz.GetRefreshToken(r),
+			account.ID, route.MatchedDomain(r), sessions.GetRefreshToken(r),
 		)
 		if err != nil {
 			panic(err)
 		}
 
 		// Return the signed session in a cookie
-		sessionz.Set(app.Config, w, sessionToken)
+		sessions.Set(app.Config, w, sessionToken)
 
 		// Return the signed identity token in the body
 		WriteData(w, http.StatusCreated, map[string]string{

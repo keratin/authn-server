@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/keratin/authn-server/api/meta"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/stretchr/testify/assert"
@@ -13,7 +12,7 @@ import (
 
 func TestGetStats(t *testing.T) {
 	app := test.App()
-	server := test.Server(app, meta.Routes(app))
+	server := test.Server(app)
 	defer server.Close()
 
 	app.Actives.Track(1)
@@ -32,7 +31,7 @@ func TestGetStats(t *testing.T) {
 func TestGetStatsWithoutRedis(t *testing.T) {
 	app := test.App()
 	app.Actives = nil
-	server := test.Server(app, meta.Routes(app))
+	server := test.Server(app)
 	defer server.Close()
 
 	client := route.NewClient(server.URL).Authenticated(app.Config.AuthUsername, app.Config.AuthPassword)

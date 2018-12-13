@@ -8,7 +8,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/keratin/authn-server/api/test"
-	apiSessions "github.com/keratin/authn-server/api/sessions"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/services"
@@ -21,7 +20,7 @@ import (
 
 func TestPostSessionToken(t *testing.T) {
 	app := test.App()
-	server := test.Server(app, apiSessions.Routes(app))
+	server := test.Server(app)
 	defer server.Close()
 
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])

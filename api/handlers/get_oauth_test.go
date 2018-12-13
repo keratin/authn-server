@@ -7,7 +7,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/keratin/authn-server/api/oauth"
 	"github.com/keratin/authn-server/api/test"
 	oauthlib "github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/lib/route"
@@ -25,7 +24,7 @@ func TestGetOauth(t *testing.T) {
 	// configure and start the authn test server
 	app := test.App()
 	app.OauthProviders["test"] = *providerClient
-	server := test.Server(app, oauth.Routes(app))
+	server := test.Server(app)
 	defer server.Close()
 
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])

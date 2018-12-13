@@ -7,7 +7,6 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/keratin/authn-server/api/passwords"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/models"
@@ -21,7 +20,7 @@ import (
 
 func TestPostPassword(t *testing.T) {
 	app := test.App()
-	server := test.Server(app, passwords.Routes(app))
+	server := test.Server(app)
 	defer server.Close()
 
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])

@@ -7,7 +7,6 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/keratin/authn-server/api/meta"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/app"
 	"github.com/stretchr/testify/assert"
@@ -20,7 +19,7 @@ func TestGetConfiguration(t *testing.T) {
 			AuthNURL: &url.URL{Scheme: "https", Host: "authn.example.com", Path: "/foo"},
 		},
 	}
-	server := test.Server(app, meta.Routes(app))
+	server := test.Server(app)
 	defer server.Close()
 
 	res, err := http.Get(fmt.Sprintf("%s/configuration", server.URL))

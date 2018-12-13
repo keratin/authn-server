@@ -1,10 +1,11 @@
-package api
+package api_test
 
 import (
 	"fmt"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/stretchr/testify/assert"
@@ -14,7 +15,7 @@ import (
 func TestCORS(t *testing.T) {
 	app := test.App()
 	domain := app.Config.ApplicationDomains[0]
-	server := httptest.NewServer(router(app))
+	server := httptest.NewServer(api.Router(app))
 	defer server.Close()
 
 	client := route.NewClient(server.URL)

@@ -9,7 +9,6 @@ import (
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/services"
 
-	"github.com/keratin/authn-server/api/accounts"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -17,7 +16,7 @@ import (
 
 func TestPatchAccount(t *testing.T) {
 	app := test.App()
-	server := test.Server(app, accounts.Routes(app))
+	server := test.Server(app)
 	defer server.Close()
 
 	client := route.NewClient(server.URL).Authenticated(app.Config.AuthUsername, app.Config.AuthPassword)

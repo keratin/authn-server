@@ -7,7 +7,6 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/keratin/authn-server/api/sessions"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/services"
@@ -17,7 +16,7 @@ import (
 
 func TestPostSessionSuccess(t *testing.T) {
 	app := test.App()
-	server := test.Server(app, sessions.Routes(app))
+	server := test.Server(app)
 	defer server.Close()
 
 	b, _ := bcrypt.GenerateFromPassword([]byte("bar"), 4)
@@ -37,7 +36,7 @@ func TestPostSessionSuccess(t *testing.T) {
 
 func TestPostSessionSuccessWithSession(t *testing.T) {
 	app := test.App()
-	server := test.Server(app, sessions.Routes(app))
+	server := test.Server(app)
 	defer server.Close()
 
 	b, _ := bcrypt.GenerateFromPassword([]byte("bar"), 4)
@@ -66,7 +65,7 @@ func TestPostSessionSuccessWithSession(t *testing.T) {
 
 func TestPostSessionFailure(t *testing.T) {
 	app := test.App()
-	server := test.Server(app, sessions.Routes(app))
+	server := test.Server(app)
 	defer server.Close()
 
 	var testCases = []struct {

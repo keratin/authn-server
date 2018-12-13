@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"testing"
 
-	apiSessions "github.com/keratin/authn-server/api/sessions"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
@@ -16,7 +15,7 @@ import (
 
 func TestDeleteSessionSuccess(t *testing.T) {
 	testApp := test.App()
-	server := test.Server(testApp, apiSessions.Routes(testApp))
+	server := test.Server(testApp)
 	defer server.Close()
 
 	accountID := 514628
@@ -44,7 +43,7 @@ func TestDeleteSessionSuccess(t *testing.T) {
 
 func TestDeleteSessionFailure(t *testing.T) {
 	testApp := test.App()
-	server := test.Server(testApp, apiSessions.Routes(testApp))
+	server := test.Server(testApp)
 	defer server.Close()
 
 	badCfg := &app.Config{
@@ -65,7 +64,7 @@ func TestDeleteSessionFailure(t *testing.T) {
 
 func TestDeleteSessionWithoutSession(t *testing.T) {
 	testApp := test.App()
-	server := test.Server(testApp, apiSessions.Routes(testApp))
+	server := test.Server(testApp)
 	defer server.Close()
 
 	client := route.NewClient(server.URL).Referred(&testApp.Config.ApplicationDomains[0])

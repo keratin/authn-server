@@ -1,4 +1,4 @@
-package sessionz
+package sessions
 
 import (
 	"context"

@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/keratin/authn-server/api/meta"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data/mock"
@@ -23,7 +22,7 @@ func TestGetJWKs(t *testing.T) {
 		Config:   &app.Config{},
 	}
 
-	server := test.Server(app, meta.Routes(app))
+	server := test.Server(app)
 	defer server.Close()
 
 	res, err := http.Get(fmt.Sprintf("%s/jwks", server.URL))
@@ -42,7 +41,7 @@ func BenchmarkGetJWKs(b *testing.B) {
 		Config:   &app.Config{},
 	}
 
-	server := test.Server(app, meta.Routes(app))
+	server := test.Server(app)
 	defer server.Close()
 
 	b.ResetTimer()

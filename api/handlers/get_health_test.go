@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/keratin/authn-server/api/meta"
 	"github.com/keratin/authn-server/api/test"
 	"github.com/keratin/authn-server/app"
 	"github.com/stretchr/testify/assert"
@@ -18,7 +17,7 @@ func TestGetHealth(t *testing.T) {
 		RedisCheck: func() bool { return true },
 		Config:     &app.Config{},
 	}
-	server := test.Server(app, meta.Routes(app))
+	server := test.Server(app)
 	defer server.Close()
 
 	res, err := http.Get(fmt.Sprintf("%s/health", server.URL))

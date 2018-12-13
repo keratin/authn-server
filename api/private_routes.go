@@ -1,36 +1,33 @@
-package accounts
+package api
 
 import (
 	"github.com/keratin/authn-server/api/handlers"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-func PublicRoutes(app *app.App) []*route.HandledRoute {
-	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
-
-	routes := []*route.HandledRoute{}
-
-	if app.Config.EnableSignup {
-		routes = append(routes,
-			route.Post("/accounts").
-				SecuredWith(originSecurity).
-				Handle(handlers.PostAccount(app)),
-			route.Get("/accounts/available").
-				SecuredWith(originSecurity).
-				Handle(handlers.GetAccountsAvailable(app)),
-		)
-	}
-
-	return routes
-}
-
-func Routes(app *app.App) []*route.HandledRoute {
+func privateRoutes(app *app.App) []*route.HandledRoute {
+	var routes []*route.HandledRoute
 	authentication := route.BasicAuthSecurity(app.Config.AuthUsername, app.Config.AuthPassword, "Private AuthN Realm")
 
-	routes := PublicRoutes(app)
-
 	routes = append(routes,
+		route.Get("/").
+			SecuredWith(route.Unsecured()).
+			Handle(handlers.GetRoot(app)),
+
+		route.Get("/jwks").
+			SecuredWith(route.Unsecured()).
+			Handle(handlers.GetJWKs(app)),
+
+		route.Get("/configuration").
+			SecuredWith(route.Unsecured()).
+			Handle(handlers.GetConfiguration(app)),
+
+		route.Get("/metrics").
+			SecuredWith(authentication).
+			Handle(promhttp.Handler()),
+
 		route.Post("/accounts/import").
 			SecuredWith(authentication).
 			Handle(handlers.PostAccountsImport(app)),
@@ -59,6 +56,14 @@ func Routes(app *app.App) []*route.HandledRoute {
 			SecuredWith(authentication).
 			Handle(handlers.DeleteAccount(app)),
 	)
+
+	if app.Actives != nil {
+		routes = append(routes,
+			route.Get("/stats").
+				SecuredWith(authentication).
+				Handle(handlers.GetStats(app)),
+		)
+	}
 
 	return routes
 }
