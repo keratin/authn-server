@@ -1,6 +1,7 @@
 package sessions
 
 import (
+	"github.com/keratin/authn-server/api/handlers"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
 )
@@ -11,26 +12,26 @@ func PublicRoutes(app *app.App) []*route.HandledRoute {
 	routes := []*route.HandledRoute{
 		route.Post("/session").
 			SecuredWith(originSecurity).
-			Handle(PostSession(app)),
+			Handle(handlers.PostSession(app)),
 
 		route.Delete("/session").
 			SecuredWith(originSecurity).
-			Handle(DeleteSession(app)),
+			Handle(handlers.DeleteSession(app)),
 
 		route.Get("/session/refresh").
 			SecuredWith(originSecurity).
-			Handle(GetSessionRefresh(app)),
+			Handle(handlers.GetSessionRefresh(app)),
 	}
 
 	if app.Config.AppPasswordlessTokenURL != nil {
 		routes = append(routes,
 			route.Get("/session/token").
 				SecuredWith(originSecurity).
-				Handle(GetSessionToken(app)),
+				Handle(handlers.GetSessionToken(app)),
 
 			route.Post("/session/token").
 				SecuredWith(originSecurity).
-				Handle(PostSessionToken(app)),
+				Handle(handlers.PostSessionToken(app)),
 		)
 	}
 

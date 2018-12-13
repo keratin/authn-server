@@ -1,6 +1,7 @@
 package oauth
 
 import (
+	"github.com/keratin/authn-server/api/handlers"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
 )
@@ -13,10 +14,10 @@ func PublicRoutes(app *app.App) []*route.HandledRoute {
 		routes = append(routes,
 			route.Get("/oauth/"+providerName).
 				SecuredWith(route.Unsecured()).
-				Handle(GetOauth(app, providerName)),
+				Handle(handlers.GetOauth(app, providerName)),
 			route.Get("/oauth/"+providerName+"/return").
 				SecuredWith(route.Unsecured()).
-				Handle(GetOauthReturn(app, providerName)),
+				Handle(handlers.GetOauthReturn(app, providerName)),
 		)
 	}
 

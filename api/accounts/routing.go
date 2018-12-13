@@ -1,6 +1,7 @@
 package accounts
 
 import (
+	"github.com/keratin/authn-server/api/handlers"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
 )
@@ -14,10 +15,10 @@ func PublicRoutes(app *app.App) []*route.HandledRoute {
 		routes = append(routes,
 			route.Post("/accounts").
 				SecuredWith(originSecurity).
-				Handle(PostAccount(app)),
+				Handle(handlers.PostAccount(app)),
 			route.Get("/accounts/available").
 				SecuredWith(originSecurity).
-				Handle(GetAccountsAvailable(app)),
+				Handle(handlers.GetAccountsAvailable(app)),
 		)
 	}
 
@@ -32,31 +33,31 @@ func Routes(app *app.App) []*route.HandledRoute {
 	routes = append(routes,
 		route.Post("/accounts/import").
 			SecuredWith(authentication).
-			Handle(PostAccountsImport(app)),
+			Handle(handlers.PostAccountsImport(app)),
 
 		route.Get("/accounts/{id:[0-9]+}").
 			SecuredWith(authentication).
-			Handle(GetAccount(app)),
+			Handle(handlers.GetAccount(app)),
 
 		route.Patch("/accounts/{id:[0-9]+}").
 			SecuredWith(authentication).
-			Handle(PatchAccount(app)),
+			Handle(handlers.PatchAccount(app)),
 
 		route.Patch("/accounts/{id:[0-9]+}/lock").
 			SecuredWith(authentication).
-			Handle(PatchAccountLock(app)),
+			Handle(handlers.PatchAccountLock(app)),
 
 		route.Patch("/accounts/{id:[0-9]+}/unlock").
 			SecuredWith(authentication).
-			Handle(PatchAccountUnlock(app)),
+			Handle(handlers.PatchAccountUnlock(app)),
 
 		route.Patch("/accounts/{id:[0-9]+}/expire_password").
 			SecuredWith(authentication).
-			Handle(PatchAccountExpirePassword(app)),
+			Handle(handlers.PatchAccountExpirePassword(app)),
 
 		route.Delete("/accounts/{id:[0-9]+}").
 			SecuredWith(authentication).
-			Handle(DeleteAccount(app)),
+			Handle(handlers.DeleteAccount(app)),
 	)
 
 	return routes

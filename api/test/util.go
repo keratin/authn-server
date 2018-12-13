@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/keratin/authn-server/api/util"
+	"github.com/keratin/authn-server/api/handlers"
 )
 
 func ReadBody(res *http.Response) []byte {
@@ -21,7 +21,7 @@ func ReadBody(res *http.Response) []byte {
 // `inner`, an empty struct that describes the expected (desired) shape of what is inside the
 // envelope.
 func ExtractResult(res *http.Response, inner interface{}) error {
-	return json.Unmarshal(ReadBody(res), &util.ServiceData{inner})
+	return json.Unmarshal(ReadBody(res), &handlers.ServiceData{inner})
 }
 
 // ReadCookie gets a cookie by name.

@@ -7,7 +7,7 @@ import (
 
 	jwt "gopkg.in/square/go-jose.v2/jwt"
 
-	"github.com/keratin/authn-server/api/util"
+	"github.com/keratin/authn-server/api/handlers"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/services"
@@ -20,7 +20,7 @@ import (
 func AssertData(t *testing.T, res *http.Response, expected interface{}) {
 	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
 
-	j, err := json.Marshal(util.ServiceData{expected})
+	j, err := json.Marshal(handlers.ServiceData{expected})
 	require.NoError(t, err)
 	assert.Equal(t, string(j), string(ReadBody(res)))
 }
@@ -28,7 +28,7 @@ func AssertData(t *testing.T, res *http.Response, expected interface{}) {
 func AssertErrors(t *testing.T, res *http.Response, expected services.FieldErrors) {
 	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
 
-	j, err := json.Marshal(util.ServiceErrors{Errors: expected})
+	j, err := json.Marshal(handlers.ServiceErrors{Errors: expected})
 	require.NoError(t, err)
 	assert.Equal(t, string(j), string(ReadBody(res)))
 }
