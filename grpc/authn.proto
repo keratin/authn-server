@@ -88,14 +88,14 @@ service PublicAuthN {
     };
   }
 
-  rpc Login(LoginRequest) returns (SignupResponse) {
+  rpc Login(LoginRequest) returns (SignupResponseEnvelope) {
     option (google.api.http) = {
       post : "/session",
       body : "*"
     };
   }
 
-  rpc RefreshSession(google.protobuf.Empty) returns (SignupResponse) {
+  rpc RefreshSession(google.protobuf.Empty) returns (SignupResponseEnvelope) {
     option (google.api.http) = {
       get : "/session"
     };
@@ -114,7 +114,7 @@ service PublicAuthN {
     };
   }
 
-  rpc ChangePassword(ChangePasswordRequest) returns (SignupResponse) {
+  rpc ChangePassword(ChangePasswordRequest) returns (SignupResponseEnvelope) {
     option (google.api.http) = {
       post : "/password",
       body : "*"
