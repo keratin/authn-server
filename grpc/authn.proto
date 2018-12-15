@@ -72,7 +72,7 @@ message HealthCheckResponse {
 
 message Key {
   string use = 1;
-  repeated string alg = 2;
+  string alg = 2;
   string kty = 3;
   string kid = 4;
   string e = 5;
