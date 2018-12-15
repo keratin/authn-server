@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/keratin/authn-server/api"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data"
+	"github.com/keratin/authn-server/server"
 	"os"
 	"path"
 )
@@ -52,7 +52,7 @@ func serve(cfg *app.Config) {
 		fmt.Println(fmt.Sprintf("PUBLIC_PORT: %d", app.Config.PublicPort))
 	}
 
-	api.Server(app)
+	server.Server(app)
 }
 
 func migrate(cfg *app.Config) {

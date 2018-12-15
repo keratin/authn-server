@@ -10,7 +10,7 @@ clean:
 
 init:
 	which -s ego || go get github.com/benbjohnson/ego/cmd/ego
-	ego api/views
+	ego server/views
 
 # The Linux builder is a Docker container because that's the easiest way to get the toolchain for
 # CGO on a MacOS host.
@@ -80,8 +80,8 @@ benchmarks:
 	docker-compose up -d redis
 	TEST_REDIS_URL=redis://127.0.0.1:8701/12 \
 		go test -run=XXX -bench=. \
-			github.com/keratin/authn-server/api/meta \
-			github.com/keratin/authn-server/api/sessions
+			github.com/keratin/authn-server/server/meta \
+			github.com/keratin/authn-server/server/sessions
 
 # Run migrations
 .PHONY: migrate
