@@ -8,7 +8,7 @@ import (
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
 	"github.com/keratin/authn-server/app/services"
-	"github.com/keratin/authn-server/tokens/sessions"
+	"github.com/keratin/authn-server/app/tokens/sessions"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"net/url"

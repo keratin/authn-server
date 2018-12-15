@@ -8,7 +8,7 @@ import (
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data/mock"
-	"github.com/keratin/authn-server/tokens/sessions"
+	"github.com/keratin/authn-server/app/tokens/sessions"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

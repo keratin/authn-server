@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/tokens/passwordless"
+	"github.com/keratin/authn-server/app/tokens/passwordless"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

@@ -6,8 +6,8 @@ import (
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/models"
 	"github.com/keratin/authn-server/ops"
-	"github.com/keratin/authn-server/tokens/identities"
-	"github.com/keratin/authn-server/tokens/sessions"
+	"github.com/keratin/authn-server/app/tokens/identities"
+	"github.com/keratin/authn-server/app/tokens/sessions"
 	"github.com/pkg/errors"
 )
 

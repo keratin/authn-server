@@ -9,7 +9,7 @@ import (
 	"github.com/keratin/authn-server/lib/route"
 
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/tokens/oauth"
+	"github.com/keratin/authn-server/app/tokens/oauth"
 )
 
 func GetOauth(app *app.App, providerName string) http.HandlerFunc {

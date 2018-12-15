@@ -6,7 +6,7 @@ import (
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/models"
-	"github.com/keratin/authn-server/tokens/passwordless"
+	"github.com/keratin/authn-server/app/tokens/passwordless"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )

@@ -7,7 +7,7 @@ import (
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data"
-	"github.com/keratin/authn-server/tokens/resets"
+	"github.com/keratin/authn-server/app/tokens/resets"
 	"github.com/pkg/errors"
 )
 

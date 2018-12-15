@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/tokens/oauth"
+	"github.com/keratin/authn-server/app/tokens/oauth"
 	"github.com/pkg/errors"
 )
 

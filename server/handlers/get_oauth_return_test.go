@@ -12,7 +12,7 @@ import (
 	"github.com/keratin/authn-server/server/test"
 	oauthlib "github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/lib/route"
-	oauthtoken "github.com/keratin/authn-server/tokens/oauth"
+	oauthtoken "github.com/keratin/authn-server/app/tokens/oauth"
 )
 
 func TestGetOauthReturn(t *testing.T) {
