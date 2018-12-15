@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/models"
+	"github.com/keratin/authn-server/app/models"
 	"github.com/keratin/authn-server/app/services"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

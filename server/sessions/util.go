@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/models"
+	"github.com/keratin/authn-server/app/models"
 	"github.com/keratin/authn-server/app/tokens/sessions"
 )
 

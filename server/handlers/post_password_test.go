@@ -9,7 +9,7 @@ import (
 
 	"github.com/keratin/authn-server/server/test"
 	"github.com/keratin/authn-server/lib/route"
-	"github.com/keratin/authn-server/models"
+	"github.com/keratin/authn-server/app/models"
 	"github.com/keratin/authn-server/app/services"
 	"github.com/keratin/authn-server/app/tokens/resets"
 	"github.com/keratin/authn-server/app/tokens/sessions"

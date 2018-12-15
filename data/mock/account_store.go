@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/keratin/authn-server/models"
+	"github.com/keratin/authn-server/app/models"
 )
 
 type Error struct {

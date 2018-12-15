@@ -4,7 +4,7 @@ import (
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/data"
 	"github.com/keratin/authn-server/lib/route"
-	"github.com/keratin/authn-server/models"
+	"github.com/keratin/authn-server/app/models"
 	"github.com/keratin/authn-server/ops"
 	"github.com/keratin/authn-server/app/tokens/identities"
 	"github.com/keratin/authn-server/app/tokens/sessions"

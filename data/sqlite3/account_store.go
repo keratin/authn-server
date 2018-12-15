@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/keratin/authn-server/models"
+	"github.com/keratin/authn-server/app/models"
 )
 
 type AccountStore struct {
