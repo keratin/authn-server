@@ -8,8 +8,8 @@ import (
 
 	"github.com/go-redis/redis"
 	"github.com/jmoiron/sqlx"
-	dataRedis "github.com/keratin/authn-server/data/redis"
-	"github.com/keratin/authn-server/data/sqlite3"
+	dataRedis "github.com/keratin/authn-server/app/data/redis"
+	"github.com/keratin/authn-server/app/data/sqlite3"
 	"github.com/keratin/authn-server/app/models"
 )
 

@@ -3,7 +3,7 @@ package testers
 import (
 	"testing"
 
-	"github.com/keratin/authn-server/data"
+	"github.com/keratin/authn-server/app/data"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

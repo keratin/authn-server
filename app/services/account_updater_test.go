@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/app/data/mock"
 )
 
 func TestAccountUpdater(t *testing.T) {

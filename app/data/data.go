@@ -8,10 +8,10 @@ import (
 
 	my "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"github.com/keratin/authn-server/data/mock"
-	"github.com/keratin/authn-server/data/mysql"
-	"github.com/keratin/authn-server/data/postgres"
-	"github.com/keratin/authn-server/data/sqlite3"
+	"github.com/keratin/authn-server/app/data/mock"
+	"github.com/keratin/authn-server/app/data/mysql"
+	"github.com/keratin/authn-server/app/data/postgres"
+	"github.com/keratin/authn-server/app/data/sqlite3"
 	sq3 "github.com/mattn/go-sqlite3"
 )
 

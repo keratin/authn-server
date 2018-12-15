@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/keratin/authn-server/data/sqlite3"
-	"github.com/keratin/authn-server/data/testers"
+	"github.com/keratin/authn-server/app/data/sqlite3"
+	"github.com/keratin/authn-server/app/data/testers"
 	"github.com/stretchr/testify/require"
 )
 

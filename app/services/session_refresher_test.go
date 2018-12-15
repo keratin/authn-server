@@ -4,7 +4,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/app/data/mock"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
 	"github.com/keratin/authn-server/app/services"

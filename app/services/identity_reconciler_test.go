@@ -12,7 +12,7 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/app/data/mock"
 )
 
 func TestIdentityReconciler(t *testing.T) {

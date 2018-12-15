@@ -4,13 +4,13 @@ import (
 	"os"
 
 	"github.com/go-redis/redis"
-	"github.com/keratin/authn-server/data"
+	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	dataRedis "github.com/keratin/authn-server/data/redis"
+	dataRedis "github.com/keratin/authn-server/app/data/redis"
 )
 
 type pinger func() bool

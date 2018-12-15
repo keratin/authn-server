@@ -1,7 +1,7 @@
 package services
 
 import (
-	"github.com/keratin/authn-server/data"
+	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/app/models"
 	"github.com/pkg/errors"
 )

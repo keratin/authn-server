@@ -9,7 +9,7 @@ import (
 	"github.com/keratin/authn-server/server/sessions"
 	"github.com/keratin/authn-server/server/test"
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/app/data/mock"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
 	"github.com/stretchr/testify/assert"

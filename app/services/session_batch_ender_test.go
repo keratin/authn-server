@@ -1,7 +1,7 @@
 package services_test
 
 import (
-	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/app/data/mock"
 	"github.com/keratin/authn-server/app/services"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

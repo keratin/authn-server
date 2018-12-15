@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/keratin/authn-server/data/postgres"
-	"github.com/keratin/authn-server/data/testers"
+	"github.com/keratin/authn-server/app/data/postgres"
+	"github.com/keratin/authn-server/app/data/testers"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 )

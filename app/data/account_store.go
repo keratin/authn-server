@@ -3,11 +3,11 @@ package data
 import (
 	"fmt"
 
-	"github.com/keratin/authn-server/data/postgres"
+	"github.com/keratin/authn-server/app/data/postgres"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/keratin/authn-server/data/mysql"
-	"github.com/keratin/authn-server/data/sqlite3"
+	"github.com/keratin/authn-server/app/data/mysql"
+	"github.com/keratin/authn-server/app/data/sqlite3"
 	"github.com/keratin/authn-server/app/models"
 )
 

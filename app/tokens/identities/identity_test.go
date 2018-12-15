@@ -11,7 +11,7 @@ import (
 	jose "gopkg.in/square/go-jose.v2"
 
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/data/mock"
+	"github.com/keratin/authn-server/app/data/mock"
 	"github.com/keratin/authn-server/app/tokens/identities"
 	"github.com/keratin/authn-server/app/tokens/sessions"
 	"github.com/stretchr/testify/assert"
