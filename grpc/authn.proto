@@ -29,6 +29,14 @@ message LoginRequest {
   string password = 2;
 }
 
+message RequestPasswordlessLoginRequest {
+  string username = 1;
+}
+
+message SubmitPasswordlessLoginRequest {
+  string token = 1;
+}
+
 message PasswordResetRequest { string username = 1; }
 
 message ChangePasswordRequest {
@@ -104,6 +112,19 @@ service PublicAuthN {
   rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete : "/session"
+    };
+  }
+
+  rpc RequestPasswordlessLogin(RequestPasswordlessLoginRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      get : "/session/token"
+    };
+  }
+
+  rpc SubmitPasswordlessLogin(SubmitPasswordlessLoginRequest) returns (SignupResponseEnvelope) {
+    option (google.api.http) = {
+      post: "/session/token",
+      body : "*"
     };
   }
 

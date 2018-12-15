@@ -91,6 +91,36 @@ func request_PublicAuthN_Logout_0(ctx context.Context, marshaler runtime.Marshal
 }
 
 var (
+	filter_PublicAuthN_RequestPasswordlessLogin_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
+func request_PublicAuthN_RequestPasswordlessLogin_0(ctx context.Context, marshaler runtime.Marshaler, client PublicAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq RequestPasswordlessLoginRequest
+	var metadata runtime.ServerMetadata
+
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_PublicAuthN_RequestPasswordlessLogin_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.RequestPasswordlessLogin(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func request_PublicAuthN_SubmitPasswordlessLogin_0(ctx context.Context, marshaler runtime.Marshaler, client PublicAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq SubmitPasswordlessLoginRequest
+	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.SubmitPasswordlessLogin(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+var (
 	filter_PublicAuthN_RequestPasswordReset_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
@@ -347,6 +377,46 @@ func RegisterPublicAuthNHandlerClient(ctx context.Context, mux *runtime.ServeMux
 
 	})
 
+	mux.Handle("GET", pattern_PublicAuthN_RequestPasswordlessLogin_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_PublicAuthN_RequestPasswordlessLogin_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_PublicAuthN_RequestPasswordlessLogin_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_PublicAuthN_SubmitPasswordlessLogin_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_PublicAuthN_SubmitPasswordlessLogin_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_PublicAuthN_SubmitPasswordlessLogin_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("GET", pattern_PublicAuthN_RequestPasswordReset_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -501,6 +571,10 @@ var (
 
 	pattern_PublicAuthN_Logout_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"session"}, ""))
 
+	pattern_PublicAuthN_RequestPasswordlessLogin_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"session", "token"}, ""))
+
+	pattern_PublicAuthN_SubmitPasswordlessLogin_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"session", "token"}, ""))
+
 	pattern_PublicAuthN_RequestPasswordReset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"password", "reset"}, ""))
 
 	pattern_PublicAuthN_ChangePassword_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"password"}, ""))
@@ -526,6 +600,10 @@ var (
 	forward_PublicAuthN_RefreshSession_0 = runtime.ForwardResponseMessage
 
 	forward_PublicAuthN_Logout_0 = runtime.ForwardResponseMessage
+
+	forward_PublicAuthN_RequestPasswordlessLogin_0 = runtime.ForwardResponseMessage
+
+	forward_PublicAuthN_SubmitPasswordlessLogin_0 = runtime.ForwardResponseMessage
 
 	forward_PublicAuthN_RequestPasswordReset_0 = runtime.ForwardResponseMessage
 
