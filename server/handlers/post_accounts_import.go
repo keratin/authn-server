@@ -5,7 +5,7 @@ import (
 	"regexp"
 
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/services"
+	"github.com/keratin/authn-server/app/services"
 )
 
 func PostAccountsImport(app *app.App) http.HandlerFunc {

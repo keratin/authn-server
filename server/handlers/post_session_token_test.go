@@ -10,7 +10,7 @@ import (
 	"github.com/keratin/authn-server/server/test"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/models"
-	"github.com/keratin/authn-server/services"
+	"github.com/keratin/authn-server/app/services"
 	"github.com/keratin/authn-server/tokens/passwordless"
 	"github.com/keratin/authn-server/tokens/sessions"
 	"github.com/pkg/errors"

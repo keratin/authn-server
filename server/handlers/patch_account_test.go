@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/keratin/authn-server/lib/route"
-	"github.com/keratin/authn-server/services"
+	"github.com/keratin/authn-server/app/services"
 
 	"github.com/keratin/authn-server/server/test"
 	"github.com/stretchr/testify/assert"

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/services"
+	"github.com/keratin/authn-server/app/services"
 )
 
 func GetAccountsAvailable(app *app.App) http.HandlerFunc {

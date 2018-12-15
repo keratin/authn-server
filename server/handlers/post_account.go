@@ -6,7 +6,7 @@ import (
 	"github.com/keratin/authn-server/server/sessions"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
-	"github.com/keratin/authn-server/services"
+	"github.com/keratin/authn-server/app/services"
 )
 
 func PostAccount(app *app.App) http.HandlerFunc {
