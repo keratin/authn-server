@@ -56,7 +56,7 @@ github.com/prometheus/client_model v0.0.0-20170216185247-6f3806018612 h1:13pIdM2
 github.com/prometheus/client_model v0.0.0-20170216185247-6f3806018612/go.mod h1:MbSGuTsp3dbXC40dX6PRTWyKYBIrTGTE9sqQNg2J8bo=
 github.com/prometheus/common v0.0.0-20171104095907-e3fb1a1acd76 h1:g2v6dZgmqj2wYGPgHYX5WVaQ9IwV1ylsSiD+f8RvS1Y=
 github.com/prometheus/common v0.0.0-20171104095907-e3fb1a1acd76/go.mod h1:daVV7qP5qjZbuso7PdcryaAu0sAZbrN9i7WWcTMWvro=
-github.com/prometheus/procfs v0.0.0-20171017214025-a6e9df898b13 h1:iAstix1KspoLBRl8NoQH8wCdrkaLCdcHhF98EE5b3dY=
+github.com/prometheus/procfs v0.0.0-20171017214025-a6e9df898b13 h1:leRfx9kcgnSDkqAFhaaUcRqpAZgnFdwZkZcdRcea1h0=
 github.com/prometheus/procfs v0.0.0-20171017214025-a6e9df898b13/go.mod h1:c3At6R/oaqEKCNdg8wHV1ftS6bRYblBhIjjI8uT2IGk=
 github.com/sirupsen/logrus v1.0.5 h1:8c8b5uO0zS4X6RPl/sd1ENwSkIc0/H2PaHxE3udaE8I=
 github.com/sirupsen/logrus v1.0.5/go.mod h1:pMByvHTf9Beacp5x1UXfOR9xyW/9antXMhjMPG0dEzc=
