@@ -31,8 +31,8 @@ type FieldErrors []fieldError
 
 func (es FieldErrors) Error() string {
 	var buf = make([]string, len(es))
-	for _, e := range es {
-		buf = append(buf, e.String())
+	for i, e := range es {
+		buf[i] = e.String()
 	}
 	return strings.Join(buf, ", ")
 }
