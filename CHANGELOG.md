@@ -6,6 +6,10 @@
 
 * Query optimizations on private admin endpoints.
 
+### Fixed
+
+* panic while evaluating some utf8 password characters
+
 ## 1.5.0
 
 ### Added
