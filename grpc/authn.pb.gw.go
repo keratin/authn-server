@@ -12,7 +12,6 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/gogo/protobuf/types"
 	"github.com/golang/protobuf/proto"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/utilities"
@@ -29,7 +28,7 @@ var _ status.Status
 var _ = runtime.String
 var _ = utilities.NewDoubleArray
 
-func request_PublicAuthN_Signup_0(ctx context.Context, marshaler runtime.Marshaler, client PublicAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_SignupService_Signup_0(ctx context.Context, marshaler runtime.Marshaler, client SignupServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq SignupRequest
 	var metadata runtime.ServerMetadata
 
@@ -43,18 +42,65 @@ func request_PublicAuthN_Signup_0(ctx context.Context, marshaler runtime.Marshal
 }
 
 var (
-	filter_PublicAuthN_IsUsernameAvailable_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+	filter_SignupService_IsUsernameAvailable_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
-func request_PublicAuthN_IsUsernameAvailable_0(ctx context.Context, marshaler runtime.Marshaler, client PublicAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_SignupService_IsUsernameAvailable_0(ctx context.Context, marshaler runtime.Marshaler, client SignupServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq IsUsernameAvailableRequest
 	var metadata runtime.ServerMetadata
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_PublicAuthN_IsUsernameAvailable_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_SignupService_IsUsernameAvailable_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
 	msg, err := client.IsUsernameAvailable(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+var (
+	filter_PasswordResetService_RequestPasswordReset_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
+func request_PasswordResetService_RequestPasswordReset_0(ctx context.Context, marshaler runtime.Marshaler, client PasswordResetServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq PasswordResetRequest
+	var metadata runtime.ServerMetadata
+
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_PasswordResetService_RequestPasswordReset_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.RequestPasswordReset(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+var (
+	filter_PasswordlessService_RequestPasswordlessLogin_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
+func request_PasswordlessService_RequestPasswordlessLogin_0(ctx context.Context, marshaler runtime.Marshaler, client PasswordlessServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq RequestPasswordlessLoginRequest
+	var metadata runtime.ServerMetadata
+
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_PasswordlessService_RequestPasswordlessLogin_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.RequestPasswordlessLogin(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func request_PasswordlessService_SubmitPasswordlessLogin_0(ctx context.Context, marshaler runtime.Marshaler, client PasswordlessServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq SubmitPasswordlessLoginRequest
+	var metadata runtime.ServerMetadata
+
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.SubmitPasswordlessLogin(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
@@ -72,17 +118,8 @@ func request_PublicAuthN_Login_0(ctx context.Context, marshaler runtime.Marshale
 
 }
 
-func request_PublicAuthN_RefreshSession_0(ctx context.Context, marshaler runtime.Marshaler, client PublicAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq types.Empty
-	var metadata runtime.ServerMetadata
-
-	msg, err := client.RefreshSession(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-
-}
-
 func request_PublicAuthN_Logout_0(ctx context.Context, marshaler runtime.Marshaler, client PublicAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq types.Empty
+	var protoReq LogoutRequest
 	var metadata runtime.ServerMetadata
 
 	msg, err := client.Logout(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -90,49 +127,11 @@ func request_PublicAuthN_Logout_0(ctx context.Context, marshaler runtime.Marshal
 
 }
 
-var (
-	filter_PublicAuthN_RequestPasswordlessLogin_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
-)
-
-func request_PublicAuthN_RequestPasswordlessLogin_0(ctx context.Context, marshaler runtime.Marshaler, client PublicAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq RequestPasswordlessLoginRequest
+func request_PublicAuthN_RefreshSession_0(ctx context.Context, marshaler runtime.Marshaler, client PublicAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq RefreshSessionRequest
 	var metadata runtime.ServerMetadata
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_PublicAuthN_RequestPasswordlessLogin_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-
-	msg, err := client.RequestPasswordlessLogin(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-
-}
-
-func request_PublicAuthN_SubmitPasswordlessLogin_0(ctx context.Context, marshaler runtime.Marshaler, client PublicAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq SubmitPasswordlessLoginRequest
-	var metadata runtime.ServerMetadata
-
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-
-	msg, err := client.SubmitPasswordlessLogin(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-
-}
-
-var (
-	filter_PublicAuthN_RequestPasswordReset_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
-)
-
-func request_PublicAuthN_RequestPasswordReset_0(ctx context.Context, marshaler runtime.Marshaler, client PublicAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq PasswordResetRequest
-	var metadata runtime.ServerMetadata
-
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_PublicAuthN_RequestPasswordReset_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-
-	msg, err := client.RequestPasswordReset(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.RefreshSession(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
@@ -150,94 +149,269 @@ func request_PublicAuthN_ChangePassword_0(ctx context.Context, marshaler runtime
 
 }
 
-var (
-	filter_PublicAuthN_BeginOAuth_0 = &utilities.DoubleArray{Encoding: map[string]int{"providerName": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
-)
-
-func request_PublicAuthN_BeginOAuth_0(ctx context.Context, marshaler runtime.Marshaler, client PublicAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq BeginOAuthRequest
-	var metadata runtime.ServerMetadata
-
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["providerName"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "providerName")
-	}
-
-	protoReq.ProviderName, err = runtime.String(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "providerName", err)
-	}
-
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_PublicAuthN_BeginOAuth_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-
-	msg, err := client.BeginOAuth(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-
-}
-
-func request_PublicAuthN_OAuthReturn_0(ctx context.Context, marshaler runtime.Marshaler, client PublicAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq OAuthReturnRequest
-	var metadata runtime.ServerMetadata
-
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["providerName"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "providerName")
-	}
-
-	protoReq.ProviderName, err = runtime.String(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "providerName", err)
-	}
-
-	msg, err := client.OAuthReturn(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-
-}
-
-func request_PublicAuthN_ServiceConfiguration_0(ctx context.Context, marshaler runtime.Marshaler, client PublicAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq types.Empty
-	var metadata runtime.ServerMetadata
-
-	msg, err := client.ServiceConfiguration(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-
-}
-
-func request_PublicAuthN_JWKS_0(ctx context.Context, marshaler runtime.Marshaler, client PublicAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq types.Empty
-	var metadata runtime.ServerMetadata
-
-	msg, err := client.JWKS(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-
-}
-
 func request_PublicAuthN_HealthCheck_0(ctx context.Context, marshaler runtime.Marshaler, client PublicAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq types.Empty
+	var protoReq HealthCheckRequest
 	var metadata runtime.ServerMetadata
 
 	msg, err := client.HealthCheck(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
+
+// RegisterSignupServiceHandlerFromEndpoint is same as RegisterSignupServiceHandler but
+// automatically dials to "endpoint" and closes the connection when "ctx" gets done.
+func RegisterSignupServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
+	conn, err := grpc.Dial(endpoint, opts...)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			if cerr := conn.Close(); cerr != nil {
+				grpclog.Infof("Failed to close conn to %s: %v", endpoint, cerr)
+			}
+			return
+		}
+		go func() {
+			<-ctx.Done()
+			if cerr := conn.Close(); cerr != nil {
+				grpclog.Infof("Failed to close conn to %s: %v", endpoint, cerr)
+			}
+		}()
+	}()
+
+	return RegisterSignupServiceHandler(ctx, mux, conn)
+}
+
+// RegisterSignupServiceHandler registers the http handlers for service SignupService to "mux".
+// The handlers forward requests to the grpc endpoint over "conn".
+func RegisterSignupServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return RegisterSignupServiceHandlerClient(ctx, mux, NewSignupServiceClient(conn))
+}
+
+// RegisterSignupServiceHandlerClient registers the http handlers for service SignupService
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "SignupServiceClient".
+// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "SignupServiceClient"
+// doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
+// "SignupServiceClient" to call the correct interceptors.
+func RegisterSignupServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client SignupServiceClient) error {
+
+	mux.Handle("POST", pattern_SignupService_Signup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_SignupService_Signup_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_SignupService_Signup_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_SignupService_IsUsernameAvailable_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_SignupService_IsUsernameAvailable_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_SignupService_IsUsernameAvailable_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	return nil
+}
+
+var (
+	pattern_SignupService_Signup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"accounts"}, ""))
+
+	pattern_SignupService_IsUsernameAvailable_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"accounts", "available"}, ""))
+)
+
+var (
+	forward_SignupService_Signup_0 = runtime.ForwardResponseMessage
+
+	forward_SignupService_IsUsernameAvailable_0 = runtime.ForwardResponseMessage
+)
+
+// RegisterPasswordResetServiceHandlerFromEndpoint is same as RegisterPasswordResetServiceHandler but
+// automatically dials to "endpoint" and closes the connection when "ctx" gets done.
+func RegisterPasswordResetServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
+	conn, err := grpc.Dial(endpoint, opts...)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			if cerr := conn.Close(); cerr != nil {
+				grpclog.Infof("Failed to close conn to %s: %v", endpoint, cerr)
+			}
+			return
+		}
+		go func() {
+			<-ctx.Done()
+			if cerr := conn.Close(); cerr != nil {
+				grpclog.Infof("Failed to close conn to %s: %v", endpoint, cerr)
+			}
+		}()
+	}()
+
+	return RegisterPasswordResetServiceHandler(ctx, mux, conn)
+}
+
+// RegisterPasswordResetServiceHandler registers the http handlers for service PasswordResetService to "mux".
+// The handlers forward requests to the grpc endpoint over "conn".
+func RegisterPasswordResetServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return RegisterPasswordResetServiceHandlerClient(ctx, mux, NewPasswordResetServiceClient(conn))
+}
+
+// RegisterPasswordResetServiceHandlerClient registers the http handlers for service PasswordResetService
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "PasswordResetServiceClient".
+// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "PasswordResetServiceClient"
+// doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
+// "PasswordResetServiceClient" to call the correct interceptors.
+func RegisterPasswordResetServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client PasswordResetServiceClient) error {
+
+	mux.Handle("GET", pattern_PasswordResetService_RequestPasswordReset_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_PasswordResetService_RequestPasswordReset_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_PasswordResetService_RequestPasswordReset_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	return nil
+}
+
+var (
+	pattern_PasswordResetService_RequestPasswordReset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"password", "reset"}, ""))
+)
+
+var (
+	forward_PasswordResetService_RequestPasswordReset_0 = runtime.ForwardResponseMessage
+)
+
+// RegisterPasswordlessServiceHandlerFromEndpoint is same as RegisterPasswordlessServiceHandler but
+// automatically dials to "endpoint" and closes the connection when "ctx" gets done.
+func RegisterPasswordlessServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
+	conn, err := grpc.Dial(endpoint, opts...)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err != nil {
+			if cerr := conn.Close(); cerr != nil {
+				grpclog.Infof("Failed to close conn to %s: %v", endpoint, cerr)
+			}
+			return
+		}
+		go func() {
+			<-ctx.Done()
+			if cerr := conn.Close(); cerr != nil {
+				grpclog.Infof("Failed to close conn to %s: %v", endpoint, cerr)
+			}
+		}()
+	}()
+
+	return RegisterPasswordlessServiceHandler(ctx, mux, conn)
+}
+
+// RegisterPasswordlessServiceHandler registers the http handlers for service PasswordlessService to "mux".
+// The handlers forward requests to the grpc endpoint over "conn".
+func RegisterPasswordlessServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return RegisterPasswordlessServiceHandlerClient(ctx, mux, NewPasswordlessServiceClient(conn))
+}
+
+// RegisterPasswordlessServiceHandlerClient registers the http handlers for service PasswordlessService
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "PasswordlessServiceClient".
+// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "PasswordlessServiceClient"
+// doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
+// "PasswordlessServiceClient" to call the correct interceptors.
+func RegisterPasswordlessServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client PasswordlessServiceClient) error {
+
+	mux.Handle("GET", pattern_PasswordlessService_RequestPasswordlessLogin_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_PasswordlessService_RequestPasswordlessLogin_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_PasswordlessService_RequestPasswordlessLogin_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_PasswordlessService_SubmitPasswordlessLogin_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_PasswordlessService_SubmitPasswordlessLogin_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_PasswordlessService_SubmitPasswordlessLogin_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	return nil
+}
+
+var (
+	pattern_PasswordlessService_RequestPasswordlessLogin_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"session", "token"}, ""))
+
+	pattern_PasswordlessService_SubmitPasswordlessLogin_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"session", "token"}, ""))
+)
+
+var (
+	forward_PasswordlessService_RequestPasswordlessLogin_0 = runtime.ForwardResponseMessage
+
+	forward_PasswordlessService_SubmitPasswordlessLogin_0 = runtime.ForwardResponseMessage
+)
 
 // RegisterPublicAuthNHandlerFromEndpoint is same as RegisterPublicAuthNHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
@@ -277,46 +451,6 @@ func RegisterPublicAuthNHandler(ctx context.Context, mux *runtime.ServeMux, conn
 // "PublicAuthNClient" to call the correct interceptors.
 func RegisterPublicAuthNHandlerClient(ctx context.Context, mux *runtime.ServeMux, client PublicAuthNClient) error {
 
-	mux.Handle("POST", pattern_PublicAuthN_Signup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_PublicAuthN_Signup_0(rctx, inboundMarshaler, client, req, pathParams)
-		ctx = runtime.NewServerMetadataContext(ctx, md)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_PublicAuthN_Signup_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
-	mux.Handle("GET", pattern_PublicAuthN_IsUsernameAvailable_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_PublicAuthN_IsUsernameAvailable_0(rctx, inboundMarshaler, client, req, pathParams)
-		ctx = runtime.NewServerMetadataContext(ctx, md)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_PublicAuthN_IsUsernameAvailable_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
 	mux.Handle("POST", pattern_PublicAuthN_Login_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -334,26 +468,6 @@ func RegisterPublicAuthNHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		}
 
 		forward_PublicAuthN_Login_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
-	mux.Handle("GET", pattern_PublicAuthN_RefreshSession_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_PublicAuthN_RefreshSession_0(rctx, inboundMarshaler, client, req, pathParams)
-		ctx = runtime.NewServerMetadataContext(ctx, md)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_PublicAuthN_RefreshSession_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -377,7 +491,7 @@ func RegisterPublicAuthNHandlerClient(ctx context.Context, mux *runtime.ServeMux
 
 	})
 
-	mux.Handle("GET", pattern_PublicAuthN_RequestPasswordlessLogin_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_PublicAuthN_RefreshSession_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -386,54 +500,14 @@ func RegisterPublicAuthNHandlerClient(ctx context.Context, mux *runtime.ServeMux
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_PublicAuthN_RequestPasswordlessLogin_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_PublicAuthN_RefreshSession_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_PublicAuthN_RequestPasswordlessLogin_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
-	mux.Handle("POST", pattern_PublicAuthN_SubmitPasswordlessLogin_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_PublicAuthN_SubmitPasswordlessLogin_0(rctx, inboundMarshaler, client, req, pathParams)
-		ctx = runtime.NewServerMetadataContext(ctx, md)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_PublicAuthN_SubmitPasswordlessLogin_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
-	mux.Handle("GET", pattern_PublicAuthN_RequestPasswordReset_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_PublicAuthN_RequestPasswordReset_0(rctx, inboundMarshaler, client, req, pathParams)
-		ctx = runtime.NewServerMetadataContext(ctx, md)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_PublicAuthN_RequestPasswordReset_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PublicAuthN_RefreshSession_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -454,86 +528,6 @@ func RegisterPublicAuthNHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		}
 
 		forward_PublicAuthN_ChangePassword_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
-	mux.Handle("GET", pattern_PublicAuthN_BeginOAuth_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_PublicAuthN_BeginOAuth_0(rctx, inboundMarshaler, client, req, pathParams)
-		ctx = runtime.NewServerMetadataContext(ctx, md)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_PublicAuthN_BeginOAuth_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
-	mux.Handle("GET", pattern_PublicAuthN_OAuthReturn_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_PublicAuthN_OAuthReturn_0(rctx, inboundMarshaler, client, req, pathParams)
-		ctx = runtime.NewServerMetadataContext(ctx, md)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_PublicAuthN_OAuthReturn_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
-	mux.Handle("GET", pattern_PublicAuthN_ServiceConfiguration_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_PublicAuthN_ServiceConfiguration_0(rctx, inboundMarshaler, client, req, pathParams)
-		ctx = runtime.NewServerMetadataContext(ctx, md)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_PublicAuthN_ServiceConfiguration_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
-	mux.Handle("GET", pattern_PublicAuthN_JWKS_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_PublicAuthN_JWKS_0(rctx, inboundMarshaler, client, req, pathParams)
-		ctx = runtime.NewServerMetadataContext(ctx, md)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_PublicAuthN_JWKS_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -561,61 +555,25 @@ func RegisterPublicAuthNHandlerClient(ctx context.Context, mux *runtime.ServeMux
 }
 
 var (
-	pattern_PublicAuthN_Signup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"accounts"}, ""))
-
-	pattern_PublicAuthN_IsUsernameAvailable_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"accounts", "available"}, ""))
-
 	pattern_PublicAuthN_Login_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"session"}, ""))
-
-	pattern_PublicAuthN_RefreshSession_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"session"}, ""))
 
 	pattern_PublicAuthN_Logout_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"session"}, ""))
 
-	pattern_PublicAuthN_RequestPasswordlessLogin_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"session", "token"}, ""))
-
-	pattern_PublicAuthN_SubmitPasswordlessLogin_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"session", "token"}, ""))
-
-	pattern_PublicAuthN_RequestPasswordReset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"password", "reset"}, ""))
+	pattern_PublicAuthN_RefreshSession_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"session", "refresh"}, ""))
 
 	pattern_PublicAuthN_ChangePassword_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"password"}, ""))
-
-	pattern_PublicAuthN_BeginOAuth_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"oauth", "providerName"}, ""))
-
-	pattern_PublicAuthN_OAuthReturn_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"oauth", "providerName", "return"}, ""))
-
-	pattern_PublicAuthN_ServiceConfiguration_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"configuration"}, ""))
-
-	pattern_PublicAuthN_JWKS_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"jwks"}, ""))
 
 	pattern_PublicAuthN_HealthCheck_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"health"}, ""))
 )
 
 var (
-	forward_PublicAuthN_Signup_0 = runtime.ForwardResponseMessage
-
-	forward_PublicAuthN_IsUsernameAvailable_0 = runtime.ForwardResponseMessage
-
 	forward_PublicAuthN_Login_0 = runtime.ForwardResponseMessage
-
-	forward_PublicAuthN_RefreshSession_0 = runtime.ForwardResponseMessage
 
 	forward_PublicAuthN_Logout_0 = runtime.ForwardResponseMessage
 
-	forward_PublicAuthN_RequestPasswordlessLogin_0 = runtime.ForwardResponseMessage
-
-	forward_PublicAuthN_SubmitPasswordlessLogin_0 = runtime.ForwardResponseMessage
-
-	forward_PublicAuthN_RequestPasswordReset_0 = runtime.ForwardResponseMessage
+	forward_PublicAuthN_RefreshSession_0 = runtime.ForwardResponseMessage
 
 	forward_PublicAuthN_ChangePassword_0 = runtime.ForwardResponseMessage
-
-	forward_PublicAuthN_BeginOAuth_0 = runtime.ForwardResponseMessage
-
-	forward_PublicAuthN_OAuthReturn_0 = runtime.ForwardResponseMessage
-
-	forward_PublicAuthN_ServiceConfiguration_0 = runtime.ForwardResponseMessage
-
-	forward_PublicAuthN_JWKS_0 = runtime.ForwardResponseMessage
 
 	forward_PublicAuthN_HealthCheck_0 = runtime.ForwardResponseMessage
 )

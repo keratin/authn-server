@@ -1,34 +1,39 @@
 syntax = "proto3";
 
-package grpc;
+package keratin.authn;
 option go_package = "grpc";
 
-import "google/protobuf/empty.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 
-message GetAccountRequest { string id = 1; }
+option (gogoproto.populate_all) = true;
+
+message GetAccountRequest { int64 id = 1; }
 
 message GetAccountResponse {
   int64 id = 1;
   string username = 2;
-  bool locked = 3;
-  bool deleted = 4;
+  bool locked = 3 [(gogoproto.jsontag) = "locked" ];
+  bool deleted = 4 [(gogoproto.jsontag) = "deleted" ];
 }
 
 message GetAccountResponseEnvelope { GetAccountResponse result = 1; }
 
 message UpdateAccountRequest {
-  string id = 1;
+  int64 id = 1;
   string username = 2;
 }
 
+message UpdateAccountResponse {}
 
-message LockAccountRequest { string id = 1; }
+message LockAccountRequest { int64 id = 1; }
+message LockAccountResponse {}
 
-message UnlockAccountRequest { string id = 1; }
+message UnlockAccountRequest { int64 id = 1; }
+message UnlockAccountResponse {}
 
-message ArchiveAccountRequest { string id = 1; }
+message ArchiveAccountRequest { int64 id = 1; }
+message ArchiveAccountResponse {}
 
 message ImportAccountRequst {
   string username = 1;
@@ -39,66 +44,118 @@ message ImportAccountResponse { int64 id = 1 [ (gogoproto.jsontag) = "id" ]; }
 
 message ImportAccountResponseEnvelope { ImportAccountResponse result = 1; }
 
+message ExpirePasswordRequest { int64 id = 1; }
+message ExpirePasswordResponse {}
 
-message ExpirePasswordRequest { string id = 1; }
+message JWKSRequest {}
+message Key {
+  string use = 1;
+  string alg = 2;
+  string kty = 3;
+  string kid = 4;
+  string e = 5;
+  string n = 6;
+}
+message JWKSResponse { repeated Key keys = 1; }
 
+message ServiceStatsRequest {}
 message ServiceStatsResponse {
-    message active_stats {
-        map<string, int64> daily = 1;
-        map<string, int64> weekly = 2;
-        map<string, int64> monthly = 3;
-    }
-    active_stats actives = 1;
+  message active_stats {
+    map<string, int64> daily = 1;
+    map<string, int64> weekly = 2;
+    map<string, int64> monthly = 3;
+  }
+  active_stats actives = 1;
 }
 
-service AdminAuthN {
+message ServiceConfigurationRequest {}
+message Configuration {
+  string issuer = 1;
+  repeated string response_types_supported = 2;
+  repeated string subject_types_supported = 3;
+  repeated string id_token_signing_alg_values_supported = 4;
+  repeated string claims_supported = 5;
+  string jwks_uri = 6;
+}
+
+service UnsecuredAdminAuthN {
+  rpc JWKS(JWKSRequest) returns (JWKSResponse) {
+    option (google.api.http) = {
+      get : "/jwks"
+    };
+  }
+
+  rpc ServiceConfiguration(ServiceConfigurationRequest)
+      returns (Configuration) {
+    option (google.api.http) = {
+      get : "/configuration"
+    };
+  }
+}
+
+service SecuredAdminAuthN {
+  rpc ImportAccount(ImportAccountRequst)
+      returns (ImportAccountResponseEnvelope) {
+    option (google.api.http) = {
+      post : "/accounts/import"
+      body : "*"
+    };
+  }
 
   rpc GetAccount(GetAccountRequest) returns (GetAccountResponseEnvelope) {
     option (google.api.http) = {
-      get : "/accounts/{id}",
+      get : "/accounts/{id}"
     };
   }
 
-  rpc UpdateAccount(UpdateAccountRequest) returns (google.protobuf.Empty) {
+  rpc UpdateAccount(UpdateAccountRequest) returns (UpdateAccountResponse) {
     option (google.api.http) = {
-      put : "/accounts/{id}",
+      put : "/accounts/{id}"
       body : "username"
+      additional_bindings : {
+        patch : "/accounts/{id}"
+        body : "username"
+      }
     };
   }
 
-  rpc LockAccount(LockAccountRequest) returns (google.protobuf.Empty) {
+  rpc LockAccount(LockAccountRequest) returns (LockAccountResponse) {
     option (google.api.http) = {
       put : "/accounts/{id}/lock"
+      additional_bindings: {
+        patch: "/accounts/{id}/lock"
+      }
     };
   }
 
-  rpc UnlockAcount(UnlockAccountRequest) returns (google.protobuf.Empty) {
+  rpc UnlockAcount(UnlockAccountRequest) returns (UnlockAccountResponse) {
     option (google.api.http) = {
       put : "/accounts/{id}/unlock"
+      additional_bindings: {
+        patch: "/accounts/{id}/unlock"
+      }
     };
   }
 
-  rpc ArchiveAccount(ArchiveAccountRequest) returns (google.protobuf.Empty) {
+  rpc ArchiveAccount(ArchiveAccountRequest) returns (ArchiveAccountResponse) {
     option (google.api.http) = {
       delete : "/accounts/{id}"
     };
   }
 
-  rpc ImportAccount(ImportAccountRequst)
-      returns (ImportAccountResponseEnvelope) {
-    option (google.api.http) = {
-      post : "/accounts/import",
-      body : "*"
-    };
-  }
-
-  rpc ExpirePassword(ExpirePasswordRequest) returns (google.protobuf.Empty) {
+  rpc ExpirePassword(ExpirePasswordRequest) returns (ExpirePasswordResponse) {
     option (google.api.http) = {
       put : "/accounts/{id}/expire_password"
+      additional_bindings: {
+        patch: "/accounts/{id}/expire_password"
+      }
     };
   }
+}
 
-  rpc ServiceStats(google.protobuf.Empty) returns (ServiceStatsResponse) {
+// Secured. Only registered if Redis is available.
+service AuthNActives {
+  rpc ServiceStats(ServiceStatsRequest) returns (ServiceStatsResponse) {
     option (google.api.http) = {
       get : "/stats"
     };

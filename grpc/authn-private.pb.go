@@ -8,7 +8,6 @@ import fmt "fmt"
 import math "math"
 import _ "github.com/gogo/googleapis/google/api"
 import _ "github.com/gogo/protobuf/gogoproto"
-import types "github.com/gogo/protobuf/types"
 
 import strings "strings"
 import reflect "reflect"
@@ -33,7 +32,7 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 type GetAccountRequest struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
@@ -41,7 +40,7 @@ type GetAccountRequest struct {
 func (m *GetAccountRequest) Reset()      { *m = GetAccountRequest{} }
 func (*GetAccountRequest) ProtoMessage() {}
 func (*GetAccountRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_d4727a028c8ad90a, []int{0}
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{0}
 }
 func (m *GetAccountRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -70,18 +69,18 @@ func (m *GetAccountRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GetAccountRequest proto.InternalMessageInfo
 
-func (m *GetAccountRequest) GetId() string {
+func (m *GetAccountRequest) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
-	return ""
+	return 0
 }
 
 type GetAccountResponse struct {
 	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Username             string   `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Locked               bool     `protobuf:"varint,3,opt,name=locked,proto3" json:"locked,omitempty"`
-	Deleted              bool     `protobuf:"varint,4,opt,name=deleted,proto3" json:"deleted,omitempty"`
+	Locked               bool     `protobuf:"varint,3,opt,name=locked,proto3" json:"locked"`
+	Deleted              bool     `protobuf:"varint,4,opt,name=deleted,proto3" json:"deleted"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
@@ -89,7 +88,7 @@ type GetAccountResponse struct {
 func (m *GetAccountResponse) Reset()      { *m = GetAccountResponse{} }
 func (*GetAccountResponse) ProtoMessage() {}
 func (*GetAccountResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_d4727a028c8ad90a, []int{1}
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{1}
 }
 func (m *GetAccountResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -155,7 +154,7 @@ type GetAccountResponseEnvelope struct {
 func (m *GetAccountResponseEnvelope) Reset()      { *m = GetAccountResponseEnvelope{} }
 func (*GetAccountResponseEnvelope) ProtoMessage() {}
 func (*GetAccountResponseEnvelope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_d4727a028c8ad90a, []int{2}
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{2}
 }
 func (m *GetAccountResponseEnvelope) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -192,7 +191,7 @@ func (m *GetAccountResponseEnvelope) GetResult() *GetAccountResponse {
 }
 
 type UpdateAccountRequest struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Username             string   `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -201,7 +200,7 @@ type UpdateAccountRequest struct {
 func (m *UpdateAccountRequest) Reset()      { *m = UpdateAccountRequest{} }
 func (*UpdateAccountRequest) ProtoMessage() {}
 func (*UpdateAccountRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_d4727a028c8ad90a, []int{3}
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{3}
 }
 func (m *UpdateAccountRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -230,11 +229,11 @@ func (m *UpdateAccountRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_UpdateAccountRequest proto.InternalMessageInfo
 
-func (m *UpdateAccountRequest) GetId() string {
+func (m *UpdateAccountRequest) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
-	return ""
+	return 0
 }
 
 func (m *UpdateAccountRequest) GetUsername() string {
@@ -244,8 +243,45 @@ func (m *UpdateAccountRequest) GetUsername() string {
 	return ""
 }
 
+type UpdateAccountResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *UpdateAccountResponse) Reset()      { *m = UpdateAccountResponse{} }
+func (*UpdateAccountResponse) ProtoMessage() {}
+func (*UpdateAccountResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{4}
+}
+func (m *UpdateAccountResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *UpdateAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_UpdateAccountResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *UpdateAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateAccountResponse.Merge(dst, src)
+}
+func (m *UpdateAccountResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *UpdateAccountResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdateAccountResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UpdateAccountResponse proto.InternalMessageInfo
+
 type LockAccountRequest struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
@@ -253,7 +289,7 @@ type LockAccountRequest struct {
 func (m *LockAccountRequest) Reset()      { *m = LockAccountRequest{} }
 func (*LockAccountRequest) ProtoMessage() {}
 func (*LockAccountRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_d4727a028c8ad90a, []int{4}
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{5}
 }
 func (m *LockAccountRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -282,15 +318,52 @@ func (m *LockAccountRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_LockAccountRequest proto.InternalMessageInfo
 
-func (m *LockAccountRequest) GetId() string {
+func (m *LockAccountRequest) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
-	return ""
+	return 0
 }
 
+type LockAccountResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *LockAccountResponse) Reset()      { *m = LockAccountResponse{} }
+func (*LockAccountResponse) ProtoMessage() {}
+func (*LockAccountResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{6}
+}
+func (m *LockAccountResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LockAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LockAccountResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *LockAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LockAccountResponse.Merge(dst, src)
+}
+func (m *LockAccountResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *LockAccountResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_LockAccountResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LockAccountResponse proto.InternalMessageInfo
+
 type UnlockAccountRequest struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
@@ -298,7 +371,7 @@ type UnlockAccountRequest struct {
 func (m *UnlockAccountRequest) Reset()      { *m = UnlockAccountRequest{} }
 func (*UnlockAccountRequest) ProtoMessage() {}
 func (*UnlockAccountRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_d4727a028c8ad90a, []int{5}
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{7}
 }
 func (m *UnlockAccountRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -327,15 +400,52 @@ func (m *UnlockAccountRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_UnlockAccountRequest proto.InternalMessageInfo
 
-func (m *UnlockAccountRequest) GetId() string {
+func (m *UnlockAccountRequest) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
-	return ""
+	return 0
 }
 
+type UnlockAccountResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *UnlockAccountResponse) Reset()      { *m = UnlockAccountResponse{} }
+func (*UnlockAccountResponse) ProtoMessage() {}
+func (*UnlockAccountResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{8}
+}
+func (m *UnlockAccountResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *UnlockAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_UnlockAccountResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *UnlockAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnlockAccountResponse.Merge(dst, src)
+}
+func (m *UnlockAccountResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *UnlockAccountResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnlockAccountResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UnlockAccountResponse proto.InternalMessageInfo
+
 type ArchiveAccountRequest struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
@@ -343,7 +453,7 @@ type ArchiveAccountRequest struct {
 func (m *ArchiveAccountRequest) Reset()      { *m = ArchiveAccountRequest{} }
 func (*ArchiveAccountRequest) ProtoMessage() {}
 func (*ArchiveAccountRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_d4727a028c8ad90a, []int{6}
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{9}
 }
 func (m *ArchiveAccountRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -372,12 +482,49 @@ func (m *ArchiveAccountRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_ArchiveAccountRequest proto.InternalMessageInfo
 
-func (m *ArchiveAccountRequest) GetId() string {
+func (m *ArchiveAccountRequest) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
-	return ""
+	return 0
 }
+
+type ArchiveAccountResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ArchiveAccountResponse) Reset()      { *m = ArchiveAccountResponse{} }
+func (*ArchiveAccountResponse) ProtoMessage() {}
+func (*ArchiveAccountResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{10}
+}
+func (m *ArchiveAccountResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ArchiveAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ArchiveAccountResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *ArchiveAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ArchiveAccountResponse.Merge(dst, src)
+}
+func (m *ArchiveAccountResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *ArchiveAccountResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ArchiveAccountResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ArchiveAccountResponse proto.InternalMessageInfo
 
 type ImportAccountRequst struct {
 	Username             string   `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
@@ -390,7 +537,7 @@ type ImportAccountRequst struct {
 func (m *ImportAccountRequst) Reset()      { *m = ImportAccountRequst{} }
 func (*ImportAccountRequst) ProtoMessage() {}
 func (*ImportAccountRequst) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_d4727a028c8ad90a, []int{7}
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{11}
 }
 func (m *ImportAccountRequst) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -449,7 +596,7 @@ type ImportAccountResponse struct {
 func (m *ImportAccountResponse) Reset()      { *m = ImportAccountResponse{} }
 func (*ImportAccountResponse) ProtoMessage() {}
 func (*ImportAccountResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_d4727a028c8ad90a, []int{8}
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{12}
 }
 func (m *ImportAccountResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -494,7 +641,7 @@ type ImportAccountResponseEnvelope struct {
 func (m *ImportAccountResponseEnvelope) Reset()      { *m = ImportAccountResponseEnvelope{} }
 func (*ImportAccountResponseEnvelope) ProtoMessage() {}
 func (*ImportAccountResponseEnvelope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_d4727a028c8ad90a, []int{9}
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{13}
 }
 func (m *ImportAccountResponseEnvelope) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -531,7 +678,7 @@ func (m *ImportAccountResponseEnvelope) GetResult() *ImportAccountResponse {
 }
 
 type ExpirePasswordRequest struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
@@ -539,7 +686,7 @@ type ExpirePasswordRequest struct {
 func (m *ExpirePasswordRequest) Reset()      { *m = ExpirePasswordRequest{} }
 func (*ExpirePasswordRequest) ProtoMessage() {}
 func (*ExpirePasswordRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_d4727a028c8ad90a, []int{10}
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{14}
 }
 func (m *ExpirePasswordRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -568,12 +715,253 @@ func (m *ExpirePasswordRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_ExpirePasswordRequest proto.InternalMessageInfo
 
-func (m *ExpirePasswordRequest) GetId() string {
+func (m *ExpirePasswordRequest) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
+	return 0
+}
+
+type ExpirePasswordResponse struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ExpirePasswordResponse) Reset()      { *m = ExpirePasswordResponse{} }
+func (*ExpirePasswordResponse) ProtoMessage() {}
+func (*ExpirePasswordResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{15}
+}
+func (m *ExpirePasswordResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ExpirePasswordResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ExpirePasswordResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *ExpirePasswordResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ExpirePasswordResponse.Merge(dst, src)
+}
+func (m *ExpirePasswordResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *ExpirePasswordResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ExpirePasswordResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ExpirePasswordResponse proto.InternalMessageInfo
+
+type JWKSRequest struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *JWKSRequest) Reset()      { *m = JWKSRequest{} }
+func (*JWKSRequest) ProtoMessage() {}
+func (*JWKSRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{16}
+}
+func (m *JWKSRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *JWKSRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_JWKSRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *JWKSRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_JWKSRequest.Merge(dst, src)
+}
+func (m *JWKSRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *JWKSRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_JWKSRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_JWKSRequest proto.InternalMessageInfo
+
+type Key struct {
+	Use                  string   `protobuf:"bytes,1,opt,name=use,proto3" json:"use,omitempty"`
+	Alg                  string   `protobuf:"bytes,2,opt,name=alg,proto3" json:"alg,omitempty"`
+	Kty                  string   `protobuf:"bytes,3,opt,name=kty,proto3" json:"kty,omitempty"`
+	Kid                  string   `protobuf:"bytes,4,opt,name=kid,proto3" json:"kid,omitempty"`
+	E                    string   `protobuf:"bytes,5,opt,name=e,proto3" json:"e,omitempty"`
+	N                    string   `protobuf:"bytes,6,opt,name=n,proto3" json:"n,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Key) Reset()      { *m = Key{} }
+func (*Key) ProtoMessage() {}
+func (*Key) Descriptor() ([]byte, []int) {
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{17}
+}
+func (m *Key) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Key) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Key.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *Key) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Key.Merge(dst, src)
+}
+func (m *Key) XXX_Size() int {
+	return m.Size()
+}
+func (m *Key) XXX_DiscardUnknown() {
+	xxx_messageInfo_Key.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Key proto.InternalMessageInfo
+
+func (m *Key) GetUse() string {
+	if m != nil {
+		return m.Use
+	}
 	return ""
 }
+
+func (m *Key) GetAlg() string {
+	if m != nil {
+		return m.Alg
+	}
+	return ""
+}
+
+func (m *Key) GetKty() string {
+	if m != nil {
+		return m.Kty
+	}
+	return ""
+}
+
+func (m *Key) GetKid() string {
+	if m != nil {
+		return m.Kid
+	}
+	return ""
+}
+
+func (m *Key) GetE() string {
+	if m != nil {
+		return m.E
+	}
+	return ""
+}
+
+func (m *Key) GetN() string {
+	if m != nil {
+		return m.N
+	}
+	return ""
+}
+
+type JWKSResponse struct {
+	Keys                 []*Key   `protobuf:"bytes,1,rep,name=keys" json:"keys,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *JWKSResponse) Reset()      { *m = JWKSResponse{} }
+func (*JWKSResponse) ProtoMessage() {}
+func (*JWKSResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{18}
+}
+func (m *JWKSResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *JWKSResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_JWKSResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *JWKSResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_JWKSResponse.Merge(dst, src)
+}
+func (m *JWKSResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *JWKSResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_JWKSResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_JWKSResponse proto.InternalMessageInfo
+
+func (m *JWKSResponse) GetKeys() []*Key {
+	if m != nil {
+		return m.Keys
+	}
+	return nil
+}
+
+type ServiceStatsRequest struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ServiceStatsRequest) Reset()      { *m = ServiceStatsRequest{} }
+func (*ServiceStatsRequest) ProtoMessage() {}
+func (*ServiceStatsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{19}
+}
+func (m *ServiceStatsRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ServiceStatsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ServiceStatsRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *ServiceStatsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ServiceStatsRequest.Merge(dst, src)
+}
+func (m *ServiceStatsRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *ServiceStatsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ServiceStatsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ServiceStatsRequest proto.InternalMessageInfo
 
 type ServiceStatsResponse struct {
 	Actives              *ServiceStatsResponseActiveStats `protobuf:"bytes,1,opt,name=actives" json:"actives,omitempty"`
@@ -584,7 +972,7 @@ type ServiceStatsResponse struct {
 func (m *ServiceStatsResponse) Reset()      { *m = ServiceStatsResponse{} }
 func (*ServiceStatsResponse) ProtoMessage() {}
 func (*ServiceStatsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_d4727a028c8ad90a, []int{11}
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{20}
 }
 func (m *ServiceStatsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -631,7 +1019,7 @@ type ServiceStatsResponseActiveStats struct {
 func (m *ServiceStatsResponseActiveStats) Reset()      { *m = ServiceStatsResponseActiveStats{} }
 func (*ServiceStatsResponseActiveStats) ProtoMessage() {}
 func (*ServiceStatsResponseActiveStats) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_d4727a028c8ad90a, []int{11, 0}
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{20, 0}
 }
 func (m *ServiceStatsResponseActiveStats) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -681,23 +1069,156 @@ func (m *ServiceStatsResponseActiveStats) GetMonthly() map[string]int64 {
 	return nil
 }
 
+type ServiceConfigurationRequest struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ServiceConfigurationRequest) Reset()      { *m = ServiceConfigurationRequest{} }
+func (*ServiceConfigurationRequest) ProtoMessage() {}
+func (*ServiceConfigurationRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{21}
+}
+func (m *ServiceConfigurationRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ServiceConfigurationRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ServiceConfigurationRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *ServiceConfigurationRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ServiceConfigurationRequest.Merge(dst, src)
+}
+func (m *ServiceConfigurationRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *ServiceConfigurationRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ServiceConfigurationRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ServiceConfigurationRequest proto.InternalMessageInfo
+
+type Configuration struct {
+	Issuer                           string   `protobuf:"bytes,1,opt,name=issuer,proto3" json:"issuer,omitempty"`
+	ResponseTypesSupported           []string `protobuf:"bytes,2,rep,name=response_types_supported,json=responseTypesSupported" json:"response_types_supported,omitempty"`
+	SubjectTypesSupported            []string `protobuf:"bytes,3,rep,name=subject_types_supported,json=subjectTypesSupported" json:"subject_types_supported,omitempty"`
+	IdTokenSigningAlgValuesSupported []string `protobuf:"bytes,4,rep,name=id_token_signing_alg_values_supported,json=idTokenSigningAlgValuesSupported" json:"id_token_signing_alg_values_supported,omitempty"`
+	ClaimsSupported                  []string `protobuf:"bytes,5,rep,name=claims_supported,json=claimsSupported" json:"claims_supported,omitempty"`
+	JwksUri                          string   `protobuf:"bytes,6,opt,name=jwks_uri,json=jwksUri,proto3" json:"jwks_uri,omitempty"`
+	XXX_NoUnkeyedLiteral             struct{} `json:"-"`
+	XXX_sizecache                    int32    `json:"-"`
+}
+
+func (m *Configuration) Reset()      { *m = Configuration{} }
+func (*Configuration) ProtoMessage() {}
+func (*Configuration) Descriptor() ([]byte, []int) {
+	return fileDescriptor_authn_private_c60a8bdddc03adb9, []int{22}
+}
+func (m *Configuration) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Configuration) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Configuration.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *Configuration) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Configuration.Merge(dst, src)
+}
+func (m *Configuration) XXX_Size() int {
+	return m.Size()
+}
+func (m *Configuration) XXX_DiscardUnknown() {
+	xxx_messageInfo_Configuration.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Configuration proto.InternalMessageInfo
+
+func (m *Configuration) GetIssuer() string {
+	if m != nil {
+		return m.Issuer
+	}
+	return ""
+}
+
+func (m *Configuration) GetResponseTypesSupported() []string {
+	if m != nil {
+		return m.ResponseTypesSupported
+	}
+	return nil
+}
+
+func (m *Configuration) GetSubjectTypesSupported() []string {
+	if m != nil {
+		return m.SubjectTypesSupported
+	}
+	return nil
+}
+
+func (m *Configuration) GetIdTokenSigningAlgValuesSupported() []string {
+	if m != nil {
+		return m.IdTokenSigningAlgValuesSupported
+	}
+	return nil
+}
+
+func (m *Configuration) GetClaimsSupported() []string {
+	if m != nil {
+		return m.ClaimsSupported
+	}
+	return nil
+}
+
+func (m *Configuration) GetJwksUri() string {
+	if m != nil {
+		return m.JwksUri
+	}
+	return ""
+}
+
 func init() {
-	proto.RegisterType((*GetAccountRequest)(nil), "grpc.GetAccountRequest")
-	proto.RegisterType((*GetAccountResponse)(nil), "grpc.GetAccountResponse")
-	proto.RegisterType((*GetAccountResponseEnvelope)(nil), "grpc.GetAccountResponseEnvelope")
-	proto.RegisterType((*UpdateAccountRequest)(nil), "grpc.UpdateAccountRequest")
-	proto.RegisterType((*LockAccountRequest)(nil), "grpc.LockAccountRequest")
-	proto.RegisterType((*UnlockAccountRequest)(nil), "grpc.UnlockAccountRequest")
-	proto.RegisterType((*ArchiveAccountRequest)(nil), "grpc.ArchiveAccountRequest")
-	proto.RegisterType((*ImportAccountRequst)(nil), "grpc.ImportAccountRequst")
-	proto.RegisterType((*ImportAccountResponse)(nil), "grpc.ImportAccountResponse")
-	proto.RegisterType((*ImportAccountResponseEnvelope)(nil), "grpc.ImportAccountResponseEnvelope")
-	proto.RegisterType((*ExpirePasswordRequest)(nil), "grpc.ExpirePasswordRequest")
-	proto.RegisterType((*ServiceStatsResponse)(nil), "grpc.ServiceStatsResponse")
-	proto.RegisterType((*ServiceStatsResponseActiveStats)(nil), "grpc.ServiceStatsResponse.active_stats")
-	proto.RegisterMapType((map[string]int64)(nil), "grpc.ServiceStatsResponse.active_stats.DailyEntry")
-	proto.RegisterMapType((map[string]int64)(nil), "grpc.ServiceStatsResponse.active_stats.MonthlyEntry")
-	proto.RegisterMapType((map[string]int64)(nil), "grpc.ServiceStatsResponse.active_stats.WeeklyEntry")
+	proto.RegisterType((*GetAccountRequest)(nil), "keratin.authn.GetAccountRequest")
+	proto.RegisterType((*GetAccountResponse)(nil), "keratin.authn.GetAccountResponse")
+	proto.RegisterType((*GetAccountResponseEnvelope)(nil), "keratin.authn.GetAccountResponseEnvelope")
+	proto.RegisterType((*UpdateAccountRequest)(nil), "keratin.authn.UpdateAccountRequest")
+	proto.RegisterType((*UpdateAccountResponse)(nil), "keratin.authn.UpdateAccountResponse")
+	proto.RegisterType((*LockAccountRequest)(nil), "keratin.authn.LockAccountRequest")
+	proto.RegisterType((*LockAccountResponse)(nil), "keratin.authn.LockAccountResponse")
+	proto.RegisterType((*UnlockAccountRequest)(nil), "keratin.authn.UnlockAccountRequest")
+	proto.RegisterType((*UnlockAccountResponse)(nil), "keratin.authn.UnlockAccountResponse")
+	proto.RegisterType((*ArchiveAccountRequest)(nil), "keratin.authn.ArchiveAccountRequest")
+	proto.RegisterType((*ArchiveAccountResponse)(nil), "keratin.authn.ArchiveAccountResponse")
+	proto.RegisterType((*ImportAccountRequst)(nil), "keratin.authn.ImportAccountRequst")
+	proto.RegisterType((*ImportAccountResponse)(nil), "keratin.authn.ImportAccountResponse")
+	proto.RegisterType((*ImportAccountResponseEnvelope)(nil), "keratin.authn.ImportAccountResponseEnvelope")
+	proto.RegisterType((*ExpirePasswordRequest)(nil), "keratin.authn.ExpirePasswordRequest")
+	proto.RegisterType((*ExpirePasswordResponse)(nil), "keratin.authn.ExpirePasswordResponse")
+	proto.RegisterType((*JWKSRequest)(nil), "keratin.authn.JWKSRequest")
+	proto.RegisterType((*Key)(nil), "keratin.authn.Key")
+	proto.RegisterType((*JWKSResponse)(nil), "keratin.authn.JWKSResponse")
+	proto.RegisterType((*ServiceStatsRequest)(nil), "keratin.authn.ServiceStatsRequest")
+	proto.RegisterType((*ServiceStatsResponse)(nil), "keratin.authn.ServiceStatsResponse")
+	proto.RegisterType((*ServiceStatsResponseActiveStats)(nil), "keratin.authn.ServiceStatsResponse.active_stats")
+	proto.RegisterMapType((map[string]int64)(nil), "keratin.authn.ServiceStatsResponse.active_stats.DailyEntry")
+	proto.RegisterMapType((map[string]int64)(nil), "keratin.authn.ServiceStatsResponse.active_stats.MonthlyEntry")
+	proto.RegisterMapType((map[string]int64)(nil), "keratin.authn.ServiceStatsResponse.active_stats.WeeklyEntry")
+	proto.RegisterType((*ServiceConfigurationRequest)(nil), "keratin.authn.ServiceConfigurationRequest")
+	proto.RegisterType((*Configuration)(nil), "keratin.authn.Configuration")
 }
 func (this *GetAccountRequest) Equal(that interface{}) bool {
 	if that == nil {
@@ -807,6 +1328,27 @@ func (this *UpdateAccountRequest) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *UpdateAccountResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*UpdateAccountResponse)
+	if !ok {
+		that2, ok := that.(UpdateAccountResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	return true
+}
 func (this *LockAccountRequest) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
@@ -827,6 +1369,27 @@ func (this *LockAccountRequest) Equal(that interface{}) bool {
 		return false
 	}
 	if this.Id != that1.Id {
+		return false
+	}
+	return true
+}
+func (this *LockAccountResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*LockAccountResponse)
+	if !ok {
+		that2, ok := that.(LockAccountResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
 		return false
 	}
 	return true
@@ -855,6 +1418,27 @@ func (this *UnlockAccountRequest) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *UnlockAccountResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*UnlockAccountResponse)
+	if !ok {
+		that2, ok := that.(UnlockAccountResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	return true
+}
 func (this *ArchiveAccountRequest) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
@@ -875,6 +1459,27 @@ func (this *ArchiveAccountRequest) Equal(that interface{}) bool {
 		return false
 	}
 	if this.Id != that1.Id {
+		return false
+	}
+	return true
+}
+func (this *ArchiveAccountResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*ArchiveAccountResponse)
+	if !ok {
+		that2, ok := that.(ArchiveAccountResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
 		return false
 	}
 	return true
@@ -981,6 +1586,137 @@ func (this *ExpirePasswordRequest) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *ExpirePasswordResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*ExpirePasswordResponse)
+	if !ok {
+		that2, ok := that.(ExpirePasswordResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	return true
+}
+func (this *JWKSRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*JWKSRequest)
+	if !ok {
+		that2, ok := that.(JWKSRequest)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	return true
+}
+func (this *Key) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Key)
+	if !ok {
+		that2, ok := that.(Key)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Use != that1.Use {
+		return false
+	}
+	if this.Alg != that1.Alg {
+		return false
+	}
+	if this.Kty != that1.Kty {
+		return false
+	}
+	if this.Kid != that1.Kid {
+		return false
+	}
+	if this.E != that1.E {
+		return false
+	}
+	if this.N != that1.N {
+		return false
+	}
+	return true
+}
+func (this *JWKSResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*JWKSResponse)
+	if !ok {
+		that2, ok := that.(JWKSResponse)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.Keys) != len(that1.Keys) {
+		return false
+	}
+	for i := range this.Keys {
+		if !this.Keys[i].Equal(that1.Keys[i]) {
+			return false
+		}
+	}
+	return true
+}
+func (this *ServiceStatsRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*ServiceStatsRequest)
+	if !ok {
+		that2, ok := that.(ServiceStatsRequest)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	return true
+}
 func (this *ServiceStatsResponse) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
@@ -1050,6 +1786,86 @@ func (this *ServiceStatsResponseActiveStats) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *ServiceConfigurationRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*ServiceConfigurationRequest)
+	if !ok {
+		that2, ok := that.(ServiceConfigurationRequest)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	return true
+}
+func (this *Configuration) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*Configuration)
+	if !ok {
+		that2, ok := that.(Configuration)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Issuer != that1.Issuer {
+		return false
+	}
+	if len(this.ResponseTypesSupported) != len(that1.ResponseTypesSupported) {
+		return false
+	}
+	for i := range this.ResponseTypesSupported {
+		if this.ResponseTypesSupported[i] != that1.ResponseTypesSupported[i] {
+			return false
+		}
+	}
+	if len(this.SubjectTypesSupported) != len(that1.SubjectTypesSupported) {
+		return false
+	}
+	for i := range this.SubjectTypesSupported {
+		if this.SubjectTypesSupported[i] != that1.SubjectTypesSupported[i] {
+			return false
+		}
+	}
+	if len(this.IdTokenSigningAlgValuesSupported) != len(that1.IdTokenSigningAlgValuesSupported) {
+		return false
+	}
+	for i := range this.IdTokenSigningAlgValuesSupported {
+		if this.IdTokenSigningAlgValuesSupported[i] != that1.IdTokenSigningAlgValuesSupported[i] {
+			return false
+		}
+	}
+	if len(this.ClaimsSupported) != len(that1.ClaimsSupported) {
+		return false
+	}
+	for i := range this.ClaimsSupported {
+		if this.ClaimsSupported[i] != that1.ClaimsSupported[i] {
+			return false
+		}
+	}
+	if this.JwksUri != that1.JwksUri {
+		return false
+	}
+	return true
+}
 func (this *GetAccountRequest) GoString() string {
 	if this == nil {
 		return "nil"
@@ -1096,6 +1912,15 @@ func (this *UpdateAccountRequest) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *UpdateAccountResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 4)
+	s = append(s, "&grpc.UpdateAccountResponse{")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *LockAccountRequest) GoString() string {
 	if this == nil {
 		return "nil"
@@ -1103,6 +1928,15 @@ func (this *LockAccountRequest) GoString() string {
 	s := make([]string, 0, 5)
 	s = append(s, "&grpc.LockAccountRequest{")
 	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *LockAccountResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 4)
+	s = append(s, "&grpc.LockAccountResponse{")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -1116,6 +1950,15 @@ func (this *UnlockAccountRequest) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *UnlockAccountResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 4)
+	s = append(s, "&grpc.UnlockAccountResponse{")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *ArchiveAccountRequest) GoString() string {
 	if this == nil {
 		return "nil"
@@ -1123,6 +1966,15 @@ func (this *ArchiveAccountRequest) GoString() string {
 	s := make([]string, 0, 5)
 	s = append(s, "&grpc.ArchiveAccountRequest{")
 	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *ArchiveAccountResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 4)
+	s = append(s, "&grpc.ArchiveAccountResponse{")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -1167,6 +2019,60 @@ func (this *ExpirePasswordRequest) GoString() string {
 	s := make([]string, 0, 5)
 	s = append(s, "&grpc.ExpirePasswordRequest{")
 	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *ExpirePasswordResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 4)
+	s = append(s, "&grpc.ExpirePasswordResponse{")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *JWKSRequest) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 4)
+	s = append(s, "&grpc.JWKSRequest{")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *Key) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 10)
+	s = append(s, "&grpc.Key{")
+	s = append(s, "Use: "+fmt.Sprintf("%#v", this.Use)+",\n")
+	s = append(s, "Alg: "+fmt.Sprintf("%#v", this.Alg)+",\n")
+	s = append(s, "Kty: "+fmt.Sprintf("%#v", this.Kty)+",\n")
+	s = append(s, "Kid: "+fmt.Sprintf("%#v", this.Kid)+",\n")
+	s = append(s, "E: "+fmt.Sprintf("%#v", this.E)+",\n")
+	s = append(s, "N: "+fmt.Sprintf("%#v", this.N)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *JWKSResponse) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&grpc.JWKSResponse{")
+	if this.Keys != nil {
+		s = append(s, "Keys: "+fmt.Sprintf("%#v", this.Keys)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *ServiceStatsRequest) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 4)
+	s = append(s, "&grpc.ServiceStatsRequest{")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -1230,6 +2136,30 @@ func (this *ServiceStatsResponseActiveStats) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *ServiceConfigurationRequest) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 4)
+	s = append(s, "&grpc.ServiceConfigurationRequest{")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *Configuration) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 10)
+	s = append(s, "&grpc.Configuration{")
+	s = append(s, "Issuer: "+fmt.Sprintf("%#v", this.Issuer)+",\n")
+	s = append(s, "ResponseTypesSupported: "+fmt.Sprintf("%#v", this.ResponseTypesSupported)+",\n")
+	s = append(s, "SubjectTypesSupported: "+fmt.Sprintf("%#v", this.SubjectTypesSupported)+",\n")
+	s = append(s, "IdTokenSigningAlgValuesSupported: "+fmt.Sprintf("%#v", this.IdTokenSigningAlgValuesSupported)+",\n")
+	s = append(s, "ClaimsSupported: "+fmt.Sprintf("%#v", this.ClaimsSupported)+",\n")
+	s = append(s, "JwksUri: "+fmt.Sprintf("%#v", this.JwksUri)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func valueToGoStringAuthnPrivate(v interface{}, typ string) string {
 	rv := reflect.ValueOf(v)
 	if rv.IsNil() {
@@ -1247,295 +2177,423 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// AdminAuthNClient is the client API for AdminAuthN service.
+// UnsecuredAdminAuthNClient is the client API for UnsecuredAdminAuthN service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type AdminAuthNClient interface {
-	GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponseEnvelope, error)
-	UpdateAccount(ctx context.Context, in *UpdateAccountRequest, opts ...grpc.CallOption) (*types.Empty, error)
-	LockAccount(ctx context.Context, in *LockAccountRequest, opts ...grpc.CallOption) (*types.Empty, error)
-	UnlockAcount(ctx context.Context, in *UnlockAccountRequest, opts ...grpc.CallOption) (*types.Empty, error)
-	ArchiveAccount(ctx context.Context, in *ArchiveAccountRequest, opts ...grpc.CallOption) (*types.Empty, error)
-	ImportAccount(ctx context.Context, in *ImportAccountRequst, opts ...grpc.CallOption) (*ImportAccountResponseEnvelope, error)
-	ExpirePassword(ctx context.Context, in *ExpirePasswordRequest, opts ...grpc.CallOption) (*types.Empty, error)
-	ServiceStats(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*ServiceStatsResponse, error)
+type UnsecuredAdminAuthNClient interface {
+	JWKS(ctx context.Context, in *JWKSRequest, opts ...grpc.CallOption) (*JWKSResponse, error)
+	ServiceConfiguration(ctx context.Context, in *ServiceConfigurationRequest, opts ...grpc.CallOption) (*Configuration, error)
 }
 
-type adminAuthNClient struct {
+type unsecuredAdminAuthNClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewAdminAuthNClient(cc *grpc.ClientConn) AdminAuthNClient {
-	return &adminAuthNClient{cc}
+func NewUnsecuredAdminAuthNClient(cc *grpc.ClientConn) UnsecuredAdminAuthNClient {
+	return &unsecuredAdminAuthNClient{cc}
 }
 
-func (c *adminAuthNClient) GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponseEnvelope, error) {
-	out := new(GetAccountResponseEnvelope)
-	err := c.cc.Invoke(ctx, "/grpc.AdminAuthN/GetAccount", in, out, opts...)
+func (c *unsecuredAdminAuthNClient) JWKS(ctx context.Context, in *JWKSRequest, opts ...grpc.CallOption) (*JWKSResponse, error) {
+	out := new(JWKSResponse)
+	err := c.cc.Invoke(ctx, "/keratin.authn.UnsecuredAdminAuthN/JWKS", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *adminAuthNClient) UpdateAccount(ctx context.Context, in *UpdateAccountRequest, opts ...grpc.CallOption) (*types.Empty, error) {
-	out := new(types.Empty)
-	err := c.cc.Invoke(ctx, "/grpc.AdminAuthN/UpdateAccount", in, out, opts...)
+func (c *unsecuredAdminAuthNClient) ServiceConfiguration(ctx context.Context, in *ServiceConfigurationRequest, opts ...grpc.CallOption) (*Configuration, error) {
+	out := new(Configuration)
+	err := c.cc.Invoke(ctx, "/keratin.authn.UnsecuredAdminAuthN/ServiceConfiguration", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *adminAuthNClient) LockAccount(ctx context.Context, in *LockAccountRequest, opts ...grpc.CallOption) (*types.Empty, error) {
-	out := new(types.Empty)
-	err := c.cc.Invoke(ctx, "/grpc.AdminAuthN/LockAccount", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
+// UnsecuredAdminAuthNServer is the server API for UnsecuredAdminAuthN service.
+type UnsecuredAdminAuthNServer interface {
+	JWKS(context.Context, *JWKSRequest) (*JWKSResponse, error)
+	ServiceConfiguration(context.Context, *ServiceConfigurationRequest) (*Configuration, error)
 }
 
-func (c *adminAuthNClient) UnlockAcount(ctx context.Context, in *UnlockAccountRequest, opts ...grpc.CallOption) (*types.Empty, error) {
-	out := new(types.Empty)
-	err := c.cc.Invoke(ctx, "/grpc.AdminAuthN/UnlockAcount", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
+func RegisterUnsecuredAdminAuthNServer(s *grpc.Server, srv UnsecuredAdminAuthNServer) {
+	s.RegisterService(&_UnsecuredAdminAuthN_serviceDesc, srv)
 }
 
-func (c *adminAuthNClient) ArchiveAccount(ctx context.Context, in *ArchiveAccountRequest, opts ...grpc.CallOption) (*types.Empty, error) {
-	out := new(types.Empty)
-	err := c.cc.Invoke(ctx, "/grpc.AdminAuthN/ArchiveAccount", in, out, opts...)
-	if err != nil {
+func _UnsecuredAdminAuthN_JWKS_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(JWKSRequest)
+	if err := dec(in); err != nil {
 		return nil, err
 	}
-	return out, nil
+	if interceptor == nil {
+		return srv.(UnsecuredAdminAuthNServer).JWKS(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keratin.authn.UnsecuredAdminAuthN/JWKS",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UnsecuredAdminAuthNServer).JWKS(ctx, req.(*JWKSRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
-func (c *adminAuthNClient) ImportAccount(ctx context.Context, in *ImportAccountRequst, opts ...grpc.CallOption) (*ImportAccountResponseEnvelope, error) {
+func _UnsecuredAdminAuthN_ServiceConfiguration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ServiceConfigurationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UnsecuredAdminAuthNServer).ServiceConfiguration(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keratin.authn.UnsecuredAdminAuthN/ServiceConfiguration",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UnsecuredAdminAuthNServer).ServiceConfiguration(ctx, req.(*ServiceConfigurationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _UnsecuredAdminAuthN_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "keratin.authn.UnsecuredAdminAuthN",
+	HandlerType: (*UnsecuredAdminAuthNServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "JWKS",
+			Handler:    _UnsecuredAdminAuthN_JWKS_Handler,
+		},
+		{
+			MethodName: "ServiceConfiguration",
+			Handler:    _UnsecuredAdminAuthN_ServiceConfiguration_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "authn-private.proto",
+}
+
+// SecuredAdminAuthNClient is the client API for SecuredAdminAuthN service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type SecuredAdminAuthNClient interface {
+	ImportAccount(ctx context.Context, in *ImportAccountRequst, opts ...grpc.CallOption) (*ImportAccountResponseEnvelope, error)
+	GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponseEnvelope, error)
+	UpdateAccount(ctx context.Context, in *UpdateAccountRequest, opts ...grpc.CallOption) (*UpdateAccountResponse, error)
+	LockAccount(ctx context.Context, in *LockAccountRequest, opts ...grpc.CallOption) (*LockAccountResponse, error)
+	UnlockAcount(ctx context.Context, in *UnlockAccountRequest, opts ...grpc.CallOption) (*UnlockAccountResponse, error)
+	ArchiveAccount(ctx context.Context, in *ArchiveAccountRequest, opts ...grpc.CallOption) (*ArchiveAccountResponse, error)
+	ExpirePassword(ctx context.Context, in *ExpirePasswordRequest, opts ...grpc.CallOption) (*ExpirePasswordResponse, error)
+}
+
+type securedAdminAuthNClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewSecuredAdminAuthNClient(cc *grpc.ClientConn) SecuredAdminAuthNClient {
+	return &securedAdminAuthNClient{cc}
+}
+
+func (c *securedAdminAuthNClient) ImportAccount(ctx context.Context, in *ImportAccountRequst, opts ...grpc.CallOption) (*ImportAccountResponseEnvelope, error) {
 	out := new(ImportAccountResponseEnvelope)
-	err := c.cc.Invoke(ctx, "/grpc.AdminAuthN/ImportAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/keratin.authn.SecuredAdminAuthN/ImportAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *adminAuthNClient) ExpirePassword(ctx context.Context, in *ExpirePasswordRequest, opts ...grpc.CallOption) (*types.Empty, error) {
-	out := new(types.Empty)
-	err := c.cc.Invoke(ctx, "/grpc.AdminAuthN/ExpirePassword", in, out, opts...)
+func (c *securedAdminAuthNClient) GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponseEnvelope, error) {
+	out := new(GetAccountResponseEnvelope)
+	err := c.cc.Invoke(ctx, "/keratin.authn.SecuredAdminAuthN/GetAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *adminAuthNClient) ServiceStats(ctx context.Context, in *types.Empty, opts ...grpc.CallOption) (*ServiceStatsResponse, error) {
-	out := new(ServiceStatsResponse)
-	err := c.cc.Invoke(ctx, "/grpc.AdminAuthN/ServiceStats", in, out, opts...)
+func (c *securedAdminAuthNClient) UpdateAccount(ctx context.Context, in *UpdateAccountRequest, opts ...grpc.CallOption) (*UpdateAccountResponse, error) {
+	out := new(UpdateAccountResponse)
+	err := c.cc.Invoke(ctx, "/keratin.authn.SecuredAdminAuthN/UpdateAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// AdminAuthNServer is the server API for AdminAuthN service.
-type AdminAuthNServer interface {
-	GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponseEnvelope, error)
-	UpdateAccount(context.Context, *UpdateAccountRequest) (*types.Empty, error)
-	LockAccount(context.Context, *LockAccountRequest) (*types.Empty, error)
-	UnlockAcount(context.Context, *UnlockAccountRequest) (*types.Empty, error)
-	ArchiveAccount(context.Context, *ArchiveAccountRequest) (*types.Empty, error)
+func (c *securedAdminAuthNClient) LockAccount(ctx context.Context, in *LockAccountRequest, opts ...grpc.CallOption) (*LockAccountResponse, error) {
+	out := new(LockAccountResponse)
+	err := c.cc.Invoke(ctx, "/keratin.authn.SecuredAdminAuthN/LockAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *securedAdminAuthNClient) UnlockAcount(ctx context.Context, in *UnlockAccountRequest, opts ...grpc.CallOption) (*UnlockAccountResponse, error) {
+	out := new(UnlockAccountResponse)
+	err := c.cc.Invoke(ctx, "/keratin.authn.SecuredAdminAuthN/UnlockAcount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *securedAdminAuthNClient) ArchiveAccount(ctx context.Context, in *ArchiveAccountRequest, opts ...grpc.CallOption) (*ArchiveAccountResponse, error) {
+	out := new(ArchiveAccountResponse)
+	err := c.cc.Invoke(ctx, "/keratin.authn.SecuredAdminAuthN/ArchiveAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *securedAdminAuthNClient) ExpirePassword(ctx context.Context, in *ExpirePasswordRequest, opts ...grpc.CallOption) (*ExpirePasswordResponse, error) {
+	out := new(ExpirePasswordResponse)
+	err := c.cc.Invoke(ctx, "/keratin.authn.SecuredAdminAuthN/ExpirePassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// SecuredAdminAuthNServer is the server API for SecuredAdminAuthN service.
+type SecuredAdminAuthNServer interface {
 	ImportAccount(context.Context, *ImportAccountRequst) (*ImportAccountResponseEnvelope, error)
-	ExpirePassword(context.Context, *ExpirePasswordRequest) (*types.Empty, error)
-	ServiceStats(context.Context, *types.Empty) (*ServiceStatsResponse, error)
+	GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponseEnvelope, error)
+	UpdateAccount(context.Context, *UpdateAccountRequest) (*UpdateAccountResponse, error)
+	LockAccount(context.Context, *LockAccountRequest) (*LockAccountResponse, error)
+	UnlockAcount(context.Context, *UnlockAccountRequest) (*UnlockAccountResponse, error)
+	ArchiveAccount(context.Context, *ArchiveAccountRequest) (*ArchiveAccountResponse, error)
+	ExpirePassword(context.Context, *ExpirePasswordRequest) (*ExpirePasswordResponse, error)
 }
 
-func RegisterAdminAuthNServer(s *grpc.Server, srv AdminAuthNServer) {
-	s.RegisterService(&_AdminAuthN_serviceDesc, srv)
+func RegisterSecuredAdminAuthNServer(s *grpc.Server, srv SecuredAdminAuthNServer) {
+	s.RegisterService(&_SecuredAdminAuthN_serviceDesc, srv)
 }
 
-func _AdminAuthN_GetAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAccountRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminAuthNServer).GetAccount(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/grpc.AdminAuthN/GetAccount",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminAuthNServer).GetAccount(ctx, req.(*GetAccountRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AdminAuthN_UpdateAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateAccountRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminAuthNServer).UpdateAccount(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/grpc.AdminAuthN/UpdateAccount",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminAuthNServer).UpdateAccount(ctx, req.(*UpdateAccountRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AdminAuthN_LockAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LockAccountRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminAuthNServer).LockAccount(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/grpc.AdminAuthN/LockAccount",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminAuthNServer).LockAccount(ctx, req.(*LockAccountRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AdminAuthN_UnlockAcount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UnlockAccountRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminAuthNServer).UnlockAcount(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/grpc.AdminAuthN/UnlockAcount",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminAuthNServer).UnlockAcount(ctx, req.(*UnlockAccountRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AdminAuthN_ArchiveAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ArchiveAccountRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminAuthNServer).ArchiveAccount(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/grpc.AdminAuthN/ArchiveAccount",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminAuthNServer).ArchiveAccount(ctx, req.(*ArchiveAccountRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AdminAuthN_ImportAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SecuredAdminAuthN_ImportAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ImportAccountRequst)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AdminAuthNServer).ImportAccount(ctx, in)
+		return srv.(SecuredAdminAuthNServer).ImportAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/grpc.AdminAuthN/ImportAccount",
+		FullMethod: "/keratin.authn.SecuredAdminAuthN/ImportAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminAuthNServer).ImportAccount(ctx, req.(*ImportAccountRequst))
+		return srv.(SecuredAdminAuthNServer).ImportAccount(ctx, req.(*ImportAccountRequst))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AdminAuthN_ExpirePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SecuredAdminAuthN_GetAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAccountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecuredAdminAuthNServer).GetAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keratin.authn.SecuredAdminAuthN/GetAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecuredAdminAuthNServer).GetAccount(ctx, req.(*GetAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SecuredAdminAuthN_UpdateAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateAccountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecuredAdminAuthNServer).UpdateAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keratin.authn.SecuredAdminAuthN/UpdateAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecuredAdminAuthNServer).UpdateAccount(ctx, req.(*UpdateAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SecuredAdminAuthN_LockAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LockAccountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecuredAdminAuthNServer).LockAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keratin.authn.SecuredAdminAuthN/LockAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecuredAdminAuthNServer).LockAccount(ctx, req.(*LockAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SecuredAdminAuthN_UnlockAcount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnlockAccountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecuredAdminAuthNServer).UnlockAcount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keratin.authn.SecuredAdminAuthN/UnlockAcount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecuredAdminAuthNServer).UnlockAcount(ctx, req.(*UnlockAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SecuredAdminAuthN_ArchiveAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ArchiveAccountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecuredAdminAuthNServer).ArchiveAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keratin.authn.SecuredAdminAuthN/ArchiveAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecuredAdminAuthNServer).ArchiveAccount(ctx, req.(*ArchiveAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SecuredAdminAuthN_ExpirePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ExpirePasswordRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AdminAuthNServer).ExpirePassword(ctx, in)
+		return srv.(SecuredAdminAuthNServer).ExpirePassword(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/grpc.AdminAuthN/ExpirePassword",
+		FullMethod: "/keratin.authn.SecuredAdminAuthN/ExpirePassword",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminAuthNServer).ExpirePassword(ctx, req.(*ExpirePasswordRequest))
+		return srv.(SecuredAdminAuthNServer).ExpirePassword(ctx, req.(*ExpirePasswordRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AdminAuthN_ServiceStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(types.Empty)
+var _SecuredAdminAuthN_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "keratin.authn.SecuredAdminAuthN",
+	HandlerType: (*SecuredAdminAuthNServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ImportAccount",
+			Handler:    _SecuredAdminAuthN_ImportAccount_Handler,
+		},
+		{
+			MethodName: "GetAccount",
+			Handler:    _SecuredAdminAuthN_GetAccount_Handler,
+		},
+		{
+			MethodName: "UpdateAccount",
+			Handler:    _SecuredAdminAuthN_UpdateAccount_Handler,
+		},
+		{
+			MethodName: "LockAccount",
+			Handler:    _SecuredAdminAuthN_LockAccount_Handler,
+		},
+		{
+			MethodName: "UnlockAcount",
+			Handler:    _SecuredAdminAuthN_UnlockAcount_Handler,
+		},
+		{
+			MethodName: "ArchiveAccount",
+			Handler:    _SecuredAdminAuthN_ArchiveAccount_Handler,
+		},
+		{
+			MethodName: "ExpirePassword",
+			Handler:    _SecuredAdminAuthN_ExpirePassword_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "authn-private.proto",
+}
+
+// AuthNActivesClient is the client API for AuthNActives service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type AuthNActivesClient interface {
+	ServiceStats(ctx context.Context, in *ServiceStatsRequest, opts ...grpc.CallOption) (*ServiceStatsResponse, error)
+}
+
+type authNActivesClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewAuthNActivesClient(cc *grpc.ClientConn) AuthNActivesClient {
+	return &authNActivesClient{cc}
+}
+
+func (c *authNActivesClient) ServiceStats(ctx context.Context, in *ServiceStatsRequest, opts ...grpc.CallOption) (*ServiceStatsResponse, error) {
+	out := new(ServiceStatsResponse)
+	err := c.cc.Invoke(ctx, "/keratin.authn.AuthNActives/ServiceStats", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AuthNActivesServer is the server API for AuthNActives service.
+type AuthNActivesServer interface {
+	ServiceStats(context.Context, *ServiceStatsRequest) (*ServiceStatsResponse, error)
+}
+
+func RegisterAuthNActivesServer(s *grpc.Server, srv AuthNActivesServer) {
+	s.RegisterService(&_AuthNActives_serviceDesc, srv)
+}
+
+func _AuthNActives_ServiceStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ServiceStatsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AdminAuthNServer).ServiceStats(ctx, in)
+		return srv.(AuthNActivesServer).ServiceStats(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/grpc.AdminAuthN/ServiceStats",
+		FullMethod: "/keratin.authn.AuthNActives/ServiceStats",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminAuthNServer).ServiceStats(ctx, req.(*types.Empty))
+		return srv.(AuthNActivesServer).ServiceStats(ctx, req.(*ServiceStatsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _AdminAuthN_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "grpc.AdminAuthN",
-	HandlerType: (*AdminAuthNServer)(nil),
+var _AuthNActives_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "keratin.authn.AuthNActives",
+	HandlerType: (*AuthNActivesServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetAccount",
-			Handler:    _AdminAuthN_GetAccount_Handler,
-		},
-		{
-			MethodName: "UpdateAccount",
-			Handler:    _AdminAuthN_UpdateAccount_Handler,
-		},
-		{
-			MethodName: "LockAccount",
-			Handler:    _AdminAuthN_LockAccount_Handler,
-		},
-		{
-			MethodName: "UnlockAcount",
-			Handler:    _AdminAuthN_UnlockAcount_Handler,
-		},
-		{
-			MethodName: "ArchiveAccount",
-			Handler:    _AdminAuthN_ArchiveAccount_Handler,
-		},
-		{
-			MethodName: "ImportAccount",
-			Handler:    _AdminAuthN_ImportAccount_Handler,
-		},
-		{
-			MethodName: "ExpirePassword",
-			Handler:    _AdminAuthN_ExpirePassword_Handler,
-		},
-		{
 			MethodName: "ServiceStats",
-			Handler:    _AdminAuthN_ServiceStats_Handler,
+			Handler:    _AuthNActives_ServiceStats_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1557,11 +2615,10 @@ func (m *GetAccountRequest) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Id) > 0 {
-		dAtA[i] = 0xa
+	if m.Id != 0 {
+		dAtA[i] = 0x8
 		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Id)))
-		i += copy(dAtA[i:], m.Id)
+		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Id))
 	}
 	return i, nil
 }
@@ -1658,11 +2715,10 @@ func (m *UpdateAccountRequest) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Id) > 0 {
-		dAtA[i] = 0xa
+	if m.Id != 0 {
+		dAtA[i] = 0x8
 		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Id)))
-		i += copy(dAtA[i:], m.Id)
+		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Id))
 	}
 	if len(m.Username) > 0 {
 		dAtA[i] = 0x12
@@ -1670,6 +2726,24 @@ func (m *UpdateAccountRequest) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Username)))
 		i += copy(dAtA[i:], m.Username)
 	}
+	return i, nil
+}
+
+func (m *UpdateAccountResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *UpdateAccountResponse) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
 	return i, nil
 }
 
@@ -1688,12 +2762,29 @@ func (m *LockAccountRequest) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Id) > 0 {
-		dAtA[i] = 0xa
+	if m.Id != 0 {
+		dAtA[i] = 0x8
 		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Id)))
-		i += copy(dAtA[i:], m.Id)
+		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Id))
 	}
+	return i, nil
+}
+
+func (m *LockAccountResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LockAccountResponse) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
 	return i, nil
 }
 
@@ -1712,12 +2803,29 @@ func (m *UnlockAccountRequest) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Id) > 0 {
-		dAtA[i] = 0xa
+	if m.Id != 0 {
+		dAtA[i] = 0x8
 		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Id)))
-		i += copy(dAtA[i:], m.Id)
+		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Id))
 	}
+	return i, nil
+}
+
+func (m *UnlockAccountResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *UnlockAccountResponse) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
 	return i, nil
 }
 
@@ -1736,12 +2844,29 @@ func (m *ArchiveAccountRequest) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Id) > 0 {
-		dAtA[i] = 0xa
+	if m.Id != 0 {
+		dAtA[i] = 0x8
 		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Id)))
-		i += copy(dAtA[i:], m.Id)
+		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Id))
 	}
+	return i, nil
+}
+
+func (m *ArchiveAccountResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ArchiveAccountResponse) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
 	return i, nil
 }
 
@@ -1851,12 +2976,149 @@ func (m *ExpirePasswordRequest) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Id) > 0 {
+	if m.Id != 0 {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Id))
+	}
+	return i, nil
+}
+
+func (m *ExpirePasswordResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ExpirePasswordResponse) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	return i, nil
+}
+
+func (m *JWKSRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *JWKSRequest) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	return i, nil
+}
+
+func (m *Key) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Key) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Use) > 0 {
 		dAtA[i] = 0xa
 		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Id)))
-		i += copy(dAtA[i:], m.Id)
+		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Use)))
+		i += copy(dAtA[i:], m.Use)
 	}
+	if len(m.Alg) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Alg)))
+		i += copy(dAtA[i:], m.Alg)
+	}
+	if len(m.Kty) > 0 {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Kty)))
+		i += copy(dAtA[i:], m.Kty)
+	}
+	if len(m.Kid) > 0 {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Kid)))
+		i += copy(dAtA[i:], m.Kid)
+	}
+	if len(m.E) > 0 {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.E)))
+		i += copy(dAtA[i:], m.E)
+	}
+	if len(m.N) > 0 {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.N)))
+		i += copy(dAtA[i:], m.N)
+	}
+	return i, nil
+}
+
+func (m *JWKSResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *JWKSResponse) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Keys) > 0 {
+		for _, msg := range m.Keys {
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintAuthnPrivate(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	return i, nil
+}
+
+func (m *ServiceStatsRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ServiceStatsRequest) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
 	return i, nil
 }
 
@@ -1954,6 +3216,114 @@ func (m *ServiceStatsResponseActiveStats) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *ServiceConfigurationRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ServiceConfigurationRequest) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	return i, nil
+}
+
+func (m *Configuration) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Configuration) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Issuer) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Issuer)))
+		i += copy(dAtA[i:], m.Issuer)
+	}
+	if len(m.ResponseTypesSupported) > 0 {
+		for _, s := range m.ResponseTypesSupported {
+			dAtA[i] = 0x12
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
+	}
+	if len(m.SubjectTypesSupported) > 0 {
+		for _, s := range m.SubjectTypesSupported {
+			dAtA[i] = 0x1a
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
+	}
+	if len(m.IdTokenSigningAlgValuesSupported) > 0 {
+		for _, s := range m.IdTokenSigningAlgValuesSupported {
+			dAtA[i] = 0x22
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
+	}
+	if len(m.ClaimsSupported) > 0 {
+		for _, s := range m.ClaimsSupported {
+			dAtA[i] = 0x2a
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
+	}
+	if len(m.JwksUri) > 0 {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.JwksUri)))
+		i += copy(dAtA[i:], m.JwksUri)
+	}
+	return i, nil
+}
+
 func encodeVarintAuthnPrivate(dAtA []byte, offset int, v uint64) int {
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
@@ -1963,12 +3333,367 @@ func encodeVarintAuthnPrivate(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return offset + 1
 }
+func NewPopulatedGetAccountRequest(r randyAuthnPrivate, easy bool) *GetAccountRequest {
+	this := &GetAccountRequest{}
+	this.Id = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Id *= -1
+	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedGetAccountResponse(r randyAuthnPrivate, easy bool) *GetAccountResponse {
+	this := &GetAccountResponse{}
+	this.Id = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Id *= -1
+	}
+	this.Username = string(randStringAuthnPrivate(r))
+	this.Locked = bool(bool(r.Intn(2) == 0))
+	this.Deleted = bool(bool(r.Intn(2) == 0))
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedGetAccountResponseEnvelope(r randyAuthnPrivate, easy bool) *GetAccountResponseEnvelope {
+	this := &GetAccountResponseEnvelope{}
+	if r.Intn(10) != 0 {
+		this.Result = NewPopulatedGetAccountResponse(r, easy)
+	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedUpdateAccountRequest(r randyAuthnPrivate, easy bool) *UpdateAccountRequest {
+	this := &UpdateAccountRequest{}
+	this.Id = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Id *= -1
+	}
+	this.Username = string(randStringAuthnPrivate(r))
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedUpdateAccountResponse(r randyAuthnPrivate, easy bool) *UpdateAccountResponse {
+	this := &UpdateAccountResponse{}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedLockAccountRequest(r randyAuthnPrivate, easy bool) *LockAccountRequest {
+	this := &LockAccountRequest{}
+	this.Id = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Id *= -1
+	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedLockAccountResponse(r randyAuthnPrivate, easy bool) *LockAccountResponse {
+	this := &LockAccountResponse{}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedUnlockAccountRequest(r randyAuthnPrivate, easy bool) *UnlockAccountRequest {
+	this := &UnlockAccountRequest{}
+	this.Id = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Id *= -1
+	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedUnlockAccountResponse(r randyAuthnPrivate, easy bool) *UnlockAccountResponse {
+	this := &UnlockAccountResponse{}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedArchiveAccountRequest(r randyAuthnPrivate, easy bool) *ArchiveAccountRequest {
+	this := &ArchiveAccountRequest{}
+	this.Id = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Id *= -1
+	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedArchiveAccountResponse(r randyAuthnPrivate, easy bool) *ArchiveAccountResponse {
+	this := &ArchiveAccountResponse{}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedImportAccountRequst(r randyAuthnPrivate, easy bool) *ImportAccountRequst {
+	this := &ImportAccountRequst{}
+	this.Username = string(randStringAuthnPrivate(r))
+	this.Password = string(randStringAuthnPrivate(r))
+	this.Locked = bool(bool(r.Intn(2) == 0))
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedImportAccountResponse(r randyAuthnPrivate, easy bool) *ImportAccountResponse {
+	this := &ImportAccountResponse{}
+	this.Id = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Id *= -1
+	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedImportAccountResponseEnvelope(r randyAuthnPrivate, easy bool) *ImportAccountResponseEnvelope {
+	this := &ImportAccountResponseEnvelope{}
+	if r.Intn(10) != 0 {
+		this.Result = NewPopulatedImportAccountResponse(r, easy)
+	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedExpirePasswordRequest(r randyAuthnPrivate, easy bool) *ExpirePasswordRequest {
+	this := &ExpirePasswordRequest{}
+	this.Id = int64(r.Int63())
+	if r.Intn(2) == 0 {
+		this.Id *= -1
+	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedExpirePasswordResponse(r randyAuthnPrivate, easy bool) *ExpirePasswordResponse {
+	this := &ExpirePasswordResponse{}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedJWKSRequest(r randyAuthnPrivate, easy bool) *JWKSRequest {
+	this := &JWKSRequest{}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedKey(r randyAuthnPrivate, easy bool) *Key {
+	this := &Key{}
+	this.Use = string(randStringAuthnPrivate(r))
+	this.Alg = string(randStringAuthnPrivate(r))
+	this.Kty = string(randStringAuthnPrivate(r))
+	this.Kid = string(randStringAuthnPrivate(r))
+	this.E = string(randStringAuthnPrivate(r))
+	this.N = string(randStringAuthnPrivate(r))
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedJWKSResponse(r randyAuthnPrivate, easy bool) *JWKSResponse {
+	this := &JWKSResponse{}
+	if r.Intn(10) != 0 {
+		v1 := r.Intn(5)
+		this.Keys = make([]*Key, v1)
+		for i := 0; i < v1; i++ {
+			this.Keys[i] = NewPopulatedKey(r, easy)
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedServiceStatsRequest(r randyAuthnPrivate, easy bool) *ServiceStatsRequest {
+	this := &ServiceStatsRequest{}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedServiceStatsResponse(r randyAuthnPrivate, easy bool) *ServiceStatsResponse {
+	this := &ServiceStatsResponse{}
+	if r.Intn(10) != 0 {
+		this.Actives = NewPopulatedServiceStatsResponseActiveStats(r, easy)
+	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedServiceStatsResponseActiveStats(r randyAuthnPrivate, easy bool) *ServiceStatsResponseActiveStats {
+	this := &ServiceStatsResponseActiveStats{}
+	if r.Intn(10) != 0 {
+		v2 := r.Intn(10)
+		this.Daily = make(map[string]int64)
+		for i := 0; i < v2; i++ {
+			v3 := randStringAuthnPrivate(r)
+			this.Daily[v3] = int64(r.Int63())
+			if r.Intn(2) == 0 {
+				this.Daily[v3] *= -1
+			}
+		}
+	}
+	if r.Intn(10) != 0 {
+		v4 := r.Intn(10)
+		this.Weekly = make(map[string]int64)
+		for i := 0; i < v4; i++ {
+			v5 := randStringAuthnPrivate(r)
+			this.Weekly[v5] = int64(r.Int63())
+			if r.Intn(2) == 0 {
+				this.Weekly[v5] *= -1
+			}
+		}
+	}
+	if r.Intn(10) != 0 {
+		v6 := r.Intn(10)
+		this.Monthly = make(map[string]int64)
+		for i := 0; i < v6; i++ {
+			v7 := randStringAuthnPrivate(r)
+			this.Monthly[v7] = int64(r.Int63())
+			if r.Intn(2) == 0 {
+				this.Monthly[v7] *= -1
+			}
+		}
+	}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedServiceConfigurationRequest(r randyAuthnPrivate, easy bool) *ServiceConfigurationRequest {
+	this := &ServiceConfigurationRequest{}
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+func NewPopulatedConfiguration(r randyAuthnPrivate, easy bool) *Configuration {
+	this := &Configuration{}
+	this.Issuer = string(randStringAuthnPrivate(r))
+	v8 := r.Intn(10)
+	this.ResponseTypesSupported = make([]string, v8)
+	for i := 0; i < v8; i++ {
+		this.ResponseTypesSupported[i] = string(randStringAuthnPrivate(r))
+	}
+	v9 := r.Intn(10)
+	this.SubjectTypesSupported = make([]string, v9)
+	for i := 0; i < v9; i++ {
+		this.SubjectTypesSupported[i] = string(randStringAuthnPrivate(r))
+	}
+	v10 := r.Intn(10)
+	this.IdTokenSigningAlgValuesSupported = make([]string, v10)
+	for i := 0; i < v10; i++ {
+		this.IdTokenSigningAlgValuesSupported[i] = string(randStringAuthnPrivate(r))
+	}
+	v11 := r.Intn(10)
+	this.ClaimsSupported = make([]string, v11)
+	for i := 0; i < v11; i++ {
+		this.ClaimsSupported[i] = string(randStringAuthnPrivate(r))
+	}
+	this.JwksUri = string(randStringAuthnPrivate(r))
+	if !easy && r.Intn(10) != 0 {
+	}
+	return this
+}
+
+type randyAuthnPrivate interface {
+	Float32() float32
+	Float64() float64
+	Int63() int64
+	Int31() int32
+	Uint32() uint32
+	Intn(n int) int
+}
+
+func randUTF8RuneAuthnPrivate(r randyAuthnPrivate) rune {
+	ru := r.Intn(62)
+	if ru < 10 {
+		return rune(ru + 48)
+	} else if ru < 36 {
+		return rune(ru + 55)
+	}
+	return rune(ru + 61)
+}
+func randStringAuthnPrivate(r randyAuthnPrivate) string {
+	v12 := r.Intn(100)
+	tmps := make([]rune, v12)
+	for i := 0; i < v12; i++ {
+		tmps[i] = randUTF8RuneAuthnPrivate(r)
+	}
+	return string(tmps)
+}
+func randUnrecognizedAuthnPrivate(r randyAuthnPrivate, maxFieldNumber int) (dAtA []byte) {
+	l := r.Intn(5)
+	for i := 0; i < l; i++ {
+		wire := r.Intn(4)
+		if wire == 3 {
+			wire = 5
+		}
+		fieldNumber := maxFieldNumber + r.Intn(100)
+		dAtA = randFieldAuthnPrivate(dAtA, r, fieldNumber, wire)
+	}
+	return dAtA
+}
+func randFieldAuthnPrivate(dAtA []byte, r randyAuthnPrivate, fieldNumber int, wire int) []byte {
+	key := uint32(fieldNumber)<<3 | uint32(wire)
+	switch wire {
+	case 0:
+		dAtA = encodeVarintPopulateAuthnPrivate(dAtA, uint64(key))
+		v13 := r.Int63()
+		if r.Intn(2) == 0 {
+			v13 *= -1
+		}
+		dAtA = encodeVarintPopulateAuthnPrivate(dAtA, uint64(v13))
+	case 1:
+		dAtA = encodeVarintPopulateAuthnPrivate(dAtA, uint64(key))
+		dAtA = append(dAtA, byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)))
+	case 2:
+		dAtA = encodeVarintPopulateAuthnPrivate(dAtA, uint64(key))
+		ll := r.Intn(100)
+		dAtA = encodeVarintPopulateAuthnPrivate(dAtA, uint64(ll))
+		for j := 0; j < ll; j++ {
+			dAtA = append(dAtA, byte(r.Intn(256)))
+		}
+	default:
+		dAtA = encodeVarintPopulateAuthnPrivate(dAtA, uint64(key))
+		dAtA = append(dAtA, byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)), byte(r.Intn(256)))
+	}
+	return dAtA
+}
+func encodeVarintPopulateAuthnPrivate(dAtA []byte, v uint64) []byte {
+	for v >= 1<<7 {
+		dAtA = append(dAtA, uint8(uint64(v)&0x7f|0x80))
+		v >>= 7
+	}
+	dAtA = append(dAtA, uint8(v))
+	return dAtA
+}
 func (m *GetAccountRequest) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Id)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
+	if m.Id != 0 {
+		n += 1 + sovAuthnPrivate(uint64(m.Id))
 	}
 	return n
 }
@@ -2005,9 +3730,8 @@ func (m *GetAccountResponseEnvelope) Size() (n int) {
 func (m *UpdateAccountRequest) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Id)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
+	if m.Id != 0 {
+		n += 1 + sovAuthnPrivate(uint64(m.Id))
 	}
 	l = len(m.Username)
 	if l > 0 {
@@ -2016,33 +3740,54 @@ func (m *UpdateAccountRequest) Size() (n int) {
 	return n
 }
 
+func (m *UpdateAccountResponse) Size() (n int) {
+	var l int
+	_ = l
+	return n
+}
+
 func (m *LockAccountRequest) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Id)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
+	if m.Id != 0 {
+		n += 1 + sovAuthnPrivate(uint64(m.Id))
 	}
+	return n
+}
+
+func (m *LockAccountResponse) Size() (n int) {
+	var l int
+	_ = l
 	return n
 }
 
 func (m *UnlockAccountRequest) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Id)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
+	if m.Id != 0 {
+		n += 1 + sovAuthnPrivate(uint64(m.Id))
 	}
+	return n
+}
+
+func (m *UnlockAccountResponse) Size() (n int) {
+	var l int
+	_ = l
 	return n
 }
 
 func (m *ArchiveAccountRequest) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Id)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
+	if m.Id != 0 {
+		n += 1 + sovAuthnPrivate(uint64(m.Id))
 	}
+	return n
+}
+
+func (m *ArchiveAccountResponse) Size() (n int) {
+	var l int
+	_ = l
 	return n
 }
 
@@ -2085,10 +3830,69 @@ func (m *ImportAccountResponseEnvelope) Size() (n int) {
 func (m *ExpirePasswordRequest) Size() (n int) {
 	var l int
 	_ = l
-	l = len(m.Id)
+	if m.Id != 0 {
+		n += 1 + sovAuthnPrivate(uint64(m.Id))
+	}
+	return n
+}
+
+func (m *ExpirePasswordResponse) Size() (n int) {
+	var l int
+	_ = l
+	return n
+}
+
+func (m *JWKSRequest) Size() (n int) {
+	var l int
+	_ = l
+	return n
+}
+
+func (m *Key) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.Use)
 	if l > 0 {
 		n += 1 + l + sovAuthnPrivate(uint64(l))
 	}
+	l = len(m.Alg)
+	if l > 0 {
+		n += 1 + l + sovAuthnPrivate(uint64(l))
+	}
+	l = len(m.Kty)
+	if l > 0 {
+		n += 1 + l + sovAuthnPrivate(uint64(l))
+	}
+	l = len(m.Kid)
+	if l > 0 {
+		n += 1 + l + sovAuthnPrivate(uint64(l))
+	}
+	l = len(m.E)
+	if l > 0 {
+		n += 1 + l + sovAuthnPrivate(uint64(l))
+	}
+	l = len(m.N)
+	if l > 0 {
+		n += 1 + l + sovAuthnPrivate(uint64(l))
+	}
+	return n
+}
+
+func (m *JWKSResponse) Size() (n int) {
+	var l int
+	_ = l
+	if len(m.Keys) > 0 {
+		for _, e := range m.Keys {
+			l = e.Size()
+			n += 1 + l + sovAuthnPrivate(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *ServiceStatsRequest) Size() (n int) {
+	var l int
+	_ = l
 	return n
 }
 
@@ -2128,6 +3932,50 @@ func (m *ServiceStatsResponseActiveStats) Size() (n int) {
 			mapEntrySize := 1 + len(k) + sovAuthnPrivate(uint64(len(k))) + 1 + sovAuthnPrivate(uint64(v))
 			n += mapEntrySize + 1 + sovAuthnPrivate(uint64(mapEntrySize))
 		}
+	}
+	return n
+}
+
+func (m *ServiceConfigurationRequest) Size() (n int) {
+	var l int
+	_ = l
+	return n
+}
+
+func (m *Configuration) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.Issuer)
+	if l > 0 {
+		n += 1 + l + sovAuthnPrivate(uint64(l))
+	}
+	if len(m.ResponseTypesSupported) > 0 {
+		for _, s := range m.ResponseTypesSupported {
+			l = len(s)
+			n += 1 + l + sovAuthnPrivate(uint64(l))
+		}
+	}
+	if len(m.SubjectTypesSupported) > 0 {
+		for _, s := range m.SubjectTypesSupported {
+			l = len(s)
+			n += 1 + l + sovAuthnPrivate(uint64(l))
+		}
+	}
+	if len(m.IdTokenSigningAlgValuesSupported) > 0 {
+		for _, s := range m.IdTokenSigningAlgValuesSupported {
+			l = len(s)
+			n += 1 + l + sovAuthnPrivate(uint64(l))
+		}
+	}
+	if len(m.ClaimsSupported) > 0 {
+		for _, s := range m.ClaimsSupported {
+			l = len(s)
+			n += 1 + l + sovAuthnPrivate(uint64(l))
+		}
+	}
+	l = len(m.JwksUri)
+	if l > 0 {
+		n += 1 + l + sovAuthnPrivate(uint64(l))
 	}
 	return n
 }
@@ -2189,12 +4037,30 @@ func (this *UpdateAccountRequest) String() string {
 	}, "")
 	return s
 }
+func (this *UpdateAccountResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&UpdateAccountResponse{`,
+		`}`,
+	}, "")
+	return s
+}
 func (this *LockAccountRequest) String() string {
 	if this == nil {
 		return "nil"
 	}
 	s := strings.Join([]string{`&LockAccountRequest{`,
 		`Id:` + fmt.Sprintf("%v", this.Id) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *LockAccountResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&LockAccountResponse{`,
 		`}`,
 	}, "")
 	return s
@@ -2209,12 +4075,30 @@ func (this *UnlockAccountRequest) String() string {
 	}, "")
 	return s
 }
+func (this *UnlockAccountResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&UnlockAccountResponse{`,
+		`}`,
+	}, "")
+	return s
+}
 func (this *ArchiveAccountRequest) String() string {
 	if this == nil {
 		return "nil"
 	}
 	s := strings.Join([]string{`&ArchiveAccountRequest{`,
 		`Id:` + fmt.Sprintf("%v", this.Id) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *ArchiveAccountResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&ArchiveAccountResponse{`,
 		`}`,
 	}, "")
 	return s
@@ -2257,6 +4141,58 @@ func (this *ExpirePasswordRequest) String() string {
 	}
 	s := strings.Join([]string{`&ExpirePasswordRequest{`,
 		`Id:` + fmt.Sprintf("%v", this.Id) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *ExpirePasswordResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&ExpirePasswordResponse{`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *JWKSRequest) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&JWKSRequest{`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *Key) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&Key{`,
+		`Use:` + fmt.Sprintf("%v", this.Use) + `,`,
+		`Alg:` + fmt.Sprintf("%v", this.Alg) + `,`,
+		`Kty:` + fmt.Sprintf("%v", this.Kty) + `,`,
+		`Kid:` + fmt.Sprintf("%v", this.Kid) + `,`,
+		`E:` + fmt.Sprintf("%v", this.E) + `,`,
+		`N:` + fmt.Sprintf("%v", this.N) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *JWKSResponse) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&JWKSResponse{`,
+		`Keys:` + strings.Replace(fmt.Sprintf("%v", this.Keys), "Key", "Key", 1) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *ServiceStatsRequest) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&ServiceStatsRequest{`,
 		`}`,
 	}, "")
 	return s
@@ -2313,6 +4249,30 @@ func (this *ServiceStatsResponseActiveStats) String() string {
 	}, "")
 	return s
 }
+func (this *ServiceConfigurationRequest) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&ServiceConfigurationRequest{`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *Configuration) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&Configuration{`,
+		`Issuer:` + fmt.Sprintf("%v", this.Issuer) + `,`,
+		`ResponseTypesSupported:` + fmt.Sprintf("%v", this.ResponseTypesSupported) + `,`,
+		`SubjectTypesSupported:` + fmt.Sprintf("%v", this.SubjectTypesSupported) + `,`,
+		`IdTokenSigningAlgValuesSupported:` + fmt.Sprintf("%v", this.IdTokenSigningAlgValuesSupported) + `,`,
+		`ClaimsSupported:` + fmt.Sprintf("%v", this.ClaimsSupported) + `,`,
+		`JwksUri:` + fmt.Sprintf("%v", this.JwksUri) + `,`,
+		`}`,
+	}, "")
+	return s
+}
 func valueToStringAuthnPrivate(v interface{}) string {
 	rv := reflect.ValueOf(v)
 	if rv.IsNil() {
@@ -2351,10 +4311,10 @@ func (m *GetAccountRequest) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
-			var stringLen uint64
+			m.Id = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowAuthnPrivate
@@ -2364,21 +4324,11 @@ func (m *GetAccountRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				m.Id |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Id = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
@@ -2651,10 +4601,10 @@ func (m *UpdateAccountRequest) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
-			var stringLen uint64
+			m.Id = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowAuthnPrivate
@@ -2664,21 +4614,11 @@ func (m *UpdateAccountRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				m.Id |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Id = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Username", wireType)
@@ -2708,6 +4648,56 @@ func (m *UpdateAccountRequest) Unmarshal(dAtA []byte) error {
 			}
 			m.Username = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *UpdateAccountResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAuthnPrivate
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: UpdateAccountResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: UpdateAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
 		default:
 			iNdEx = preIndex
 			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
@@ -2759,10 +4749,10 @@ func (m *LockAccountRequest) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
-			var stringLen uint64
+			m.Id = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowAuthnPrivate
@@ -2772,21 +4762,61 @@ func (m *LockAccountRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				m.Id |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
 				return ErrInvalidLengthAuthnPrivate
 			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
+			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Id = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *LockAccountResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAuthnPrivate
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LockAccountResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LockAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
 		default:
 			iNdEx = preIndex
 			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
@@ -2838,10 +4868,10 @@ func (m *UnlockAccountRequest) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
-			var stringLen uint64
+			m.Id = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowAuthnPrivate
@@ -2851,21 +4881,61 @@ func (m *UnlockAccountRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				m.Id |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
 				return ErrInvalidLengthAuthnPrivate
 			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
+			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Id = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *UnlockAccountResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAuthnPrivate
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: UnlockAccountResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: UnlockAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
 		default:
 			iNdEx = preIndex
 			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
@@ -2917,10 +4987,10 @@ func (m *ArchiveAccountRequest) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
 			}
-			var stringLen uint64
+			m.Id = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowAuthnPrivate
@@ -2930,21 +5000,61 @@ func (m *ArchiveAccountRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				m.Id |= (int64(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
 				return ErrInvalidLengthAuthnPrivate
 			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
+			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Id = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ArchiveAccountResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAuthnPrivate
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ArchiveAccountResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ArchiveAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
 		default:
 			iNdEx = preIndex
 			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
@@ -3276,8 +5386,177 @@ func (m *ExpirePasswordRequest) Unmarshal(dAtA []byte) error {
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthnPrivate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= (int64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ExpirePasswordResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAuthnPrivate
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ExpirePasswordResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ExpirePasswordResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *JWKSRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAuthnPrivate
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: JWKSRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: JWKSRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Key) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAuthnPrivate
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Key: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Key: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Use", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -3302,8 +5581,284 @@ func (m *ExpirePasswordRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Id = string(dAtA[iNdEx:postIndex])
+			m.Use = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Alg", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthnPrivate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Alg = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Kty", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthnPrivate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Kty = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Kid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthnPrivate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Kid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field E", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthnPrivate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.E = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field N", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthnPrivate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.N = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *JWKSResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAuthnPrivate
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: JWKSResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: JWKSResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Keys", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthnPrivate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Keys = append(m.Keys, &Key{})
+			if err := m.Keys[len(m.Keys)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *ServiceStatsRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAuthnPrivate
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ServiceStatsRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ServiceStatsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
 		default:
 			iNdEx = preIndex
 			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
@@ -3779,6 +6334,280 @@ func (m *ServiceStatsResponseActiveStats) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *ServiceConfigurationRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAuthnPrivate
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ServiceConfigurationRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ServiceConfigurationRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *Configuration) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAuthnPrivate
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: Configuration: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: Configuration: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Issuer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthnPrivate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Issuer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ResponseTypesSupported", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthnPrivate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ResponseTypesSupported = append(m.ResponseTypesSupported, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubjectTypesSupported", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthnPrivate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SubjectTypesSupported = append(m.SubjectTypesSupported, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IdTokenSigningAlgValuesSupported", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthnPrivate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.IdTokenSigningAlgValuesSupported = append(m.IdTokenSigningAlgValuesSupported, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ClaimsSupported", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthnPrivate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ClaimsSupported = append(m.ClaimsSupported, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field JwksUri", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAuthnPrivate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.JwksUri = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthAuthnPrivate
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func skipAuthnPrivate(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
@@ -3884,61 +6713,88 @@ var (
 	ErrIntOverflowAuthnPrivate   = fmt.Errorf("proto: integer overflow")
 )
 
-func init() { proto.RegisterFile("authn-private.proto", fileDescriptor_authn_private_d4727a028c8ad90a) }
+func init() { proto.RegisterFile("authn-private.proto", fileDescriptor_authn_private_c60a8bdddc03adb9) }
 
-var fileDescriptor_authn_private_d4727a028c8ad90a = []byte{
-	// 843 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x56, 0xcd, 0x6e, 0xf3, 0x54,
-	0x10, 0x8d, 0x93, 0x7e, 0x69, 0x98, 0xe4, 0x8b, 0xca, 0x6d, 0x92, 0x9a, 0x5b, 0x6a, 0x22, 0x17,
-	0xb5, 0x55, 0xa5, 0xda, 0x28, 0x65, 0x51, 0xb2, 0x4b, 0x45, 0x04, 0x08, 0xa8, 0x50, 0x4a, 0x85,
-	0x84, 0x40, 0x95, 0x6b, 0x5f, 0x12, 0x2b, 0x8e, 0xaf, 0xb1, 0xaf, 0x53, 0x22, 0x84, 0x84, 0xfa,
-	0x04, 0x48, 0x3c, 0x03, 0x88, 0x47, 0x61, 0x59, 0x89, 0x0d, 0x2b, 0x44, 0x03, 0x0b, 0xc4, 0xaa,
-	0x8f, 0xf0, 0xc9, 0xd7, 0x76, 0xe2, 0x24, 0x76, 0x7f, 0x76, 0x19, 0x7b, 0xe6, 0x9c, 0x99, 0x39,
-	0x9e, 0xa3, 0xc0, 0xa6, 0xe6, 0xb3, 0x81, 0x7d, 0xe4, 0xb8, 0xe6, 0x58, 0x63, 0x44, 0x71, 0x5c,
-	0xca, 0x28, 0x5a, 0xeb, 0xbb, 0x8e, 0x8e, 0xb7, 0xfb, 0x94, 0xf6, 0x2d, 0xa2, 0xf2, 0x67, 0x57,
-	0xfe, 0x37, 0x2a, 0x19, 0x39, 0x6c, 0x12, 0xa6, 0xe0, 0xa3, 0xbe, 0xc9, 0x06, 0xfe, 0x95, 0xa2,
-	0xd3, 0x91, 0xda, 0xa7, 0x7d, 0x3a, 0xcf, 0x0a, 0x22, 0x1e, 0xf0, 0x5f, 0x51, 0xfa, 0x9b, 0x11,
-	0x96, 0xe6, 0x98, 0xaa, 0x66, 0xdb, 0x94, 0x69, 0xcc, 0xa4, 0xb6, 0x17, 0xbe, 0x95, 0x77, 0xe1,
-	0xf5, 0x0f, 0x08, 0xeb, 0xe8, 0x3a, 0xf5, 0x6d, 0xd6, 0x23, 0xdf, 0xfa, 0xc4, 0x63, 0xa8, 0x0a,
-	0x79, 0xd3, 0x10, 0x85, 0xa6, 0x70, 0xf0, 0x5a, 0x2f, 0x6f, 0x1a, 0xb2, 0x0b, 0x28, 0x99, 0xe4,
-	0x39, 0xd4, 0xf6, 0x48, 0x22, 0xab, 0x10, 0x64, 0x21, 0x0c, 0x25, 0xdf, 0x23, 0xae, 0xad, 0x8d,
-	0x88, 0x98, 0xe7, 0xb5, 0xb3, 0x18, 0x35, 0xa0, 0x68, 0x51, 0x7d, 0x48, 0x0c, 0xb1, 0xd0, 0x14,
-	0x0e, 0x4a, 0xbd, 0x28, 0x42, 0x22, 0xac, 0x1b, 0xc4, 0x22, 0x8c, 0x18, 0xe2, 0x1a, 0x7f, 0x11,
-	0x87, 0xf2, 0x19, 0xe0, 0x55, 0xce, 0xae, 0x3d, 0x26, 0x16, 0x75, 0x08, 0x7a, 0x07, 0x8a, 0x2e,
-	0xf1, 0x7c, 0x8b, 0x71, 0xfe, 0x72, 0x4b, 0x54, 0x82, 0xbd, 0x29, 0xab, 0x15, 0xbd, 0x28, 0x4f,
-	0x3e, 0x85, 0xda, 0x85, 0x63, 0x68, 0x8c, 0x3c, 0x3c, 0xeb, 0x43, 0x53, 0xc8, 0x6f, 0x03, 0xfa,
-	0x84, 0xea, 0xc3, 0x47, 0xb6, 0xb5, 0x07, 0xb5, 0x0b, 0xdb, 0x7a, 0x3c, 0x6f, 0x1f, 0xea, 0x1d,
-	0x57, 0x1f, 0x98, 0xe3, 0x47, 0x5a, 0x92, 0x09, 0x6c, 0x7e, 0x34, 0x72, 0xa8, 0x9b, 0x94, 0xc9,
-	0x63, 0x0b, 0x9d, 0x0a, 0x4b, 0xfb, 0xc6, 0x50, 0x72, 0x34, 0xcf, 0xbb, 0xa6, 0xae, 0x11, 0x4f,
-	0x11, 0xc7, 0x59, 0x5a, 0xc8, 0x2a, 0xd4, 0x97, 0x68, 0x22, 0xa1, 0x1b, 0x73, 0xa1, 0x4f, 0x8b,
-	0xff, 0xff, 0xf5, 0x56, 0xde, 0x34, 0x78, 0x5f, 0x9f, 0xc3, 0x4e, 0x6a, 0xc1, 0x4c, 0xa5, 0xe3,
-	0x25, 0x95, 0xb6, 0x43, 0x95, 0x52, 0x8b, 0x66, 0x42, 0xed, 0x43, 0xbd, 0xfb, 0x9d, 0x63, 0xba,
-	0xe4, 0xb3, 0xa8, 0xe1, 0xac, 0xb5, 0xdc, 0xac, 0x41, 0xed, 0x9c, 0xb8, 0x63, 0x53, 0x27, 0xe7,
-	0x4c, 0x63, 0xde, 0xac, 0xdf, 0x0e, 0xac, 0x6b, 0x3a, 0x33, 0xc7, 0xc4, 0x8b, 0x78, 0xf7, 0x43,
-	0xde, 0xb4, 0x64, 0x25, 0xcc, 0xbc, 0xf4, 0xf8, 0xc3, 0xb8, 0x0e, 0xff, 0x5a, 0x80, 0x4a, 0xf2,
-	0x0d, 0xfa, 0x10, 0x5e, 0x18, 0x9a, 0x69, 0x4d, 0x44, 0xa1, 0x59, 0x38, 0x28, 0xb7, 0x5a, 0x4f,
-	0x44, 0x54, 0xde, 0x0f, 0x8a, 0xba, 0x36, 0x73, 0x27, 0xbd, 0x10, 0x00, 0x7d, 0x0c, 0xc5, 0x6b,
-	0x42, 0x86, 0xd6, 0x44, 0xcc, 0x73, 0xa8, 0xe3, 0xa7, 0x42, 0x7d, 0xc1, 0xab, 0x42, 0xac, 0x08,
-	0x02, 0x9d, 0xc1, 0xfa, 0x88, 0xda, 0x6c, 0x60, 0x4d, 0xc4, 0x02, 0x47, 0x7b, 0xf7, 0xa9, 0x68,
-	0x9f, 0x86, 0x65, 0x21, 0x5c, 0x0c, 0x82, 0x4f, 0x00, 0xe6, 0x1d, 0xa3, 0x0d, 0x28, 0x0c, 0xc9,
-	0x24, 0x5a, 0x79, 0xf0, 0x13, 0xd5, 0xe0, 0xc5, 0x58, 0xb3, 0xfc, 0xf0, 0x34, 0x0a, 0xbd, 0x30,
-	0x68, 0xe7, 0x4f, 0x04, 0xfc, 0x1e, 0x94, 0x13, 0x0d, 0x3e, 0xab, 0xb4, 0x0d, 0x95, 0x64, 0x37,
-	0xcf, 0xa9, 0x6d, 0xfd, 0x52, 0x04, 0xe8, 0x18, 0x23, 0xd3, 0xee, 0xf8, 0x6c, 0x70, 0x86, 0x2e,
-	0x01, 0xe6, 0x1e, 0x80, 0xb6, 0x56, 0x5d, 0x81, 0x7f, 0x4a, 0xb8, 0x99, 0x65, 0x17, 0xf1, 0xa7,
-	0x2b, 0x37, 0x6e, 0xfe, 0xf8, 0xf7, 0xe7, 0xfc, 0x06, 0xaa, 0xaa, 0x5a, 0x98, 0xe1, 0xa9, 0xdf,
-	0x9b, 0xc6, 0x0f, 0x88, 0xc0, 0xcb, 0x05, 0x1b, 0x41, 0x38, 0x84, 0x4a, 0xf3, 0x16, 0xdc, 0x50,
-	0x42, 0xef, 0x55, 0x62, 0x87, 0x56, 0xba, 0x81, 0x8f, 0xcb, 0x4d, 0x0e, 0x8e, 0xf1, 0x12, 0x78,
-	0x7b, 0x7e, 0xbf, 0x5f, 0x41, 0x39, 0xe1, 0x34, 0x28, 0xb2, 0xb7, 0x55, 0xf3, 0xc9, 0xa4, 0xd8,
-	0xe6, 0x14, 0x75, 0xbc, 0xb9, 0x48, 0xa1, 0x06, 0xb7, 0x8e, 0x34, 0xa8, 0xc4, 0x0e, 0xb5, 0x30,
-	0x43, 0x8a, 0x6b, 0x65, 0x12, 0xec, 0x70, 0x82, 0x2d, 0x5c, 0x5f, 0x22, 0xf0, 0x39, 0x08, 0xfa,
-	0x1a, 0xaa, 0x8b, 0xe6, 0x86, 0xa2, 0xe3, 0x4f, 0xb5, 0xbc, 0x4c, 0x96, 0x48, 0x86, 0xc3, 0x65,
-	0x19, 0x2c, 0x78, 0xb9, 0xe0, 0x22, 0xe8, 0x8d, 0x54, 0x6b, 0x09, 0x7c, 0x12, 0xef, 0x3e, 0xe0,
-	0x3a, 0x33, 0xbd, 0xa3, 0x7d, 0xc9, 0x1b, 0x73, 0x22, 0x93, 0x17, 0xb4, 0x85, 0x43, 0x34, 0x82,
-	0xea, 0xa2, 0x25, 0xc5, 0xc3, 0xa4, 0x1a, 0x55, 0xe6, 0x30, 0x7b, 0x9c, 0xa3, 0x89, 0xa5, 0xa5,
-	0x95, 0x11, 0x8e, 0x72, 0x39, 0x33, 0xe8, 0x1e, 0x54, 0x92, 0xf7, 0x8b, 0x32, 0xf0, 0x30, 0xce,
-	0xbe, 0x75, 0xb9, 0xca, 0xb9, 0x4a, 0xa8, 0xa8, 0xf2, 0x73, 0x3f, 0x6d, 0xdd, 0xde, 0x49, 0xb9,
-	0x3f, 0xef, 0xa4, 0xdc, 0xfd, 0x9d, 0x24, 0xfc, 0x38, 0x95, 0x84, 0xdf, 0xa6, 0x92, 0xf0, 0xfb,
-	0x54, 0x12, 0x6e, 0xa7, 0x92, 0xf0, 0xf7, 0x54, 0x12, 0xfe, 0x9b, 0x4a, 0xb9, 0xfb, 0xa9, 0x24,
-	0xfc, 0xf4, 0x8f, 0x94, 0xfb, 0x92, 0xff, 0x0b, 0xb9, 0x2a, 0x72, 0xbe, 0xe3, 0x57, 0x01, 0x00,
-	0x00, 0xff, 0xff, 0xef, 0xb0, 0xa6, 0xaf, 0xa9, 0x08, 0x00, 0x00,
+var fileDescriptor_authn_private_c60a8bdddc03adb9 = []byte{
+	// 1265 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x57, 0xcf, 0x6f, 0x1b, 0x45,
+	0x14, 0xce, 0xd8, 0x89, 0x93, 0x3e, 0x3b, 0x21, 0x9d, 0xc4, 0xa9, 0xd9, 0xb6, 0x5b, 0xb3, 0xfd,
+	0x95, 0x56, 0xad, 0x5d, 0x19, 0x29, 0x6a, 0x43, 0x39, 0x38, 0x50, 0x01, 0x2d, 0x14, 0xb0, 0x1b,
+	0x22, 0x45, 0x42, 0xd6, 0x66, 0x77, 0xba, 0x99, 0x7a, 0xbd, 0xbb, 0xdd, 0x9d, 0x75, 0x6a, 0x21,
+	0x10, 0xe2, 0x84, 0xc4, 0x05, 0xc4, 0x85, 0xbf, 0x00, 0x38, 0xf2, 0x2f, 0x70, 0xe3, 0x58, 0x89,
+	0x0b, 0xa7, 0x42, 0x0c, 0x07, 0x94, 0x53, 0x8f, 0x1c, 0xd1, 0xce, 0xce, 0xda, 0xde, 0xf5, 0xd6,
+	0x6e, 0x4e, 0xde, 0x99, 0xf7, 0x7d, 0xdf, 0x7b, 0xf3, 0xe6, 0xcd, 0xcc, 0x33, 0xac, 0xa8, 0x3e,
+	0xdb, 0xb7, 0xae, 0x3b, 0x2e, 0xed, 0xaa, 0x8c, 0x54, 0x1c, 0xd7, 0x66, 0x36, 0x5e, 0x6c, 0x13,
+	0x57, 0x65, 0xd4, 0xaa, 0x70, 0xa3, 0x74, 0xdd, 0xa0, 0x6c, 0xdf, 0xdf, 0xab, 0x68, 0x76, 0xa7,
+	0x6a, 0xd8, 0x86, 0x5d, 0xe5, 0xa8, 0x3d, 0xff, 0x21, 0x1f, 0xf1, 0x01, 0xff, 0x0a, 0xd9, 0xd2,
+	0x19, 0xc3, 0xb6, 0x0d, 0x93, 0x54, 0x55, 0x87, 0x56, 0x55, 0xcb, 0xb2, 0x99, 0xca, 0xa8, 0x6d,
+	0x79, 0xa1, 0x55, 0x39, 0x0f, 0x27, 0xdf, 0x21, 0xac, 0xae, 0x69, 0xb6, 0x6f, 0xb1, 0x06, 0x79,
+	0xec, 0x13, 0x8f, 0xe1, 0x25, 0xc8, 0x50, 0xbd, 0x84, 0xca, 0x68, 0x3d, 0xdb, 0xc8, 0x50, 0x5d,
+	0xf9, 0x06, 0x01, 0x1e, 0x45, 0x79, 0x8e, 0x6d, 0x79, 0x24, 0x09, 0xc3, 0x12, 0x2c, 0xf8, 0x1e,
+	0x71, 0x2d, 0xb5, 0x43, 0x4a, 0x99, 0x32, 0x5a, 0x3f, 0xd1, 0x18, 0x8c, 0xb1, 0x02, 0x39, 0xd3,
+	0xd6, 0xda, 0x44, 0x2f, 0x65, 0xcb, 0x68, 0x7d, 0x61, 0x0b, 0x8e, 0x9e, 0x9d, 0x13, 0x33, 0x0d,
+	0xf1, 0x8b, 0x2f, 0xc2, 0xbc, 0x4e, 0x4c, 0xc2, 0x88, 0x5e, 0x9a, 0xe5, 0xa0, 0xfc, 0xd1, 0xb3,
+	0x73, 0xd1, 0x54, 0x23, 0xfa, 0x50, 0x76, 0x40, 0x1a, 0x0f, 0xe6, 0x8e, 0xd5, 0x25, 0xa6, 0xed,
+	0x10, 0x7c, 0x0b, 0x72, 0x2e, 0xf1, 0x7c, 0x93, 0xf1, 0xc0, 0xf2, 0xb5, 0xd7, 0x2a, 0xb1, 0xec,
+	0x55, 0xc6, 0xa9, 0x0d, 0x41, 0x50, 0xb6, 0x60, 0x75, 0xdb, 0xd1, 0x55, 0x46, 0x26, 0xa7, 0x63,
+	0xd2, 0x3a, 0x95, 0x53, 0x50, 0x4c, 0x68, 0x84, 0x4e, 0x94, 0x0b, 0x80, 0xdf, 0xb7, 0xb5, 0xf6,
+	0x94, 0x4c, 0x17, 0x61, 0x25, 0x86, 0x12, 0xe4, 0x4b, 0xb0, 0xba, 0x6d, 0x99, 0xd3, 0xe9, 0x81,
+	0xf7, 0x38, 0x4e, 0x08, 0x5c, 0x86, 0x62, 0xdd, 0xd5, 0xf6, 0x69, 0x77, 0xca, 0xda, 0x94, 0x12,
+	0xac, 0x25, 0x81, 0x42, 0x82, 0xc0, 0xca, 0x7b, 0x1d, 0xc7, 0x76, 0x47, 0x8b, 0xc5, 0x63, 0xb1,
+	0x64, 0xa0, 0xc4, 0xa6, 0x4b, 0xb0, 0xe0, 0xa8, 0x9e, 0x77, 0x60, 0xbb, 0x7a, 0x94, 0xa8, 0x68,
+	0x8c, 0xd7, 0xe2, 0x05, 0x11, 0x15, 0x81, 0x52, 0x85, 0x62, 0xc2, 0x8d, 0xa8, 0xb6, 0xb5, 0x61,
+	0xa4, 0x5b, 0xb9, 0xa3, 0x67, 0xe7, 0x32, 0x54, 0xe7, 0x11, 0x7f, 0x0a, 0x67, 0x53, 0x09, 0x83,
+	0x8a, 0xb8, 0x9d, 0xa8, 0x88, 0x0b, 0x89, 0x8a, 0x48, 0x65, 0x0f, 0x8a, 0xe2, 0x32, 0x14, 0xef,
+	0x3c, 0x71, 0xa8, 0x4b, 0x3e, 0x12, 0x91, 0x4f, 0xc8, 0x5c, 0x12, 0x28, 0x32, 0xb7, 0x08, 0xf9,
+	0xbb, 0x3b, 0xf7, 0x9a, 0x82, 0xa8, 0x50, 0xc8, 0xde, 0x23, 0x3d, 0xbc, 0x0c, 0x59, 0xdf, 0x8b,
+	0x72, 0x16, 0x7c, 0x06, 0x33, 0xaa, 0x69, 0x88, 0x4c, 0x05, 0x9f, 0xc1, 0x4c, 0x9b, 0xf5, 0x78,
+	0x86, 0x4e, 0x34, 0x82, 0x4f, 0x3e, 0x43, 0xc3, 0xf3, 0x11, 0xcc, 0x50, 0x1d, 0x17, 0x00, 0x91,
+	0xd2, 0x1c, 0x1f, 0x23, 0x12, 0x8c, 0xac, 0x52, 0x2e, 0x1c, 0x59, 0xca, 0x06, 0x14, 0x42, 0xcf,
+	0x22, 0x87, 0x97, 0x60, 0xb6, 0x4d, 0x7a, 0x5e, 0x09, 0x95, 0xb3, 0xeb, 0xf9, 0x1a, 0x4e, 0x24,
+	0xe2, 0x1e, 0xe9, 0x35, 0xb8, 0x3d, 0x28, 0xc3, 0x26, 0x71, 0xbb, 0x54, 0x23, 0x4d, 0xa6, 0x32,
+	0x2f, 0x8a, 0xfc, 0xc7, 0x59, 0x58, 0x8d, 0xcf, 0x0b, 0xdd, 0xbb, 0x30, 0xaf, 0x6a, 0x8c, 0x76,
+	0x89, 0x27, 0x72, 0x7c, 0x23, 0x21, 0x9d, 0xc6, 0xaa, 0x84, 0x94, 0x96, 0xc7, 0x27, 0x23, 0x01,
+	0xe9, 0xd7, 0x2c, 0x14, 0x46, 0x2d, 0xf8, 0x63, 0x98, 0xd3, 0x55, 0x6a, 0xf6, 0x44, 0xd4, 0x6f,
+	0x1c, 0x57, 0xba, 0xf2, 0x76, 0xc0, 0xbe, 0x63, 0x31, 0xb7, 0xd7, 0x08, 0x95, 0xf0, 0x03, 0xc8,
+	0x1d, 0x10, 0xd2, 0x36, 0x7b, 0xa5, 0x0c, 0xd7, 0xbc, 0x7d, 0x6c, 0xcd, 0x1d, 0x4e, 0x0f, 0x45,
+	0x85, 0x16, 0xde, 0x81, 0xf9, 0x8e, 0x6d, 0xb1, 0x7d, 0x33, 0xd8, 0xb1, 0x40, 0xf6, 0xcd, 0x63,
+	0xcb, 0x7e, 0x10, 0xf2, 0x43, 0xdd, 0x48, 0x4d, 0xba, 0x09, 0x30, 0x5c, 0x03, 0x2f, 0x01, 0xd2,
+	0x8b, 0x0a, 0xa7, 0x4d, 0x7a, 0x78, 0x15, 0xe6, 0xba, 0xaa, 0xe9, 0x87, 0xb7, 0x51, 0xb6, 0x11,
+	0x0e, 0x36, 0x33, 0x37, 0x91, 0x74, 0x0b, 0xf2, 0x23, 0x91, 0x1e, 0x8b, 0xba, 0x09, 0x85, 0xd1,
+	0x68, 0x8e, 0xc3, 0x55, 0xce, 0xc2, 0x69, 0xb1, 0xd6, 0xb7, 0x6c, 0xeb, 0x21, 0x35, 0x7c, 0x97,
+	0x3f, 0x3a, 0x51, 0x1d, 0xfd, 0x92, 0x81, 0xc5, 0x98, 0x21, 0xb8, 0x0d, 0xa8, 0xe7, 0xf9, 0xc4,
+	0x15, 0xfa, 0x62, 0x84, 0x6f, 0x42, 0xc9, 0x15, 0x89, 0x6a, 0xb1, 0x9e, 0x43, 0xbc, 0x96, 0xe7,
+	0x3b, 0xc1, 0x71, 0x25, 0x3a, 0xdf, 0xba, 0x13, 0x8d, 0xb5, 0xc8, 0xfe, 0x20, 0x30, 0x37, 0x23,
+	0x2b, 0xde, 0x80, 0x53, 0x9e, 0xbf, 0xf7, 0x88, 0x68, 0x6c, 0x8c, 0x98, 0xe5, 0xc4, 0xa2, 0x30,
+	0x27, 0x78, 0x1f, 0xc2, 0x45, 0xaa, 0xb7, 0x98, 0xdd, 0x26, 0x56, 0xcb, 0xa3, 0x86, 0x45, 0x2d,
+	0xa3, 0xa5, 0x9a, 0x46, 0x8b, 0x2f, 0x6e, 0x54, 0x65, 0x96, 0xab, 0x94, 0xa9, 0xfe, 0x20, 0xc0,
+	0x36, 0x43, 0x68, 0xdd, 0x34, 0x3e, 0xe1, 0xc0, 0xa1, 0xe0, 0x15, 0x58, 0xd6, 0x4c, 0x95, 0x76,
+	0x46, 0xb9, 0x73, 0x9c, 0xfb, 0x4a, 0x38, 0x3f, 0x84, 0xbe, 0x0a, 0x0b, 0x8f, 0x0e, 0xda, 0x5e,
+	0xcb, 0x77, 0xa9, 0x38, 0xc3, 0xf3, 0xc1, 0x78, 0xdb, 0xa5, 0xb5, 0x3f, 0x11, 0xac, 0x6c, 0x5b,
+	0x1e, 0xd1, 0x7c, 0x97, 0xe8, 0x75, 0xbd, 0x43, 0xad, 0xba, 0xcf, 0xf6, 0xef, 0xe3, 0xfb, 0x30,
+	0x1b, 0x9c, 0x70, 0x2c, 0x25, 0x4a, 0x6d, 0xe4, 0xc2, 0x91, 0x4e, 0xa7, 0xda, 0xa2, 0xcb, 0xe9,
+	0xab, 0xdf, 0xff, 0xf9, 0x3e, 0x33, 0x8f, 0xe7, 0xaa, 0x81, 0x2b, 0xfc, 0x64, 0x70, 0xc2, 0xe3,
+	0x1b, 0x74, 0x35, 0xbd, 0x94, 0xd3, 0xb6, 0x57, 0x3a, 0x93, 0xc0, 0xc6, 0x40, 0xca, 0x1a, 0x77,
+	0xb8, 0x8c, 0x97, 0xaa, 0xda, 0xe8, 0x7c, 0xed, 0x70, 0x1e, 0x4e, 0x36, 0xc7, 0xd6, 0xf7, 0x05,
+	0x2c, 0xc6, 0xee, 0x67, 0xac, 0x4c, 0xbe, 0xbd, 0x83, 0x37, 0x49, 0xba, 0xf6, 0x32, 0x37, 0x7c,
+	0xf4, 0x3e, 0x28, 0xa7, 0x79, 0x40, 0x45, 0x65, 0xb9, 0xaa, 0x86, 0x08, 0xaf, 0x4a, 0x39, 0x61,
+	0x13, 0x5d, 0xc5, 0x8f, 0x01, 0x86, 0x1d, 0x03, 0x2e, 0x4f, 0x68, 0x26, 0xc2, 0xb5, 0x5f, 0x99,
+	0xda, 0x6e, 0x0c, 0xfc, 0x0e, 0x13, 0x31, 0xf0, 0xfb, 0x19, 0xd5, 0x3f, 0xc7, 0x3f, 0x20, 0x58,
+	0x8c, 0xf5, 0x10, 0xf8, 0x7c, 0x42, 0x34, 0xad, 0x4b, 0x91, 0x2e, 0x4c, 0x06, 0x89, 0xed, 0xbe,
+	0xcd, 0x9d, 0x6e, 0x48, 0x09, 0xa7, 0x9b, 0x83, 0x47, 0x7b, 0x57, 0xaa, 0xbd, 0xd0, 0x86, 0xbf,
+	0x46, 0x90, 0x1f, 0xe9, 0x4f, 0x70, 0xb2, 0xb9, 0x1a, 0xef, 0x70, 0x24, 0x65, 0x12, 0x44, 0x04,
+	0x55, 0xe3, 0x41, 0x5d, 0x93, 0x56, 0xe2, 0x8e, 0xab, 0x41, 0x4b, 0xb0, 0x5b, 0xac, 0xa5, 0x4d,
+	0xe3, 0xef, 0x10, 0x14, 0xa2, 0x5e, 0x27, 0x3d, 0x49, 0x29, 0x0d, 0xd3, 0x78, 0x92, 0x52, 0xbb,
+	0xa5, 0x0d, 0x1e, 0xcf, 0x0d, 0xa9, 0x98, 0x70, 0xec, 0x73, 0xf4, 0xee, 0xa9, 0x5a, 0xba, 0x01,
+	0xfb, 0xb0, 0x14, 0x6f, 0x9e, 0x70, 0xd2, 0x5f, 0x6a, 0x13, 0x26, 0x5d, 0x9c, 0x82, 0x12, 0x61,
+	0x89, 0x82, 0xb9, 0x9a, 0x2c, 0x98, 0x9f, 0x10, 0x2c, 0xc5, 0x5b, 0x8f, 0x31, 0xbf, 0xa9, 0x2d,
+	0xcc, 0x98, 0xdf, 0x17, 0xf4, 0x2f, 0xef, 0x72, 0xbf, 0x5b, 0x92, 0x9c, 0x58, 0x35, 0xe1, 0xf0,
+	0x56, 0xd4, 0xd2, 0xed, 0x96, 0x6b, 0x53, 0x10, 0xb5, 0x03, 0x28, 0xf0, 0x63, 0x5d, 0x0f, 0xdf,
+	0x7a, 0x6c, 0x40, 0x61, 0xf4, 0x4d, 0x1c, 0x3b, 0xdc, 0x29, 0x4d, 0x88, 0x74, 0xfe, 0x25, 0x1e,
+	0x55, 0x65, 0x89, 0x87, 0xbc, 0x80, 0x73, 0x55, 0xfe, 0xae, 0x6e, 0x6d, 0x3c, 0x3d, 0x94, 0x67,
+	0xfe, 0x38, 0x94, 0x67, 0x9e, 0x1f, 0xca, 0xe8, 0xbf, 0x43, 0x19, 0x7d, 0xd9, 0x97, 0xd1, 0xcf,
+	0x7d, 0x19, 0xfd, 0xd6, 0x97, 0xd1, 0xd3, 0xbe, 0x8c, 0xfe, 0xea, 0xcb, 0xe8, 0xdf, 0xbe, 0x3c,
+	0xf3, 0xbc, 0x2f, 0xa3, 0x6f, 0xff, 0x96, 0x67, 0x76, 0x67, 0x0d, 0xd7, 0xd1, 0xf6, 0x72, 0xfc,
+	0x5f, 0xd2, 0xeb, 0xff, 0x07, 0x00, 0x00, 0xff, 0xff, 0x37, 0x3e, 0x45, 0x00, 0x98, 0x0d, 0x00,
+	0x00,
 }

@@ -1,9 +1,8 @@
 syntax = "proto3";
 
-package grpc;
+package keratin.authn;
 option go_package = "grpc";
 
-import "google/protobuf/empty.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 
@@ -18,70 +17,13 @@ message SignupResponse {
 
 message SignupResponseEnvelope { SignupResponse result = 1; }
 
-
 message IsUsernameAvailableRequest { string username = 1; }
 message IsUsernameAvailableResponseEnvelope {
   bool result = 1 [ (gogoproto.jsontag) = "result" ];
 }
 
-message LoginRequest {
-  string username = 1;
-  string password = 2;
-}
-
-message RequestPasswordlessLoginRequest {
-  string username = 1;
-}
-
-message SubmitPasswordlessLoginRequest {
-  string token = 1;
-}
-
-message PasswordResetRequest { string username = 1; }
-
-message ChangePasswordRequest {
-  string password = 1;
-  string token = 2;
-  string currentPassword = 3;
-}
-
-
-message BeginOAuthRequest {
-  string providerName = 1;
-  string redirectURI = 2;
-}
-message BeginOAuthResponse { string provider = 1; }
-
-message OAuthReturnRequest { string providerName = 1; }
-message OAuthReturnResponse { string redirect = 1; }
-
-message Configuration {
-  string issuer = 1;
-  repeated string response_types_supported = 2;
-  repeated string subject_types_supported = 3;
-  repeated string id_token_signing_alg_values_supported = 4;
-  repeated string claims_supported = 5;
-  string jwks_uri = 6;
-}
-
-message HealthCheckResponse {
-  bool http = 1;
-  bool db = 2;
-  bool redis = 3;
-}
-
-message Key {
-  string use = 1;
-  string alg = 2;
-  string kty = 3;
-  string kid = 4;
-  string e = 5;
-  string n = 6;
-}
-message JWKSResponse { repeated Key keys = 1; }
-
-service PublicAuthN {
-
+// SignupService is made independant to only be registered if Signup is enabled
+service SignupService {
   rpc Signup(SignupRequest) returns (SignupResponseEnvelope) {
     option (google.api.http) = {
       post : "/accounts",
@@ -95,78 +37,142 @@ service PublicAuthN {
       get : "/accounts/available"
     };
   }
+}
 
-  rpc Login(LoginRequest) returns (SignupResponseEnvelope) {
+message PasswordResetRequest { string username = 1; }
+message PasswordResetResponse {}
+
+service PasswordResetService {
+  rpc RequestPasswordReset(PasswordResetRequest)
+      returns (PasswordResetResponse) {
     option (google.api.http) = {
-      post : "/session",
-      body : "*"
+      get : "/password/reset"
     };
   }
+}
 
-  rpc RefreshSession(google.protobuf.Empty) returns (SignupResponseEnvelope) {
-    option (google.api.http) = {
-      get : "/session"
-    };
-  }
+message RequestPasswordlessLoginRequest { string username = 1; }
+message RequestPasswordlessLoginResponse {}
 
-  rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      delete : "/session"
-    };
-  }
+message SubmitPasswordlessLoginRequest { string token = 1; }
 
-  rpc RequestPasswordlessLogin(RequestPasswordlessLoginRequest) returns (google.protobuf.Empty) {
+message SubmitPasswordlessLoginResponse {
+  string id_token = 1 [ (gogoproto.jsontag) = "id_token" ];
+}
+
+message SubmitPasswordlessLoginResponseEnvelope {
+  SubmitPasswordlessLoginResponse result = 1;
+}
+
+service PasswordlessService {
+  rpc RequestPasswordlessLogin(RequestPasswordlessLoginRequest)
+      returns (RequestPasswordlessLoginResponse) {
     option (google.api.http) = {
       get : "/session/token"
     };
   }
 
-  rpc SubmitPasswordlessLogin(SubmitPasswordlessLoginRequest) returns (SignupResponseEnvelope) {
+  rpc SubmitPasswordlessLogin(SubmitPasswordlessLoginRequest)
+      returns (SubmitPasswordlessLoginResponseEnvelope) {
     option (google.api.http) = {
-      post: "/session/token",
+      post : "/session/token"
+      body : "*"
+    };
+  }
+}
+
+// Draft OAuth.
+// TODO: Implement OAuth API surface on top of gRPC, if possible. As of now, OAuth is handled outside of gRPC-Gateway.
+//
+// message BeginOAuthRequest {
+//   string providerName = 1;
+//   string redirectURI = 2;
+// }
+// message BeginOAuthResponse { string provider = 1; }
+// message OAuthReturnRequest { string providerName = 1; }
+// message OAuthReturnResponse { string redirect = 1; }
+// service OAuthService {
+//   rpc BeginOAuth(BeginOAuthRequest) returns (BeginOAuthResponse) {
+//     option (google.api.http) = {
+//       get : "/oauth/{providerName}"
+//     };
+//   }
+//   rpc OAuthReturn(OAuthReturnRequest) returns (OAuthReturnResponse) {
+//     option (google.api.http) = {
+//       get : "/oauth/{providerName}/return"
+//     };
+//   }
+// }
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string id_token = 1 [ (gogoproto.jsontag) = "id_token" ];
+}
+
+message LoginResponseEnvelope { LoginResponse result = 1; }
+
+message LogoutRequest {}
+message LogoutResponse {}
+
+message RefreshSessionRequest {}
+message RefreshSessionResponse {
+  string id_token = 1 [ (gogoproto.jsontag) = "id_token" ];
+}
+message RefreshSessionResponseEnvelope { RefreshSessionResponse result = 1; }
+
+message ChangePasswordRequest {
+  string password = 1;
+  string token = 2;
+  string currentPassword = 3;
+}
+
+message ChangePasswordResponse {
+  string id_token = 1 [ (gogoproto.jsontag) = "id_token" ];
+}
+message ChangePasswordResponseEnvelope { ChangePasswordResponse result = 1; }
+
+message HealthCheckRequest {}
+message HealthCheckResponse {
+  bool http = 1;
+  bool db = 2;
+  bool redis = 3;
+}
+
+service PublicAuthN {
+
+  rpc Login(LoginRequest) returns (LoginResponseEnvelope) {
+    option (google.api.http) = {
+      post : "/session"
       body : "*"
     };
   }
 
-  rpc RequestPasswordReset(PasswordResetRequest)
-      returns (google.protobuf.Empty) {
+  rpc Logout(LogoutRequest) returns (LogoutResponse) {
     option (google.api.http) = {
-      get : "/password/reset"
+      delete : "/session"
     };
   }
 
-  rpc ChangePassword(ChangePasswordRequest) returns (SignupResponseEnvelope) {
+  rpc RefreshSession(RefreshSessionRequest)
+      returns (RefreshSessionResponseEnvelope) {
     option (google.api.http) = {
-      post : "/password",
+      get : "/session/refresh"
+    };
+  }
+
+  rpc ChangePassword(ChangePasswordRequest)
+      returns (ChangePasswordResponseEnvelope) {
+    option (google.api.http) = {
+      post : "/password"
       body : "*"
     };
   }
 
-  rpc BeginOAuth(BeginOAuthRequest) returns (BeginOAuthResponse) {
-    option (google.api.http) = {
-      get : "/oauth/{providerName}"
-    };
-  }
-
-  rpc OAuthReturn(OAuthReturnRequest) returns (OAuthReturnResponse) {
-    option (google.api.http) = {
-      get : "/oauth/{providerName}/return"
-    };
-  }
-
-  rpc ServiceConfiguration(google.protobuf.Empty) returns (Configuration) {
-    option (google.api.http) = {
-      get : "/configuration"
-    };
-  }
-
-  rpc JWKS(google.protobuf.Empty) returns (JWKSResponse) {
-    option (google.api.http) = {
-      get : "/jwks"
-    };
-  }
-
-  rpc HealthCheck(google.protobuf.Empty) returns (HealthCheckResponse) {
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse) {
     option (google.api.http) = {
       get : "/health"
     };
