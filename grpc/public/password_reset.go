@@ -1,16 +1,16 @@
 package public
 
 import (
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
+	"github.com/keratin/authn-server/app/services"
 	authnpb "github.com/keratin/authn-server/grpc"
-	"github.com/keratin/authn-server/services"
 	context "golang.org/x/net/context"
 )
 
 var _ authnpb.PasswordResetServiceServer = passwordResetServer{}
 
 type passwordResetServer struct {
-	app *api.App
+	app *app.App
 }
 
 func (s passwordResetServer) RequestPasswordReset(ctx context.Context, req *authnpb.PasswordResetRequest) (*authnpb.PasswordResetResponse, error) {

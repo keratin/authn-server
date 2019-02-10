@@ -3,37 +3,18 @@ package private
 import (
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/grpc/public"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 /*
-func router(app *api.App) http.Handler {
-	r := mux.NewRouter()
-	route.Attach(r, app.Config.MountedPath, meta.Routes(app)...)
-	route.Attach(r, app.Config.MountedPath, accounts.Routes(app)...)
-	route.Attach(r, app.Config.MountedPath, sessions.Routes(app)...)
-	route.Attach(r, app.Config.MountedPath, passwords.Routes(app)...)
-	route.Attach(r, app.Config.MountedPath, oauth.Routes(app)...)
-
-	return wrapRouter(r, app)
-}
-
-func publicRouter(app *api.App) http.Handler {
-	r := mux.NewRouter()
-	route.Attach(r, app.Config.MountedPath, meta.PublicRoutes(app)...)
-	route.Attach(r, app.Config.MountedPath, accounts.PublicRoutes(app)...)
-	route.Attach(r, app.Config.MountedPath, sessions.PublicRoutes(app)...)
-	route.Attach(r, app.Config.MountedPath, passwords.PublicRoutes(app)...)
-	route.Attach(r, app.Config.MountedPath, oauth.PublicRoutes(app)...)
-
-	return wrapRouter(r, app)
-}
+	Reference: github.com/keratin/authn-server/server/private_routes.go
 */
 
-func RegisterRoutes(router *mux.Router, app *api.App, gmux *runtime.ServeMux) {
+// RegisterRoutes registers gmux as the handler for the private routes on router
+func RegisterRoutes(router *mux.Router, app *app.App, gmux *runtime.ServeMux) {
 	public.RegisterRoutes(router, app, gmux)
 
 	route.Attach(router, app.Config.MountedPath, metaRoutes(app, gmux)...)
@@ -41,7 +22,7 @@ func RegisterRoutes(router *mux.Router, app *api.App, gmux *runtime.ServeMux) {
 
 }
 
-func metaRoutes(app *api.App, gmux *runtime.ServeMux) []*route.HandledRoute {
+func metaRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 	authentication := route.BasicAuthSecurity(app.Config.AuthUsername, app.Config.AuthPassword, "Private AuthN Realm")
 
 	routes := []*route.HandledRoute{}
@@ -69,7 +50,7 @@ func metaRoutes(app *api.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 	return routes
 }
 
-func accountRoutes(app *api.App, gmux *runtime.ServeMux) []*route.HandledRoute {
+func accountRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 	authentication := route.BasicAuthSecurity(app.Config.AuthUsername, app.Config.AuthPassword, "Private AuthN Realm")
 
 	routes := []*route.HandledRoute{}

@@ -9,16 +9,16 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/keratin/authn-server/api"
-	"github.com/keratin/authn-server/api/views"
+	"github.com/keratin/authn-server/app"
 	authnpb "github.com/keratin/authn-server/grpc"
 	"github.com/keratin/authn-server/grpc/internal/gateway"
 	"github.com/keratin/authn-server/grpc/public"
+	"github.com/keratin/authn-server/server/views"
 	"golang.org/x/net/context"
 	grpc "google.golang.org/grpc"
 )
 
-func RunPrivateGateway(ctx context.Context, app *api.App, r *mux.Router, conn *grpc.ClientConn, l net.Listener) error {
+func RunPrivateGateway(ctx context.Context, app *app.App, r *mux.Router, conn *grpc.ClientConn, l net.Listener) error {
 
 	gmux := runtime.NewServeMux(
 		runtime.WithForwardResponseOption(gateway.StatusCodeMutator),

@@ -3,7 +3,7 @@ package private
 import (
 	"encoding/json"
 
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 	authnpb "github.com/keratin/authn-server/grpc"
 	"github.com/keratin/authn-server/lib/compat"
 	"golang.org/x/net/context"
@@ -11,7 +11,7 @@ import (
 )
 
 type unsecuredServer struct {
-	app *api.App
+	app *app.App
 }
 
 func (ss unsecuredServer) ServiceConfiguration(context.Context, *authnpb.ServiceConfigurationRequest) (*authnpb.Configuration, error) {
@@ -32,7 +32,7 @@ func (ss unsecuredServer) JWKS(ctx context.Context, _ *authnpb.JWKSRequest) (*au
 		if err != nil {
 			ss.app.Reporter.ReportError(err)
 		} else {
-			// There are not proto definitions for jose.JSONWebKey and the marshalled version
+			// There are no proto definitions for jose.JSONWebKey and the marshalled version
 			// looks different than the struct, so the workaround is to build jose.JSONWebKey,
 			// marshal it , then unmarshal it into our message.
 			k, err := jose.JSONWebKey{

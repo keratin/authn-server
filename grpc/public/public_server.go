@@ -7,6 +7,10 @@ import (
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 
+	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
+	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -17,12 +21,12 @@ import (
 
 	pkgerrors "github.com/pkg/errors"
 
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
+	"github.com/keratin/authn-server/app/models"
+	"github.com/keratin/authn-server/app/services"
+	"github.com/keratin/authn-server/app/tokens/sessions"
 	authnpb "github.com/keratin/authn-server/grpc"
 	"github.com/keratin/authn-server/grpc/internal/errors"
-	"github.com/keratin/authn-server/models"
-	"github.com/keratin/authn-server/services"
-	"github.com/keratin/authn-server/tokens/sessions"
 )
 
 // Compile-time check
@@ -32,13 +36,15 @@ type sessionKey int
 type accountIDKey int
 
 type publicServer struct {
-	app *api.App
+	app *app.App
 }
 
-func RunPublicGRPC(ctx context.Context, app *api.App, l net.Listener) error {
+func RunPublicGRPC(ctx context.Context, app *app.App, l net.Listener) error {
 	srv := grpc.NewServer(
 		grpc_middleware.WithUnaryServerChain(
-			logInterceptor,
+			grpc_ctxtags.UnaryServerInterceptor(),
+			grpc_logrus.UnaryServerInterceptor(logrus.NewEntry(logrus.StandardLogger())),
+			grpc_prometheus.UnaryServerInterceptor,
 			sessionInterceptor(app),
 		),
 	)
@@ -57,7 +63,7 @@ func RunPublicGRPC(ctx context.Context, app *api.App, l net.Listener) error {
 	return nil
 }
 
-func RegisterPublicGRPCMethods(srv *grpc.Server, app *api.App) {
+func RegisterPublicGRPCMethods(srv *grpc.Server, app *app.App) {
 	authnpb.RegisterPublicAuthNServer(srv, publicServer{
 		app: app,
 	})
@@ -81,7 +87,7 @@ func RegisterPublicGRPCMethods(srv *grpc.Server, app *api.App) {
 	}
 }
 
-func sessionInterceptor(app *api.App) grpc.UnaryServerInterceptor {
+func sessionInterceptor(app *app.App) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		var session *sessions.Claims
 		var parseOnce sync.Once
@@ -126,17 +132,6 @@ func sessionInterceptor(app *api.App) grpc.UnaryServerInterceptor {
 		ctx = context.WithValue(ctx, accountIDKey(0), lookup)
 		return handler(ctx, req)
 	}
-}
-
-func logInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	log.Infof("calling method: %s", info.FullMethod)
-
-	res, err := handler(ctx, req)
-	if err != nil {
-		log.Errorf("error from method: %s", err)
-		log.Errorf("error type: %T", err)
-	}
-	return res, err
 }
 
 func (s publicServer) Login(ctx context.Context, req *authnpb.LoginRequest) (*authnpb.LoginResponseEnvelope, error) {

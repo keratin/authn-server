@@ -4,14 +4,14 @@ import (
 	"github.com/keratin/authn-server/grpc/internal/errors"
 	"google.golang.org/grpc/codes"
 
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
+	"github.com/keratin/authn-server/app/services"
 	authnpb "github.com/keratin/authn-server/grpc"
-	"github.com/keratin/authn-server/services"
 	"golang.org/x/net/context"
 )
 
 type securedServer struct {
-	app *api.App
+	app *app.App
 
 	// SECURITY: ensure that both ConstantTimeCompare operations are run, so that a
 	// timing attack may not verify a correct username without a correct password.

@@ -7,14 +7,14 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 	authnpb "github.com/keratin/authn-server/grpc"
 	"github.com/keratin/authn-server/grpc/internal/gateway"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
 
-func RegisterPublicGatewayHandlers(ctx context.Context, app *api.App, r *mux.Router, mux *runtime.ServeMux, conn *grpc.ClientConn) {
+func RegisterPublicGatewayHandlers(ctx context.Context, app *app.App, r *mux.Router, mux *runtime.ServeMux, conn *grpc.ClientConn) {
 	authnpb.RegisterPublicAuthNHandler(ctx, mux, conn)
 	if app.Config.EnableSignup {
 		authnpb.RegisterSignupServiceHandler(ctx, mux, conn)
@@ -29,7 +29,7 @@ func RegisterPublicGatewayHandlers(ctx context.Context, app *api.App, r *mux.Rou
 	}
 }
 
-func RunPublicGateway(ctx context.Context, app *api.App, r *mux.Router, conn *grpc.ClientConn, l net.Listener) error {
+func RunPublicGateway(ctx context.Context, app *app.App, r *mux.Router, conn *grpc.ClientConn, l net.Listener) error {
 
 	gmux := runtime.NewServeMux(
 		runtime.WithForwardResponseOption(gateway.CookieSetter(app.Config)), // Cookies always have to go first

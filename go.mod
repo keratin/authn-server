@@ -18,6 +18,7 @@ require (
 	github.com/gorilla/handlers v1.3.0
 	github.com/gorilla/mux v1.6.1
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
+	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/grpc-ecosystem/grpc-gateway v1.5.1
 	github.com/hpcloud/tail v1.0.0 // indirect
 	github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6 // indirect

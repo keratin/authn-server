@@ -9,7 +9,7 @@ import (
 	"net"
 
 	"github.com/gorilla/mux"
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/grpc/internal/errors"
 	"github.com/keratin/authn-server/grpc/private"
 	"github.com/keratin/authn-server/grpc/public"
@@ -22,7 +22,7 @@ func init() {
 }
 
 // RunPrivateService starts a gRPC server for the private API and accompanying gRPC-Gateway server
-func RunPrivateService(ctx context.Context, app *api.App, grpcListener net.Listener, httpListener net.Listener) error {
+func RunPrivateService(ctx context.Context, app *app.App, grpcListener net.Listener, httpListener net.Listener) error {
 
 	privateRouter := mux.NewRouter()
 
@@ -45,7 +45,7 @@ func RunPrivateService(ctx context.Context, app *api.App, grpcListener net.Liste
 }
 
 // RunPublicService starts a gRPC server for the public API and accompanying gRPC-Gateway server
-func RunPublicService(ctx context.Context, app *api.App, grpcListener net.Listener, httpListener net.Listener) error {
+func RunPublicService(ctx context.Context, app *app.App, grpcListener net.Listener, httpListener net.Listener) error {
 
 	publicRouter := mux.NewRouter()
 

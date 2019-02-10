@@ -1,13 +1,13 @@
 package private
 
 import (
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
 	authnpb "github.com/keratin/authn-server/grpc"
 	"golang.org/x/net/context"
 )
 
 type statsServer struct {
-	app *api.App
+	app *app.App
 
 	// SECURITY: ensure that both ConstantTimeCompare operations are run, so that a
 	// timing attack may not verify a correct username without a correct password.

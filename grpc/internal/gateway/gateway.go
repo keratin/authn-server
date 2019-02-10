@@ -14,9 +14,9 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/keratin/authn-server/api"
-	"github.com/keratin/authn-server/config"
+	"github.com/keratin/authn-server/app"
 	authnpb "github.com/keratin/authn-server/grpc"
+	"github.com/keratin/authn-server/server/sessions"
 )
 
 type GatewayResponseMiddleware func(ctx context.Context, response http.ResponseWriter, m proto.Message) error
@@ -34,7 +34,7 @@ func StatusCodeMutator(ctx context.Context, response http.ResponseWriter, m prot
 
 // CookieSetter extracts the session cookie from metadata and assigns it to a cookie. If the session
 // value is an empty string, then the cookie is marked to be removed.
-func CookieSetter(cfg *config.Config) GatewayResponseMiddleware {
+func CookieSetter(cfg *app.Config) GatewayResponseMiddleware {
 	return func(ctx context.Context, response http.ResponseWriter, m proto.Message) error {
 		switch m.(type) {
 		case *authnpb.LogoutResponse, *authnpb.SignupResponseEnvelope, *authnpb.LoginResponseEnvelope:
@@ -46,7 +46,7 @@ func CookieSetter(cfg *config.Config) GatewayResponseMiddleware {
 			if len(ss) != 1 {
 				return fmt.Errorf("Received more than a single session value")
 			}
-			api.SetSession(cfg, response, ss[0])
+			sessions.Set(cfg, response, ss[0])
 		}
 		return nil
 	}
@@ -76,14 +76,6 @@ func FormWrapper(mux http.Handler) http.Handler {
 			r.ContentLength = int64(len(jsonBody))
 			r.Header.Set("Content-Type", "application/json")
 		}
-		mux.ServeHTTP(w, r)
-	})
-}
-
-// HeaderPrinter logs the headers of the request
-func HeaderPrinter(mux http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println(r.Header)
 		mux.ServeHTTP(w, r)
 	})
 }

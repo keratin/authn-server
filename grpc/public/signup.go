@@ -3,10 +3,10 @@ package public
 import (
 	"fmt"
 
-	"github.com/keratin/authn-server/api"
+	"github.com/keratin/authn-server/app"
+	"github.com/keratin/authn-server/app/services"
 	authnpb "github.com/keratin/authn-server/grpc"
 	"github.com/keratin/authn-server/grpc/internal/errors"
-	"github.com/keratin/authn-server/services"
 	context "golang.org/x/net/context"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	grpc "google.golang.org/grpc"
@@ -16,7 +16,7 @@ import (
 )
 
 type signupServiceServer struct {
-	app *api.App
+	app *app.App
 }
 
 var _ authnpb.SignupServiceServer = signupServiceServer{}

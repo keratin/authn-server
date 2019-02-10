@@ -3,44 +3,25 @@ package public
 import (
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/keratin/authn-server/api"
-	"github.com/keratin/authn-server/api/oauth"
+	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/server/handlers"
 )
 
 /*
-func router(app *api.App) http.Handler {
-	r := mux.NewRouter()
-	route.Attach(r, app.Config.MountedPath, meta.Routes(app)...)
-	route.Attach(r, app.Config.MountedPath, accounts.Routes(app)...)
-	route.Attach(r, app.Config.MountedPath, sessions.Routes(app)...)
-	route.Attach(r, app.Config.MountedPath, passwords.Routes(app)...)
-	route.Attach(r, app.Config.MountedPath, oauth.Routes(app)...)
-
-	return wrapRouter(r, app)
-}
-
-func publicRouter(app *api.App) http.Handler {
-	r := mux.NewRouter()
-	route.Attach(r, app.Config.MountedPath, meta.PublicRoutes(app)...)
-	route.Attach(r, app.Config.MountedPath, accounts.PublicRoutes(app)...)
-	route.Attach(r, app.Config.MountedPath, sessions.PublicRoutes(app)...)
-	route.Attach(r, app.Config.MountedPath, passwords.PublicRoutes(app)...)
-	route.Attach(r, app.Config.MountedPath, oauth.PublicRoutes(app)...)
-
-	return wrapRouter(r, app)
-}
+	Reference: github.com/keratin/authn-server/server/public_routes.go
 */
 
-func RegisterRoutes(router *mux.Router, app *api.App, gmux *runtime.ServeMux) {
+// RegisterRoutes registers gmux as the handler for the public routes on router
+func RegisterRoutes(router *mux.Router, app *app.App, gmux *runtime.ServeMux) {
 	route.Attach(router, app.Config.MountedPath, accountRoutes(app, gmux)...)
 	route.Attach(router, app.Config.MountedPath, metaRoutes(app, gmux)...)
 	route.Attach(router, app.Config.MountedPath, sessionsRoutes(app, gmux)...)
 	route.Attach(router, app.Config.MountedPath, passwordsRoutes(app, gmux)...)
-	route.Attach(router, app.Config.MountedPath, oauth.PublicRoutes(app)...)
+	route.Attach(router, app.Config.MountedPath, oauthRoutes(app)...)
 }
 
-func metaRoutes(app *api.App, gmux *runtime.ServeMux) []*route.HandledRoute {
+func metaRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 	return []*route.HandledRoute{
 		route.Get("/health").
 			SecuredWith(route.Unsecured()).
@@ -48,7 +29,7 @@ func metaRoutes(app *api.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 	}
 }
 
-func accountRoutes(app *api.App, gmux *runtime.ServeMux) []*route.HandledRoute {
+func accountRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
 
 	routes := []*route.HandledRoute{}
@@ -67,7 +48,7 @@ func accountRoutes(app *api.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 	return routes
 }
 
-func sessionsRoutes(app *api.App, gmux *runtime.ServeMux) []*route.HandledRoute {
+func sessionsRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
 
 	routes := []*route.HandledRoute{
@@ -99,7 +80,7 @@ func sessionsRoutes(app *api.App, gmux *runtime.ServeMux) []*route.HandledRoute 
 	return routes
 }
 
-func passwordsRoutes(app *api.App, gmux *runtime.ServeMux) []*route.HandledRoute {
+func passwordsRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
 
 	routes := []*route.HandledRoute{
@@ -116,5 +97,20 @@ func passwordsRoutes(app *api.App, gmux *runtime.ServeMux) []*route.HandledRoute
 		)
 	}
 
+	return routes
+}
+
+func oauthRoutes(app *app.App) []*route.HandledRoute {
+	routes := []*route.HandledRoute{}
+	for providerName := range app.OauthProviders {
+		routes = append(routes,
+			route.Get("/oauth/"+providerName).
+				SecuredWith(route.Unsecured()).
+				Handle(handlers.GetOauth(app, providerName)),
+			route.Get("/oauth/"+providerName+"/return").
+				SecuredWith(route.Unsecured()).
+				Handle(handlers.GetOauthReturn(app, providerName)),
+		)
+	}
 	return routes
 }
