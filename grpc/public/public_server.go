@@ -1,6 +1,7 @@
 package public
 
 import (
+	"crypto/tls"
 	"fmt"
 	"net"
 	"sync"
@@ -16,6 +17,7 @@ import (
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
@@ -40,14 +42,24 @@ type publicServer struct {
 }
 
 func RunPublicGRPC(ctx context.Context, app *app.App, l net.Listener) error {
-	srv := grpc.NewServer(
+	opts := []grpc.ServerOption{
 		grpc_middleware.WithUnaryServerChain(
 			grpc_ctxtags.UnaryServerInterceptor(),
 			grpc_logrus.UnaryServerInterceptor(logrus.NewEntry(logrus.StandardLogger())),
 			grpc_prometheus.UnaryServerInterceptor,
 			sessionInterceptor(app),
 		),
-	)
+	}
+	if app.Config.ClientCA != nil {
+		tlsConfig := &tls.Config{
+			Certificates:       []tls.Certificate{app.Config.Certificate},
+			ClientCAs:          app.Config.ClientCA,
+			ClientAuth:         tls.RequireAndVerifyClientCert,
+			InsecureSkipVerify: app.Config.TLSSkipVerify,
+		}
+		opts = append(opts, grpc.Creds(credentials.NewTLS(tlsConfig)))
+	}
+	srv := grpc.NewServer(opts...)
 
 	RegisterPublicGRPCMethods(srv, app)
 

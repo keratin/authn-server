@@ -2,6 +2,9 @@ package server
 
 import (
 	"context"
+	"crypto/tls"
+
+	"google.golang.org/grpc/credentials"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	log "github.com/sirupsen/logrus"
@@ -32,7 +35,18 @@ func RunPrivateService(ctx context.Context, app *app.App, grpcListener net.Liste
 		return private.RunPrivateGRPC(ctx, app, grpcListener)
 	})
 
-	privClientConn, err := grpc.DialContext(context.TODO(), grpcListener.Addr().String(), grpc.WithInsecure())
+	connCreds := grpc.WithInsecure()
+	if app.Config.ClientCA != nil {
+		tlsConfig := &tls.Config{
+			Certificates:       []tls.Certificate{app.Config.Certificate},
+			ClientCAs:          app.Config.ClientCA,
+			ClientAuth:         tls.RequireAndVerifyClientCert,
+			InsecureSkipVerify: app.Config.TLSSkipVerify,
+		}
+		connCreds = grpc.WithTransportCredentials(credentials.NewTLS(tlsConfig))
+	}
+
+	privClientConn, err := grpc.DialContext(ctx, grpcListener.Addr().String(), connCreds)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -55,7 +69,18 @@ func RunPublicService(ctx context.Context, app *app.App, grpcListener net.Listen
 		return public.RunPublicGRPC(ctx, app, grpcListener)
 	})
 
-	clientConn, err := grpc.DialContext(ctx, grpcListener.Addr().String(), grpc.WithInsecure())
+	connCreds := grpc.WithInsecure()
+	if app.Config.ClientCA != nil {
+		tlsConfig := &tls.Config{
+			Certificates:       []tls.Certificate{app.Config.Certificate},
+			ClientCAs:          app.Config.ClientCA,
+			ClientAuth:         tls.RequireAndVerifyClientCert,
+			InsecureSkipVerify: app.Config.TLSSkipVerify,
+		}
+		connCreds = grpc.WithTransportCredentials(credentials.NewTLS(tlsConfig))
+	}
+
+	clientConn, err := grpc.DialContext(ctx, grpcListener.Addr().String(), connCreds)
 	if err != nil {
 		log.Fatal(err)
 	}
