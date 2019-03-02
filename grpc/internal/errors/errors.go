@@ -39,6 +39,14 @@ func (es FieldErrors) Error() string {
 	return strings.Join(buf, ", ")
 }
 
+func ToFieldErrors(errs *errdetails.BadRequest) FieldErrors {
+	fes := FieldErrors{}
+	for _, violation := range errs.GetFieldViolations() {
+		fes = append(fes, FieldError{Field: violation.GetField(), Message: violation.GetDescription()})
+	}
+	return fes
+}
+
 func ToStatusErrorWithDetails(fes services.FieldErrors, errCode codes.Code) *status.Status {
 	br := &errdetails.BadRequest{}
 	for _, fe := range fes {
@@ -83,10 +91,7 @@ func CustomHTTPError(ctx context.Context, mux *runtime.ServeMux, marshaler runti
 			}
 
 			// Convert the errors back to AuthN's custom error responses to preserve the shape of the returned error
-			fes := FieldErrors{}
-			for _, violation := range t.GetFieldViolations() {
-				fes = append(fes, FieldError{Field: violation.GetField(), Message: violation.GetDescription()})
-			}
+			fes := ToFieldErrors(t)
 			j, er := json.Marshal(ServiceErrors{fes})
 			if er != nil {
 				panic(er)
