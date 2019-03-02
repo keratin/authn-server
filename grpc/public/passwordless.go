@@ -5,6 +5,7 @@ import (
 	"github.com/keratin/authn-server/app/services"
 	authnpb "github.com/keratin/authn-server/grpc"
 	"github.com/keratin/authn-server/grpc/internal/errors"
+	"github.com/keratin/authn-server/grpc/internal/meta"
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc/codes"
 )
@@ -54,14 +55,14 @@ func (s passwordlessServer) SubmitPasswordlessLogin(ctx context.Context, req *au
 
 	sessionToken, identityToken, err := services.SessionCreator(
 		s.app.AccountStore, s.app.RefreshTokenStore, s.app.KeyStore, s.app.Actives, s.app.Config, s.app.Reporter,
-		accountID, &s.app.Config.ApplicationDomains[0], getRefreshToken(ctx),
+		accountID, &s.app.Config.ApplicationDomains[0], meta.GetRefreshToken(ctx),
 	)
 	if err != nil {
 		panic(err)
 	}
 
 	// Return the signed session in a cookie
-	setSession(ctx, s.app.Config.SessionCookieName, sessionToken)
+	meta.SetSession(ctx, s.app.Config.SessionCookieName, sessionToken)
 
 	// Return the signed identity token in the body
 	return &authnpb.SubmitPasswordlessLoginResponseEnvelope{

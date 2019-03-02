@@ -11,15 +11,11 @@ import (
 
 	"google.golang.org/grpc/metadata"
 
-	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
-	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
-	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
-	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/keratin/authn-server/app"
 	authnpb "github.com/keratin/authn-server/grpc"
+	"github.com/keratin/authn-server/grpc/internal/meta"
 	"github.com/keratin/authn-server/grpc/public"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	grpc "google.golang.org/grpc"
@@ -31,17 +27,8 @@ type basicAuthMatcher func(username, password string) bool
 
 // RunPrivateGRPC registers the private services and runs the gRPC server on the provided listener
 func RunPrivateGRPC(ctx context.Context, app *app.App, l net.Listener) error {
-	opts := []grpc.ServerOption{
-		grpc_middleware.WithUnaryServerChain(
-			grpc_ctxtags.UnaryServerInterceptor(),
-			grpc_logrus.UnaryServerInterceptor(logrus.NewEntry(logrus.StandardLogger())),
-			grpc_prometheus.UnaryServerInterceptor,
-			// the default authentication is none
-			grpc_auth.UnaryServerInterceptor(func(ctx context.Context) (context.Context, error) {
-				return ctx, nil
-			}),
-		),
-	}
+	opts := meta.PrivateServerOptions(app)
+
 	if app.Config.ClientCA != nil {
 		tlsConfig := &tls.Config{
 			Certificates:       []tls.Certificate{app.Config.Certificate},

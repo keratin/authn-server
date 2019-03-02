@@ -7,6 +7,7 @@ import (
 	"github.com/keratin/authn-server/app/services"
 	authnpb "github.com/keratin/authn-server/grpc"
 	"github.com/keratin/authn-server/grpc/internal/errors"
+	"github.com/keratin/authn-server/grpc/internal/meta"
 	context "golang.org/x/net/context"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	grpc "google.golang.org/grpc"
@@ -33,7 +34,7 @@ func (s signupServiceServer) Signup(ctx context.Context, req *authnpb.SignupRequ
 
 	sessionToken, identityToken, err := services.SessionCreator(
 		s.app.AccountStore, s.app.RefreshTokenStore, s.app.KeyStore, s.app.Actives, s.app.Config, s.app.Reporter,
-		account.ID, &s.app.Config.ApplicationDomains[0], getRefreshToken(ctx),
+		account.ID, &s.app.Config.ApplicationDomains[0], meta.GetRefreshToken(ctx),
 	)
 	if err != nil {
 		panic(err)
