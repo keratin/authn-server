@@ -1,12 +1,13 @@
 syntax = "proto3";
 
 package keratin.authn;
-option go_package = "grpc";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 
+option go_package = "grpc";
 option (gogoproto.populate_all) = true;
+option (gogoproto.testgen_all) = true;
 
 message GetAccountRequest { int64 id = 1; }
 
@@ -128,7 +129,7 @@ service SecuredAdminAuthN {
     };
   }
 
-  rpc UnlockAcount(UnlockAccountRequest) returns (UnlockAccountResponse) {
+  rpc UnlockAccount(UnlockAccountRequest) returns (UnlockAccountResponse) {
     option (google.api.http) = {
       put : "/accounts/{id}/unlock"
       additional_bindings: {

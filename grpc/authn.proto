@@ -1,10 +1,14 @@
 syntax = "proto3";
 
 package keratin.authn;
-option go_package = "grpc";
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "google/api/annotations.proto";
+
+option go_package = "grpc";
+option (gogoproto.populate_all) = true;
+option (gogoproto.testgen_all) = true;
+
 
 message SignupRequest {
   string username = 1;

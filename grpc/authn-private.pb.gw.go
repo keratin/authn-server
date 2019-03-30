@@ -202,7 +202,7 @@ func request_SecuredAdminAuthN_LockAccount_1(ctx context.Context, marshaler runt
 
 }
 
-func request_SecuredAdminAuthN_UnlockAcount_0(ctx context.Context, marshaler runtime.Marshaler, client SecuredAdminAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_SecuredAdminAuthN_UnlockAccount_0(ctx context.Context, marshaler runtime.Marshaler, client SecuredAdminAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq UnlockAccountRequest
 	var metadata runtime.ServerMetadata
 
@@ -224,12 +224,12 @@ func request_SecuredAdminAuthN_UnlockAcount_0(ctx context.Context, marshaler run
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
-	msg, err := client.UnlockAcount(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.UnlockAccount(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func request_SecuredAdminAuthN_UnlockAcount_1(ctx context.Context, marshaler runtime.Marshaler, client SecuredAdminAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_SecuredAdminAuthN_UnlockAccount_1(ctx context.Context, marshaler runtime.Marshaler, client SecuredAdminAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq UnlockAccountRequest
 	var metadata runtime.ServerMetadata
 
@@ -251,7 +251,7 @@ func request_SecuredAdminAuthN_UnlockAcount_1(ctx context.Context, marshaler run
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
 	}
 
-	msg, err := client.UnlockAcount(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.UnlockAccount(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
@@ -597,7 +597,7 @@ func RegisterSecuredAdminAuthNHandlerClient(ctx context.Context, mux *runtime.Se
 
 	})
 
-	mux.Handle("PUT", pattern_SecuredAdminAuthN_UnlockAcount_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PUT", pattern_SecuredAdminAuthN_UnlockAccount_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -606,18 +606,18 @@ func RegisterSecuredAdminAuthNHandlerClient(ctx context.Context, mux *runtime.Se
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_SecuredAdminAuthN_UnlockAcount_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_SecuredAdminAuthN_UnlockAccount_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_SecuredAdminAuthN_UnlockAcount_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_SecuredAdminAuthN_UnlockAccount_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("PATCH", pattern_SecuredAdminAuthN_UnlockAcount_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PATCH", pattern_SecuredAdminAuthN_UnlockAccount_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -626,14 +626,14 @@ func RegisterSecuredAdminAuthNHandlerClient(ctx context.Context, mux *runtime.Se
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_SecuredAdminAuthN_UnlockAcount_1(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_SecuredAdminAuthN_UnlockAccount_1(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_SecuredAdminAuthN_UnlockAcount_1(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_SecuredAdminAuthN_UnlockAccount_1(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -713,9 +713,9 @@ var (
 
 	pattern_SecuredAdminAuthN_LockAccount_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "lock"}, ""))
 
-	pattern_SecuredAdminAuthN_UnlockAcount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "unlock"}, ""))
+	pattern_SecuredAdminAuthN_UnlockAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "unlock"}, ""))
 
-	pattern_SecuredAdminAuthN_UnlockAcount_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "unlock"}, ""))
+	pattern_SecuredAdminAuthN_UnlockAccount_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "unlock"}, ""))
 
 	pattern_SecuredAdminAuthN_ArchiveAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"accounts", "id"}, ""))
 
@@ -737,9 +737,9 @@ var (
 
 	forward_SecuredAdminAuthN_LockAccount_1 = runtime.ForwardResponseMessage
 
-	forward_SecuredAdminAuthN_UnlockAcount_0 = runtime.ForwardResponseMessage
+	forward_SecuredAdminAuthN_UnlockAccount_0 = runtime.ForwardResponseMessage
 
-	forward_SecuredAdminAuthN_UnlockAcount_1 = runtime.ForwardResponseMessage
+	forward_SecuredAdminAuthN_UnlockAccount_1 = runtime.ForwardResponseMessage
 
 	forward_SecuredAdminAuthN_ArchiveAccount_0 = runtime.ForwardResponseMessage
 

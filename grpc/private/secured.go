@@ -49,7 +49,6 @@ func (ss securedServer) UpdateAccount(ctx context.Context, req *authnpb.UpdateAc
 			if fe[0].Message == services.ErrNotFound {
 				return nil, errors.ToStatusErrorWithDetails(fe, codes.NotFound).Err()
 			}
-
 			return nil, errors.ToStatusErrorWithDetails(fe, codes.FailedPrecondition).Err()
 		}
 		panic(err)
@@ -71,7 +70,7 @@ func (ss securedServer) LockAccount(ctx context.Context, req *authnpb.LockAccoun
 	return &authnpb.LockAccountResponse{}, nil
 }
 
-func (ss securedServer) UnlockAcount(ctx context.Context, req *authnpb.UnlockAccountRequest) (*authnpb.UnlockAccountResponse, error) {
+func (ss securedServer) UnlockAccount(ctx context.Context, req *authnpb.UnlockAccountRequest) (*authnpb.UnlockAccountResponse, error) {
 	err := services.AccountUnlocker(ss.app.AccountStore, int(req.GetId()))
 	if err != nil {
 		if fe, ok := err.(services.FieldErrors); ok {
