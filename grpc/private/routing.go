@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/keratin/authn-server/app"
+	"github.com/keratin/authn-server/grpc/internal/gateway"
 	"github.com/keratin/authn-server/grpc/public"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -31,17 +32,17 @@ func metaRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 		routes = append(routes,
 			route.Get("/stats").
 				SecuredWith(authentication).
-				Handle(gmux),
+				Handle(gateway.TrimSubpath(app, gmux)),
 		)
 	}
 
 	routes = append(routes,
 		route.Get("/jwks").
 			SecuredWith(route.Unsecured()).
-			Handle(gmux),
+			Handle(gateway.TrimSubpath(app, gmux)),
 		route.Get("/configuration").
 			SecuredWith(route.Unsecured()).
-			Handle(gmux),
+			Handle(gateway.TrimSubpath(app, gmux)),
 		route.Get("/metrics").
 			SecuredWith(authentication).
 			Handle(promhttp.Handler()),
@@ -58,31 +59,31 @@ func accountRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 	routes = append(routes,
 		route.Post("/accounts/import").
 			SecuredWith(authentication).
-			Handle(gmux),
+			Handle(gateway.TrimSubpath(app, gmux)),
 
 		route.Get("/accounts/{id:[0-9]+}").
 			SecuredWith(authentication).
-			Handle(gmux),
+			Handle(gateway.TrimSubpath(app, gmux)),
 
 		route.Patch("/accounts/{id:[0-9]+}").
 			SecuredWith(authentication).
-			Handle(gmux),
+			Handle(gateway.TrimSubpath(app, gmux)),
 
 		route.Patch("/accounts/{id:[0-9]+}/lock").
 			SecuredWith(authentication).
-			Handle(gmux),
+			Handle(gateway.TrimSubpath(app, gmux)),
 
 		route.Patch("/accounts/{id:[0-9]+}/unlock").
 			SecuredWith(authentication).
-			Handle(gmux),
+			Handle(gateway.TrimSubpath(app, gmux)),
 
 		route.Patch("/accounts/{id:[0-9]+}/expire_password").
 			SecuredWith(authentication).
-			Handle(gmux),
+			Handle(gateway.TrimSubpath(app, gmux)),
 
 		route.Delete("/accounts/{id:[0-9]+}").
 			SecuredWith(authentication).
-			Handle(gmux),
+			Handle(gateway.TrimSubpath(app, gmux)),
 	)
 
 	return routes

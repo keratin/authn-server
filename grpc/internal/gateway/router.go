@@ -11,6 +11,12 @@ import (
 	"github.com/keratin/authn-server/server/sessions"
 )
 
+// WrapRouter returns a handler with the following middlewares:
+// - Combined Logging (in Apache Combined Log Format)
+// - Sessions managing middleware
+// - CORS
+// - Proxy headers (if applicable)
+// -  Panic handler
 func WrapRouter(r http.Handler, app *app.App) http.Handler {
 	stack := gorilla.CombinedLoggingHandler(os.Stdout, r)
 
@@ -28,4 +34,9 @@ func WrapRouter(r http.Handler, app *app.App) http.Handler {
 	}
 
 	return ops.PanicHandler(app.Reporter, stack)
+}
+
+// TrimSubpath removes the subpath prefix allowing the gRPC-gateway to handle the request on the defined path
+func TrimSubpath(app *app.App, h http.Handler) http.Handler {
+	return http.StripPrefix(app.Config.AuthNURL.Path, h)
 }

@@ -4,6 +4,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/keratin/authn-server/app"
+	"github.com/keratin/authn-server/grpc/internal/gateway"
+
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/server/handlers"
 )
@@ -25,7 +27,7 @@ func metaRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 	return []*route.HandledRoute{
 		route.Get("/health").
 			SecuredWith(route.Unsecured()).
-			Handle(gmux),
+			Handle(gateway.TrimSubpath(app, gmux)),
 	}
 }
 
@@ -38,10 +40,10 @@ func accountRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 		routes = append(routes,
 			route.Post("/accounts").
 				SecuredWith(originSecurity).
-				Handle(gmux),
+				Handle(gateway.TrimSubpath(app, gmux)),
 			route.Get("/accounts/available").
 				SecuredWith(originSecurity).
-				Handle(gmux),
+				Handle(gateway.TrimSubpath(app, gmux)),
 		)
 	}
 
@@ -54,26 +56,26 @@ func sessionsRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute 
 	routes := []*route.HandledRoute{
 		route.Post("/session").
 			SecuredWith(originSecurity).
-			Handle(gmux),
+			Handle(gateway.TrimSubpath(app, gmux)),
 
 		route.Delete("/session").
 			SecuredWith(originSecurity).
-			Handle(gmux),
+			Handle(gateway.TrimSubpath(app, gmux)),
 
 		route.Get("/session/refresh").
 			SecuredWith(originSecurity).
-			Handle(gmux),
+			Handle(gateway.TrimSubpath(app, gmux)),
 	}
 
 	if app.Config.AppPasswordlessTokenURL != nil {
 		routes = append(routes,
 			route.Get("/session/token").
 				SecuredWith(originSecurity).
-				Handle(gmux),
+				Handle(gateway.TrimSubpath(app, gmux)),
 
 			route.Post("/session/token").
 				SecuredWith(originSecurity).
-				Handle(gmux),
+				Handle(gateway.TrimSubpath(app, gmux)),
 		)
 	}
 
@@ -86,14 +88,14 @@ func passwordsRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute
 	routes := []*route.HandledRoute{
 		route.Post("/password").
 			SecuredWith(originSecurity).
-			Handle(gmux),
+			Handle(gateway.TrimSubpath(app, gmux)),
 	}
 
 	if app.Config.AppPasswordResetURL != nil {
 		routes = append(routes,
 			route.Get("/password/reset").
 				SecuredWith(originSecurity).
-				Handle(gmux),
+				Handle(gateway.TrimSubpath(app, gmux)),
 		)
 	}
 
