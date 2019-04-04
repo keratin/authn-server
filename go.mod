@@ -35,6 +35,7 @@ require (
 	github.com/prometheus/common v0.0.0-20171104095907-e3fb1a1acd76 // indirect
 	github.com/prometheus/procfs v0.0.0-20171017214025-a6e9df898b13 // indirect
 	github.com/sirupsen/logrus v1.0.5
+	github.com/soheilhy/cmux v0.1.4
 	github.com/stretchr/testify v1.2.1
 	golang.org/x/crypto v0.0.0-20170619204222-adbae1b6b6fb
 	golang.org/x/net v0.0.0-20180826012351-8a410e7b638d

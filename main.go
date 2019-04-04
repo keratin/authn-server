@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/app/data"
-	"github.com/keratin/authn-server/server"
 	"os"
 	"path"
+
+	"github.com/keratin/authn-server/app"
+	"github.com/keratin/authn-server/app/data"
+	grpcserver "github.com/keratin/authn-server/grpc/server"
+	"github.com/keratin/authn-server/server"
 )
 
 // VERSION is a value injected at build time with ldflags
@@ -52,6 +54,10 @@ func serve(cfg *app.Config) {
 		fmt.Println(fmt.Sprintf("PUBLIC_PORT: %d", app.Config.PublicPort))
 	}
 
+	if cfg.EnableGRPC {
+		grpcserver.Server(app)
+		return
+	}
 	server.Server(app)
 }
 
