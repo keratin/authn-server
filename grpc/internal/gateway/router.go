@@ -3,6 +3,7 @@ package gateway
 import (
 	"net/http"
 	"os"
+	"strings"
 
 	gorilla "github.com/gorilla/handlers"
 	"github.com/keratin/authn-server/app"
@@ -38,5 +39,8 @@ func WrapRouter(r http.Handler, app *app.App) http.Handler {
 
 // TrimSubpath removes the subpath prefix allowing the gRPC-gateway to handle the request on the defined path
 func TrimSubpath(app *app.App, h http.Handler) http.Handler {
-	return http.StripPrefix(app.Config.AuthNURL.Path, h)
+	if app.Config.AuthNURL.Path == "/" {
+		return h
+	}
+	return http.StripPrefix(strings.TrimSuffix(app.Config.AuthNURL.Path, "/"), h)
 }
