@@ -28,7 +28,7 @@ func init() {
 }
 
 // RunPrivateService starts a gRPC server for the private API and accompanying gRPC-Gateway server
-func RunPrivateService(ctx context.Context, app *app.App, grpcListener net.Listener, httpListener net.Listener) error {
+func runPrivateService(ctx context.Context, app *app.App, grpcListener net.Listener, httpListener net.Listener) error {
 
 	privateRouter := mux.NewRouter()
 
@@ -62,7 +62,7 @@ func RunPrivateService(ctx context.Context, app *app.App, grpcListener net.Liste
 }
 
 // RunPublicService starts a gRPC server for the public API and accompanying gRPC-Gateway server
-func RunPublicService(ctx context.Context, app *app.App, grpcListener net.Listener, httpListener net.Listener) error {
+func runPublicService(ctx context.Context, app *app.App, grpcListener net.Listener, httpListener net.Listener) error {
 
 	publicRouter := mux.NewRouter()
 
