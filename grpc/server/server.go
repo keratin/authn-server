@@ -113,7 +113,7 @@ func Server(app *app.App) {
 		}()
 
 		go func() {
-			log.Fatal(RunPublicService(context.Background(), app, grpcl, httpl))
+			log.Fatal(runPublicService(context.Background(), app, grpcl, httpl))
 		}()
 	}
 
@@ -131,5 +131,5 @@ func Server(app *app.App) {
 		}
 	}()
 
-	log.Fatal(RunPrivateService(context.Background(), app, grpcl, httpNoTLSL))
+	log.Fatal(runPrivateService(context.Background(), app, grpcl, httpNoTLSL))
 }
