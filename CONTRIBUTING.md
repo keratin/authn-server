@@ -41,14 +41,16 @@ AuthN's scope does not include:
 
 AuthN uses a services pattern to implement the business logic of RESTful route handlers.
 
-* `api/`
+* `app/`
+  * Configuration routines read from ENV variables to prepare the server.
+  * Services encode AuthN's business logic and validations. Any meaningful work in a
+    web request should be performed by a service object.
+  * Data Access Objects (DAO) implement an interface for pluggable persistence backends
+* `server/`
+  * The REST implementation of AuthN's HTTP server
   * Routes are responsible for invoking the correct handler
   * Handlers are responsible for translating HTTP requests into service commands, and translating
     service results back into HTTP responses.
-* `services/`
-  * Services perform validations and encode AuthN's business logic
-* `data/`
-  * Data Access Objects (DAO) implement an interface for pluggable persistence backends
 
 ### Dependency Injection
 
@@ -59,7 +61,8 @@ AuthN uses a services pattern to implement the business logic of RESTful route h
 ### Error Handling
 
 Errors are passed up from services to handlers. If an error is not recoverable, the handler should
-panic (fatal) or report (warning). Panics are reported and generate a 500 error.
+panic (fatal) or report (warning). Panics are handled in middleware that reports them to an outside
+service while generating a HTTP 500 error.
 
 ## Tests
 
