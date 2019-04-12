@@ -112,10 +112,10 @@ func basicAuthCheck(ctx context.Context, matcher basicAuthMatcher) (context.Cont
 
 	user, password := cs[:s], cs[s+1:]
 	if !matcher(user, password) {
-		herr := grpc.SetHeader(ctx, metadata.Pairs("www-authenticate", `Basic realm="Private AuthN Realm"`))
-		log.Printf("herr is: %s", herr)
-		// header := metadata.Pairs("WWW-authenticate", `Basic realm="Private AuthN Realm"`)
-		// grpc.SendHeader(ctx, header)
+		err := grpc.SetHeader(ctx, metadata.Pairs("www-authenticate", `Basic realm="Private AuthN Realm"`))
+		if err != nil {
+			log.Errorf("error setting header: %s", err)
+		}
 		ctx = metadata.AppendToOutgoingContext(ctx, "WWW-Authenticate", `Basic realm="Private AuthN Realm"`)
 		return ctx, status.Error(codes.Unauthenticated, "invalid user or password")
 	}
