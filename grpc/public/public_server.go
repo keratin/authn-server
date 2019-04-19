@@ -1,7 +1,6 @@
 package public
 
 import (
-	"crypto/tls"
 	"fmt"
 	"net"
 
@@ -10,7 +9,6 @@ import (
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/status"
 
 	pkgerrors "github.com/pkg/errors"
@@ -31,16 +29,6 @@ type publicServer struct {
 
 func RunPublicGRPC(ctx context.Context, app *app.App, l net.Listener) error {
 	opts := meta.PublicServerOptions(app)
-
-	if app.Config.ClientCA != nil {
-		tlsConfig := &tls.Config{
-			Certificates:       []tls.Certificate{app.Config.Certificate},
-			ClientCAs:          app.Config.ClientCA,
-			ClientAuth:         tls.RequireAndVerifyClientCert,
-			InsecureSkipVerify: app.Config.TLSSkipVerify,
-		}
-		opts = append(opts, grpc.Creds(credentials.NewTLS(tlsConfig)))
-	}
 	srv := grpc.NewServer(opts...)
 
 	RegisterPublicGRPCMethods(srv, app)

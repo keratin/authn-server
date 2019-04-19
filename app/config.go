@@ -4,11 +4,9 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
-	"crypto/tls"
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
-	"io/ioutil"
 	"math/big"
 	"net/url"
 	"os"
@@ -70,9 +68,6 @@ type Config struct {
 	GitHubOauthCredentials      *oauth.Credentials
 	FacebookOauthCredentials    *oauth.Credentials
 	EnableGRPC                  bool
-	Certificate                 tls.Certificate
-	ClientCA                    *x509.CertPool
-	TLSSkipVerify               bool
 }
 
 var configurers = []configurer{
@@ -524,50 +519,6 @@ var configurers = []configurer{
 			return err
 		}
 		return nil
-	},
-
-	// TLS_CERT and TLS_KEY pair for gRPC server
-	// TLS_CA is the certificate authority to validate cliet certs against.
-	// TLS_CA is configured along with TLS_CERT and TLS_KEY to enforce mindful configuration.
-	func(c *Config) error {
-		if os.Getenv("TLS_CERT") != "" || os.Getenv("TLS_KEY") != "" {
-			certFile, err := requireEnv("TLS_CERT")
-			if err != nil {
-				return err
-			}
-			keyFile, err := requireEnv("TLS_KEY")
-			if err != nil {
-				return err
-			}
-			cert, err := tls.LoadX509KeyPair(certFile, keyFile)
-			if err != nil {
-				return err
-			}
-			c.Certificate = cert
-
-			caPath, err := requireEnv("TLS_CA")
-			if err != nil {
-				return err
-			}
-			c.ClientCA = x509.NewCertPool()
-			bs, err := ioutil.ReadFile(caPath)
-			if err != nil {
-				return err
-			}
-			if ok := c.ClientCA.AppendCertsFromPEM(bs); !ok {
-				return fmt.Errorf("unable to add TLS_CA from: %s", caPath)
-			}
-		}
-		return nil
-	},
-
-	// TLS_SKIP_VERIFY is mapped to crypt/tls.Certificate.InsecureSkipVerify.
-	func(c *Config) error {
-		skip, err := lookupBool("TLS_SKIP_VERIFY", false)
-		if err == nil {
-			c.TLSSkipVerify = skip
-		}
-		return err
 	},
 }
 

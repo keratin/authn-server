@@ -2,12 +2,9 @@ package private
 
 import (
 	"crypto/subtle"
-	"crypto/tls"
 	"encoding/base64"
 	"net"
 	"strings"
-
-	"google.golang.org/grpc/credentials"
 
 	"google.golang.org/grpc/metadata"
 
@@ -28,16 +25,6 @@ type basicAuthMatcher func(username, password string) bool
 // RunPrivateGRPC registers the private services and runs the gRPC server on the provided listener
 func RunPrivateGRPC(ctx context.Context, app *app.App, l net.Listener) error {
 	opts := meta.PrivateServerOptions(app)
-
-	if app.Config.ClientCA != nil {
-		tlsConfig := &tls.Config{
-			Certificates:       []tls.Certificate{app.Config.Certificate},
-			ClientCAs:          app.Config.ClientCA,
-			ClientAuth:         tls.RequireAndVerifyClientCert,
-			InsecureSkipVerify: app.Config.TLSSkipVerify,
-		}
-		opts = append(opts, grpc.Creds(credentials.NewTLS(tlsConfig)))
-	}
 	srv := grpc.NewServer(opts...)
 
 	public.RegisterPublicGRPCMethods(srv, app)
