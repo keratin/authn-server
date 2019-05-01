@@ -21,7 +21,7 @@ func NewDB(url *url.URL) (*sqlx.DB, error) {
 		return sqlite3.NewDB(url.Path)
 	case "mysql":
 		return mysql.NewDB(url)
-	case "postgres":
+	case "postgresql", "postgres":
 		return postgres.NewDB(url)
 	default:
 		return nil, fmt.Errorf("Unsupported database: %s", url.Scheme)
