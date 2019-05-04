@@ -3,7 +3,8 @@ PROJECT := authn-server
 NAME := $(ORG)/$(PROJECT)
 VERSION := 1.5.0
 MAIN := main.go routing.go
-GATEWAY_SRC:= $(shell go list -f '{{ .Dir }}' -m github.com/grpc-ecosystem/grpc-gateway)
+GOGOPROTO := $(shell go list -f '{{ .Dir }}' -m github.com/gogo/protobuf)
+GOGOGOOGLE := $(shell go list -f '{{ .Dir }}' -m github.com/gogo/googleapis)
 
 .PHONY: clean
 clean:
@@ -105,7 +106,7 @@ release: test dist
 
 .PHONY: generate-grpc
 generate-grpc:
-	protoc -I=./grpc -I=vendor -I=$(GATEWAY_SRC)/third_party/googleapis --gogoslick_out=\
+	protoc -I=./grpc -I=$(GOGOPROTO) -I=$(GOGOGOOGLE) --gogoslick_out=\
 	Mgoogle/api/annotations.proto=github.com/gogo/googleapis/google/api,\
 	Mgoogle/protobuf/any.proto=github.com/gogo/protobuf/types,\
 	Mgoogle/protobuf/duration.proto=github.com/gogo/protobuf/types,\
