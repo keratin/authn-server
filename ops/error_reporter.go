@@ -1,9 +1,13 @@
 package ops
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 )
 
 // ErrorReporter is a thing that exports details about errors and panics to another service. Care
@@ -11,6 +15,7 @@ import (
 type ErrorReporter interface {
 	ReportError(err error)
 	ReportRequestError(err error, r *http.Request)
+	ReportGRPCError(err error, info *grpc.UnaryServerInfo, req interface{})
 }
 
 // PanicHandler returns a http.Handler that will recover any panics and report them as request
@@ -33,4 +38,23 @@ func PanicHandler(r ErrorReporter, next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, req)
 	})
+}
+
+// GRPCRecoveryInterceptor return an interceptor that will recover any panics and report them as request
+// errors. If a panic is caught, the interceptor will return HTTP 500.
+func GRPCRecoveryInterceptor(r ErrorReporter) grpc.UnaryServerInterceptor {
+	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (_ interface{}, err error) {
+		defer func() {
+			val := recover()
+			switch errValue := val.(type) {
+			case nil:
+				return
+			case error:
+			default:
+				err = grpc.Errorf(codes.Internal, "%v", errValue)
+			}
+			r.ReportGRPCError(err, info, req)
+		}()
+		return handler(ctx, req)
+	}
 }

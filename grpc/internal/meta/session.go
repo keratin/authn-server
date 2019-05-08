@@ -32,7 +32,7 @@ func SessionInterceptor(app *app.App) grpc.UnaryServerInterceptor {
 				var err error
 				session, err = sessions.Parse(cookies[0], app.Config)
 				if err != nil {
-					app.Reporter.ReportError(pkgerrors.Wrap(err, "Parse"))
+					app.Reporter.ReportGRPCError(pkgerrors.Wrap(err, "Parse"), info, req)
 					return
 				}
 			})
@@ -51,7 +51,7 @@ func SessionInterceptor(app *app.App) grpc.UnaryServerInterceptor {
 
 				accountID, err = app.RefreshTokenStore.Find(models.RefreshToken(session.Subject))
 				if err != nil {
-					app.Reporter.ReportError(pkgerrors.Wrap(err, "Find"))
+					app.Reporter.ReportGRPCError(pkgerrors.Wrap(err, "Find"), info, req)
 				}
 			})
 			return accountID
@@ -62,6 +62,7 @@ func SessionInterceptor(app *app.App) grpc.UnaryServerInterceptor {
 	}
 }
 
+// GetRefreshToken extracts the refresh token from the context.
 func GetRefreshToken(ctx context.Context) *models.RefreshToken {
 	claims := GetSession(ctx)
 	if claims != nil {
@@ -71,6 +72,7 @@ func GetRefreshToken(ctx context.Context) *models.RefreshToken {
 	return nil
 }
 
+// GetSession extracts the session claim from the request context.
 func GetSession(ctx context.Context) *sessions.Claims {
 	fn, ok := ctx.Value(sessionKey(0)).(func() *sessions.Claims)
 	if ok {
@@ -79,12 +81,14 @@ func GetSession(ctx context.Context) *sessions.Claims {
 	return nil
 }
 
+// SetSession sends the session claim in the gRPC response header.
 func SetSession(ctx context.Context, cookieName string, val string) {
 	// create and send header
 	header := metadata.Pairs(cookieName, val)
 	grpc.SendHeader(ctx, header)
 }
 
+// GetSessionAccountID extracts the account ID stored in the request context.
 func GetSessionAccountID(ctx context.Context) int {
 	fn, ok := ctx.Value(accountIDKey(0)).(func() int)
 	if ok {

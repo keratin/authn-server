@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/keratin/authn-server/app"
+	"github.com/keratin/authn-server/ops"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
@@ -18,6 +19,7 @@ import (
 func PrivateServerOptions(app *app.App) []grpc.ServerOption {
 	return []grpc.ServerOption{
 		grpc_middleware.WithUnaryServerChain(
+			ops.GRPCRecoveryInterceptor(app.Reporter),
 			grpc_ctxtags.UnaryServerInterceptor(),
 			grpc_logrus.UnaryServerInterceptor(logrus.NewEntry(logrus.StandardLogger())),
 			grpc_prometheus.UnaryServerInterceptor,
@@ -33,6 +35,7 @@ func PrivateServerOptions(app *app.App) []grpc.ServerOption {
 func PublicServerOptions(app *app.App) []grpc.ServerOption {
 	return []grpc.ServerOption{
 		grpc_middleware.WithUnaryServerChain(
+			ops.GRPCRecoveryInterceptor(app.Reporter),
 			grpc_ctxtags.UnaryServerInterceptor(),
 			grpc_logrus.UnaryServerInterceptor(logrus.NewEntry(logrus.StandardLogger())),
 			grpc_prometheus.UnaryServerInterceptor,
