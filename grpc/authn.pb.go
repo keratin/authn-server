@@ -40,7 +40,7 @@ type SignupRequest struct {
 func (m *SignupRequest) Reset()      { *m = SignupRequest{} }
 func (*SignupRequest) ProtoMessage() {}
 func (*SignupRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{0}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{0}
 }
 func (m *SignupRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -92,7 +92,7 @@ type SignupResponse struct {
 func (m *SignupResponse) Reset()      { *m = SignupResponse{} }
 func (*SignupResponse) ProtoMessage() {}
 func (*SignupResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{1}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{1}
 }
 func (m *SignupResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -137,7 +137,7 @@ type SignupResponseEnvelope struct {
 func (m *SignupResponseEnvelope) Reset()      { *m = SignupResponseEnvelope{} }
 func (*SignupResponseEnvelope) ProtoMessage() {}
 func (*SignupResponseEnvelope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{2}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{2}
 }
 func (m *SignupResponseEnvelope) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -182,7 +182,7 @@ type IsUsernameAvailableRequest struct {
 func (m *IsUsernameAvailableRequest) Reset()      { *m = IsUsernameAvailableRequest{} }
 func (*IsUsernameAvailableRequest) ProtoMessage() {}
 func (*IsUsernameAvailableRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{3}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{3}
 }
 func (m *IsUsernameAvailableRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -227,7 +227,7 @@ type IsUsernameAvailableResponseEnvelope struct {
 func (m *IsUsernameAvailableResponseEnvelope) Reset()      { *m = IsUsernameAvailableResponseEnvelope{} }
 func (*IsUsernameAvailableResponseEnvelope) ProtoMessage() {}
 func (*IsUsernameAvailableResponseEnvelope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{4}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{4}
 }
 func (m *IsUsernameAvailableResponseEnvelope) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -272,7 +272,7 @@ type PasswordResetRequest struct {
 func (m *PasswordResetRequest) Reset()      { *m = PasswordResetRequest{} }
 func (*PasswordResetRequest) ProtoMessage() {}
 func (*PasswordResetRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{5}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{5}
 }
 func (m *PasswordResetRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -316,7 +316,7 @@ type PasswordResetResponse struct {
 func (m *PasswordResetResponse) Reset()      { *m = PasswordResetResponse{} }
 func (*PasswordResetResponse) ProtoMessage() {}
 func (*PasswordResetResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{6}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{6}
 }
 func (m *PasswordResetResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -354,7 +354,7 @@ type RequestPasswordlessLoginRequest struct {
 func (m *RequestPasswordlessLoginRequest) Reset()      { *m = RequestPasswordlessLoginRequest{} }
 func (*RequestPasswordlessLoginRequest) ProtoMessage() {}
 func (*RequestPasswordlessLoginRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{7}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{7}
 }
 func (m *RequestPasswordlessLoginRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -398,7 +398,7 @@ type RequestPasswordlessLoginResponse struct {
 func (m *RequestPasswordlessLoginResponse) Reset()      { *m = RequestPasswordlessLoginResponse{} }
 func (*RequestPasswordlessLoginResponse) ProtoMessage() {}
 func (*RequestPasswordlessLoginResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{8}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{8}
 }
 func (m *RequestPasswordlessLoginResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -436,7 +436,7 @@ type SubmitPasswordlessLoginRequest struct {
 func (m *SubmitPasswordlessLoginRequest) Reset()      { *m = SubmitPasswordlessLoginRequest{} }
 func (*SubmitPasswordlessLoginRequest) ProtoMessage() {}
 func (*SubmitPasswordlessLoginRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{9}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{9}
 }
 func (m *SubmitPasswordlessLoginRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -481,7 +481,7 @@ type SubmitPasswordlessLoginResponse struct {
 func (m *SubmitPasswordlessLoginResponse) Reset()      { *m = SubmitPasswordlessLoginResponse{} }
 func (*SubmitPasswordlessLoginResponse) ProtoMessage() {}
 func (*SubmitPasswordlessLoginResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{10}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{10}
 }
 func (m *SubmitPasswordlessLoginResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -528,7 +528,7 @@ func (m *SubmitPasswordlessLoginResponseEnvelope) Reset() {
 }
 func (*SubmitPasswordlessLoginResponseEnvelope) ProtoMessage() {}
 func (*SubmitPasswordlessLoginResponseEnvelope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{11}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{11}
 }
 func (m *SubmitPasswordlessLoginResponseEnvelope) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -574,7 +574,7 @@ type LoginRequest struct {
 func (m *LoginRequest) Reset()      { *m = LoginRequest{} }
 func (*LoginRequest) ProtoMessage() {}
 func (*LoginRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{12}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{12}
 }
 func (m *LoginRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -626,7 +626,7 @@ type LoginResponse struct {
 func (m *LoginResponse) Reset()      { *m = LoginResponse{} }
 func (*LoginResponse) ProtoMessage() {}
 func (*LoginResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{13}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{13}
 }
 func (m *LoginResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -671,7 +671,7 @@ type LoginResponseEnvelope struct {
 func (m *LoginResponseEnvelope) Reset()      { *m = LoginResponseEnvelope{} }
 func (*LoginResponseEnvelope) ProtoMessage() {}
 func (*LoginResponseEnvelope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{14}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{14}
 }
 func (m *LoginResponseEnvelope) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -715,7 +715,7 @@ type LogoutRequest struct {
 func (m *LogoutRequest) Reset()      { *m = LogoutRequest{} }
 func (*LogoutRequest) ProtoMessage() {}
 func (*LogoutRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{15}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{15}
 }
 func (m *LogoutRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -752,7 +752,7 @@ type LogoutResponse struct {
 func (m *LogoutResponse) Reset()      { *m = LogoutResponse{} }
 func (*LogoutResponse) ProtoMessage() {}
 func (*LogoutResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{16}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{16}
 }
 func (m *LogoutResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -789,7 +789,7 @@ type RefreshSessionRequest struct {
 func (m *RefreshSessionRequest) Reset()      { *m = RefreshSessionRequest{} }
 func (*RefreshSessionRequest) ProtoMessage() {}
 func (*RefreshSessionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{17}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{17}
 }
 func (m *RefreshSessionRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -827,7 +827,7 @@ type RefreshSessionResponse struct {
 func (m *RefreshSessionResponse) Reset()      { *m = RefreshSessionResponse{} }
 func (*RefreshSessionResponse) ProtoMessage() {}
 func (*RefreshSessionResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{18}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{18}
 }
 func (m *RefreshSessionResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -872,7 +872,7 @@ type RefreshSessionResponseEnvelope struct {
 func (m *RefreshSessionResponseEnvelope) Reset()      { *m = RefreshSessionResponseEnvelope{} }
 func (*RefreshSessionResponseEnvelope) ProtoMessage() {}
 func (*RefreshSessionResponseEnvelope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{19}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{19}
 }
 func (m *RefreshSessionResponseEnvelope) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -919,7 +919,7 @@ type ChangePasswordRequest struct {
 func (m *ChangePasswordRequest) Reset()      { *m = ChangePasswordRequest{} }
 func (*ChangePasswordRequest) ProtoMessage() {}
 func (*ChangePasswordRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{20}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{20}
 }
 func (m *ChangePasswordRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -978,7 +978,7 @@ type ChangePasswordResponse struct {
 func (m *ChangePasswordResponse) Reset()      { *m = ChangePasswordResponse{} }
 func (*ChangePasswordResponse) ProtoMessage() {}
 func (*ChangePasswordResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{21}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{21}
 }
 func (m *ChangePasswordResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1023,7 +1023,7 @@ type ChangePasswordResponseEnvelope struct {
 func (m *ChangePasswordResponseEnvelope) Reset()      { *m = ChangePasswordResponseEnvelope{} }
 func (*ChangePasswordResponseEnvelope) ProtoMessage() {}
 func (*ChangePasswordResponseEnvelope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{22}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{22}
 }
 func (m *ChangePasswordResponseEnvelope) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1067,7 +1067,7 @@ type HealthCheckRequest struct {
 func (m *HealthCheckRequest) Reset()      { *m = HealthCheckRequest{} }
 func (*HealthCheckRequest) ProtoMessage() {}
 func (*HealthCheckRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{23}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{23}
 }
 func (m *HealthCheckRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1107,7 +1107,7 @@ type HealthCheckResponse struct {
 func (m *HealthCheckResponse) Reset()      { *m = HealthCheckResponse{} }
 func (*HealthCheckResponse) ProtoMessage() {}
 func (*HealthCheckResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_9436f9e21b10c3df, []int{24}
+	return fileDescriptor_authn_4d129f6c4b8d03bc, []int{24}
 }
 func (m *HealthCheckResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -6023,9 +6023,9 @@ var (
 	ErrIntOverflowAuthn   = fmt.Errorf("proto: integer overflow")
 )
 
-func init() { proto.RegisterFile("authn.proto", fileDescriptor_authn_9436f9e21b10c3df) }
+func init() { proto.RegisterFile("authn.proto", fileDescriptor_authn_4d129f6c4b8d03bc) }
 
-var fileDescriptor_authn_9436f9e21b10c3df = []byte{
+var fileDescriptor_authn_4d129f6c4b8d03bc = []byte{
 	// 950 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x56, 0x4f, 0x6f, 0x1b, 0x45,
 	0x14, 0xcf, 0x98, 0x34, 0x75, 0x5e, 0x1a, 0x27, 0x8c, 0xed, 0xc4, 0x6c, 0xd3, 0x4d, 0x99, 0xb6,

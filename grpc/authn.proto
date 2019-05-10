@@ -85,29 +85,6 @@ service PasswordlessService {
   }
 }
 
-// Draft OAuth.
-// TODO: Implement OAuth API surface on top of gRPC, if possible. As of now, OAuth is handled outside of gRPC-Gateway.
-//
-// message BeginOAuthRequest {
-//   string providerName = 1;
-//   string redirectURI = 2;
-// }
-// message BeginOAuthResponse { string provider = 1; }
-// message OAuthReturnRequest { string providerName = 1; }
-// message OAuthReturnResponse { string redirect = 1; }
-// service OAuthService {
-//   rpc BeginOAuth(BeginOAuthRequest) returns (BeginOAuthResponse) {
-//     option (google.api.http) = {
-//       get : "/oauth/{providerName}"
-//     };
-//   }
-//   rpc OAuthReturn(OAuthReturnRequest) returns (OAuthReturnResponse) {
-//     option (google.api.http) = {
-//       get : "/oauth/{providerName}/return"
-//     };
-//   }
-// }
-
 message LoginRequest {
   string username = 1;
   string password = 2;
