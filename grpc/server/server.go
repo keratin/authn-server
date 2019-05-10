@@ -70,8 +70,7 @@ func runPublicService(ctx context.Context, app *app.App, grpcListener net.Listen
 	return g.Wait()
 }
 
-func Server(app *app.App) {
-
+func Server(ctx context.Context, app *app.App) {
 	if app.Config.PublicPort != 0 {
 		tcpl, err := net.Listen("tcp", fmt.Sprintf(":%d", app.Config.PublicPort))
 		if err != nil {
@@ -88,7 +87,7 @@ func Server(app *app.App) {
 		}()
 
 		go func() {
-			log.Fatal(runPublicService(context.Background(), app, grpcl, httpl))
+			log.Fatal(runPublicService(ctx, app, grpcl, httpl))
 		}()
 	}
 
@@ -106,5 +105,5 @@ func Server(app *app.App) {
 		}
 	}()
 
-	log.Fatal(runPrivateService(context.Background(), app, grpcl, httpNoTLSL))
+	log.Fatal(runPrivateService(ctx, app, grpcl, httpNoTLSL))
 }

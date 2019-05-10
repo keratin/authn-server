@@ -1,14 +1,17 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"os/signal"
 	"path"
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data"
 	grpcserver "github.com/keratin/authn-server/grpc/server"
 	"github.com/keratin/authn-server/server"
+	log "github.com/sirupsen/logrus"
 )
 
 // VERSION is a value injected at build time with ldflags
@@ -55,7 +58,16 @@ func serve(cfg *app.Config) {
 	}
 
 	if cfg.EnableGRPC {
-		grpcserver.Server(app)
+		ctx, cancel := context.WithCancel(context.Background())
+		gracefulStop := make(chan os.Signal)
+		signal.Notify(gracefulStop, os.Interrupt, os.Kill)
+		go func() {
+			grpcserver.Server(ctx, app)
+		}()
+		<-gracefulStop
+		log.Println("kill signal received")
+		log.Println("gracefully stopping")
+		cancel()
 		return
 	}
 	server.Server(app)
