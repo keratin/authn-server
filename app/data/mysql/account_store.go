@@ -9,12 +9,12 @@ import (
 )
 
 type AccountStore struct {
-	*sqlx.DB
+	sqlx.Ext
 }
 
 func (db *AccountStore) Find(id int) (*models.Account, error) {
 	account := models.Account{}
-	err := db.Get(&account, "SELECT * FROM accounts WHERE id = ?", id)
+	err := sqlx.Get(db, &account, "SELECT * FROM accounts WHERE id = ?", id)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
@@ -28,7 +28,7 @@ func (db *AccountStore) Find(id int) (*models.Account, error) {
 
 func (db *AccountStore) FindByUsername(u string) (*models.Account, error) {
 	account := models.Account{}
-	err := db.Get(&account, "SELECT * FROM accounts WHERE username = ? AND deleted_at IS NULL", u)
+	err := sqlx.Get(db, &account, "SELECT * FROM accounts WHERE username = ? AND deleted_at IS NULL", u)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
@@ -39,7 +39,7 @@ func (db *AccountStore) FindByUsername(u string) (*models.Account, error) {
 
 func (db *AccountStore) FindByOauthAccount(provider string, providerID string) (*models.Account, error) {
 	account := models.Account{}
-	err := db.Get(&account, "SELECT a.* FROM accounts a INNER JOIN oauth_accounts oa ON a.id = oa.account_id WHERE oa.provider = ? AND oa.provider_id = ?", provider, providerID)
+	err := sqlx.Get(db, &account, "SELECT a.* FROM accounts a INNER JOIN oauth_accounts oa ON a.id = oa.account_id WHERE oa.provider = ? AND oa.provider_id = ?", provider, providerID)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
@@ -59,7 +59,7 @@ func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 		UpdatedAt:         now,
 	}
 
-	result, err := db.NamedExec(
+	result, err := sqlx.NamedExec(db,
 		"INSERT INTO accounts (username, password, locked, require_new_password, password_changed_at, created_at, updated_at) VALUES (:username, :password, :locked, :require_new_password, :password_changed_at, :created_at, :updated_at)",
 		account,
 	)
@@ -79,7 +79,7 @@ func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 func (db *AccountStore) AddOauthAccount(accountID int, provider string, providerID string, accessToken string) error {
 	now := time.Now()
 
-	_, err := db.NamedExec(`
+	_, err := sqlx.NamedExec(db, `
         INSERT INTO oauth_accounts (account_id, provider, provider_id, access_token, created_at, updated_at)
         VALUES (:account_id, :provider, :provider_id, :access_token, :created_at, :updated_at)
     `, map[string]interface{}{
@@ -95,7 +95,7 @@ func (db *AccountStore) AddOauthAccount(accountID int, provider string, provider
 
 func (db *AccountStore) GetOauthAccounts(accountID int) ([]*models.OauthAccount, error) {
 	accounts := []*models.OauthAccount{}
-	err := db.Select(&accounts, `SELECT * FROM oauth_accounts WHERE account_id = ?`, accountID)
+	err := sqlx.Select(db, &accounts, `SELECT * FROM oauth_accounts WHERE account_id = ?`, accountID)
 	return accounts, err
 }
 

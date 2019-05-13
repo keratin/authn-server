@@ -27,14 +27,14 @@ type AccountStore interface {
 	SetLastLogin(id int) (bool, error)
 }
 
-func NewAccountStore(db *sqlx.DB) (AccountStore, error) {
+func NewAccountStore(db sqlx.Ext) (AccountStore, error) {
 	switch db.DriverName() {
 	case "sqlite3":
-		return &sqlite3.AccountStore{DB: db}, nil
+		return &sqlite3.AccountStore{Ext: db}, nil
 	case "mysql":
-		return &mysql.AccountStore{DB: db}, nil
+		return &mysql.AccountStore{Ext: db}, nil
 	case "postgres":
-		return &postgres.AccountStore{DB: db}, nil
+		return &postgres.AccountStore{Ext: db}, nil
 	default:
 		return nil, fmt.Errorf("unsupported driver: %v", db.DriverName())
 	}

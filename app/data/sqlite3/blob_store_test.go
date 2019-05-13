@@ -19,6 +19,6 @@ func TestBlobStore(t *testing.T) {
 			DB:       db,
 		}
 		tester(t, store)
-		store.DB.Close()
+		db.Close()
 	}
 }

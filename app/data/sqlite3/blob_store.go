@@ -16,7 +16,7 @@ var placeholder = "generating"
 type BlobStore struct {
 	TTL      time.Duration
 	LockTime time.Duration
-	DB       *sqlx.DB
+	DB       sqlx.Ext
 }
 
 func (s *BlobStore) Clean(reporter ops.ErrorReporter) {
@@ -33,7 +33,7 @@ func (s *BlobStore) Clean(reporter ops.ErrorReporter) {
 
 func (s *BlobStore) Read(name string) ([]byte, error) {
 	var blob []byte
-	err := s.DB.QueryRow("SELECT blob FROM blobs WHERE name = ? AND blob != ? AND expires_at > ?", name, placeholder, time.Now()).Scan(&blob)
+	err := s.DB.QueryRowx("SELECT blob FROM blobs WHERE name = ? AND blob != ? AND expires_at > ?", name, placeholder, time.Now()).Scan(&blob)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {

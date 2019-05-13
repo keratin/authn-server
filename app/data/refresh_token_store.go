@@ -47,7 +47,7 @@ func NewRefreshTokenStore(db *sqlx.DB, redis *redis.Client, reporter ops.ErrorRe
 	switch db.DriverName() {
 	case "sqlite3":
 		store := &sqlite3.RefreshTokenStore{
-			DB:  db,
+			Ext:  db,
 			TTL: ttl,
 		}
 		store.Clean(reporter)
