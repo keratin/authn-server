@@ -9,6 +9,7 @@
 ### Fixed
 
 * panic while evaluating some utf8 password characters
+* zxcvbn library we use exhibited some deviation from standard (see: https://github.com/nbutton23/zxcvbn-go/issues/20) so switched to https://github.com/trustelem/zxcvbn [#99]
 
 ## 1.5.0
 

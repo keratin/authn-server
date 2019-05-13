@@ -1,6 +1,7 @@
 package services
 
 import (
+	"encoding/hex"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/lib"
@@ -56,7 +57,8 @@ func IdentityReconciler(accountStore data.AccountStore, cfg *app.Config, provide
 		return nil, errors.Wrap(err, "GenerateToken")
 	}
 	// TODO: transactional account + identity
-	newAccount, err := AccountCreator(accountStore, cfg, providerUser.Email, string(rand))
+	// Note we hex encode token because zxcvbn does not seem to like non-printable characters
+	newAccount, err := AccountCreator(accountStore, cfg, providerUser.Email, hex.EncodeToString(rand))
 	if err != nil {
 		return nil, errors.Wrap(err, "AccountCreator")
 	}

@@ -6,12 +6,14 @@ require (
 	github.com/beorn7/perks v0.0.0-20160804104726-4c0e84591b9a // indirect
 	github.com/certifi/gocertifi v0.0.0-20170727155124-3fd9e1adb12b // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/dlclark/regexp2 v1.1.6 // indirect
 	github.com/felixge/httpsnoop v1.0.0
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
 	github.com/getsentry/raven-go v0.0.0-20170614100719-d175f85701df
 	github.com/go-redis/redis v6.10.2+incompatible
 	github.com/go-sql-driver/mysql v1.3.0
 	github.com/golang/protobuf v0.0.0-20171021043952-1643683e1b54 // indirect
+	github.com/google/go-cmp v0.3.0 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/handlers v1.3.0
 	github.com/gorilla/mux v1.6.1
@@ -21,7 +23,6 @@ require (
 	github.com/lib/pq v0.0.0-20180327071824-d34b9ff171c2
 	github.com/mattn/go-sqlite3 v1.6.0
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
-	github.com/nbutton23/zxcvbn-go v0.0.0-20180912185939-ae427f1e4c1d
 	github.com/onsi/ginkgo v1.6.0 // indirect
 	github.com/onsi/gomega v1.4.1 // indirect
 	github.com/pkg/errors v0.8.0
@@ -32,6 +33,8 @@ require (
 	github.com/prometheus/procfs v0.0.0-20171017214025-a6e9df898b13 // indirect
 	github.com/sirupsen/logrus v1.0.5
 	github.com/stretchr/testify v1.2.1
+	github.com/test-go/testify v1.1.4 // indirect
+	github.com/trustelem/zxcvbn v1.0.1
 	golang.org/x/crypto v0.0.0-20170619204222-adbae1b6b6fb
 	golang.org/x/net v0.0.0-20170624000434-5f8847ae0d0e // indirect
 	golang.org/x/oauth2 v0.0.0-20180416194528-6881fee410a5
