@@ -5,6 +5,7 @@
 ### Improved
 
 * Query optimizations on private admin endpoints.
+* Pre-compute JWK key on RSA key generation and include within private key wrapper type for use by dependees.
 
 ### Fixed
 

@@ -1,16 +1,15 @@
 package data
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
 	"time"
 
+	"github.com/keratin/authn-server/app/data/private"
+
 	"github.com/keratin/authn-server/lib"
 
-	"github.com/keratin/authn-server/lib/compat"
 	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -50,16 +49,14 @@ func (m *KeyStoreRotater) Maintain(ks *RotatingKeyStore, r ops.ErrorReporter) er
 	if keys[0] != nil {
 		ks.Rotate(keys[0])
 
-		keyID, _ := compat.KeyID(keys[0].Public())
-		log.WithFields(log.Fields{"keyID": keyID}).Info("previous key restored")
+		log.WithFields(log.Fields{"keyID": keys[0].JWK.KeyID}).Info("previous key restored")
 	}
 
 	// ensure and rotate in the current key
 	if keys[1] != nil {
 		ks.Rotate(keys[1])
 
-		keyID, _ := compat.KeyID(keys[1].Public())
-		log.WithFields(log.Fields{"keyID": keyID}).Info("current key restored")
+		log.WithFields(log.Fields{"keyID": keys[1].JWK.KeyID}).Info("current key restored")
 	} else {
 		newKey, err := m.generate()
 		if err != nil {
@@ -94,9 +91,9 @@ func (m *KeyStoreRotater) rotate(ks *RotatingKeyStore) error {
 // restore will query the blob store for the previous and current keys. It returns keys in the
 // proper sorting order, with the newest (current) key in last position. missing keys will leave a
 // blank slot, so that the caller may choose what to do.
-func (m *KeyStoreRotater) restore() ([]*rsa.PrivateKey, error) {
+func (m *KeyStoreRotater) restore() ([]*private.Key, error) {
 	bucket := m.currentBucket()
-	keys := make([]*rsa.PrivateKey, 2)
+	keys := make([]*private.Key, 2)
 
 	previous, err := m.find(bucket - 1)
 	if err != nil {
@@ -115,9 +112,9 @@ func (m *KeyStoreRotater) restore() ([]*rsa.PrivateKey, error) {
 
 // generate will create a new key and store it as an encrypted blob. It relies on a write lock to
 // coordinate with other AuthN servers.
-func (m *KeyStoreRotater) generate() (*rsa.PrivateKey, error) {
+func (m *KeyStoreRotater) generate() (*private.Key, error) {
 	keyName := fmt.Sprintf("rsa:%d", m.currentBucket())
-	key, err := rsa.GenerateKey(rand.Reader, m.keyStrength)
+	key, err := private.GenerateKey(m.keyStrength)
 	if err != nil {
 		return nil, err
 	}
@@ -129,8 +126,7 @@ func (m *KeyStoreRotater) generate() (*rsa.PrivateKey, error) {
 	}
 
 	if ok {
-		keyID, _ := compat.KeyID(key.Public())
-		log.WithFields(log.Fields{"keyID": keyID, "keyName": keyName}).Info("new key generated")
+		log.WithFields(log.Fields{"keyID": key.JWK.KeyID, "keyName": keyName}).Info("new key generated")
 	} else {
 		keyBlob, err := m.store.Read(keyName)
 		if err != nil {
@@ -138,15 +134,14 @@ func (m *KeyStoreRotater) generate() (*rsa.PrivateKey, error) {
 		}
 		key = bytesToKey(keyBlob)
 
-		keyID, _ := compat.KeyID(key.Public())
-		log.WithFields(log.Fields{"keyID": keyID}).Info("key synchronized")
+		log.WithFields(log.Fields{"keyID": key.JWK.KeyID}).Info("key synchronized")
 	}
 
 	return key, nil
 }
 
 // find will retrieve and deserialize/decrypt from the blob store
-func (m *KeyStoreRotater) find(bucket int64) (*rsa.PrivateKey, error) {
+func (m *KeyStoreRotater) find(bucket int64) (*private.Key, error) {
 	blob, err := m.store.Read(fmt.Sprintf("rsa:%d", bucket))
 	if err != nil {
 		return nil, errors.Wrap(err, "Get")
@@ -162,18 +157,19 @@ func (m *KeyStoreRotater) currentBucket() int64 {
 	return time.Now().Unix() / int64(m.interval/time.Second)
 }
 
-func keyToBytes(key *rsa.PrivateKey) []byte {
+func keyToBytes(key *private.Key) []byte {
 	return pem.EncodeToMemory(&pem.Block{
 		Type:  "RSA PRIVATE KEY",
-		Bytes: x509.MarshalPKCS1PrivateKey(key),
+		Bytes: x509.MarshalPKCS1PrivateKey(key.PrivateKey),
 	})
 }
 
-func bytesToKey(b []byte) *rsa.PrivateKey {
+func bytesToKey(b []byte) *private.Key {
 	block, _ := pem.Decode(b)
 	if block == nil {
 		return nil
 	}
 	key, _ := x509.ParsePKCS1PrivateKey(block.Bytes)
-	return key
+	privateKey, _ := private.NewKey(key)
+	return privateKey
 }

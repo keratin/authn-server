@@ -1,13 +1,12 @@
 package data_test
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
 	"testing"
 	"time"
 
 	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/app/data/mock"
+	"github.com/keratin/authn-server/app/data/private"
 	"github.com/keratin/authn-server/ops"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -56,14 +55,14 @@ func TestKeyStoreRotater(t *testing.T) {
 
 		firstKey := store.Keys()[0]
 
-		secondKey, err := rsa.GenerateKey(rand.Reader, 256)
+		secondKey, err := private.GenerateKey(256)
 		require.NoError(t, err)
 		store.Rotate(secondKey)
-		assert.Equal(t, []*rsa.PrivateKey{firstKey, secondKey}, store.Keys())
+		assert.Equal(t, []*private.Key{firstKey, secondKey}, store.Keys())
 
-		thirdKey, err := rsa.GenerateKey(rand.Reader, 256)
+		thirdKey, err := private.GenerateKey(256)
 		require.NoError(t, err)
 		store.Rotate(thirdKey)
-		assert.Equal(t, []*rsa.PrivateKey{secondKey, thirdKey}, store.Keys())
+		assert.Equal(t, []*private.Key{secondKey, thirdKey}, store.Keys())
 	})
 }
