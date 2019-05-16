@@ -71,7 +71,7 @@ func RunPrivateGateway(ctx context.Context, app *app.App, r *mux.Router, conn *g
 		}
 	}()
 
-	if err := s.Serve(l); err != http.ErrServerClosed {
+	if err := s.Serve(l); err != nil && err != http.ErrServerClosed {
 		return err
 	}
 
