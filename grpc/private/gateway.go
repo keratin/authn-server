@@ -22,10 +22,9 @@ func RunPrivateGateway(ctx context.Context, app *app.App, r *mux.Router, conn *g
 
 	gmux := runtime.NewServeMux(
 		runtime.WithForwardResponseOption(gateway.StatusCodeMutator),
-		runtime.WithMarshalerOption("*", &runtime.JSONPb{
-			OrigName:     true,
-			EmitDefaults: true,
-		}),
+		// Workaround this limitation: https://github.com/grpc-ecosystem/grpc-gateway/issues/920.
+		// Go's JSON encoder doesn't convert (u)int64 to strings silently.
+		runtime.WithMarshalerOption(runtime.MIMEWildcard, gateway.JSONMarshaler()),
 	)
 
 	r.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {

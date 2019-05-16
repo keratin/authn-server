@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
-	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -21,10 +20,13 @@ import (
 
 type GatewayResponseMiddleware func(ctx context.Context, response http.ResponseWriter, m proto.Message) error
 
+func JSONMarshaler() runtime.Marshaler {
+	return new(customJSONMarshaler)
+}
+
 // StatusCodeMutator changes the HTTP Repsonse status code to the desired mapping. The default mapping
 // by gRPC-Gateway doesn't have some of the desired responses (e.g. 201), which is why this function is needed.
 func StatusCodeMutator(ctx context.Context, response http.ResponseWriter, m proto.Message) error {
-	log.Printf("%s: message type: %T", time.Now(), m)
 	switch m.(type) {
 	case *authnpb.SignupResponseEnvelope, *authnpb.LoginResponseEnvelope, *authnpb.RefreshSessionResponseEnvelope, *authnpb.SubmitPasswordlessLoginResponseEnvelope, *authnpb.ChangePasswordResponseEnvelope:
 		response.WriteHeader(http.StatusCreated)
