@@ -15,7 +15,7 @@ const scope = "reset"
 
 type Claims struct {
 	Scope string          `json:"scope"`
-	Lock  jwt.NumericDate `json:"lock"`
+	Lock  *jwt.NumericDate `json:"lock"`
 	jwt.Claims
 }
 
@@ -31,7 +31,7 @@ func (c *Claims) Sign(hmacKey []byte) (string, error) {
 }
 
 func (c *Claims) LockExpired(passwordChangedAt time.Time) bool {
-	lockedAt := time.Unix(int64(c.Lock), 0)
+	lockedAt := time.Unix(int64(*c.Lock), 0)
 	expiredAt := passwordChangedAt.Truncate(time.Second)
 
 	return expiredAt.After(lockedAt)

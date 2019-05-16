@@ -14,7 +14,7 @@ import (
 )
 
 type Claims struct {
-	AuthTime jwt.NumericDate `json:"auth_time"`
+	AuthTime *jwt.NumericDate `json:"auth_time"`
 	jwt.Claims
 }
 
