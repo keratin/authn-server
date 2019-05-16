@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/keratin/authn-server/app"
-	zxcvbn "github.com/nbutton23/zxcvbn-go"
+	"github.com/trustelem/zxcvbn"
 )
 
 var ErrMissing = "MISSING"
@@ -49,7 +49,8 @@ func passwordValidator(cfg *app.Config, password string) *fieldError {
 		password = password[:100]
 	}
 
-	if zxcvbn.PasswordStrength(password, []string{}).Score < cfg.PasswordMinComplexity {
+	strength := zxcvbn.PasswordStrength(password, []string{})
+	if strength.Score < cfg.PasswordMinComplexity {
 		return &fieldError{"password", ErrInsecure}
 	}
 
