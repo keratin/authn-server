@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/jmoiron/sqlx"
 	"os"
 
 	"github.com/go-redis/redis"
@@ -16,6 +17,7 @@ import (
 type pinger func() bool
 
 type App struct {
+	DB                *sqlx.DB
 	DbCheck           pinger
 	RedisCheck        pinger
 	Config            *Config
@@ -97,6 +99,8 @@ func NewApp(cfg *Config) (*App, error) {
 	}
 
 	return &App{
+		// Provide access to root DB - useful when extending AccountStore functionality
+		DB:                db,
 		DbCheck:           func() bool { return db.Ping() == nil },
 		RedisCheck:        func() bool { return redis != nil && redis.Ping().Err() == nil },
 		Config:            cfg,

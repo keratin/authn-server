@@ -15,7 +15,7 @@ import (
 )
 
 type RefreshTokenStore struct {
-	*sqlx.DB
+	sqlx.Ext
 	TTL time.Duration
 }
 
@@ -52,7 +52,7 @@ func (s *RefreshTokenStore) Create(accountID int) (models.RefreshToken, error) {
 
 func (s *RefreshTokenStore) Find(token models.RefreshToken) (int, error) {
 	var accountID int
-	err := s.QueryRow(
+	err := s.QueryRowx(
 		"SELECT account_id FROM refresh_tokens WHERE token = ? AND expires_at > ?",
 		token,
 		time.Now(),
