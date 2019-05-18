@@ -1,19 +1,21 @@
 package mock
 
-import "crypto/rsa"
+import (
+	"github.com/keratin/authn-server/app/data/private"
+)
 
 type keyStore struct {
-	key *rsa.PrivateKey
+	key *private.Key
 }
 
-func NewKeyStore(key *rsa.PrivateKey) *keyStore {
+func NewKeyStore(key *private.Key) *keyStore {
 	return &keyStore{key}
 }
 
-func (ks *keyStore) Key() *rsa.PrivateKey {
+func (ks *keyStore) Key() *private.Key {
 	return ks.key
 }
 
-func (ks *keyStore) Keys() []*rsa.PrivateKey {
-	return []*rsa.PrivateKey{ks.key}
+func (ks *keyStore) Keys() []*private.Key {
+	return []*private.Key{ks.key}
 }

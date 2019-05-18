@@ -1,16 +1,16 @@
 package identities
 
 import (
-	"crypto/rsa"
 	"strconv"
 	"time"
 
+	"github.com/keratin/authn-server/app/data/private"
+
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/lib/compat"
 	"github.com/keratin/authn-server/app/tokens/sessions"
 	"github.com/pkg/errors"
-	jose "gopkg.in/square/go-jose.v2"
-	jwt "gopkg.in/square/go-jose.v2/jwt"
+	"gopkg.in/square/go-jose.v2"
+	"gopkg.in/square/go-jose.v2/jwt"
 )
 
 type Claims struct {
@@ -18,15 +18,10 @@ type Claims struct {
 	jwt.Claims
 }
 
-func (c *Claims) Sign(rsaKey *rsa.PrivateKey) (string, error) {
-	keyID, err := compat.KeyID(rsaKey.Public())
-	if err != nil {
-		return "", errors.Wrap(err, "KeyID")
-	}
-
+func (c *Claims) Sign(key *private.Key) (string, error) {
 	jwk := jose.JSONWebKey{
-		Key:   rsaKey,
-		KeyID: keyID,
+		Key:   key.PrivateKey,
+		KeyID: key.JWK.KeyID,
 	}
 
 	signer, err := jose.NewSigner(

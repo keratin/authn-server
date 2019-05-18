@@ -1,22 +1,22 @@
 package services_test
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
-	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/app/data/mock"
-	"github.com/keratin/authn-server/lib/route"
-	"github.com/keratin/authn-server/ops"
-	"github.com/keratin/authn-server/app/services"
-	"github.com/keratin/authn-server/app/tokens/sessions"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"net/url"
 	"testing"
+
+	"github.com/keratin/authn-server/app"
+	"github.com/keratin/authn-server/app/data/mock"
+	"github.com/keratin/authn-server/app/data/private"
+	"github.com/keratin/authn-server/app/services"
+	"github.com/keratin/authn-server/app/tokens/sessions"
+	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/ops"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSessionRefresher(t *testing.T) {
-	rsaKey, err := rsa.GenerateKey(rand.Reader, 512)
+	rsaKey, err := private.GenerateKey(512)
 	require.NoError(t, err)
 	keyStore := mock.NewKeyStore(rsaKey)
 	cfg := &app.Config{

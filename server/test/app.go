@@ -1,12 +1,11 @@
 package test
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
 	"net/url"
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data/mock"
+	"github.com/keratin/authn-server/app/data/private"
 	"github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
@@ -18,7 +17,7 @@ func App() *app.App {
 		panic(err)
 	}
 
-	weakKey, err := rsa.GenerateKey(rand.Reader, 512)
+	weakKey, err := private.GenerateKey(512)
 	if err != nil {
 		panic(err)
 	}

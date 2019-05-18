@@ -1,14 +1,12 @@
 package identities_test
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
 	"net/url"
 	"testing"
 
-	"github.com/keratin/authn-server/lib/compat"
+	"github.com/keratin/authn-server/app/data/private"
 
-	jose "gopkg.in/square/go-jose.v2"
+	"gopkg.in/square/go-jose.v2"
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data/mock"
@@ -24,7 +22,7 @@ func TestIdentityClaims(t *testing.T) {
 		AuthNURL:          &url.URL{Scheme: "http", Host: "authn.example.com"},
 		SessionSigningKey: []byte("key-a-reno"),
 	}
-	key, err := rsa.GenerateKey(rand.Reader, 512)
+	key, err := private.GenerateKey(512)
 	require.NoError(t, err)
 	session, err := sessions.New(store, &cfg, 1, "example.com")
 	require.NoError(t, err)
@@ -37,8 +35,7 @@ func TestIdentityClaims(t *testing.T) {
 		parsed, err := jose.ParseSigned(identityStr)
 		require.NoError(t, err)
 
-		keyID, err := compat.KeyID(key.Public())
 		require.NoError(t, err)
-		assert.Equal(t, keyID, parsed.Signatures[0].Header.KeyID)
+		assert.Equal(t, key.JWK.KeyID, parsed.Signatures[0].Header.KeyID)
 	})
 }
