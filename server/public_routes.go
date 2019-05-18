@@ -6,7 +6,7 @@ import (
 	"github.com/keratin/authn-server/server/handlers"
 )
 
-func publicRoutes(app *app.App) []*route.HandledRoute {
+func PublicRoutes(app *app.App) []*route.HandledRoute {
 	var routes []*route.HandledRoute
 	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
 

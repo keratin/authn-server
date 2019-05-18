@@ -15,15 +15,15 @@ import (
 
 func Router(app *app.App) http.Handler {
 	r := mux.NewRouter()
-	route.Attach(r, app.Config.MountedPath, privateRoutes(app)...)
-	route.Attach(r, app.Config.MountedPath, publicRoutes(app)...)
+	route.Attach(r, app.Config.MountedPath, PrivateRoutes(app)...)
+	route.Attach(r, app.Config.MountedPath, PublicRoutes(app)...)
 
 	return wrapRouter(r, app)
 }
 
 func PublicRouter(app *app.App) http.Handler {
 	r := mux.NewRouter()
-	route.Attach(r, app.Config.MountedPath, publicRoutes(app)...)
+	route.Attach(r, app.Config.MountedPath, PublicRoutes(app)...)
 
 	return wrapRouter(r, app)
 }
