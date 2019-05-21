@@ -32,7 +32,7 @@ func init() {
 	prometheus.MustRegister(httpTimings)
 }
 
-func instrumentRoute(name string, next http.Handler) http.Handler {
+func InstrumentRoute(name string, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		metrics := httpsnoop.CaptureMetrics(next, w, r)
 		httpRequests.WithLabelValues(name, strconv.Itoa(metrics.Code)).Inc()

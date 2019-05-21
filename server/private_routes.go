@@ -7,7 +7,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-func privateRoutes(app *app.App) []*route.HandledRoute {
+func PrivateRoutes(app *app.App) []*route.HandledRoute {
 	var routes []*route.HandledRoute
 	authentication := route.BasicAuthSecurity(app.Config.AuthUsername, app.Config.AuthPassword, "Private AuthN Realm")
 
