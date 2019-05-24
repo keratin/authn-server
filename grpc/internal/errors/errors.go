@@ -79,6 +79,12 @@ func CustomHTTPError(ctx context.Context, mux *runtime.ServeMux, marshaler runti
 		return
 	}
 
+	// Non-Basic-Auth authentication failure (only possible in /session/refresh)
+	if statusError.Code() == codes.Unauthenticated {
+		w.WriteHeader(401)
+		return
+	}
+
 	for _, detail := range statusError.Details() {
 
 		switch t := detail.(type) {
