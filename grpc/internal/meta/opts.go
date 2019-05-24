@@ -27,6 +27,7 @@ func PrivateServerOptions(app *app.App) []grpc.ServerOption {
 			grpc_auth.UnaryServerInterceptor(func(ctx context.Context) (context.Context, error) {
 				return ctx, nil
 			}),
+			SessionInterceptor(app),
 		),
 	}
 }

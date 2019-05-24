@@ -37,6 +37,7 @@ func RunPublicGateway(ctx context.Context, app *app.App, r *mux.Router, conn *gr
 		// Workaround this limitation: https://github.com/grpc-ecosystem/grpc-gateway/issues/920.
 		// Go's JSON encoder doesn't convert (u)int64 to strings silently.
 		runtime.WithMarshalerOption(runtime.MIMEWildcard, gateway.JSONMarshaler()),
+		runtime.WithMetadata(gateway.CookieAnnotator(app)),
 	)
 
 	RegisterRoutes(r, app, gmux)

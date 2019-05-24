@@ -16,6 +16,7 @@ import (
 	"github.com/keratin/authn-server/app"
 	authnpb "github.com/keratin/authn-server/grpc"
 	"github.com/keratin/authn-server/server/sessions"
+	"google.golang.org/grpc/metadata"
 )
 
 type GatewayResponseMiddleware func(ctx context.Context, response http.ResponseWriter, m proto.Message) error
@@ -51,6 +52,21 @@ func CookieSetter(cfg *app.Config) GatewayResponseMiddleware {
 			sessions.Set(cfg, response, ss[0])
 		}
 		return nil
+	}
+}
+
+// CookieAnnotator reads the cookie from the *http.Request and sends it to the gRPC service as gRPC metadata
+func CookieAnnotator(app *app.App) func(ctx context.Context, req *http.Request) metadata.MD {
+	return func(ctx context.Context, req *http.Request) metadata.MD {
+		log.Printf("\n\n Host: %s\nCookies: %+v\nRequest URI: %s\nURL: %s \n\n", req.Host, req.Cookies(), req.RequestURI, req.URL)
+		cookie, err := req.Cookie(app.Config.SessionCookieName)
+		if err != nil {
+			app.Reporter.ReportRequestError(err, req)
+			return nil
+		}
+		return metadata.MD{
+			app.Config.SessionCookieName: []string{cookie.Value},
+		}
 	}
 }
 

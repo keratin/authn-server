@@ -21,10 +21,12 @@ import (
 func RunPrivateGateway(ctx context.Context, app *app.App, r *mux.Router, conn *grpc.ClientConn, l net.Listener) error {
 
 	gmux := runtime.NewServeMux(
+		runtime.WithForwardResponseOption(gateway.CookieSetter(app.Config)), // Cookies always have to go first
 		runtime.WithForwardResponseOption(gateway.StatusCodeMutator),
 		// Workaround this limitation: https://github.com/grpc-ecosystem/grpc-gateway/issues/920.
 		// Go's JSON encoder doesn't convert (u)int64 to strings silently.
 		runtime.WithMarshalerOption(runtime.MIMEWildcard, gateway.JSONMarshaler()),
+		runtime.WithMetadata(gateway.CookieAnnotator(app)),
 	)
 
 	r.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
