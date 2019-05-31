@@ -2,6 +2,9 @@
 
 ## HEAD
 
+### Changed
+* Same-origin requests are now accepted (for browsers that do not send Origin header for same-origin), by falling back to Referer header to determine the application domain that should be selected in the request's context. The Referer header is only consulted when Origin is not set. Since browsers are only permitted to omit Origin header for same-origin requests this behavior should be robust.
+
 ### Added
 
 * Log when rejecting a request for a missing or invalid Origin header [#34]

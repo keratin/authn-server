@@ -11,35 +11,23 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestOriginSecurity(t *testing.T) {
-	readBody := func(res *http.Response) []byte {
-		body, err := ioutil.ReadAll(res.Body)
-		require.NoError(t, err)
-		res.Body.Close()
-		return body
-	}
+const successBody = "success"
 
+func TestOriginSecurity(t *testing.T) {
 	testCases := []struct {
-		domain  string
-		origin  string
-		success bool
+		domain      string
+		goodOrigins []string
+		badOrigins  []string
 	}{
-		{"example.com", "http://example.com", true},
-		{"example.com", "http://example.com:3000", true},
-		{"www.example.com", "http://www.example.com", true},
-		{"www.example.com", "http://example.com", false},
-		{"example.com:3000", "http://example.com:3000", true},
-		{"example.com:3000", "http://example.com:8080", false},
-		{"example.com:80", "http://example.com", true},
-		{"example.com:80", "https://example.com", false},
-		{"example.com:80", "http://example.com:3000", false},
-		{"example.com:443", "https://example.com", true},
-		{"example.com:443", "http://example.com", false},
-		{"example.com:443", "https://example.com:3000", false},
+		{"example.com", []string{"http://example.com", "http://example.com:3000"}, nil},
+		{"www.example.com", []string{"http://www.example.com"}, []string{"http://example.com"}},
+		{"example.com:3000", []string{"http://example.com:3000"}, []string{"http://example.com:8080"}},
+		{"example.com:80", []string{"http://example.com"}, []string{"https://example.com", "http://example.com:3000"}},
+		{"example.com:443", []string{"https://example.com"}, []string{"http://example.com", "https://example.com:3000"}},
 	}
 
 	nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("success"))
+		w.Write([]byte(successBody))
 	})
 
 	for _, tc := range testCases {
@@ -48,18 +36,57 @@ func TestOriginSecurity(t *testing.T) {
 
 			server := httptest.NewServer(adapter(nextHandler))
 			defer server.Close()
+			// Undefined - referer and origin missing
+			assertOriginDenied(t, server, "", "")
 
-			req, err := http.NewRequest("GET", server.URL, nil)
-			require.NoError(t, err)
-			req.Header.Add("Origin", tc.origin)
-			res, err := http.DefaultClient.Do(req)
-			require.NoError(t, err)
+			for _, goodOrigin := range tc.goodOrigins {
+				// Cross-site case
+				assertOriginAccepted(t, server, goodOrigin, goodOrigin)
+				assertOriginAccepted(t, server, goodOrigin, "")
+				// Same-origin case
+				assertOriginAccepted(t, server, "", goodOrigin)
 
-			if tc.success {
-				assert.Equal(t, string(readBody(res)), "success")
-			} else {
-				assert.Equal(t, http.StatusForbidden, res.StatusCode)
+				for _, badOrigin := range tc.badOrigins {
+					// Shouldn't happen, but origin takes precedent and referer is ignored
+					assertOriginAccepted(t, server, goodOrigin, badOrigin)
+					// Origin takes precedent so fails
+					assertOriginDenied(t, server, badOrigin, goodOrigin)
+				}
+			}
+			for _, badOrigin := range tc.badOrigins {
+				assertOriginDenied(t, server, badOrigin, "")
+				assertOriginDenied(t, server, badOrigin, badOrigin)
 			}
 		})
 	}
+}
+
+func assertOriginAccepted(t *testing.T, server *httptest.Server, origin, referer string) {
+	res := originDo(t, server, origin, referer)
+	assert.Equal(t, successBody, readBody(t, res))
+	assert.Equal(t, res.StatusCode, http.StatusOK)
+}
+
+func assertOriginDenied(t *testing.T, server *httptest.Server, origin, referer string) {
+	res := originDo(t, server, origin, referer)
+	assert.Equal(t, "Origin is not a trusted host.", readBody(t, res))
+	assert.Equal(t, res.StatusCode, http.StatusForbidden)
+}
+
+func originDo(t *testing.T, server *httptest.Server, origin, referer string) *http.Response {
+	req, err := http.NewRequest("GET", server.URL, nil)
+	require.NoError(t, err)
+	req.Header.Add("Origin", origin)
+	req.Header.Add("Referer", referer)
+	res, err := http.DefaultClient.Do(req)
+	require.NoError(t, err)
+	return res
+}
+
+func readBody(t *testing.T, res *http.Response) string {
+	body, err := ioutil.ReadAll(res.Body)
+	require.NoError(t, err)
+	err = res.Body.Close()
+	require.NoError(t, err)
+	return string(body)
 }
