@@ -5,6 +5,7 @@
 ### Added
 
 * Log when rejecting a request for a missing or invalid Origin header [#34]
+* Accept PUT HTTP calls on every endpoint accepting PATCH [#104]
 
 ### Improved
 
