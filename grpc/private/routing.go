@@ -81,6 +81,22 @@ func accountRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 			SecuredWith(authentication).
 			Handle(gateway.TrimSubpath(app, gmux)),
 
+		route.Put("/accounts/{id:[0-9]+}").
+			SecuredWith(authentication).
+			Handle(gateway.TrimSubpath(app, gmux)),
+
+		route.Put("/accounts/{id:[0-9]+}/lock").
+			SecuredWith(authentication).
+			Handle(gateway.TrimSubpath(app, gmux)),
+
+		route.Put("/accounts/{id:[0-9]+}/unlock").
+			SecuredWith(authentication).
+			Handle(gateway.TrimSubpath(app, gmux)),
+
+		route.Put("/accounts/{id:[0-9]+}/expire_password").
+			SecuredWith(authentication).
+			Handle(gateway.TrimSubpath(app, gmux)),
+
 		route.Delete("/accounts/{id:[0-9]+}").
 			SecuredWith(authentication).
 			Handle(gateway.TrimSubpath(app, gmux)),

@@ -7,7 +7,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-func privateRoutes(app *app.App) []*route.HandledRoute {
+func PrivateRoutes(app *app.App) []*route.HandledRoute {
 	var routes []*route.HandledRoute
 	authentication := route.BasicAuthSecurity(app.Config.AuthUsername, app.Config.AuthPassword, "Private AuthN Realm")
 
@@ -49,6 +49,22 @@ func privateRoutes(app *app.App) []*route.HandledRoute {
 			Handle(handlers.PatchAccountUnlock(app)),
 
 		route.Patch("/accounts/{id:[0-9]+}/expire_password").
+			SecuredWith(authentication).
+			Handle(handlers.PatchAccountExpirePassword(app)),
+
+		route.Put("/accounts/{id:[0-9]+}").
+			SecuredWith(authentication).
+			Handle(handlers.PatchAccount(app)),
+
+		route.Put("/accounts/{id:[0-9]+}/lock").
+			SecuredWith(authentication).
+			Handle(handlers.PatchAccountLock(app)),
+
+		route.Put("/accounts/{id:[0-9]+}/unlock").
+			SecuredWith(authentication).
+			Handle(handlers.PatchAccountUnlock(app)),
+
+		route.Put("/accounts/{id:[0-9]+}/expire_password").
 			SecuredWith(authentication).
 			Handle(handlers.PatchAccountExpirePassword(app)),
 

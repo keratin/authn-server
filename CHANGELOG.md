@@ -2,13 +2,20 @@
 
 ## HEAD
 
+### Added
+
+* Log when rejecting a request for a missing or invalid Origin header [#34]
+* Accept PUT HTTP calls on every endpoint accepting PATCH [#104]
+
 ### Improved
 
 * Query optimizations on private admin endpoints.
+* Pre-compute JWK key on RSA key generation and include within private key wrapper type for use by dependees.
 
 ### Fixed
 
 * panic while evaluating some utf8 password characters
+* zxcvbn library we use exhibited some deviation from standard (see: https://github.com/nbutton23/zxcvbn-go/issues/20) so switched to https://github.com/trustelem/zxcvbn [#99]
 
 ## 1.5.0
 

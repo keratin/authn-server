@@ -15,6 +15,6 @@ func TestRefreshTokenStore(t *testing.T) {
 		require.NoError(t, err)
 		store := &sqlite3.RefreshTokenStore{db, time.Second}
 		tester(t, store)
-		store.Close()
+		db.Close()
 	}
 }

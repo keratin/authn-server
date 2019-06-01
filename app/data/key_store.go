@@ -1,12 +1,12 @@
 package data
 
 import (
-	"crypto/rsa"
+	"github.com/keratin/authn-server/app/data/private"
 )
 
 type KeyStore interface {
 	// Returns the current key
-	Key() *rsa.PrivateKey
+	Key() *private.Key
 	// Returns recent keys (including current key)
-	Keys() []*rsa.PrivateKey
+	Keys() []*private.Key
 }

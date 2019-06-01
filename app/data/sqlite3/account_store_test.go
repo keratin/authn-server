@@ -14,6 +14,6 @@ func TestAccountStore(t *testing.T) {
 		require.NoError(t, err)
 		store := &sqlite3.AccountStore{db}
 		tester(t, store)
-		store.Close()
+		db.Close()
 	}
 }

@@ -16,29 +16,34 @@ type SecurityHandler func(http.Handler) http.Handler
 
 // Post creates a new POST route. A security handler must be registered next.
 func Post(tpl string) *Route {
-	return &Route{verb: "POST", tpl: tpl}
+	return &Route{Verb: "POST", Tpl: tpl}
 }
 
 // Get creates a new GET route. A security handler must be registered next.
 func Get(tpl string) *Route {
-	return &Route{verb: "GET", tpl: tpl}
+	return &Route{Verb: "GET", Tpl: tpl}
 }
 
 // Delete creates a new DELETE route. A security handler must be registered next.
 func Delete(tpl string) *Route {
-	return &Route{verb: "DELETE", tpl: tpl}
+	return &Route{Verb: "DELETE", Tpl: tpl}
 }
 
 // Patch creates a new PATCH route. A security handler must be registered next.
 func Patch(tpl string) *Route {
-	return &Route{verb: "PATCH", tpl: tpl}
+	return &Route{Verb: "PATCH", Tpl: tpl}
+}
+
+// Put creates a new PUT route. A security handler must be registered next.
+func Put(tpl string) *Route {
+	return &Route{Verb: "PUT", Tpl: tpl}
 }
 
 // Route is an incomplete Route comprising only verb and path (as a gorilla/mux template). It must
 // next be `SecuredWith`.
 type Route struct {
-	verb string
-	tpl  string
+	Verb string
+	Tpl  string
 }
 
 // SecuredWith registers a security handler for a route. A handler must be registered next.
@@ -64,13 +69,17 @@ type HandledRoute struct {
 	handler http.Handler
 }
 
+func (hr *HandledRoute) ServeHTTP(response http.ResponseWriter, request *http.Request) {
+	hr.security(hr.handler).ServeHTTP(response, request)
+}
+
 // Attach is the adapter for adding HandledRoutes to a gorilla/mux Router.
 func Attach(router *mux.Router, pathPrefix string, routes ...*HandledRoute) {
 	for _, r := range routes {
 		router.
 			PathPrefix(pathPrefix).
-			Methods(r.verb).
-			Path(r.tpl).
-			Handler(instrumentRoute(r.verb+" "+r.tpl, r.security(r.handler)))
+			Methods(r.Verb).
+			Path(r.Tpl).
+			Handler(InstrumentRoute(r.Verb+" "+r.Tpl, r))
 	}
 }

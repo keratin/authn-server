@@ -2,7 +2,6 @@ package app
 
 import (
 	"crypto/rand"
-	"crypto/rsa"
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/pem"
@@ -13,6 +12,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/keratin/authn-server/app/data/private"
 
 	"github.com/airbrake/gobrake"
 	raven "github.com/getsentry/raven-go"
@@ -49,7 +50,7 @@ type Config struct {
 	DBEncryptionKey             []byte
 	OAuthSigningKey             []byte
 	ResetTokenTTL               time.Duration
-	IdentitySigningKey          *rsa.PrivateKey
+	IdentitySigningKey          *private.Key
 	AuthNURL                    *url.URL
 	ForceSSL                    bool
 	MountedPath                 string
@@ -367,7 +368,10 @@ var configurers = []configurer{
 			if err != nil {
 				return err
 			}
-			c.IdentitySigningKey = key
+			c.IdentitySigningKey, err = private.NewKey(key)
+			if err != nil {
+				return err
+			}
 		}
 		return nil
 	},

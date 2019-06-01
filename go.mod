@@ -5,6 +5,7 @@ require (
 	github.com/beorn7/perks v0.0.0-20160804104726-4c0e84591b9a // indirect
 	github.com/certifi/gocertifi v0.0.0-20170727155124-3fd9e1adb12b // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/dlclark/regexp2 v1.1.6 // indirect
 	github.com/felixge/httpsnoop v1.0.0
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
 	github.com/getsentry/raven-go v0.0.0-20170614100719-d175f85701df
@@ -13,6 +14,7 @@ require (
 	github.com/gogo/googleapis v1.1.0
 	github.com/gogo/protobuf v1.2.0
 	github.com/golang/protobuf v1.2.0
+	github.com/google/go-cmp v0.3.0 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/handlers v1.3.0
 	github.com/gorilla/mux v1.6.1
@@ -25,7 +27,6 @@ require (
 	github.com/lib/pq v0.0.0-20180327071824-d34b9ff171c2
 	github.com/mattn/go-sqlite3 v1.6.0
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
-	github.com/nbutton23/zxcvbn-go v0.0.0-20180912185939-ae427f1e4c1d
 	github.com/onsi/ginkgo v1.6.0 // indirect
 	github.com/onsi/gomega v1.4.1 // indirect
 	github.com/pkg/errors v0.8.0
@@ -37,6 +38,8 @@ require (
 	github.com/sirupsen/logrus v1.0.5
 	github.com/soheilhy/cmux v0.1.4
 	github.com/stretchr/testify v1.2.1
+	github.com/test-go/testify v1.1.4 // indirect
+	github.com/trustelem/zxcvbn v1.0.1
 	golang.org/x/crypto v0.0.0-20170619204222-adbae1b6b6fb
 	golang.org/x/net v0.0.0-20180826012351-8a410e7b638d
 	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
@@ -46,7 +49,7 @@ require (
 	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2 // indirect
-	gopkg.in/square/go-jose.v2 v2.1.6
+	gopkg.in/square/go-jose.v2 v2.3.1
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.2.1 // indirect
 )
