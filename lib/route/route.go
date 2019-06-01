@@ -34,6 +34,11 @@ func Patch(tpl string) *Route {
 	return &Route{Verb: "PATCH", Tpl: tpl}
 }
 
+// Put creates a new PUT route. A security handler must be registered next.
+func Put(tpl string) *Route {
+	return &Route{Verb: "PUT", Tpl: tpl}
+}
+
 // Route is an incomplete Route comprising only verb and path (as a gorilla/mux template). It must
 // next be `SecuredWith`.
 type Route struct {

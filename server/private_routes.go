@@ -52,6 +52,22 @@ func PrivateRoutes(app *app.App) []*route.HandledRoute {
 			SecuredWith(authentication).
 			Handle(handlers.PatchAccountExpirePassword(app)),
 
+		route.Put("/accounts/{id:[0-9]+}").
+			SecuredWith(authentication).
+			Handle(handlers.PatchAccount(app)),
+
+		route.Put("/accounts/{id:[0-9]+}/lock").
+			SecuredWith(authentication).
+			Handle(handlers.PatchAccountLock(app)),
+
+		route.Put("/accounts/{id:[0-9]+}/unlock").
+			SecuredWith(authentication).
+			Handle(handlers.PatchAccountUnlock(app)),
+
+		route.Put("/accounts/{id:[0-9]+}/expire_password").
+			SecuredWith(authentication).
+			Handle(handlers.PatchAccountExpirePassword(app)),
+
 		route.Delete("/accounts/{id:[0-9]+}").
 			SecuredWith(authentication).
 			Handle(handlers.DeleteAccount(app)),
