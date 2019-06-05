@@ -58,7 +58,6 @@ func CookieSetter(cfg *app.Config) GatewayResponseMiddleware {
 // CookieAnnotator reads the cookie from the *http.Request and sends it to the gRPC service as gRPC metadata
 func CookieAnnotator(app *app.App) func(ctx context.Context, req *http.Request) metadata.MD {
 	return func(ctx context.Context, req *http.Request) metadata.MD {
-		log.Printf("\n\n Host: %s\nCookies: %+v\nRequest URI: %s\nURL: %s \n\n", req.Host, req.Cookies(), req.RequestURI, req.URL)
 		cookie, err := req.Cookie(app.Config.SessionCookieName)
 		if err != nil {
 			app.Reporter.ReportRequestError(err, req)
