@@ -1,14 +1,13 @@
 package private
 
 import (
-	"crypto/rand"
-	"crypto/rsa"
 	"net"
 	"net/url"
 	"testing"
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data/mock"
+	keypackage "github.com/keratin/authn-server/app/data/private"
 	authnpb "github.com/keratin/authn-server/grpc"
 	grpctest "github.com/keratin/authn-server/grpc/test"
 	"github.com/keratin/authn-server/server/test"
@@ -62,7 +61,7 @@ func TestServiceConfiguration(t *testing.T) {
 }
 
 func TestJWKS(t *testing.T) {
-	rsaKey, err := rsa.GenerateKey(rand.Reader, 512)
+	rsaKey, err := keypackage.GenerateKey(512)
 	require.NoError(t, err)
 
 	testApp := test.App()
