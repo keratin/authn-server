@@ -90,7 +90,7 @@ func request_SecuredAdminAuthN_UpdateAccount_0(ctx context.Context, marshaler ru
 	var protoReq UpdateAccountRequest
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq.Username); err != nil && err != io.EOF {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -121,7 +121,7 @@ func request_SecuredAdminAuthN_UpdateAccount_1(ctx context.Context, marshaler ru
 	var protoReq UpdateAccountRequest
 	var metadata runtime.ServerMetadata
 
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq.Username); err != nil && err != io.EOF {
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 

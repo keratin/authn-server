@@ -112,10 +112,10 @@ service SecuredAdminAuthN {
   rpc UpdateAccount(UpdateAccountRequest) returns (UpdateAccountResponse) {
     option (google.api.http) = {
       put : "/accounts/{id}"
-      body : "username"
+      body : "*"
       additional_bindings : {
         patch : "/accounts/{id}"
-        body : "username"
+        body : "*"
       }
     };
   }
