@@ -12,6 +12,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -124,8 +125,8 @@ func TestServer(t *testing.T) {
 
 	// to use with REST API
 	jar, err := cookiejar.New(nil)
-
 	require.NoError(t, err)
+
 	httpClient := &http.Client{
 		Jar: jar,
 	}
@@ -151,6 +152,9 @@ func TestServer(t *testing.T) {
 	securedClient := authngrpc.NewSecuredAdminAuthNClient(privateSrvcConn)
 	unsecuredClient := authngrpc.NewUnsecuredAdminAuthNClient(privateSrvcConn)
 	activesClient := authngrpc.NewAuthNActivesClient(privateSrvcConn)
+
+	// the ID of the user against who tests will be carried
+	var testSubjectID int
 
 	t.Run("Queries' results across interfaces match", func(t *testing.T) {
 		nameAvailable, err := signupClient.IsUsernameAvailable(context.Background(), &authngrpc.IsUsernameAvailableRequest{
@@ -207,14 +211,15 @@ func TestServer(t *testing.T) {
 				// check that the JWT contains nice things
 				assert.Equal(t, app.Config.AuthNURL.String(), claims.Issuer)
 			}
+			testSubjectID, err = strconv.Atoi(claims.Subject)
 
-			tokens, err := app.RefreshTokenStore.FindAll(1)
+			tokens, err := app.RefreshTokenStore.FindAll(testSubjectID)
 			assert.NoError(t, err)
 			assert.Len(t, tokens, 1)
 		})
 
 		t.Run("Get Account of a user registered via gRPC is discoverable via REST", func(t *testing.T) {
-			req, err := http.NewRequest("GET", privateURLBase+"/accounts/1", nil)
+			req, err := http.NewRequest("GET", fmt.Sprintf(privateURLBase+"/accounts/%d", testSubjectID), nil)
 			assert.NoError(t, err)
 			req.SetBasicAuth(app.Config.AuthUsername, app.Config.AuthPassword)
 
@@ -230,7 +235,7 @@ func TestServer(t *testing.T) {
 			err = json.Unmarshal(body, &response)
 			assert.NoError(t, err)
 			assert.Equal(t, account{
-				ID:       1,
+				ID:       int64(testSubjectID),
 				Username: "test@example.com",
 				Locked:   false,
 				Deleted:  false,
@@ -265,7 +270,7 @@ func TestServer(t *testing.T) {
 			assert.NoError(t, err)
 
 			// There should be 2 active sessions in the store: 1 via gRPC, 1 via REST
-			rSessions, err := app.RefreshTokenStore.FindAll(1)
+			rSessions, err := app.RefreshTokenStore.FindAll(testSubjectID)
 			assert.NoError(t, err)
 			assert.Len(t, rSessions, 2)
 
@@ -298,7 +303,7 @@ func TestServer(t *testing.T) {
 			err = token.Claims(app.KeyStore.Key().Public(), &claims)
 			assert.NoError(t, err)
 
-			rSessions, err := app.RefreshTokenStore.FindAll(1)
+			rSessions, err := app.RefreshTokenStore.FindAll(testSubjectID)
 			assert.NoError(t, err)
 			assert.Len(t, rSessions, 2)
 
@@ -332,7 +337,7 @@ func TestServer(t *testing.T) {
 			err = token.Claims(app.KeyStore.Key().Public(), &claims)
 			assert.NoError(t, err)
 
-			rSessions, err := app.RefreshTokenStore.FindAll(1)
+			rSessions, err := app.RefreshTokenStore.FindAll(testSubjectID)
 			assert.NoError(t, err)
 			assert.Len(t, rSessions, 2)
 
@@ -351,7 +356,7 @@ func TestServer(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Equal(t, http.StatusOK, res.StatusCode)
 
-			rSessions, err := app.RefreshTokenStore.FindAll(1)
+			rSessions, err := app.RefreshTokenStore.FindAll(testSubjectID)
 			assert.NoError(t, err)
 			assert.Len(t, rSessions, 1)
 		})
@@ -359,7 +364,7 @@ func TestServer(t *testing.T) {
 
 	t.Run("(Un)locking operations on users succeed across interfaces", func(t *testing.T) {
 		t.Run("Lock Account via REST interface reflects on Get Account on gRPC", func(t *testing.T) {
-			req, err := http.NewRequest("PATCH", privateURLBase+"/accounts/1/lock", nil)
+			req, err := http.NewRequest("PATCH", fmt.Sprintf(privateURLBase+"/accounts/%d/lock", testSubjectID), nil)
 			assert.NoError(t, err)
 			req.SetBasicAuth(app.Config.AuthUsername, app.Config.AuthPassword)
 
@@ -374,25 +379,25 @@ func TestServer(t *testing.T) {
 			})
 			assert.NoError(t, err)
 			assert.Equal(t, &authngrpc.GetAccountResponse{
-				Id:       1,
+				Id:       int64(testSubjectID),
 				Username: "test@example.com",
 				Locked:   true,
 				Deleted:  false,
 			}, getActResponse.Result)
 
 			// locking account clears all active sessions
-			rSessions, err := app.RefreshTokenStore.FindAll(1)
+			rSessions, err := app.RefreshTokenStore.FindAll(testSubjectID)
 			assert.NoError(t, err)
 			assert.Len(t, rSessions, 0)
 		})
 		t.Run("Unlock Account via gRPC interface reflects on Get Account via REST", func(t *testing.T) {
 			unlockRes, err := securedClient.UnlockAccount(ctx, &authngrpc.UnlockAccountRequest{
-				Id: 1,
+				Id: int64(testSubjectID),
 			})
 			assert.NoError(t, err)
 			assert.Equal(t, &authngrpc.UnlockAccountResponse{}, unlockRes)
 
-			req, err := http.NewRequest("GET", privateURLBase+"/accounts/1", nil)
+			req, err := http.NewRequest("GET", fmt.Sprintf(privateURLBase+"/accounts/%d", testSubjectID), nil)
 			assert.NoError(t, err)
 			req.SetBasicAuth(app.Config.AuthUsername, app.Config.AuthPassword)
 
@@ -408,7 +413,7 @@ func TestServer(t *testing.T) {
 			err = json.Unmarshal(body, &response)
 			assert.NoError(t, err)
 			assert.Equal(t, account{
-				ID:       1,
+				ID:       int64(testSubjectID),
 				Username: "test@example.com",
 				Locked:   false,
 				Deleted:  false,
@@ -419,7 +424,7 @@ func TestServer(t *testing.T) {
 	t.Run("Update account coverage", func(t *testing.T) {
 		t.Run("Update account with invalid username format returns error", func(t *testing.T) {
 			res, err := securedClient.UpdateAccount(context.Background(), &authngrpc.UpdateAccountRequest{
-				Id:       1,
+				Id:       int64(testSubjectID),
 				Username: "user1",
 			})
 			assert.Nil(t, res)
@@ -427,7 +432,8 @@ func TestServer(t *testing.T) {
 			code, ok := status.FromError(err)
 			assert.True(t, ok)
 			assert.Equal(t, codes.FailedPrecondition, code.Code())
-			acc, err := app.AccountStore.Find(1)
+
+			acc, err := app.AccountStore.Find(testSubjectID)
 			assert.NoError(t, err)
 			assert.Equal(t, "test@example.com", acc.Username)
 		})
@@ -435,8 +441,8 @@ func TestServer(t *testing.T) {
 			data := url.Values{
 				"username": {"test@example.net"},
 			}
-			// Account with ID 2 does not exist
-			req, err := http.NewRequest("PUT", privateURLBase+"/accounts/2", strings.NewReader(data.Encode()))
+			// Account with ID 5300 does not exist
+			req, err := http.NewRequest("PUT", privateURLBase+"/accounts/5300", strings.NewReader(data.Encode()))
 			assert.NoError(t, err)
 			setHeaders(req)
 			req.SetBasicAuth(app.Config.AuthUsername, app.Config.AuthPassword)
@@ -453,7 +459,7 @@ func TestServer(t *testing.T) {
 			assert.Equal(t, services.ErrNotFound, errResponse.Errors[0].Message)
 
 			// The username shouldn't have changed
-			acc, err := app.AccountStore.Find(1)
+			acc, err := app.AccountStore.Find(testSubjectID)
 			assert.NoError(t, err)
 			assert.Equal(t, "test@example.com", acc.Username)
 		})
@@ -462,7 +468,11 @@ func TestServer(t *testing.T) {
 				"username": {"test@example.net"},
 			}
 
-			req, err := http.NewRequest("PATCH", privateURLBase+"/accounts/1", strings.NewReader(data.Encode()))
+			req, err := http.NewRequest(
+				"PATCH",
+				fmt.Sprintf(privateURLBase+"/accounts/%d", testSubjectID),
+				strings.NewReader(data.Encode()),
+			)
 			assert.NoError(t, err)
 			setHeaders(req)
 			req.SetBasicAuth(app.Config.AuthUsername, app.Config.AuthPassword)
@@ -471,7 +481,7 @@ func TestServer(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Equal(t, http.StatusOK, res.StatusCode)
 
-			acc, err := app.AccountStore.Find(1)
+			acc, err := app.AccountStore.Find(testSubjectID)
 			assert.NoError(t, err)
 			assert.Equal(t, "test@example.net", acc.Username)
 		})
@@ -480,7 +490,11 @@ func TestServer(t *testing.T) {
 				"username": {"test@example.io"},
 			}
 
-			req, err := http.NewRequest("PUT", privateURLBase+"/accounts/1", strings.NewReader(data.Encode()))
+			req, err := http.NewRequest(
+				"PUT",
+				fmt.Sprintf(privateURLBase+"/accounts/%d", testSubjectID),
+				strings.NewReader(data.Encode()),
+			)
 			assert.NoError(t, err)
 			setHeaders(req)
 			req.SetBasicAuth(app.Config.AuthUsername, app.Config.AuthPassword)
@@ -489,19 +503,19 @@ func TestServer(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Equal(t, http.StatusOK, res.StatusCode)
 
-			acc, err := app.AccountStore.Find(1)
+			acc, err := app.AccountStore.Find(testSubjectID)
 			assert.NoError(t, err)
 			assert.Equal(t, "test@example.io", acc.Username)
 		})
 		t.Run("Update account via gRPC is successful", func(t *testing.T) {
 			res, err := securedClient.UpdateAccount(context.Background(), &authngrpc.UpdateAccountRequest{
-				Id:       1,
+				Id:       int64(testSubjectID),
 				Username: "test@example.gov",
 			})
 			assert.NoError(t, err)
 			assert.NotNil(t, res)
 
-			acc, err := app.AccountStore.Find(1)
+			acc, err := app.AccountStore.Find(testSubjectID)
 			assert.NoError(t, err)
 			assert.Equal(t, "test@example.gov", acc.Username)
 		})
