@@ -375,7 +375,7 @@ func TestServer(t *testing.T) {
 			assert.NoError(t, res.Body.Close())
 
 			getActResponse, err := securedClient.GetAccount(ctx, &authngrpc.GetAccountRequest{
-				Id: 1,
+				Id: int64(testSubjectID),
 			})
 			assert.NoError(t, err)
 			assert.Equal(t, &authngrpc.GetAccountResponse{
