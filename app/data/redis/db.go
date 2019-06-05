@@ -11,9 +11,6 @@ import (
 
 func New(url *url.URL) (*redis.Client, error) {
 	opts, err := redis.ParseURL(url.String())
-	if url.Port() == "" {
-		opts.Addr = opts.Addr + ":6379"
-	}
 	if err != nil {
 		return nil, errors.Wrap(err, "ParseURL")
 	}
