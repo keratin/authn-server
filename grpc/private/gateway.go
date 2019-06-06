@@ -69,7 +69,7 @@ func RunPrivateGateway(ctx context.Context, app *app.App, r *mux.Router, conn *g
 	go func() {
 		<-ctx.Done()
 		if err := s.Shutdown(context.Background()); err != nil {
-			log.Errorf("Failed to shutdown http server: %v", err)
+			log.Printf("HTTP server Shutdown:: %v", err)
 		}
 	}()
 
