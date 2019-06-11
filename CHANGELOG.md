@@ -4,6 +4,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+## 1.6.0
+
 ### Added
 
 * Log when rejecting a request for a missing or invalid Origin header [#34]
