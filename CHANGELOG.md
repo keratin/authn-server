@@ -1,19 +1,19 @@
 # Changelog
 
-## HEAD
+Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-### Changed
-* Same-origin requests are now accepted (for browsers that do not send Origin header for same-origin), by falling back to Referer header to determine the application domain that should be selected in the request's context. The Referer header is only consulted when Origin is not set. Since browsers are only permitted to omit Origin header for same-origin requests this behavior should be robust.
+## HEAD
 
 ### Added
 
 * Log when rejecting a request for a missing or invalid Origin header [#34]
 * Accept PUT HTTP calls on every endpoint accepting PATCH [#104]
 
-### Improved
+### Changed
 
+* Same-origin requests are now accepted (for browsers that do not send Origin header for same-origin), by falling back to Referer header to determine the application domain that should be selected in the request's context. The Referer header is only consulted when Origin is not set. Since browsers are only permitted to omit Origin header for same-origin requests this behavior should be robust. [#105]
 * Query optimizations on private admin endpoints.
-* Pre-compute JWK key on RSA key generation and include within private key wrapper type for use by dependees.
+* Pre-compute JWK key on RSA key generation and include within private key wrapper type for use by dependees. [#100]
 
 ### Fixed
 
