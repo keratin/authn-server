@@ -24,7 +24,7 @@ func OriginSecurity(domains []Domain) SecurityHandler {
 
 	return func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			origin := r.Header.Get("Origin")
+			origin := InferOrigin(r)
 			domain := FindDomain(origin, domains)
 			if domain != nil {
 				ctx := r.Context()
@@ -35,7 +35,7 @@ func OriginSecurity(domains []Domain) SecurityHandler {
 			}
 
 			if len(origin) == 0 {
-				logger.Debug("Request origin is missing")
+				logger.Debug("Could not infer request origin since Origin and Referer headers are both missing")
 			} else {
 				logger.WithFields(log.Fields{"origin": origin}).Debug("Request origin is invalid")
 			}
@@ -53,4 +53,14 @@ func MatchedDomain(r *http.Request) *Domain {
 		return d
 	}
 	return nil
+}
+
+func InferOrigin(r *http.Request) string {
+	origin := r.Header.Get("Origin")
+	if origin != "" {
+		return origin
+	}
+	// If and only if the origin header is unset we can infer that this is a same-origin request
+	// (i.e we trust browsers to behave this way), then we use the Referer header to discover the domain
+	return r.Header.Get("Referer")
 }
