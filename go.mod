@@ -20,7 +20,7 @@ require (
 	github.com/gorilla/mux v1.6.1
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
-	github.com/grpc-ecosystem/grpc-gateway v1.5.1
+	github.com/grpc-ecosystem/grpc-gateway v1.9.0
 	github.com/hpcloud/tail v1.0.0 // indirect
 	github.com/jmoiron/sqlx v0.0.0-20170430194603-d9bd385d68c0
 	github.com/joho/godotenv v1.2.0
@@ -41,11 +41,11 @@ require (
 	github.com/test-go/testify v1.1.4 // indirect
 	github.com/trustelem/zxcvbn v1.0.1
 	golang.org/x/crypto v0.0.0-20170619204222-adbae1b6b6fb
-	golang.org/x/net v0.0.0-20180826012351-8a410e7b638d
+	golang.org/x/net v0.0.0-20181220203305-927f97764cc3
 	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
 	golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4
 	google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8
-	google.golang.org/grpc v1.16.0
+	google.golang.org/grpc v1.19.0
 	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2 // indirect

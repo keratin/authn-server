@@ -3,25 +3,23 @@
 
 package grpc
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/gogo/googleapis/google/api"
-import _ "github.com/gogo/protobuf/gogoproto"
-
-import strings "strings"
-import reflect "reflect"
-import github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
-
 import (
-	context "golang.org/x/net/context"
+	context "context"
+	fmt "fmt"
+	_ "github.com/gogo/googleapis/google/api"
+	_ "github.com/gogo/protobuf/gogoproto"
+	proto "github.com/gogo/protobuf/proto"
+	github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
+	golang_proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	math "math"
+	reflect "reflect"
+	strings "strings"
 )
-
-import io "io"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
+var _ = golang_proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
@@ -32,36 +30,25 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 type GetAccountRequest struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (m *GetAccountRequest) Reset()      { *m = GetAccountRequest{} }
 func (*GetAccountRequest) ProtoMessage() {}
 func (*GetAccountRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{0}
+	return fileDescriptor_c3ae39dba9ced36b, []int{0}
 }
 func (m *GetAccountRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_GetAccountRequest.Unmarshal(m, b)
 }
 func (m *GetAccountRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_GetAccountRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_GetAccountRequest.Marshal(b, m, deterministic)
 }
-func (dst *GetAccountRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetAccountRequest.Merge(dst, src)
+func (m *GetAccountRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetAccountRequest.Merge(m, src)
 }
 func (m *GetAccountRequest) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_GetAccountRequest.Size(m)
 }
 func (m *GetAccountRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_GetAccountRequest.DiscardUnknown(m)
@@ -77,39 +64,28 @@ func (m *GetAccountRequest) GetId() int64 {
 }
 
 type GetAccountResponse struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Username             string   `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Locked               bool     `protobuf:"varint,3,opt,name=locked,proto3" json:"locked"`
-	Deleted              bool     `protobuf:"varint,4,opt,name=deleted,proto3" json:"deleted"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Id       int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Username string `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Locked   bool   `protobuf:"varint,3,opt,name=locked,proto3" json:"locked"`
+	Deleted  bool   `protobuf:"varint,4,opt,name=deleted,proto3" json:"deleted"`
 }
 
 func (m *GetAccountResponse) Reset()      { *m = GetAccountResponse{} }
 func (*GetAccountResponse) ProtoMessage() {}
 func (*GetAccountResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{1}
+	return fileDescriptor_c3ae39dba9ced36b, []int{1}
 }
 func (m *GetAccountResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_GetAccountResponse.Unmarshal(m, b)
 }
 func (m *GetAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_GetAccountResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_GetAccountResponse.Marshal(b, m, deterministic)
 }
-func (dst *GetAccountResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetAccountResponse.Merge(dst, src)
+func (m *GetAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetAccountResponse.Merge(m, src)
 }
 func (m *GetAccountResponse) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_GetAccountResponse.Size(m)
 }
 func (m *GetAccountResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_GetAccountResponse.DiscardUnknown(m)
@@ -146,36 +122,25 @@ func (m *GetAccountResponse) GetDeleted() bool {
 }
 
 type GetAccountResponseEnvelope struct {
-	Result               *GetAccountResponse `protobuf:"bytes,1,opt,name=result" json:"result,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
-	XXX_sizecache        int32               `json:"-"`
+	Result *GetAccountResponse `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
 }
 
 func (m *GetAccountResponseEnvelope) Reset()      { *m = GetAccountResponseEnvelope{} }
 func (*GetAccountResponseEnvelope) ProtoMessage() {}
 func (*GetAccountResponseEnvelope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{2}
+	return fileDescriptor_c3ae39dba9ced36b, []int{2}
 }
 func (m *GetAccountResponseEnvelope) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_GetAccountResponseEnvelope.Unmarshal(m, b)
 }
 func (m *GetAccountResponseEnvelope) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_GetAccountResponseEnvelope.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_GetAccountResponseEnvelope.Marshal(b, m, deterministic)
 }
-func (dst *GetAccountResponseEnvelope) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetAccountResponseEnvelope.Merge(dst, src)
+func (m *GetAccountResponseEnvelope) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetAccountResponseEnvelope.Merge(m, src)
 }
 func (m *GetAccountResponseEnvelope) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_GetAccountResponseEnvelope.Size(m)
 }
 func (m *GetAccountResponseEnvelope) XXX_DiscardUnknown() {
 	xxx_messageInfo_GetAccountResponseEnvelope.DiscardUnknown(m)
@@ -191,37 +156,26 @@ func (m *GetAccountResponseEnvelope) GetResult() *GetAccountResponse {
 }
 
 type UpdateAccountRequest struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Username             string   `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Id       int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Username string `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
 }
 
 func (m *UpdateAccountRequest) Reset()      { *m = UpdateAccountRequest{} }
 func (*UpdateAccountRequest) ProtoMessage() {}
 func (*UpdateAccountRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{3}
+	return fileDescriptor_c3ae39dba9ced36b, []int{3}
 }
 func (m *UpdateAccountRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_UpdateAccountRequest.Unmarshal(m, b)
 }
 func (m *UpdateAccountRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_UpdateAccountRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_UpdateAccountRequest.Marshal(b, m, deterministic)
 }
-func (dst *UpdateAccountRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UpdateAccountRequest.Merge(dst, src)
+func (m *UpdateAccountRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateAccountRequest.Merge(m, src)
 }
 func (m *UpdateAccountRequest) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_UpdateAccountRequest.Size(m)
 }
 func (m *UpdateAccountRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_UpdateAccountRequest.DiscardUnknown(m)
@@ -244,35 +198,24 @@ func (m *UpdateAccountRequest) GetUsername() string {
 }
 
 type UpdateAccountResponse struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *UpdateAccountResponse) Reset()      { *m = UpdateAccountResponse{} }
 func (*UpdateAccountResponse) ProtoMessage() {}
 func (*UpdateAccountResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{4}
+	return fileDescriptor_c3ae39dba9ced36b, []int{4}
 }
 func (m *UpdateAccountResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_UpdateAccountResponse.Unmarshal(m, b)
 }
 func (m *UpdateAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_UpdateAccountResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_UpdateAccountResponse.Marshal(b, m, deterministic)
 }
-func (dst *UpdateAccountResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UpdateAccountResponse.Merge(dst, src)
+func (m *UpdateAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateAccountResponse.Merge(m, src)
 }
 func (m *UpdateAccountResponse) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_UpdateAccountResponse.Size(m)
 }
 func (m *UpdateAccountResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_UpdateAccountResponse.DiscardUnknown(m)
@@ -281,36 +224,25 @@ func (m *UpdateAccountResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_UpdateAccountResponse proto.InternalMessageInfo
 
 type LockAccountRequest struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (m *LockAccountRequest) Reset()      { *m = LockAccountRequest{} }
 func (*LockAccountRequest) ProtoMessage() {}
 func (*LockAccountRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{5}
+	return fileDescriptor_c3ae39dba9ced36b, []int{5}
 }
 func (m *LockAccountRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_LockAccountRequest.Unmarshal(m, b)
 }
 func (m *LockAccountRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_LockAccountRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_LockAccountRequest.Marshal(b, m, deterministic)
 }
-func (dst *LockAccountRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_LockAccountRequest.Merge(dst, src)
+func (m *LockAccountRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LockAccountRequest.Merge(m, src)
 }
 func (m *LockAccountRequest) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_LockAccountRequest.Size(m)
 }
 func (m *LockAccountRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_LockAccountRequest.DiscardUnknown(m)
@@ -326,35 +258,24 @@ func (m *LockAccountRequest) GetId() int64 {
 }
 
 type LockAccountResponse struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *LockAccountResponse) Reset()      { *m = LockAccountResponse{} }
 func (*LockAccountResponse) ProtoMessage() {}
 func (*LockAccountResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{6}
+	return fileDescriptor_c3ae39dba9ced36b, []int{6}
 }
 func (m *LockAccountResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_LockAccountResponse.Unmarshal(m, b)
 }
 func (m *LockAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_LockAccountResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_LockAccountResponse.Marshal(b, m, deterministic)
 }
-func (dst *LockAccountResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_LockAccountResponse.Merge(dst, src)
+func (m *LockAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LockAccountResponse.Merge(m, src)
 }
 func (m *LockAccountResponse) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_LockAccountResponse.Size(m)
 }
 func (m *LockAccountResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_LockAccountResponse.DiscardUnknown(m)
@@ -363,36 +284,25 @@ func (m *LockAccountResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_LockAccountResponse proto.InternalMessageInfo
 
 type UnlockAccountRequest struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (m *UnlockAccountRequest) Reset()      { *m = UnlockAccountRequest{} }
 func (*UnlockAccountRequest) ProtoMessage() {}
 func (*UnlockAccountRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{7}
+	return fileDescriptor_c3ae39dba9ced36b, []int{7}
 }
 func (m *UnlockAccountRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_UnlockAccountRequest.Unmarshal(m, b)
 }
 func (m *UnlockAccountRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_UnlockAccountRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_UnlockAccountRequest.Marshal(b, m, deterministic)
 }
-func (dst *UnlockAccountRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UnlockAccountRequest.Merge(dst, src)
+func (m *UnlockAccountRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnlockAccountRequest.Merge(m, src)
 }
 func (m *UnlockAccountRequest) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_UnlockAccountRequest.Size(m)
 }
 func (m *UnlockAccountRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_UnlockAccountRequest.DiscardUnknown(m)
@@ -408,35 +318,24 @@ func (m *UnlockAccountRequest) GetId() int64 {
 }
 
 type UnlockAccountResponse struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *UnlockAccountResponse) Reset()      { *m = UnlockAccountResponse{} }
 func (*UnlockAccountResponse) ProtoMessage() {}
 func (*UnlockAccountResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{8}
+	return fileDescriptor_c3ae39dba9ced36b, []int{8}
 }
 func (m *UnlockAccountResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_UnlockAccountResponse.Unmarshal(m, b)
 }
 func (m *UnlockAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_UnlockAccountResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_UnlockAccountResponse.Marshal(b, m, deterministic)
 }
-func (dst *UnlockAccountResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UnlockAccountResponse.Merge(dst, src)
+func (m *UnlockAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnlockAccountResponse.Merge(m, src)
 }
 func (m *UnlockAccountResponse) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_UnlockAccountResponse.Size(m)
 }
 func (m *UnlockAccountResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_UnlockAccountResponse.DiscardUnknown(m)
@@ -445,36 +344,25 @@ func (m *UnlockAccountResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_UnlockAccountResponse proto.InternalMessageInfo
 
 type ArchiveAccountRequest struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (m *ArchiveAccountRequest) Reset()      { *m = ArchiveAccountRequest{} }
 func (*ArchiveAccountRequest) ProtoMessage() {}
 func (*ArchiveAccountRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{9}
+	return fileDescriptor_c3ae39dba9ced36b, []int{9}
 }
 func (m *ArchiveAccountRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_ArchiveAccountRequest.Unmarshal(m, b)
 }
 func (m *ArchiveAccountRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_ArchiveAccountRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_ArchiveAccountRequest.Marshal(b, m, deterministic)
 }
-func (dst *ArchiveAccountRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ArchiveAccountRequest.Merge(dst, src)
+func (m *ArchiveAccountRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ArchiveAccountRequest.Merge(m, src)
 }
 func (m *ArchiveAccountRequest) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_ArchiveAccountRequest.Size(m)
 }
 func (m *ArchiveAccountRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_ArchiveAccountRequest.DiscardUnknown(m)
@@ -490,35 +378,24 @@ func (m *ArchiveAccountRequest) GetId() int64 {
 }
 
 type ArchiveAccountResponse struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *ArchiveAccountResponse) Reset()      { *m = ArchiveAccountResponse{} }
 func (*ArchiveAccountResponse) ProtoMessage() {}
 func (*ArchiveAccountResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{10}
+	return fileDescriptor_c3ae39dba9ced36b, []int{10}
 }
 func (m *ArchiveAccountResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_ArchiveAccountResponse.Unmarshal(m, b)
 }
 func (m *ArchiveAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_ArchiveAccountResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_ArchiveAccountResponse.Marshal(b, m, deterministic)
 }
-func (dst *ArchiveAccountResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ArchiveAccountResponse.Merge(dst, src)
+func (m *ArchiveAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ArchiveAccountResponse.Merge(m, src)
 }
 func (m *ArchiveAccountResponse) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_ArchiveAccountResponse.Size(m)
 }
 func (m *ArchiveAccountResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_ArchiveAccountResponse.DiscardUnknown(m)
@@ -527,38 +404,27 @@ func (m *ArchiveAccountResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_ArchiveAccountResponse proto.InternalMessageInfo
 
 type ImportAccountRequst struct {
-	Username             string   `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
-	Password             string   `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
-	Locked               bool     `protobuf:"varint,3,opt,name=locked,proto3" json:"locked,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Username string `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	Locked   bool   `protobuf:"varint,3,opt,name=locked,proto3" json:"locked,omitempty"`
 }
 
 func (m *ImportAccountRequst) Reset()      { *m = ImportAccountRequst{} }
 func (*ImportAccountRequst) ProtoMessage() {}
 func (*ImportAccountRequst) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{11}
+	return fileDescriptor_c3ae39dba9ced36b, []int{11}
 }
 func (m *ImportAccountRequst) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_ImportAccountRequst.Unmarshal(m, b)
 }
 func (m *ImportAccountRequst) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_ImportAccountRequst.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_ImportAccountRequst.Marshal(b, m, deterministic)
 }
-func (dst *ImportAccountRequst) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ImportAccountRequst.Merge(dst, src)
+func (m *ImportAccountRequst) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ImportAccountRequst.Merge(m, src)
 }
 func (m *ImportAccountRequst) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_ImportAccountRequst.Size(m)
 }
 func (m *ImportAccountRequst) XXX_DiscardUnknown() {
 	xxx_messageInfo_ImportAccountRequst.DiscardUnknown(m)
@@ -588,36 +454,25 @@ func (m *ImportAccountRequst) GetLocked() bool {
 }
 
 type ImportAccountResponse struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
 }
 
 func (m *ImportAccountResponse) Reset()      { *m = ImportAccountResponse{} }
 func (*ImportAccountResponse) ProtoMessage() {}
 func (*ImportAccountResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{12}
+	return fileDescriptor_c3ae39dba9ced36b, []int{12}
 }
 func (m *ImportAccountResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_ImportAccountResponse.Unmarshal(m, b)
 }
 func (m *ImportAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_ImportAccountResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_ImportAccountResponse.Marshal(b, m, deterministic)
 }
-func (dst *ImportAccountResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ImportAccountResponse.Merge(dst, src)
+func (m *ImportAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ImportAccountResponse.Merge(m, src)
 }
 func (m *ImportAccountResponse) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_ImportAccountResponse.Size(m)
 }
 func (m *ImportAccountResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_ImportAccountResponse.DiscardUnknown(m)
@@ -633,36 +488,25 @@ func (m *ImportAccountResponse) GetId() int64 {
 }
 
 type ImportAccountResponseEnvelope struct {
-	Result               *ImportAccountResponse `protobuf:"bytes,1,opt,name=result" json:"result,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
-	XXX_sizecache        int32                  `json:"-"`
+	Result *ImportAccountResponse `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
 }
 
 func (m *ImportAccountResponseEnvelope) Reset()      { *m = ImportAccountResponseEnvelope{} }
 func (*ImportAccountResponseEnvelope) ProtoMessage() {}
 func (*ImportAccountResponseEnvelope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{13}
+	return fileDescriptor_c3ae39dba9ced36b, []int{13}
 }
 func (m *ImportAccountResponseEnvelope) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_ImportAccountResponseEnvelope.Unmarshal(m, b)
 }
 func (m *ImportAccountResponseEnvelope) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_ImportAccountResponseEnvelope.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_ImportAccountResponseEnvelope.Marshal(b, m, deterministic)
 }
-func (dst *ImportAccountResponseEnvelope) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ImportAccountResponseEnvelope.Merge(dst, src)
+func (m *ImportAccountResponseEnvelope) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ImportAccountResponseEnvelope.Merge(m, src)
 }
 func (m *ImportAccountResponseEnvelope) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_ImportAccountResponseEnvelope.Size(m)
 }
 func (m *ImportAccountResponseEnvelope) XXX_DiscardUnknown() {
 	xxx_messageInfo_ImportAccountResponseEnvelope.DiscardUnknown(m)
@@ -678,36 +522,25 @@ func (m *ImportAccountResponseEnvelope) GetResult() *ImportAccountResponse {
 }
 
 type ExpirePasswordRequest struct {
-	Id                   int64    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (m *ExpirePasswordRequest) Reset()      { *m = ExpirePasswordRequest{} }
 func (*ExpirePasswordRequest) ProtoMessage() {}
 func (*ExpirePasswordRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{14}
+	return fileDescriptor_c3ae39dba9ced36b, []int{14}
 }
 func (m *ExpirePasswordRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_ExpirePasswordRequest.Unmarshal(m, b)
 }
 func (m *ExpirePasswordRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_ExpirePasswordRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_ExpirePasswordRequest.Marshal(b, m, deterministic)
 }
-func (dst *ExpirePasswordRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ExpirePasswordRequest.Merge(dst, src)
+func (m *ExpirePasswordRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ExpirePasswordRequest.Merge(m, src)
 }
 func (m *ExpirePasswordRequest) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_ExpirePasswordRequest.Size(m)
 }
 func (m *ExpirePasswordRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_ExpirePasswordRequest.DiscardUnknown(m)
@@ -723,35 +556,24 @@ func (m *ExpirePasswordRequest) GetId() int64 {
 }
 
 type ExpirePasswordResponse struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *ExpirePasswordResponse) Reset()      { *m = ExpirePasswordResponse{} }
 func (*ExpirePasswordResponse) ProtoMessage() {}
 func (*ExpirePasswordResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{15}
+	return fileDescriptor_c3ae39dba9ced36b, []int{15}
 }
 func (m *ExpirePasswordResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_ExpirePasswordResponse.Unmarshal(m, b)
 }
 func (m *ExpirePasswordResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_ExpirePasswordResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_ExpirePasswordResponse.Marshal(b, m, deterministic)
 }
-func (dst *ExpirePasswordResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ExpirePasswordResponse.Merge(dst, src)
+func (m *ExpirePasswordResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ExpirePasswordResponse.Merge(m, src)
 }
 func (m *ExpirePasswordResponse) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_ExpirePasswordResponse.Size(m)
 }
 func (m *ExpirePasswordResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_ExpirePasswordResponse.DiscardUnknown(m)
@@ -760,35 +582,24 @@ func (m *ExpirePasswordResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_ExpirePasswordResponse proto.InternalMessageInfo
 
 type JWKSRequest struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *JWKSRequest) Reset()      { *m = JWKSRequest{} }
 func (*JWKSRequest) ProtoMessage() {}
 func (*JWKSRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{16}
+	return fileDescriptor_c3ae39dba9ced36b, []int{16}
 }
 func (m *JWKSRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_JWKSRequest.Unmarshal(m, b)
 }
 func (m *JWKSRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_JWKSRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_JWKSRequest.Marshal(b, m, deterministic)
 }
-func (dst *JWKSRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_JWKSRequest.Merge(dst, src)
+func (m *JWKSRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_JWKSRequest.Merge(m, src)
 }
 func (m *JWKSRequest) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_JWKSRequest.Size(m)
 }
 func (m *JWKSRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_JWKSRequest.DiscardUnknown(m)
@@ -797,41 +608,30 @@ func (m *JWKSRequest) XXX_DiscardUnknown() {
 var xxx_messageInfo_JWKSRequest proto.InternalMessageInfo
 
 type Key struct {
-	Use                  string   `protobuf:"bytes,1,opt,name=use,proto3" json:"use,omitempty"`
-	Alg                  string   `protobuf:"bytes,2,opt,name=alg,proto3" json:"alg,omitempty"`
-	Kty                  string   `protobuf:"bytes,3,opt,name=kty,proto3" json:"kty,omitempty"`
-	Kid                  string   `protobuf:"bytes,4,opt,name=kid,proto3" json:"kid,omitempty"`
-	E                    string   `protobuf:"bytes,5,opt,name=e,proto3" json:"e,omitempty"`
-	N                    string   `protobuf:"bytes,6,opt,name=n,proto3" json:"n,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Use string `protobuf:"bytes,1,opt,name=use,proto3" json:"use,omitempty"`
+	Alg string `protobuf:"bytes,2,opt,name=alg,proto3" json:"alg,omitempty"`
+	Kty string `protobuf:"bytes,3,opt,name=kty,proto3" json:"kty,omitempty"`
+	Kid string `protobuf:"bytes,4,opt,name=kid,proto3" json:"kid,omitempty"`
+	E   string `protobuf:"bytes,5,opt,name=e,proto3" json:"e,omitempty"`
+	N   string `protobuf:"bytes,6,opt,name=n,proto3" json:"n,omitempty"`
 }
 
 func (m *Key) Reset()      { *m = Key{} }
 func (*Key) ProtoMessage() {}
 func (*Key) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{17}
+	return fileDescriptor_c3ae39dba9ced36b, []int{17}
 }
 func (m *Key) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_Key.Unmarshal(m, b)
 }
 func (m *Key) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_Key.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_Key.Marshal(b, m, deterministic)
 }
-func (dst *Key) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Key.Merge(dst, src)
+func (m *Key) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Key.Merge(m, src)
 }
 func (m *Key) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_Key.Size(m)
 }
 func (m *Key) XXX_DiscardUnknown() {
 	xxx_messageInfo_Key.DiscardUnknown(m)
@@ -882,36 +682,25 @@ func (m *Key) GetN() string {
 }
 
 type JWKSResponse struct {
-	Keys                 []*Key   `protobuf:"bytes,1,rep,name=keys" json:"keys,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	Keys []*Key `protobuf:"bytes,1,rep,name=keys,proto3" json:"keys,omitempty"`
 }
 
 func (m *JWKSResponse) Reset()      { *m = JWKSResponse{} }
 func (*JWKSResponse) ProtoMessage() {}
 func (*JWKSResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{18}
+	return fileDescriptor_c3ae39dba9ced36b, []int{18}
 }
 func (m *JWKSResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_JWKSResponse.Unmarshal(m, b)
 }
 func (m *JWKSResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_JWKSResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_JWKSResponse.Marshal(b, m, deterministic)
 }
-func (dst *JWKSResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_JWKSResponse.Merge(dst, src)
+func (m *JWKSResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_JWKSResponse.Merge(m, src)
 }
 func (m *JWKSResponse) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_JWKSResponse.Size(m)
 }
 func (m *JWKSResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_JWKSResponse.DiscardUnknown(m)
@@ -927,35 +716,24 @@ func (m *JWKSResponse) GetKeys() []*Key {
 }
 
 type ServiceStatsRequest struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *ServiceStatsRequest) Reset()      { *m = ServiceStatsRequest{} }
 func (*ServiceStatsRequest) ProtoMessage() {}
 func (*ServiceStatsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{19}
+	return fileDescriptor_c3ae39dba9ced36b, []int{19}
 }
 func (m *ServiceStatsRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_ServiceStatsRequest.Unmarshal(m, b)
 }
 func (m *ServiceStatsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_ServiceStatsRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_ServiceStatsRequest.Marshal(b, m, deterministic)
 }
-func (dst *ServiceStatsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ServiceStatsRequest.Merge(dst, src)
+func (m *ServiceStatsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ServiceStatsRequest.Merge(m, src)
 }
 func (m *ServiceStatsRequest) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_ServiceStatsRequest.Size(m)
 }
 func (m *ServiceStatsRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_ServiceStatsRequest.DiscardUnknown(m)
@@ -964,36 +742,25 @@ func (m *ServiceStatsRequest) XXX_DiscardUnknown() {
 var xxx_messageInfo_ServiceStatsRequest proto.InternalMessageInfo
 
 type ServiceStatsResponse struct {
-	Actives              *ServiceStatsResponseActiveStats `protobuf:"bytes,1,opt,name=actives" json:"actives,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
-	XXX_sizecache        int32                            `json:"-"`
+	Actives *ServiceStatsResponseActiveStats `protobuf:"bytes,1,opt,name=actives,proto3" json:"actives,omitempty"`
 }
 
 func (m *ServiceStatsResponse) Reset()      { *m = ServiceStatsResponse{} }
 func (*ServiceStatsResponse) ProtoMessage() {}
 func (*ServiceStatsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{20}
+	return fileDescriptor_c3ae39dba9ced36b, []int{20}
 }
 func (m *ServiceStatsResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_ServiceStatsResponse.Unmarshal(m, b)
 }
 func (m *ServiceStatsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_ServiceStatsResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_ServiceStatsResponse.Marshal(b, m, deterministic)
 }
-func (dst *ServiceStatsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ServiceStatsResponse.Merge(dst, src)
+func (m *ServiceStatsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ServiceStatsResponse.Merge(m, src)
 }
 func (m *ServiceStatsResponse) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_ServiceStatsResponse.Size(m)
 }
 func (m *ServiceStatsResponse) XXX_DiscardUnknown() {
 	xxx_messageInfo_ServiceStatsResponse.DiscardUnknown(m)
@@ -1009,38 +776,27 @@ func (m *ServiceStatsResponse) GetActives() *ServiceStatsResponseActiveStats {
 }
 
 type ServiceStatsResponseActiveStats struct {
-	Daily                map[string]int64 `protobuf:"bytes,1,rep,name=daily" json:"daily,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	Weekly               map[string]int64 `protobuf:"bytes,2,rep,name=weekly" json:"weekly,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	Monthly              map[string]int64 `protobuf:"bytes,3,rep,name=monthly" json:"monthly,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
-	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
-	XXX_sizecache        int32            `json:"-"`
+	Daily   map[string]int64 `protobuf:"bytes,1,rep,name=daily,proto3" json:"daily,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	Weekly  map[string]int64 `protobuf:"bytes,2,rep,name=weekly,proto3" json:"weekly,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	Monthly map[string]int64 `protobuf:"bytes,3,rep,name=monthly,proto3" json:"monthly,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 }
 
 func (m *ServiceStatsResponseActiveStats) Reset()      { *m = ServiceStatsResponseActiveStats{} }
 func (*ServiceStatsResponseActiveStats) ProtoMessage() {}
 func (*ServiceStatsResponseActiveStats) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{20, 0}
+	return fileDescriptor_c3ae39dba9ced36b, []int{20, 0}
 }
 func (m *ServiceStatsResponseActiveStats) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_ServiceStatsResponseActiveStats.Unmarshal(m, b)
 }
 func (m *ServiceStatsResponseActiveStats) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_ServiceStatsResponseActiveStats.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_ServiceStatsResponseActiveStats.Marshal(b, m, deterministic)
 }
-func (dst *ServiceStatsResponseActiveStats) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ServiceStatsResponseActiveStats.Merge(dst, src)
+func (m *ServiceStatsResponseActiveStats) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ServiceStatsResponseActiveStats.Merge(m, src)
 }
 func (m *ServiceStatsResponseActiveStats) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_ServiceStatsResponseActiveStats.Size(m)
 }
 func (m *ServiceStatsResponseActiveStats) XXX_DiscardUnknown() {
 	xxx_messageInfo_ServiceStatsResponseActiveStats.DiscardUnknown(m)
@@ -1070,35 +826,24 @@ func (m *ServiceStatsResponseActiveStats) GetMonthly() map[string]int64 {
 }
 
 type ServiceConfigurationRequest struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *ServiceConfigurationRequest) Reset()      { *m = ServiceConfigurationRequest{} }
 func (*ServiceConfigurationRequest) ProtoMessage() {}
 func (*ServiceConfigurationRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{21}
+	return fileDescriptor_c3ae39dba9ced36b, []int{21}
 }
 func (m *ServiceConfigurationRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_ServiceConfigurationRequest.Unmarshal(m, b)
 }
 func (m *ServiceConfigurationRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_ServiceConfigurationRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_ServiceConfigurationRequest.Marshal(b, m, deterministic)
 }
-func (dst *ServiceConfigurationRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ServiceConfigurationRequest.Merge(dst, src)
+func (m *ServiceConfigurationRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ServiceConfigurationRequest.Merge(m, src)
 }
 func (m *ServiceConfigurationRequest) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_ServiceConfigurationRequest.Size(m)
 }
 func (m *ServiceConfigurationRequest) XXX_DiscardUnknown() {
 	xxx_messageInfo_ServiceConfigurationRequest.DiscardUnknown(m)
@@ -1108,40 +853,29 @@ var xxx_messageInfo_ServiceConfigurationRequest proto.InternalMessageInfo
 
 type Configuration struct {
 	Issuer                           string   `protobuf:"bytes,1,opt,name=issuer,proto3" json:"issuer,omitempty"`
-	ResponseTypesSupported           []string `protobuf:"bytes,2,rep,name=response_types_supported,json=responseTypesSupported" json:"response_types_supported,omitempty"`
-	SubjectTypesSupported            []string `protobuf:"bytes,3,rep,name=subject_types_supported,json=subjectTypesSupported" json:"subject_types_supported,omitempty"`
-	IdTokenSigningAlgValuesSupported []string `protobuf:"bytes,4,rep,name=id_token_signing_alg_values_supported,json=idTokenSigningAlgValuesSupported" json:"id_token_signing_alg_values_supported,omitempty"`
-	ClaimsSupported                  []string `protobuf:"bytes,5,rep,name=claims_supported,json=claimsSupported" json:"claims_supported,omitempty"`
+	ResponseTypesSupported           []string `protobuf:"bytes,2,rep,name=response_types_supported,json=responseTypesSupported,proto3" json:"response_types_supported,omitempty"`
+	SubjectTypesSupported            []string `protobuf:"bytes,3,rep,name=subject_types_supported,json=subjectTypesSupported,proto3" json:"subject_types_supported,omitempty"`
+	IdTokenSigningAlgValuesSupported []string `protobuf:"bytes,4,rep,name=id_token_signing_alg_values_supported,json=idTokenSigningAlgValuesSupported,proto3" json:"id_token_signing_alg_values_supported,omitempty"`
+	ClaimsSupported                  []string `protobuf:"bytes,5,rep,name=claims_supported,json=claimsSupported,proto3" json:"claims_supported,omitempty"`
 	JwksUri                          string   `protobuf:"bytes,6,opt,name=jwks_uri,json=jwksUri,proto3" json:"jwks_uri,omitempty"`
-	XXX_NoUnkeyedLiteral             struct{} `json:"-"`
-	XXX_sizecache                    int32    `json:"-"`
 }
 
 func (m *Configuration) Reset()      { *m = Configuration{} }
 func (*Configuration) ProtoMessage() {}
 func (*Configuration) Descriptor() ([]byte, []int) {
-	return fileDescriptor_authn_private_341e906219654473, []int{22}
+	return fileDescriptor_c3ae39dba9ced36b, []int{22}
 }
 func (m *Configuration) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	return xxx_messageInfo_Configuration.Unmarshal(m, b)
 }
 func (m *Configuration) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_Configuration.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	return xxx_messageInfo_Configuration.Marshal(b, m, deterministic)
 }
-func (dst *Configuration) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Configuration.Merge(dst, src)
+func (m *Configuration) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Configuration.Merge(m, src)
 }
 func (m *Configuration) XXX_Size() int {
-	return m.Size()
+	return xxx_messageInfo_Configuration.Size(m)
 }
 func (m *Configuration) XXX_DiscardUnknown() {
 	xxx_messageInfo_Configuration.DiscardUnknown(m)
@@ -1193,33 +927,147 @@ func (m *Configuration) GetJwksUri() string {
 
 func init() {
 	proto.RegisterType((*GetAccountRequest)(nil), "keratin.authn.GetAccountRequest")
+	golang_proto.RegisterType((*GetAccountRequest)(nil), "keratin.authn.GetAccountRequest")
 	proto.RegisterType((*GetAccountResponse)(nil), "keratin.authn.GetAccountResponse")
+	golang_proto.RegisterType((*GetAccountResponse)(nil), "keratin.authn.GetAccountResponse")
 	proto.RegisterType((*GetAccountResponseEnvelope)(nil), "keratin.authn.GetAccountResponseEnvelope")
+	golang_proto.RegisterType((*GetAccountResponseEnvelope)(nil), "keratin.authn.GetAccountResponseEnvelope")
 	proto.RegisterType((*UpdateAccountRequest)(nil), "keratin.authn.UpdateAccountRequest")
+	golang_proto.RegisterType((*UpdateAccountRequest)(nil), "keratin.authn.UpdateAccountRequest")
 	proto.RegisterType((*UpdateAccountResponse)(nil), "keratin.authn.UpdateAccountResponse")
+	golang_proto.RegisterType((*UpdateAccountResponse)(nil), "keratin.authn.UpdateAccountResponse")
 	proto.RegisterType((*LockAccountRequest)(nil), "keratin.authn.LockAccountRequest")
+	golang_proto.RegisterType((*LockAccountRequest)(nil), "keratin.authn.LockAccountRequest")
 	proto.RegisterType((*LockAccountResponse)(nil), "keratin.authn.LockAccountResponse")
+	golang_proto.RegisterType((*LockAccountResponse)(nil), "keratin.authn.LockAccountResponse")
 	proto.RegisterType((*UnlockAccountRequest)(nil), "keratin.authn.UnlockAccountRequest")
+	golang_proto.RegisterType((*UnlockAccountRequest)(nil), "keratin.authn.UnlockAccountRequest")
 	proto.RegisterType((*UnlockAccountResponse)(nil), "keratin.authn.UnlockAccountResponse")
+	golang_proto.RegisterType((*UnlockAccountResponse)(nil), "keratin.authn.UnlockAccountResponse")
 	proto.RegisterType((*ArchiveAccountRequest)(nil), "keratin.authn.ArchiveAccountRequest")
+	golang_proto.RegisterType((*ArchiveAccountRequest)(nil), "keratin.authn.ArchiveAccountRequest")
 	proto.RegisterType((*ArchiveAccountResponse)(nil), "keratin.authn.ArchiveAccountResponse")
+	golang_proto.RegisterType((*ArchiveAccountResponse)(nil), "keratin.authn.ArchiveAccountResponse")
 	proto.RegisterType((*ImportAccountRequst)(nil), "keratin.authn.ImportAccountRequst")
+	golang_proto.RegisterType((*ImportAccountRequst)(nil), "keratin.authn.ImportAccountRequst")
 	proto.RegisterType((*ImportAccountResponse)(nil), "keratin.authn.ImportAccountResponse")
+	golang_proto.RegisterType((*ImportAccountResponse)(nil), "keratin.authn.ImportAccountResponse")
 	proto.RegisterType((*ImportAccountResponseEnvelope)(nil), "keratin.authn.ImportAccountResponseEnvelope")
+	golang_proto.RegisterType((*ImportAccountResponseEnvelope)(nil), "keratin.authn.ImportAccountResponseEnvelope")
 	proto.RegisterType((*ExpirePasswordRequest)(nil), "keratin.authn.ExpirePasswordRequest")
+	golang_proto.RegisterType((*ExpirePasswordRequest)(nil), "keratin.authn.ExpirePasswordRequest")
 	proto.RegisterType((*ExpirePasswordResponse)(nil), "keratin.authn.ExpirePasswordResponse")
+	golang_proto.RegisterType((*ExpirePasswordResponse)(nil), "keratin.authn.ExpirePasswordResponse")
 	proto.RegisterType((*JWKSRequest)(nil), "keratin.authn.JWKSRequest")
+	golang_proto.RegisterType((*JWKSRequest)(nil), "keratin.authn.JWKSRequest")
 	proto.RegisterType((*Key)(nil), "keratin.authn.Key")
+	golang_proto.RegisterType((*Key)(nil), "keratin.authn.Key")
 	proto.RegisterType((*JWKSResponse)(nil), "keratin.authn.JWKSResponse")
+	golang_proto.RegisterType((*JWKSResponse)(nil), "keratin.authn.JWKSResponse")
 	proto.RegisterType((*ServiceStatsRequest)(nil), "keratin.authn.ServiceStatsRequest")
+	golang_proto.RegisterType((*ServiceStatsRequest)(nil), "keratin.authn.ServiceStatsRequest")
 	proto.RegisterType((*ServiceStatsResponse)(nil), "keratin.authn.ServiceStatsResponse")
+	golang_proto.RegisterType((*ServiceStatsResponse)(nil), "keratin.authn.ServiceStatsResponse")
 	proto.RegisterType((*ServiceStatsResponseActiveStats)(nil), "keratin.authn.ServiceStatsResponse.active_stats")
+	golang_proto.RegisterType((*ServiceStatsResponseActiveStats)(nil), "keratin.authn.ServiceStatsResponse.active_stats")
 	proto.RegisterMapType((map[string]int64)(nil), "keratin.authn.ServiceStatsResponse.active_stats.DailyEntry")
+	golang_proto.RegisterMapType((map[string]int64)(nil), "keratin.authn.ServiceStatsResponse.active_stats.DailyEntry")
 	proto.RegisterMapType((map[string]int64)(nil), "keratin.authn.ServiceStatsResponse.active_stats.MonthlyEntry")
+	golang_proto.RegisterMapType((map[string]int64)(nil), "keratin.authn.ServiceStatsResponse.active_stats.MonthlyEntry")
 	proto.RegisterMapType((map[string]int64)(nil), "keratin.authn.ServiceStatsResponse.active_stats.WeeklyEntry")
+	golang_proto.RegisterMapType((map[string]int64)(nil), "keratin.authn.ServiceStatsResponse.active_stats.WeeklyEntry")
 	proto.RegisterType((*ServiceConfigurationRequest)(nil), "keratin.authn.ServiceConfigurationRequest")
+	golang_proto.RegisterType((*ServiceConfigurationRequest)(nil), "keratin.authn.ServiceConfigurationRequest")
 	proto.RegisterType((*Configuration)(nil), "keratin.authn.Configuration")
+	golang_proto.RegisterType((*Configuration)(nil), "keratin.authn.Configuration")
 }
+
+func init() { proto.RegisterFile("authn-private.proto", fileDescriptor_c3ae39dba9ced36b) }
+func init() { golang_proto.RegisterFile("authn-private.proto", fileDescriptor_c3ae39dba9ced36b) }
+
+var fileDescriptor_c3ae39dba9ced36b = []byte{
+	// 1251 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x57, 0x4f, 0x73, 0xdb, 0x44,
+	0x14, 0x8f, 0x6c, 0xc7, 0x4e, 0x9f, 0x9d, 0x90, 0xae, 0xe3, 0xd4, 0xa8, 0xad, 0x6b, 0xd4, 0x7f,
+	0x69, 0xa6, 0xb5, 0x3b, 0x66, 0xa6, 0x93, 0x86, 0x72, 0x70, 0x20, 0x03, 0x34, 0x50, 0xc0, 0x4e,
+	0xc8, 0x4c, 0x66, 0x18, 0x8f, 0x22, 0x6d, 0x95, 0xad, 0x65, 0x49, 0x95, 0x56, 0x4e, 0x3d, 0x0c,
+	0x0c, 0xc3, 0x89, 0x81, 0x0b, 0x03, 0xdf, 0x01, 0x38, 0x72, 0xe4, 0x08, 0xdf, 0x80, 0x19, 0x38,
+	0xf4, 0x14, 0xa6, 0x09, 0xa7, 0x7c, 0x02, 0x8e, 0x8c, 0x56, 0x2b, 0x5b, 0x92, 0x85, 0xdd, 0x9c,
+	0xac, 0x7d, 0xfb, 0xfb, 0xfd, 0xde, 0xdb, 0xb7, 0x6f, 0x77, 0x9f, 0xa1, 0x28, 0xbb, 0xf4, 0xc0,
+	0xb8, 0x63, 0xd9, 0xa4, 0x2f, 0x53, 0x5c, 0xb3, 0x6c, 0x93, 0x9a, 0x68, 0xbe, 0x8b, 0x6d, 0x99,
+	0x12, 0xa3, 0xc6, 0x26, 0xc5, 0x3b, 0x1a, 0xa1, 0x07, 0xee, 0x7e, 0x4d, 0x31, 0x7b, 0x75, 0xcd,
+	0xd4, 0xcc, 0x3a, 0x43, 0xed, 0xbb, 0x8f, 0xd9, 0x88, 0x0d, 0xd8, 0x97, 0xcf, 0x16, 0x2f, 0x69,
+	0xa6, 0xa9, 0xe9, 0xb8, 0x2e, 0x5b, 0xa4, 0x2e, 0x1b, 0x86, 0x49, 0x65, 0x4a, 0x4c, 0xc3, 0xf1,
+	0x67, 0xa5, 0xab, 0x70, 0xfe, 0x1d, 0x4c, 0x9b, 0x8a, 0x62, 0xba, 0x06, 0x6d, 0xe1, 0xa7, 0x2e,
+	0x76, 0x28, 0x5a, 0x80, 0x14, 0x51, 0xcb, 0x42, 0x55, 0x58, 0x49, 0xb7, 0x52, 0x44, 0x95, 0xbe,
+	0x15, 0x00, 0x85, 0x51, 0x8e, 0x65, 0x1a, 0x0e, 0x8e, 0xc3, 0x90, 0x08, 0x73, 0xae, 0x83, 0x6d,
+	0x43, 0xee, 0xe1, 0x72, 0xaa, 0x2a, 0xac, 0x9c, 0x6b, 0x0d, 0xc7, 0x48, 0x82, 0xac, 0x6e, 0x2a,
+	0x5d, 0xac, 0x96, 0xd3, 0x55, 0x61, 0x65, 0x6e, 0x03, 0x4e, 0x8f, 0xae, 0x70, 0x4b, 0x8b, 0xff,
+	0xa2, 0xeb, 0x90, 0x53, 0xb1, 0x8e, 0x29, 0x56, 0xcb, 0x19, 0x06, 0xca, 0x9f, 0x1e, 0x5d, 0x09,
+	0x4c, 0xad, 0xe0, 0x43, 0xda, 0x05, 0x71, 0x3c, 0x98, 0x4d, 0xa3, 0x8f, 0x75, 0xd3, 0xc2, 0xe8,
+	0x3e, 0x64, 0x6d, 0xec, 0xb8, 0x3a, 0x65, 0x81, 0xe5, 0x1b, 0xaf, 0xd5, 0x22, 0xd9, 0xab, 0x8d,
+	0x53, 0x5b, 0x9c, 0x20, 0x6d, 0xc0, 0xd2, 0x8e, 0xa5, 0xca, 0x14, 0x4f, 0x4e, 0xc7, 0xa4, 0x75,
+	0x4a, 0x17, 0xa0, 0x14, 0xd3, 0xf0, 0x9d, 0x48, 0xd7, 0x00, 0xbd, 0x6f, 0x2a, 0xdd, 0x29, 0x99,
+	0x2e, 0x41, 0x31, 0x82, 0xe2, 0xe4, 0x1b, 0xb0, 0xb4, 0x63, 0xe8, 0xd3, 0xe9, 0x9e, 0xf7, 0x28,
+	0x8e, 0x0b, 0xdc, 0x84, 0x52, 0xd3, 0x56, 0x0e, 0x48, 0x7f, 0xca, 0xda, 0xa4, 0x32, 0x2c, 0xc7,
+	0x81, 0x5c, 0x02, 0x43, 0xf1, 0xbd, 0x9e, 0x65, 0xda, 0xe1, 0x62, 0x71, 0x68, 0x24, 0x19, 0x42,
+	0x6c, 0xd3, 0x45, 0x98, 0xb3, 0x64, 0xc7, 0x39, 0x34, 0x6d, 0x35, 0x48, 0x54, 0x30, 0x46, 0xcb,
+	0xd1, 0x82, 0x08, 0x8a, 0x40, 0xaa, 0x43, 0x29, 0xe6, 0x86, 0x57, 0xdb, 0xf2, 0x28, 0xd2, 0x8d,
+	0xec, 0xe9, 0xd1, 0x95, 0x14, 0x51, 0x59, 0xc4, 0x9f, 0xc2, 0xe5, 0x44, 0xc2, 0xb0, 0x22, 0x1e,
+	0xc4, 0x2a, 0xe2, 0x5a, 0xac, 0x22, 0x12, 0xd9, 0xc3, 0xa2, 0xb8, 0x09, 0xa5, 0xcd, 0x67, 0x16,
+	0xb1, 0xf1, 0x47, 0x3c, 0xf2, 0x09, 0x99, 0x8b, 0x03, 0x79, 0xe6, 0xe6, 0x21, 0xff, 0x70, 0x77,
+	0xab, 0xcd, 0x89, 0x12, 0x81, 0xf4, 0x16, 0x1e, 0xa0, 0x45, 0x48, 0xbb, 0x4e, 0x90, 0x33, 0xef,
+	0xd3, 0xb3, 0xc8, 0xba, 0xc6, 0x33, 0xe5, 0x7d, 0x7a, 0x96, 0x2e, 0x1d, 0xb0, 0x0c, 0x9d, 0x6b,
+	0x79, 0x9f, 0xcc, 0x42, 0xfc, 0xf3, 0xe1, 0x59, 0x88, 0x8a, 0x0a, 0x20, 0xe0, 0xf2, 0x2c, 0x1b,
+	0x0b, 0xd8, 0x1b, 0x19, 0xe5, 0xac, 0x3f, 0x32, 0xa4, 0x7b, 0x50, 0xf0, 0x3d, 0xf3, 0x1c, 0xde,
+	0x80, 0x4c, 0x17, 0x0f, 0x9c, 0xb2, 0x50, 0x4d, 0xaf, 0xe4, 0x1b, 0x28, 0x96, 0x88, 0x2d, 0x3c,
+	0x68, 0xb1, 0x79, 0xaf, 0x0c, 0xdb, 0xd8, 0xee, 0x13, 0x05, 0xb7, 0xa9, 0x4c, 0x9d, 0x20, 0xf2,
+	0x1f, 0x33, 0xb0, 0x14, 0xb5, 0x73, 0xdd, 0x87, 0x90, 0x93, 0x15, 0x4a, 0xfa, 0xd8, 0xe1, 0x39,
+	0xbe, 0x1b, 0x93, 0x4e, 0x62, 0xd5, 0x7c, 0x4a, 0xc7, 0x61, 0xc6, 0x40, 0x40, 0xfc, 0x3d, 0x0d,
+	0x85, 0xf0, 0x0c, 0xfa, 0x18, 0x66, 0x55, 0x99, 0xe8, 0x03, 0x1e, 0xf5, 0x1b, 0x67, 0x95, 0xae,
+	0xbd, 0xed, 0xb1, 0x37, 0x0d, 0x6a, 0x0f, 0x5a, 0xbe, 0x12, 0xda, 0x86, 0xec, 0x21, 0xc6, 0x5d,
+	0x7d, 0x50, 0x4e, 0x31, 0xcd, 0x07, 0x67, 0xd6, 0xdc, 0x65, 0x74, 0x5f, 0x94, 0x6b, 0xa1, 0x5d,
+	0xc8, 0xf5, 0x4c, 0x83, 0x1e, 0xe8, 0xde, 0x8e, 0x79, 0xb2, 0x6f, 0x9e, 0x59, 0xf6, 0x03, 0x9f,
+	0xef, 0xeb, 0x06, 0x6a, 0xe2, 0x1a, 0xc0, 0x68, 0x0d, 0xac, 0x04, 0xf0, 0x20, 0x28, 0x9c, 0x2e,
+	0x1e, 0xa0, 0x25, 0x98, 0xed, 0xcb, 0xba, 0xeb, 0xdf, 0x46, 0xe9, 0x96, 0x3f, 0x58, 0x4f, 0xad,
+	0x09, 0xe2, 0x7d, 0xc8, 0x87, 0x22, 0x3d, 0x13, 0x75, 0x1d, 0x0a, 0xe1, 0x68, 0xce, 0xc2, 0x95,
+	0x2e, 0xc3, 0x45, 0xbe, 0xd6, 0xb7, 0x4c, 0xe3, 0x31, 0xd1, 0x5c, 0x9b, 0x3d, 0x3a, 0x41, 0x1d,
+	0xfd, 0x92, 0x82, 0xf9, 0xc8, 0x84, 0x77, 0x1b, 0x10, 0xc7, 0x71, 0xb1, 0xcd, 0xf5, 0xf9, 0x08,
+	0xad, 0x41, 0xd9, 0xe6, 0x89, 0xea, 0xd0, 0x81, 0x85, 0x9d, 0x8e, 0xe3, 0x5a, 0xde, 0x71, 0xc5,
+	0x2a, 0xdb, 0xba, 0x73, 0xad, 0xe5, 0x60, 0x7e, 0xdb, 0x9b, 0x6e, 0x07, 0xb3, 0xe8, 0x1e, 0x5c,
+	0x70, 0xdc, 0xfd, 0x27, 0x58, 0xa1, 0x63, 0xc4, 0x34, 0x23, 0x96, 0xf8, 0x74, 0x8c, 0xf7, 0x21,
+	0x5c, 0x27, 0x6a, 0x87, 0x9a, 0x5d, 0x6c, 0x74, 0x1c, 0xa2, 0x19, 0xc4, 0xd0, 0x3a, 0xb2, 0xae,
+	0x75, 0xd8, 0xe2, 0xc2, 0x2a, 0x19, 0xa6, 0x52, 0x25, 0xea, 0xb6, 0x87, 0x6d, 0xfb, 0xd0, 0xa6,
+	0xae, 0x7d, 0xc2, 0x80, 0x23, 0xc1, 0x5b, 0xb0, 0xa8, 0xe8, 0x32, 0xe9, 0x85, 0xb9, 0xb3, 0x8c,
+	0xfb, 0x8a, 0x6f, 0x1f, 0x41, 0x5f, 0x85, 0xb9, 0x27, 0x87, 0x5d, 0xa7, 0xe3, 0xda, 0x84, 0x9f,
+	0xe1, 0x9c, 0x37, 0xde, 0xb1, 0x49, 0xe3, 0x6f, 0x01, 0x8a, 0x3b, 0x86, 0x83, 0x15, 0xd7, 0xc6,
+	0x6a, 0x53, 0xed, 0x11, 0xa3, 0xe9, 0xd2, 0x83, 0x47, 0xe8, 0x11, 0x64, 0xbc, 0x13, 0x8e, 0xc4,
+	0x58, 0xa9, 0x85, 0x2e, 0x1c, 0xf1, 0x62, 0xe2, 0x5c, 0x70, 0x39, 0x7d, 0xf5, 0xe7, 0x3f, 0x3f,
+	0xa4, 0x72, 0x68, 0xb6, 0xee, 0xb9, 0x42, 0xcf, 0x86, 0x27, 0x3c, 0xba, 0x41, 0xab, 0xc9, 0xa5,
+	0x9c, 0xb4, 0xbd, 0xe2, 0xa5, 0x18, 0x36, 0x02, 0x92, 0x96, 0x99, 0xc3, 0x45, 0xb4, 0x50, 0x57,
+	0xc2, 0xf6, 0xc6, 0x5f, 0x39, 0x38, 0xdf, 0x1e, 0x5b, 0xdf, 0x17, 0x30, 0x1f, 0xb9, 0x9f, 0x91,
+	0x34, 0xf9, 0xf6, 0xf6, 0xde, 0x24, 0xf1, 0xf6, 0xcb, 0xdc, 0xf0, 0xc1, 0xfb, 0x20, 0x5d, 0x64,
+	0x01, 0x95, 0xa4, 0xc5, 0xba, 0xec, 0x23, 0x9c, 0x3a, 0x61, 0x84, 0x75, 0x61, 0x15, 0x3d, 0x05,
+	0x18, 0x75, 0x0c, 0xa8, 0x3a, 0xa1, 0x99, 0xf0, 0xd7, 0x7e, 0x6b, 0x6a, 0xbb, 0x31, 0xf4, 0x3b,
+	0x4a, 0xc4, 0xd0, 0xef, 0x67, 0x44, 0xfd, 0x1c, 0x7d, 0x23, 0xc0, 0x7c, 0xa4, 0x87, 0x40, 0x57,
+	0x63, 0xa2, 0x49, 0x5d, 0x8a, 0x78, 0x6d, 0x32, 0x88, 0x6f, 0x77, 0x8d, 0x39, 0x5d, 0x11, 0x63,
+	0x4e, 0xd7, 0x85, 0xd5, 0xbd, 0x62, 0x63, 0xdc, 0x88, 0xbe, 0x16, 0x20, 0x1f, 0xea, 0x48, 0x50,
+	0xbc, 0x9d, 0x1a, 0xef, 0x69, 0x44, 0x69, 0x12, 0x84, 0x87, 0xd1, 0x60, 0x61, 0xdc, 0x16, 0x8b,
+	0x51, 0x8f, 0x75, 0xaf, 0x09, 0xd8, 0x2b, 0x35, 0x92, 0xcc, 0xe8, 0x7b, 0x2f, 0x2f, 0xe1, 0xee,
+	0x66, 0x3c, 0x2f, 0x09, 0x3d, 0xd2, 0x78, 0x5e, 0x12, 0x1b, 0xa4, 0x7b, 0x2c, 0xa0, 0xbb, 0x62,
+	0x29, 0xe6, 0xd9, 0x65, 0xe8, 0xbd, 0x0b, 0x8d, 0xe4, 0x09, 0xe4, 0xc2, 0x42, 0xb4, 0x5f, 0x42,
+	0x71, 0x7f, 0x89, 0x7d, 0x97, 0x78, 0x7d, 0x0a, 0x8a, 0x87, 0xc5, 0x6b, 0x64, 0x35, 0x5e, 0x23,
+	0x3f, 0x09, 0xb0, 0x10, 0xed, 0x36, 0xc6, 0xfc, 0x26, 0x76, 0x2d, 0x63, 0x7e, 0xff, 0xa7, 0x65,
+	0x79, 0x97, 0xf9, 0xdd, 0x10, 0x2b, 0xb1, 0x55, 0x63, 0x06, 0xef, 0x04, 0x5d, 0xdc, 0x5e, 0xb5,
+	0x31, 0x05, 0xd1, 0x38, 0x84, 0x02, 0x3b, 0xc9, 0x4d, 0xff, 0x79, 0x47, 0x1a, 0x14, 0xc2, 0xcf,
+	0xe0, 0xd8, 0x79, 0x4e, 0xe8, 0x3b, 0xc4, 0xab, 0x2f, 0xf1, 0x8e, 0x4a, 0x0b, 0x2c, 0xe4, 0x39,
+	0x94, 0xad, 0xb3, 0xa7, 0x74, 0x63, 0xf5, 0xf9, 0x8b, 0xca, 0xcc, 0xbf, 0x2f, 0x2a, 0xc2, 0x97,
+	0xc7, 0x15, 0xe1, 0xe7, 0xe3, 0x8a, 0xf0, 0xeb, 0x71, 0x45, 0xf8, 0xee, 0xa4, 0x32, 0xf3, 0xdb,
+	0x49, 0x45, 0xf8, 0xe3, 0xa4, 0x32, 0xf3, 0xfc, 0xa4, 0x32, 0xb3, 0x97, 0xd1, 0x6c, 0x4b, 0xd9,
+	0xcf, 0xb2, 0x3f, 0x43, 0xaf, 0xff, 0x17, 0x00, 0x00, 0xff, 0xff, 0xb3, 0x72, 0x54, 0x7c, 0x7f,
+	0x0d, 0x00, 0x00,
+}
+
 func (this *GetAccountRequest) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
@@ -1866,308 +1714,6 @@ func (this *Configuration) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *GetAccountRequest) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&grpc.GetAccountRequest{")
-	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *GetAccountResponse) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&grpc.GetAccountResponse{")
-	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
-	s = append(s, "Username: "+fmt.Sprintf("%#v", this.Username)+",\n")
-	s = append(s, "Locked: "+fmt.Sprintf("%#v", this.Locked)+",\n")
-	s = append(s, "Deleted: "+fmt.Sprintf("%#v", this.Deleted)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *GetAccountResponseEnvelope) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&grpc.GetAccountResponseEnvelope{")
-	if this.Result != nil {
-		s = append(s, "Result: "+fmt.Sprintf("%#v", this.Result)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *UpdateAccountRequest) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&grpc.UpdateAccountRequest{")
-	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
-	s = append(s, "Username: "+fmt.Sprintf("%#v", this.Username)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *UpdateAccountResponse) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 4)
-	s = append(s, "&grpc.UpdateAccountResponse{")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *LockAccountRequest) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&grpc.LockAccountRequest{")
-	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *LockAccountResponse) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 4)
-	s = append(s, "&grpc.LockAccountResponse{")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *UnlockAccountRequest) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&grpc.UnlockAccountRequest{")
-	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *UnlockAccountResponse) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 4)
-	s = append(s, "&grpc.UnlockAccountResponse{")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ArchiveAccountRequest) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&grpc.ArchiveAccountRequest{")
-	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ArchiveAccountResponse) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 4)
-	s = append(s, "&grpc.ArchiveAccountResponse{")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ImportAccountRequst) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&grpc.ImportAccountRequst{")
-	s = append(s, "Username: "+fmt.Sprintf("%#v", this.Username)+",\n")
-	s = append(s, "Password: "+fmt.Sprintf("%#v", this.Password)+",\n")
-	s = append(s, "Locked: "+fmt.Sprintf("%#v", this.Locked)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ImportAccountResponse) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&grpc.ImportAccountResponse{")
-	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ImportAccountResponseEnvelope) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&grpc.ImportAccountResponseEnvelope{")
-	if this.Result != nil {
-		s = append(s, "Result: "+fmt.Sprintf("%#v", this.Result)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ExpirePasswordRequest) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&grpc.ExpirePasswordRequest{")
-	s = append(s, "Id: "+fmt.Sprintf("%#v", this.Id)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ExpirePasswordResponse) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 4)
-	s = append(s, "&grpc.ExpirePasswordResponse{")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *JWKSRequest) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 4)
-	s = append(s, "&grpc.JWKSRequest{")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Key) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 10)
-	s = append(s, "&grpc.Key{")
-	s = append(s, "Use: "+fmt.Sprintf("%#v", this.Use)+",\n")
-	s = append(s, "Alg: "+fmt.Sprintf("%#v", this.Alg)+",\n")
-	s = append(s, "Kty: "+fmt.Sprintf("%#v", this.Kty)+",\n")
-	s = append(s, "Kid: "+fmt.Sprintf("%#v", this.Kid)+",\n")
-	s = append(s, "E: "+fmt.Sprintf("%#v", this.E)+",\n")
-	s = append(s, "N: "+fmt.Sprintf("%#v", this.N)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *JWKSResponse) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&grpc.JWKSResponse{")
-	if this.Keys != nil {
-		s = append(s, "Keys: "+fmt.Sprintf("%#v", this.Keys)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ServiceStatsRequest) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 4)
-	s = append(s, "&grpc.ServiceStatsRequest{")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ServiceStatsResponse) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 5)
-	s = append(s, "&grpc.ServiceStatsResponse{")
-	if this.Actives != nil {
-		s = append(s, "Actives: "+fmt.Sprintf("%#v", this.Actives)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ServiceStatsResponseActiveStats) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&grpc.ServiceStatsResponseActiveStats{")
-	keysForDaily := make([]string, 0, len(this.Daily))
-	for k, _ := range this.Daily {
-		keysForDaily = append(keysForDaily, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForDaily)
-	mapStringForDaily := "map[string]int64{"
-	for _, k := range keysForDaily {
-		mapStringForDaily += fmt.Sprintf("%#v: %#v,", k, this.Daily[k])
-	}
-	mapStringForDaily += "}"
-	if this.Daily != nil {
-		s = append(s, "Daily: "+mapStringForDaily+",\n")
-	}
-	keysForWeekly := make([]string, 0, len(this.Weekly))
-	for k, _ := range this.Weekly {
-		keysForWeekly = append(keysForWeekly, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForWeekly)
-	mapStringForWeekly := "map[string]int64{"
-	for _, k := range keysForWeekly {
-		mapStringForWeekly += fmt.Sprintf("%#v: %#v,", k, this.Weekly[k])
-	}
-	mapStringForWeekly += "}"
-	if this.Weekly != nil {
-		s = append(s, "Weekly: "+mapStringForWeekly+",\n")
-	}
-	keysForMonthly := make([]string, 0, len(this.Monthly))
-	for k, _ := range this.Monthly {
-		keysForMonthly = append(keysForMonthly, k)
-	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForMonthly)
-	mapStringForMonthly := "map[string]int64{"
-	for _, k := range keysForMonthly {
-		mapStringForMonthly += fmt.Sprintf("%#v: %#v,", k, this.Monthly[k])
-	}
-	mapStringForMonthly += "}"
-	if this.Monthly != nil {
-		s = append(s, "Monthly: "+mapStringForMonthly+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *ServiceConfigurationRequest) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 4)
-	s = append(s, "&grpc.ServiceConfigurationRequest{")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *Configuration) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 10)
-	s = append(s, "&grpc.Configuration{")
-	s = append(s, "Issuer: "+fmt.Sprintf("%#v", this.Issuer)+",\n")
-	s = append(s, "ResponseTypesSupported: "+fmt.Sprintf("%#v", this.ResponseTypesSupported)+",\n")
-	s = append(s, "SubjectTypesSupported: "+fmt.Sprintf("%#v", this.SubjectTypesSupported)+",\n")
-	s = append(s, "IdTokenSigningAlgValuesSupported: "+fmt.Sprintf("%#v", this.IdTokenSigningAlgValuesSupported)+",\n")
-	s = append(s, "ClaimsSupported: "+fmt.Sprintf("%#v", this.ClaimsSupported)+",\n")
-	s = append(s, "JwksUri: "+fmt.Sprintf("%#v", this.JwksUri)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func valueToGoStringAuthnPrivate(v interface{}, typ string) string {
-	rv := reflect.ValueOf(v)
-	if rv.IsNil() {
-		return "nil"
-	}
-	pv := reflect.Indirect(rv).Interface()
-	return fmt.Sprintf("func(v %v) *%v { return &v } ( %#v )", typ, typ, pv)
-}
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
@@ -2600,739 +2146,6 @@ var _AuthNActives_serviceDesc = grpc.ServiceDesc{
 	Metadata: "authn-private.proto",
 }
 
-func (m *GetAccountRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *GetAccountRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Id != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Id))
-	}
-	return i, nil
-}
-
-func (m *GetAccountResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *GetAccountResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Id != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Id))
-	}
-	if len(m.Username) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Username)))
-		i += copy(dAtA[i:], m.Username)
-	}
-	if m.Locked {
-		dAtA[i] = 0x18
-		i++
-		if m.Locked {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i++
-	}
-	if m.Deleted {
-		dAtA[i] = 0x20
-		i++
-		if m.Deleted {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i++
-	}
-	return i, nil
-}
-
-func (m *GetAccountResponseEnvelope) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *GetAccountResponseEnvelope) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Result != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Result.Size()))
-		n1, err := m.Result.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n1
-	}
-	return i, nil
-}
-
-func (m *UpdateAccountRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *UpdateAccountRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Id != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Id))
-	}
-	if len(m.Username) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Username)))
-		i += copy(dAtA[i:], m.Username)
-	}
-	return i, nil
-}
-
-func (m *UpdateAccountResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *UpdateAccountResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	return i, nil
-}
-
-func (m *LockAccountRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LockAccountRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Id != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Id))
-	}
-	return i, nil
-}
-
-func (m *LockAccountResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *LockAccountResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	return i, nil
-}
-
-func (m *UnlockAccountRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *UnlockAccountRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Id != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Id))
-	}
-	return i, nil
-}
-
-func (m *UnlockAccountResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *UnlockAccountResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	return i, nil
-}
-
-func (m *ArchiveAccountRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *ArchiveAccountRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Id != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Id))
-	}
-	return i, nil
-}
-
-func (m *ArchiveAccountResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *ArchiveAccountResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	return i, nil
-}
-
-func (m *ImportAccountRequst) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *ImportAccountRequst) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Username) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Username)))
-		i += copy(dAtA[i:], m.Username)
-	}
-	if len(m.Password) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Password)))
-		i += copy(dAtA[i:], m.Password)
-	}
-	if m.Locked {
-		dAtA[i] = 0x18
-		i++
-		if m.Locked {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i++
-	}
-	return i, nil
-}
-
-func (m *ImportAccountResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *ImportAccountResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Id != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Id))
-	}
-	return i, nil
-}
-
-func (m *ImportAccountResponseEnvelope) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *ImportAccountResponseEnvelope) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Result != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Result.Size()))
-		n2, err := m.Result.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n2
-	}
-	return i, nil
-}
-
-func (m *ExpirePasswordRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *ExpirePasswordRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Id != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Id))
-	}
-	return i, nil
-}
-
-func (m *ExpirePasswordResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *ExpirePasswordResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	return i, nil
-}
-
-func (m *JWKSRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *JWKSRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	return i, nil
-}
-
-func (m *Key) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Key) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Use) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Use)))
-		i += copy(dAtA[i:], m.Use)
-	}
-	if len(m.Alg) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Alg)))
-		i += copy(dAtA[i:], m.Alg)
-	}
-	if len(m.Kty) > 0 {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Kty)))
-		i += copy(dAtA[i:], m.Kty)
-	}
-	if len(m.Kid) > 0 {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Kid)))
-		i += copy(dAtA[i:], m.Kid)
-	}
-	if len(m.E) > 0 {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.E)))
-		i += copy(dAtA[i:], m.E)
-	}
-	if len(m.N) > 0 {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.N)))
-		i += copy(dAtA[i:], m.N)
-	}
-	return i, nil
-}
-
-func (m *JWKSResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *JWKSResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Keys) > 0 {
-		for _, msg := range m.Keys {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintAuthnPrivate(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	return i, nil
-}
-
-func (m *ServiceStatsRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *ServiceStatsRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	return i, nil
-}
-
-func (m *ServiceStatsResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *ServiceStatsResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if m.Actives != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(m.Actives.Size()))
-		n3, err := m.Actives.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n3
-	}
-	return i, nil
-}
-
-func (m *ServiceStatsResponseActiveStats) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *ServiceStatsResponseActiveStats) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Daily) > 0 {
-		for k, _ := range m.Daily {
-			dAtA[i] = 0xa
-			i++
-			v := m.Daily[k]
-			mapSize := 1 + len(k) + sovAuthnPrivate(uint64(len(k))) + 1 + sovAuthnPrivate(uint64(v))
-			i = encodeVarintAuthnPrivate(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			dAtA[i] = 0x10
-			i++
-			i = encodeVarintAuthnPrivate(dAtA, i, uint64(v))
-		}
-	}
-	if len(m.Weekly) > 0 {
-		for k, _ := range m.Weekly {
-			dAtA[i] = 0x12
-			i++
-			v := m.Weekly[k]
-			mapSize := 1 + len(k) + sovAuthnPrivate(uint64(len(k))) + 1 + sovAuthnPrivate(uint64(v))
-			i = encodeVarintAuthnPrivate(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			dAtA[i] = 0x10
-			i++
-			i = encodeVarintAuthnPrivate(dAtA, i, uint64(v))
-		}
-	}
-	if len(m.Monthly) > 0 {
-		for k, _ := range m.Monthly {
-			dAtA[i] = 0x1a
-			i++
-			v := m.Monthly[k]
-			mapSize := 1 + len(k) + sovAuthnPrivate(uint64(len(k))) + 1 + sovAuthnPrivate(uint64(v))
-			i = encodeVarintAuthnPrivate(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			dAtA[i] = 0x10
-			i++
-			i = encodeVarintAuthnPrivate(dAtA, i, uint64(v))
-		}
-	}
-	return i, nil
-}
-
-func (m *ServiceConfigurationRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *ServiceConfigurationRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	return i, nil
-}
-
-func (m *Configuration) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Configuration) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	if len(m.Issuer) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.Issuer)))
-		i += copy(dAtA[i:], m.Issuer)
-	}
-	if len(m.ResponseTypesSupported) > 0 {
-		for _, s := range m.ResponseTypesSupported {
-			dAtA[i] = 0x12
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.SubjectTypesSupported) > 0 {
-		for _, s := range m.SubjectTypesSupported {
-			dAtA[i] = 0x1a
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.IdTokenSigningAlgValuesSupported) > 0 {
-		for _, s := range m.IdTokenSigningAlgValuesSupported {
-			dAtA[i] = 0x22
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.ClaimsSupported) > 0 {
-		for _, s := range m.ClaimsSupported {
-			dAtA[i] = 0x2a
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.JwksUri) > 0 {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintAuthnPrivate(dAtA, i, uint64(len(m.JwksUri)))
-		i += copy(dAtA[i:], m.JwksUri)
-	}
-	return i, nil
-}
-
-func encodeVarintAuthnPrivate(dAtA []byte, offset int, v uint64) int {
-	for v >= 1<<7 {
-		dAtA[offset] = uint8(v&0x7f | 0x80)
-		v >>= 7
-		offset++
-	}
-	dAtA[offset] = uint8(v)
-	return offset + 1
-}
 func NewPopulatedGetAccountRequest(r randyAuthnPrivate, easy bool) *GetAccountRequest {
 	this := &GetAccountRequest{}
 	this.Id = int64(r.Int63())
@@ -3689,310 +2502,6 @@ func encodeVarintPopulateAuthnPrivate(dAtA []byte, v uint64) []byte {
 	dAtA = append(dAtA, uint8(v))
 	return dAtA
 }
-func (m *GetAccountRequest) Size() (n int) {
-	var l int
-	_ = l
-	if m.Id != 0 {
-		n += 1 + sovAuthnPrivate(uint64(m.Id))
-	}
-	return n
-}
-
-func (m *GetAccountResponse) Size() (n int) {
-	var l int
-	_ = l
-	if m.Id != 0 {
-		n += 1 + sovAuthnPrivate(uint64(m.Id))
-	}
-	l = len(m.Username)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
-	}
-	if m.Locked {
-		n += 2
-	}
-	if m.Deleted {
-		n += 2
-	}
-	return n
-}
-
-func (m *GetAccountResponseEnvelope) Size() (n int) {
-	var l int
-	_ = l
-	if m.Result != nil {
-		l = m.Result.Size()
-		n += 1 + l + sovAuthnPrivate(uint64(l))
-	}
-	return n
-}
-
-func (m *UpdateAccountRequest) Size() (n int) {
-	var l int
-	_ = l
-	if m.Id != 0 {
-		n += 1 + sovAuthnPrivate(uint64(m.Id))
-	}
-	l = len(m.Username)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
-	}
-	return n
-}
-
-func (m *UpdateAccountResponse) Size() (n int) {
-	var l int
-	_ = l
-	return n
-}
-
-func (m *LockAccountRequest) Size() (n int) {
-	var l int
-	_ = l
-	if m.Id != 0 {
-		n += 1 + sovAuthnPrivate(uint64(m.Id))
-	}
-	return n
-}
-
-func (m *LockAccountResponse) Size() (n int) {
-	var l int
-	_ = l
-	return n
-}
-
-func (m *UnlockAccountRequest) Size() (n int) {
-	var l int
-	_ = l
-	if m.Id != 0 {
-		n += 1 + sovAuthnPrivate(uint64(m.Id))
-	}
-	return n
-}
-
-func (m *UnlockAccountResponse) Size() (n int) {
-	var l int
-	_ = l
-	return n
-}
-
-func (m *ArchiveAccountRequest) Size() (n int) {
-	var l int
-	_ = l
-	if m.Id != 0 {
-		n += 1 + sovAuthnPrivate(uint64(m.Id))
-	}
-	return n
-}
-
-func (m *ArchiveAccountResponse) Size() (n int) {
-	var l int
-	_ = l
-	return n
-}
-
-func (m *ImportAccountRequst) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Username)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
-	}
-	l = len(m.Password)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
-	}
-	if m.Locked {
-		n += 2
-	}
-	return n
-}
-
-func (m *ImportAccountResponse) Size() (n int) {
-	var l int
-	_ = l
-	if m.Id != 0 {
-		n += 1 + sovAuthnPrivate(uint64(m.Id))
-	}
-	return n
-}
-
-func (m *ImportAccountResponseEnvelope) Size() (n int) {
-	var l int
-	_ = l
-	if m.Result != nil {
-		l = m.Result.Size()
-		n += 1 + l + sovAuthnPrivate(uint64(l))
-	}
-	return n
-}
-
-func (m *ExpirePasswordRequest) Size() (n int) {
-	var l int
-	_ = l
-	if m.Id != 0 {
-		n += 1 + sovAuthnPrivate(uint64(m.Id))
-	}
-	return n
-}
-
-func (m *ExpirePasswordResponse) Size() (n int) {
-	var l int
-	_ = l
-	return n
-}
-
-func (m *JWKSRequest) Size() (n int) {
-	var l int
-	_ = l
-	return n
-}
-
-func (m *Key) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Use)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
-	}
-	l = len(m.Alg)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
-	}
-	l = len(m.Kty)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
-	}
-	l = len(m.Kid)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
-	}
-	l = len(m.E)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
-	}
-	l = len(m.N)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
-	}
-	return n
-}
-
-func (m *JWKSResponse) Size() (n int) {
-	var l int
-	_ = l
-	if len(m.Keys) > 0 {
-		for _, e := range m.Keys {
-			l = e.Size()
-			n += 1 + l + sovAuthnPrivate(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *ServiceStatsRequest) Size() (n int) {
-	var l int
-	_ = l
-	return n
-}
-
-func (m *ServiceStatsResponse) Size() (n int) {
-	var l int
-	_ = l
-	if m.Actives != nil {
-		l = m.Actives.Size()
-		n += 1 + l + sovAuthnPrivate(uint64(l))
-	}
-	return n
-}
-
-func (m *ServiceStatsResponseActiveStats) Size() (n int) {
-	var l int
-	_ = l
-	if len(m.Daily) > 0 {
-		for k, v := range m.Daily {
-			_ = k
-			_ = v
-			mapEntrySize := 1 + len(k) + sovAuthnPrivate(uint64(len(k))) + 1 + sovAuthnPrivate(uint64(v))
-			n += mapEntrySize + 1 + sovAuthnPrivate(uint64(mapEntrySize))
-		}
-	}
-	if len(m.Weekly) > 0 {
-		for k, v := range m.Weekly {
-			_ = k
-			_ = v
-			mapEntrySize := 1 + len(k) + sovAuthnPrivate(uint64(len(k))) + 1 + sovAuthnPrivate(uint64(v))
-			n += mapEntrySize + 1 + sovAuthnPrivate(uint64(mapEntrySize))
-		}
-	}
-	if len(m.Monthly) > 0 {
-		for k, v := range m.Monthly {
-			_ = k
-			_ = v
-			mapEntrySize := 1 + len(k) + sovAuthnPrivate(uint64(len(k))) + 1 + sovAuthnPrivate(uint64(v))
-			n += mapEntrySize + 1 + sovAuthnPrivate(uint64(mapEntrySize))
-		}
-	}
-	return n
-}
-
-func (m *ServiceConfigurationRequest) Size() (n int) {
-	var l int
-	_ = l
-	return n
-}
-
-func (m *Configuration) Size() (n int) {
-	var l int
-	_ = l
-	l = len(m.Issuer)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
-	}
-	if len(m.ResponseTypesSupported) > 0 {
-		for _, s := range m.ResponseTypesSupported {
-			l = len(s)
-			n += 1 + l + sovAuthnPrivate(uint64(l))
-		}
-	}
-	if len(m.SubjectTypesSupported) > 0 {
-		for _, s := range m.SubjectTypesSupported {
-			l = len(s)
-			n += 1 + l + sovAuthnPrivate(uint64(l))
-		}
-	}
-	if len(m.IdTokenSigningAlgValuesSupported) > 0 {
-		for _, s := range m.IdTokenSigningAlgValuesSupported {
-			l = len(s)
-			n += 1 + l + sovAuthnPrivate(uint64(l))
-		}
-	}
-	if len(m.ClaimsSupported) > 0 {
-		for _, s := range m.ClaimsSupported {
-			l = len(s)
-			n += 1 + l + sovAuthnPrivate(uint64(l))
-		}
-	}
-	l = len(m.JwksUri)
-	if l > 0 {
-		n += 1 + l + sovAuthnPrivate(uint64(l))
-	}
-	return n
-}
-
-func sovAuthnPrivate(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
-}
-func sozAuthnPrivate(x uint64) (n int) {
-	return sovAuthnPrivate(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
 func (this *GetAccountRequest) String() string {
 	if this == nil {
 		return "nil"
@@ -4280,2520 +2789,4 @@ func valueToStringAuthnPrivate(v interface{}) string {
 	}
 	pv := reflect.Indirect(rv).Interface()
 	return fmt.Sprintf("*%v", pv)
-}
-func (m *GetAccountRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: GetAccountRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GetAccountRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *GetAccountResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: GetAccountResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GetAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Username", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Username = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Locked", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.Locked = bool(v != 0)
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Deleted", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.Deleted = bool(v != 0)
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *GetAccountResponseEnvelope) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: GetAccountResponseEnvelope: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: GetAccountResponseEnvelope: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Result", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Result == nil {
-				m.Result = &GetAccountResponse{}
-			}
-			if err := m.Result.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *UpdateAccountRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: UpdateAccountRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: UpdateAccountRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Username", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Username = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *UpdateAccountResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: UpdateAccountResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: UpdateAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LockAccountRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LockAccountRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LockAccountRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LockAccountResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LockAccountResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LockAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *UnlockAccountRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: UnlockAccountRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: UnlockAccountRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *UnlockAccountResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: UnlockAccountResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: UnlockAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *ArchiveAccountRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: ArchiveAccountRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ArchiveAccountRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *ArchiveAccountResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: ArchiveAccountResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ArchiveAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *ImportAccountRequst) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: ImportAccountRequst: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ImportAccountRequst: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Username", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Username = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Password", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Password = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Locked", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.Locked = bool(v != 0)
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *ImportAccountResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: ImportAccountResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ImportAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *ImportAccountResponseEnvelope) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: ImportAccountResponseEnvelope: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ImportAccountResponseEnvelope: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Result", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Result == nil {
-				m.Result = &ImportAccountResponse{}
-			}
-			if err := m.Result.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *ExpirePasswordRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: ExpirePasswordRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ExpirePasswordRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
-			}
-			m.Id = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Id |= (int64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *ExpirePasswordResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: ExpirePasswordResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ExpirePasswordResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *JWKSRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: JWKSRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: JWKSRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Key) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Key: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Key: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Use", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Use = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Alg", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Alg = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Kty", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Kty = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Kid", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Kid = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field E", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.E = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field N", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.N = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *JWKSResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: JWKSResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: JWKSResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Keys", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Keys = append(m.Keys, &Key{})
-			if err := m.Keys[len(m.Keys)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *ServiceStatsRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: ServiceStatsRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ServiceStatsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *ServiceStatsResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: ServiceStatsResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ServiceStatsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Actives", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Actives == nil {
-				m.Actives = &ServiceStatsResponseActiveStats{}
-			}
-			if err := m.Actives.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *ServiceStatsResponseActiveStats) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: active_stats: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: active_stats: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Daily", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Daily == nil {
-				m.Daily = make(map[string]int64)
-			}
-			var mapkey string
-			var mapvalue int64
-			for iNdEx < postIndex {
-				entryPreIndex := iNdEx
-				var wire uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowAuthnPrivate
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				fieldNum := int32(wire >> 3)
-				if fieldNum == 1 {
-					var stringLenmapkey uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowAuthnPrivate
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapkey := int(stringLenmapkey)
-					if intStringLenmapkey < 0 {
-						return ErrInvalidLengthAuthnPrivate
-					}
-					postStringIndexmapkey := iNdEx + intStringLenmapkey
-					if postStringIndexmapkey > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
-					iNdEx = postStringIndexmapkey
-				} else if fieldNum == 2 {
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowAuthnPrivate
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						mapvalue |= (int64(b) & 0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-				} else {
-					iNdEx = entryPreIndex
-					skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-					if err != nil {
-						return err
-					}
-					if skippy < 0 {
-						return ErrInvalidLengthAuthnPrivate
-					}
-					if (iNdEx + skippy) > postIndex {
-						return io.ErrUnexpectedEOF
-					}
-					iNdEx += skippy
-				}
-			}
-			m.Daily[mapkey] = mapvalue
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Weekly", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Weekly == nil {
-				m.Weekly = make(map[string]int64)
-			}
-			var mapkey string
-			var mapvalue int64
-			for iNdEx < postIndex {
-				entryPreIndex := iNdEx
-				var wire uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowAuthnPrivate
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				fieldNum := int32(wire >> 3)
-				if fieldNum == 1 {
-					var stringLenmapkey uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowAuthnPrivate
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapkey := int(stringLenmapkey)
-					if intStringLenmapkey < 0 {
-						return ErrInvalidLengthAuthnPrivate
-					}
-					postStringIndexmapkey := iNdEx + intStringLenmapkey
-					if postStringIndexmapkey > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
-					iNdEx = postStringIndexmapkey
-				} else if fieldNum == 2 {
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowAuthnPrivate
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						mapvalue |= (int64(b) & 0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-				} else {
-					iNdEx = entryPreIndex
-					skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-					if err != nil {
-						return err
-					}
-					if skippy < 0 {
-						return ErrInvalidLengthAuthnPrivate
-					}
-					if (iNdEx + skippy) > postIndex {
-						return io.ErrUnexpectedEOF
-					}
-					iNdEx += skippy
-				}
-			}
-			m.Weekly[mapkey] = mapvalue
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Monthly", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Monthly == nil {
-				m.Monthly = make(map[string]int64)
-			}
-			var mapkey string
-			var mapvalue int64
-			for iNdEx < postIndex {
-				entryPreIndex := iNdEx
-				var wire uint64
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return ErrIntOverflowAuthnPrivate
-					}
-					if iNdEx >= l {
-						return io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				fieldNum := int32(wire >> 3)
-				if fieldNum == 1 {
-					var stringLenmapkey uint64
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowAuthnPrivate
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-					intStringLenmapkey := int(stringLenmapkey)
-					if intStringLenmapkey < 0 {
-						return ErrInvalidLengthAuthnPrivate
-					}
-					postStringIndexmapkey := iNdEx + intStringLenmapkey
-					if postStringIndexmapkey > l {
-						return io.ErrUnexpectedEOF
-					}
-					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
-					iNdEx = postStringIndexmapkey
-				} else if fieldNum == 2 {
-					for shift := uint(0); ; shift += 7 {
-						if shift >= 64 {
-							return ErrIntOverflowAuthnPrivate
-						}
-						if iNdEx >= l {
-							return io.ErrUnexpectedEOF
-						}
-						b := dAtA[iNdEx]
-						iNdEx++
-						mapvalue |= (int64(b) & 0x7F) << shift
-						if b < 0x80 {
-							break
-						}
-					}
-				} else {
-					iNdEx = entryPreIndex
-					skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-					if err != nil {
-						return err
-					}
-					if skippy < 0 {
-						return ErrInvalidLengthAuthnPrivate
-					}
-					if (iNdEx + skippy) > postIndex {
-						return io.ErrUnexpectedEOF
-					}
-					iNdEx += skippy
-				}
-			}
-			m.Monthly[mapkey] = mapvalue
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *ServiceConfigurationRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: ServiceConfigurationRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ServiceConfigurationRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *Configuration) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: Configuration: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: Configuration: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Issuer", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Issuer = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ResponseTypesSupported", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ResponseTypesSupported = append(m.ResponseTypesSupported, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SubjectTypesSupported", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.SubjectTypesSupported = append(m.SubjectTypesSupported, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field IdTokenSigningAlgValuesSupported", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.IdTokenSigningAlgValuesSupported = append(m.IdTokenSigningAlgValuesSupported, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ClaimsSupported", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ClaimsSupported = append(m.ClaimsSupported, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field JwksUri", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.JwksUri = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipAuthnPrivate(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthAuthnPrivate
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func skipAuthnPrivate(dAtA []byte) (n int, err error) {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return 0, ErrIntOverflowAuthnPrivate
-			}
-			if iNdEx >= l {
-				return 0, io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		wireType := int(wire & 0x7)
-		switch wireType {
-		case 0:
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				iNdEx++
-				if dAtA[iNdEx-1] < 0x80 {
-					break
-				}
-			}
-			return iNdEx, nil
-		case 1:
-			iNdEx += 8
-			return iNdEx, nil
-		case 2:
-			var length int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowAuthnPrivate
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				length |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			iNdEx += length
-			if length < 0 {
-				return 0, ErrInvalidLengthAuthnPrivate
-			}
-			return iNdEx, nil
-		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowAuthnPrivate
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipAuthnPrivate(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
-		case 4:
-			return iNdEx, nil
-		case 5:
-			iNdEx += 4
-			return iNdEx, nil
-		default:
-			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
-		}
-	}
-	panic("unreachable")
-}
-
-var (
-	ErrInvalidLengthAuthnPrivate = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowAuthnPrivate   = fmt.Errorf("proto: integer overflow")
-)
-
-func init() { proto.RegisterFile("authn-private.proto", fileDescriptor_authn_private_341e906219654473) }
-
-var fileDescriptor_authn_private_341e906219654473 = []byte{
-	// 1253 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x57, 0xcf, 0x6f, 0x1b, 0xc5,
-	0x17, 0xcf, 0xd8, 0x8e, 0x9d, 0x3e, 0x3b, 0xf9, 0xa6, 0xe3, 0x38, 0xf5, 0x77, 0xdb, 0x6e, 0xcd,
-	0xf6, 0x57, 0x1a, 0x15, 0xbb, 0x32, 0x52, 0xd5, 0x86, 0x72, 0x70, 0xa0, 0x02, 0x5a, 0x28, 0x60,
-	0x27, 0x44, 0x8a, 0x84, 0xac, 0xed, 0xee, 0xb0, 0x99, 0x7a, 0xb3, 0xbb, 0xdd, 0x1f, 0x4e, 0x2d,
-	0x04, 0x42, 0x9c, 0x10, 0x5c, 0x10, 0xfc, 0x0f, 0xc0, 0x91, 0x23, 0x57, 0x6e, 0x1c, 0x2b, 0xc1,
-	0x81, 0x53, 0x20, 0x86, 0x03, 0xca, 0xa9, 0x47, 0x8e, 0x68, 0x67, 0x67, 0xed, 0xdd, 0xf5, 0x62,
-	0x37, 0x27, 0xef, 0xcc, 0xfb, 0x7c, 0x3e, 0xef, 0xcd, 0x9b, 0x37, 0x33, 0xcf, 0x50, 0x96, 0x3d,
-	0x77, 0xcf, 0x78, 0xd1, 0xb2, 0x69, 0x5f, 0x76, 0x49, 0xdd, 0xb2, 0x4d, 0xd7, 0xc4, 0x8b, 0x3d,
-	0x62, 0xcb, 0x2e, 0x35, 0xea, 0xcc, 0x28, 0xac, 0x68, 0xa6, 0x66, 0x32, 0x4b, 0xc3, 0xff, 0x0a,
-	0x40, 0xc2, 0x39, 0xcd, 0x34, 0x35, 0x9d, 0x34, 0x64, 0x8b, 0x36, 0x64, 0xc3, 0x30, 0x5d, 0xd9,
-	0xa5, 0xa6, 0xe1, 0x04, 0x56, 0xe9, 0x22, 0x9c, 0x7e, 0x9d, 0xb8, 0x2d, 0x45, 0x31, 0x3d, 0xc3,
-	0x6d, 0x93, 0xc7, 0x1e, 0x71, 0x5c, 0xbc, 0x04, 0x19, 0xaa, 0x56, 0x51, 0x0d, 0xad, 0x65, 0xdb,
-	0x19, 0xaa, 0x4a, 0x5f, 0x22, 0xc0, 0x51, 0x94, 0x63, 0x99, 0x86, 0x43, 0x92, 0x30, 0x2c, 0xc0,
-	0x82, 0xe7, 0x10, 0xdb, 0x90, 0xf7, 0x49, 0x35, 0x53, 0x43, 0x6b, 0xa7, 0xda, 0xa3, 0x31, 0x96,
-	0x20, 0xaf, 0x9b, 0x4a, 0x8f, 0xa8, 0xd5, 0x6c, 0x0d, 0xad, 0x2d, 0x6c, 0xc2, 0xf1, 0xe1, 0x05,
-	0x3e, 0xd3, 0xe6, 0xbf, 0xf8, 0x32, 0x14, 0x54, 0xa2, 0x13, 0x97, 0xa8, 0xd5, 0x1c, 0x03, 0x15,
-	0x8f, 0x0f, 0x2f, 0x84, 0x53, 0xed, 0xf0, 0x43, 0xda, 0x01, 0x61, 0x32, 0x98, 0xbb, 0x46, 0x9f,
-	0xe8, 0xa6, 0x45, 0xf0, 0x6d, 0xc8, 0xdb, 0xc4, 0xf1, 0x74, 0x97, 0x05, 0x56, 0x6c, 0xbe, 0x50,
-	0x8f, 0x25, 0xa9, 0x3e, 0x49, 0x6d, 0x73, 0x82, 0xb4, 0x09, 0x2b, 0xdb, 0x96, 0x2a, 0xbb, 0x64,
-	0x7a, 0x3a, 0xa6, 0xad, 0x53, 0x3a, 0x03, 0x95, 0x84, 0x46, 0xe0, 0x44, 0xba, 0x04, 0xf8, 0x2d,
-	0x53, 0xe9, 0xcd, 0xc8, 0x74, 0x05, 0xca, 0x31, 0x14, 0x27, 0x5f, 0x81, 0x95, 0x6d, 0x43, 0x9f,
-	0x4d, 0xf7, 0xbd, 0xc7, 0x71, 0x5c, 0xe0, 0x2a, 0x54, 0x5a, 0xb6, 0xb2, 0x47, 0xfb, 0x33, 0xd6,
-	0x26, 0x55, 0x61, 0x35, 0x09, 0xe4, 0x12, 0x04, 0xca, 0x6f, 0xee, 0x5b, 0xa6, 0x1d, 0x2d, 0x16,
-	0xc7, 0x8d, 0x25, 0x03, 0x25, 0x36, 0x5d, 0x80, 0x05, 0x4b, 0x76, 0x9c, 0x03, 0xd3, 0x56, 0xc3,
-	0x44, 0x85, 0x63, 0xbc, 0x1a, 0x2f, 0x88, 0xb0, 0x08, 0xa4, 0x06, 0x54, 0x12, 0x6e, 0x78, 0xb5,
-	0xad, 0x8e, 0x23, 0xdd, 0xcc, 0x1f, 0x1f, 0x5e, 0xc8, 0x50, 0x95, 0x45, 0xfc, 0x01, 0x9c, 0x4f,
-	0x25, 0x8c, 0x2a, 0xe2, 0x4e, 0xa2, 0x22, 0x2e, 0x25, 0x2a, 0x22, 0x95, 0x3d, 0x2a, 0x8a, 0xab,
-	0x50, 0xb9, 0xfb, 0xc4, 0xa2, 0x36, 0x79, 0x97, 0x47, 0x3e, 0x25, 0x73, 0x49, 0x20, 0xcf, 0xdc,
-	0x22, 0x14, 0xef, 0xed, 0xdc, 0xef, 0x70, 0xa2, 0x44, 0x21, 0x7b, 0x9f, 0x0c, 0xf0, 0x32, 0x64,
-	0x3d, 0x27, 0xcc, 0x99, 0xff, 0xe9, 0xcf, 0xc8, 0xba, 0xc6, 0x33, 0xe5, 0x7f, 0xfa, 0x33, 0x3d,
-	0x77, 0xc0, 0x32, 0x74, 0xaa, 0xed, 0x7f, 0xb2, 0x19, 0x1a, 0x9c, 0x0f, 0x7f, 0x86, 0xaa, 0xb8,
-	0x04, 0x88, 0x54, 0xe7, 0xd9, 0x18, 0x11, 0x7f, 0x64, 0x54, 0xf3, 0xc1, 0xc8, 0x90, 0x6e, 0x42,
-	0x29, 0xf0, 0xcc, 0x73, 0x78, 0x05, 0x72, 0x3d, 0x32, 0x70, 0xaa, 0xa8, 0x96, 0x5d, 0x2b, 0x36,
-	0x71, 0x22, 0x11, 0xf7, 0xc9, 0xa0, 0xcd, 0xec, 0x7e, 0x19, 0x76, 0x88, 0xdd, 0xa7, 0x0a, 0xe9,
-	0xb8, 0xb2, 0xeb, 0x84, 0x91, 0x7f, 0x9b, 0x83, 0x95, 0xf8, 0x3c, 0xd7, 0xbd, 0x07, 0x05, 0x59,
-	0x71, 0x69, 0x9f, 0x38, 0x3c, 0xc7, 0x37, 0x12, 0xd2, 0x69, 0xac, 0x7a, 0x40, 0xe9, 0x3a, 0x6c,
-	0x32, 0x14, 0x10, 0x7e, 0xca, 0x42, 0x29, 0x6a, 0xc1, 0xef, 0xc1, 0xbc, 0x2a, 0x53, 0x7d, 0xc0,
-	0xa3, 0x7e, 0xf9, 0xa4, 0xd2, 0xf5, 0xd7, 0x7c, 0xf6, 0x5d, 0xc3, 0xb5, 0x07, 0xed, 0x40, 0x09,
-	0x6f, 0x41, 0xfe, 0x80, 0x90, 0x9e, 0x3e, 0xa8, 0x66, 0x98, 0xe6, 0x9d, 0x13, 0x6b, 0xee, 0x30,
-	0x7a, 0x20, 0xca, 0xb5, 0xf0, 0x0e, 0x14, 0xf6, 0x4d, 0xc3, 0xdd, 0xd3, 0xfd, 0x1d, 0xf3, 0x65,
-	0x5f, 0x39, 0xb1, 0xec, 0xdb, 0x01, 0x3f, 0xd0, 0x0d, 0xd5, 0x84, 0x5b, 0x00, 0xe3, 0x35, 0xb0,
-	0x12, 0x20, 0x83, 0xb0, 0x70, 0x7a, 0x64, 0x80, 0x57, 0x60, 0xbe, 0x2f, 0xeb, 0x5e, 0x70, 0x1b,
-	0x65, 0xdb, 0xc1, 0x60, 0x23, 0x73, 0x0b, 0x09, 0xb7, 0xa1, 0x18, 0x89, 0xf4, 0x44, 0xd4, 0x0d,
-	0x28, 0x45, 0xa3, 0x39, 0x09, 0x57, 0x3a, 0x0f, 0x67, 0xf9, 0x5a, 0x5f, 0x35, 0x8d, 0x0f, 0xa9,
-	0xe6, 0xd9, 0xec, 0xd1, 0x09, 0xeb, 0xe8, 0x87, 0x0c, 0x2c, 0xc6, 0x0c, 0xfe, 0x6d, 0x40, 0x1d,
-	0xc7, 0x23, 0x36, 0xd7, 0xe7, 0x23, 0x7c, 0x0b, 0xaa, 0x36, 0x4f, 0x54, 0xd7, 0x1d, 0x58, 0xc4,
-	0xe9, 0x3a, 0x9e, 0xe5, 0x1f, 0x57, 0xa2, 0xb2, 0xad, 0x3b, 0xd5, 0x5e, 0x0d, 0xed, 0x5b, 0xbe,
-	0xb9, 0x13, 0x5a, 0xf1, 0x4d, 0x38, 0xe3, 0x78, 0x0f, 0x1f, 0x11, 0xc5, 0x9d, 0x20, 0x66, 0x19,
-	0xb1, 0xc2, 0xcd, 0x09, 0xde, 0x3b, 0x70, 0x99, 0xaa, 0x5d, 0xd7, 0xec, 0x11, 0xa3, 0xeb, 0x50,
-	0xcd, 0xa0, 0x86, 0xd6, 0x95, 0x75, 0xad, 0xcb, 0x16, 0x17, 0x55, 0xc9, 0x31, 0x95, 0x1a, 0x55,
-	0xb7, 0x7c, 0x6c, 0x27, 0x80, 0xb6, 0x74, 0xed, 0x7d, 0x06, 0x1c, 0x0b, 0x5e, 0x83, 0x65, 0x45,
-	0x97, 0xe9, 0x7e, 0x94, 0x3b, 0xcf, 0xb8, 0xff, 0x0b, 0xe6, 0xc7, 0xd0, 0xff, 0xc3, 0xc2, 0xa3,
-	0x83, 0x9e, 0xd3, 0xf5, 0x6c, 0xca, 0xcf, 0x70, 0xc1, 0x1f, 0x6f, 0xdb, 0xb4, 0xf9, 0x3b, 0x82,
-	0xf2, 0xb6, 0xe1, 0x10, 0xc5, 0xb3, 0x89, 0xda, 0x52, 0xf7, 0xa9, 0xd1, 0xf2, 0xdc, 0xbd, 0x07,
-	0xf8, 0x01, 0xe4, 0xfc, 0x13, 0x8e, 0x85, 0x44, 0xa9, 0x45, 0x2e, 0x1c, 0xe1, 0x6c, 0xaa, 0x2d,
-	0xbc, 0x9c, 0x3e, 0xfb, 0xe5, 0xaf, 0x6f, 0x32, 0x05, 0x3c, 0xdf, 0xf0, 0x5d, 0xe1, 0x27, 0xa3,
-	0x13, 0x1e, 0xdf, 0xa0, 0xf5, 0xf4, 0x52, 0x4e, 0xdb, 0x5e, 0xe1, 0x5c, 0x02, 0x1b, 0x03, 0x49,
-	0xab, 0xcc, 0xe1, 0x32, 0x5e, 0x6a, 0x28, 0xd1, 0xf9, 0xe6, 0xaf, 0x05, 0x38, 0xdd, 0x99, 0x58,
-	0xdf, 0x27, 0xb0, 0x18, 0xbb, 0x9f, 0xb1, 0x34, 0xfd, 0xf6, 0xf6, 0xdf, 0x24, 0xe1, 0xfa, 0xf3,
-	0xdc, 0xf0, 0xe1, 0xfb, 0x20, 0x9d, 0x65, 0x01, 0x55, 0xa4, 0xe5, 0x86, 0x1c, 0x20, 0x9c, 0x06,
-	0x65, 0x84, 0x0d, 0xb4, 0x8e, 0x1f, 0x03, 0x8c, 0x3b, 0x06, 0x5c, 0x9b, 0xd2, 0x4c, 0x04, 0x6b,
-	0xbf, 0x36, 0xb3, 0xdd, 0x18, 0xf9, 0x1d, 0x27, 0x62, 0xe4, 0xf7, 0x23, 0xaa, 0x7e, 0x8c, 0xbf,
-	0x40, 0xb0, 0x18, 0xeb, 0x21, 0xf0, 0xc5, 0x84, 0x68, 0x5a, 0x97, 0x22, 0x5c, 0x9a, 0x0e, 0xe2,
-	0xdb, 0x5d, 0x67, 0x4e, 0xd7, 0x84, 0x84, 0xd3, 0x0d, 0xb4, 0xbe, 0x5b, 0x6e, 0x4e, 0x4e, 0xe2,
-	0xcf, 0x11, 0x14, 0x23, 0x1d, 0x09, 0x4e, 0xb6, 0x53, 0x93, 0x3d, 0x8d, 0x20, 0x4d, 0x83, 0xf0,
-	0x30, 0x9a, 0x2c, 0x8c, 0xeb, 0x42, 0x39, 0xee, 0xb1, 0xe1, 0x37, 0x01, 0xbb, 0x95, 0x66, 0xda,
-	0x34, 0xfe, 0xda, 0xcf, 0x4b, 0xb4, 0xbb, 0x99, 0xcc, 0x4b, 0x4a, 0x8f, 0x34, 0x99, 0x97, 0xd4,
-	0x06, 0xe9, 0x26, 0x0b, 0xe8, 0x86, 0x50, 0x49, 0x78, 0xf6, 0x18, 0x7a, 0xf7, 0x4c, 0x33, 0xdd,
-	0x80, 0x3d, 0x58, 0x8a, 0xf7, 0x4b, 0x38, 0xe9, 0x2f, 0xb5, 0xef, 0x12, 0x2e, 0xcf, 0x40, 0xf1,
-	0xb0, 0x78, 0x8d, 0xac, 0x27, 0x6b, 0xe4, 0x3b, 0x04, 0x4b, 0xf1, 0x6e, 0x63, 0xc2, 0x6f, 0x6a,
-	0xd7, 0x32, 0xe1, 0xf7, 0x3f, 0x5a, 0x96, 0x37, 0x98, 0xdf, 0x4d, 0x41, 0x4c, 0xac, 0x9a, 0x30,
-	0x78, 0x37, 0xec, 0xe2, 0x76, 0x6b, 0xcd, 0x19, 0x88, 0xe6, 0x01, 0x94, 0xd8, 0x49, 0x6e, 0x05,
-	0xcf, 0x3b, 0xd6, 0xa0, 0x14, 0x7d, 0x06, 0x27, 0xce, 0x73, 0x4a, 0xdf, 0x21, 0x5c, 0x7c, 0x8e,
-	0x77, 0x54, 0x5a, 0x62, 0x21, 0x2f, 0xe0, 0x7c, 0x83, 0x3d, 0xa5, 0x9b, 0x1b, 0x4f, 0x8f, 0xc4,
-	0xb9, 0xdf, 0x8e, 0xc4, 0xb9, 0x67, 0x47, 0x22, 0xfa, 0xe7, 0x48, 0x44, 0x9f, 0x0e, 0x45, 0xf4,
-	0xfd, 0x50, 0x44, 0x3f, 0x0e, 0x45, 0xf4, 0xf3, 0x50, 0x44, 0x4f, 0x87, 0x22, 0xfa, 0x63, 0x28,
-	0xa2, 0xbf, 0x87, 0xe2, 0xdc, 0xb3, 0xa1, 0x88, 0xbe, 0xfa, 0x53, 0x9c, 0xdb, 0xcd, 0x69, 0xb6,
-	0xa5, 0x3c, 0xcc, 0xb3, 0x3f, 0x47, 0x2f, 0xfd, 0x1b, 0x00, 0x00, 0xff, 0xff, 0xaa, 0xce, 0x21,
-	0x62, 0x76, 0x0d, 0x00, 0x00,
 }

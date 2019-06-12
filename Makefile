@@ -6,6 +6,30 @@ MAIN := main.go routing.go
 GOGOPROTO := $(shell go list -f '{{ .Dir }}' -m github.com/gogo/protobuf)
 GOGOGOOGLE := $(shell go list -f '{{ .Dir }}' -m github.com/gogo/googleapis)
 
+# https://github.com/TheThingsIndustries/docker-protobuf
+# versions of binaries in image:
+# ALPINE_VERSION ?= 3.8
+# GO_VERSION ?= 1.11.10
+# GRPC_GATEWAY_VERSION ?= 1.9.0
+# GRPC_JAVA_VERSION ?= 1.20.0
+# GRPC_RUST_VERSION ?= 0.6.1
+# GRPC_SWIFT_VERSION ?= 0.9.0
+# GRPC_VERSION ?= 1.19.1
+# GRPC_WEB_VERSION ?= 1.0.4
+# PROTOBUF_C_VERSION ?= 1.3.1
+# PROTOC_GEN_DOC_VERSION ?= 1.3.0
+# PROTOC_GEN_FIELDMASK_VERSION ?= 0.1.2
+# PROTOC_GEN_GO_VERSION ?= 1.3.1
+# PROTOC_GEN_GOGO_VERSION ?= 1.2.1
+# PROTOC_GEN_GOGOTTN_VERSION ?= 3.0.12
+# PROTOC_GEN_LINT_VERSION ?= 0.2.1
+# PROTOC_GEN_VALIDATE_VERSION ?= 0.0.14
+# RUST_PROTOBUF_VERSION ?= 2.6.0
+# RUST_VERSION ?= 1.34.2
+# SWIFT_VERSION ?= 5.0.1
+# UPX_VERSION ?= 3.95
+PROTOC := docker run --user `id -u` --rm --mount type=bind,src=$(PWD)/grpc,dst=$(PWD)/grpc -w $(PWD) thethingsindustries/protoc:3.1.5
+
 .PHONY: clean
 clean:
 	rm -rf dist
@@ -66,7 +90,7 @@ test: init
 	TEST_REDIS_URL=redis://127.0.0.1:8701/12 \
 	  TEST_MYSQL_URL=mysql://root@127.0.0.1:8702/authnservertest \
 	  TEST_POSTGRES_URL=postgres://postgres@127.0.0.1/postgres?sslmode=disable \
-	  go test -race ./...
+	  go test -v -race ./...
 
 # Run CI tests
 .PHONY: test-ci
@@ -106,7 +130,7 @@ release: test dist
 
 .PHONY: generate-grpc
 generate-grpc:
-	protoc -I=./grpc -I=$(GOGOPROTO) -I=$(GOGOGOOGLE) --gogoslick_out=\
+	$(PROTOC) -I=./grpc --gogo_out=\
 	Mgoogle/api/annotations.proto=github.com/gogo/googleapis/google/api,\
 	Mgoogle/protobuf/any.proto=github.com/gogo/protobuf/types,\
 	Mgoogle/protobuf/duration.proto=github.com/gogo/protobuf/types,\
