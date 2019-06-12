@@ -3,8 +3,6 @@ PROJECT := authn-server
 NAME := $(ORG)/$(PROJECT)
 VERSION := 1.5.0
 MAIN := main.go routing.go
-GOGOPROTO := $(shell go list -f '{{ .Dir }}' -m github.com/gogo/protobuf)
-GOGOGOOGLE := $(shell go list -f '{{ .Dir }}' -m github.com/gogo/googleapis)
 
 # https://github.com/TheThingsIndustries/docker-protobuf
 # versions of binaries in image:
