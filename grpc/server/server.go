@@ -12,6 +12,7 @@ import (
 	"net"
 
 	"github.com/gorilla/mux"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/grpc/internal/errors"
 	"github.com/keratin/authn-server/grpc/private"
@@ -71,6 +72,9 @@ func runPublicService(ctx context.Context, app *app.App, grpcListener net.Listen
 }
 
 func Server(ctx context.Context, app *app.App) {
+	// To record handling time of the RPCs
+	grpc_prometheus.EnableHandlingTimeHistogram()
+
 	if app.Config.PublicPort != 0 {
 		tcpl, err := net.Listen("tcp", fmt.Sprintf(":%d", app.Config.PublicPort))
 		if err != nil {
