@@ -13,6 +13,30 @@ An AuthN account is a login identity: username/password, plus optional connected
   code your team finds.
 * **Architecture:** Your application may be small now, but when it grows up you want to be ready.
 
+## Integration Diagram
+
+<img src="assets/host-authn-client.svg" alt="Host and AuthN both communicate with Client">
+
+#### AuthN Server
+
+* Owns all accounts (credentials) data.
+* Communicates directly with client to reduce host app's exposure to password data and session tokens in transit.
+* Relies on SQL database (PostgreSQL, MySQL, SQLite) for long-term accounts and credentials data.
+* Relies on key/value database (Redis) for sessions, metrics, and ephemeral storage.
+
+#### Host App
+
+* Owns all user data (not credentials). Every user has one AuthN account ID.
+* Extracts AuthN accountID from access token to identify user after verifying token using public key cryptography.
+* Sends emails like password resets when prompted by AuthN.
+* Integrates admin functionality like account locking and archival against private AuthN endpoints.
+
+#### Client
+
+* Only sends password data to AuthN, in exchange for a refresh token and an access token.
+* Only sends access token to host app, limiting host app's exposure and responsibilities.
+* Periodically refreshes access token from AuthN server.
+
 ## Users and Accounts
 
 AuthN manages accounts. When an account logs in, your application receives a token containing the
@@ -42,12 +66,3 @@ class ApplicationController
   end
 end
 ```
-
-## Requirements
-
-* A SQL database for long-term accounts and credentials data. (currently: PostgreSQL, MySQL, SQLite)
-* A key/value database for sessions, metrics, and ephemeral data. (currently: Redis)
-* A host application responsible for user data, user permissions, and email delivery. (currently:
-  Go, Ruby)
-* A client application responsible for user input and refreshing access tokens. (currently:
-  JavaScript)
