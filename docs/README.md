@@ -1,6 +1,6 @@
 # Introduction
 
-AuthN is an accounts microservice. It's what you get when you treat passwords like credit cards.
+AuthN is an accounts microservice. It removes passwords and authentication security from your app.
 
 An AuthN account is a login identity: username/password, plus optional connected OAuth identities.
 
@@ -34,14 +34,20 @@ class ApplicationController
     @current_user ||= current_account_id && User.find_by_account_id(current_account_id)
   end
 
-  # if your authn-js client is configured to use localstorage then `cookies[:authn]` may
-  # need to be replaced by something like `request.headers['Authorization']`
   def current_account_id
+    # if your client sends a cookie named "authn" containing the access token
     Keratin::AuthN.subject_from(cookies[:authn])
-  end
-
-  def bearer_token
+    # OR if your client uses localStorage and sends an Authorization header
     (request.headers['Authorization'] || '').sub(/^Bearer /, '')
   end
 end
 ```
+
+## Requirements
+
+* A SQL database for long-term accounts and credentials data. (currently: PostgreSQL, MySQL, SQLite)
+* A key/value database for sessions, metrics, and ephemeral data. (currently: Redis)
+* A host application responsible for user data, user permissions, and email delivery. (currently:
+  Go, Ruby)
+* A client application responsible for user input and refreshing access tokens. (currently:
+  JavaScript)
