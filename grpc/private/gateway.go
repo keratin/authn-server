@@ -49,9 +49,11 @@ func RunPrivateGateway(ctx context.Context, app *app.App, r *mux.Router, conn *g
 		panic(err)
 	}
 
-	err = authnpb.RegisterAuthNActivesHandler(ctx, gmux, conn)
-	if err != nil {
-		panic(err)
+	if app.Actives != nil {
+		err := authnpb.RegisterAuthNActivesHandler(ctx, gmux, conn)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	err = authnpb.RegisterUnsecuredAdminAuthNHandler(ctx, gmux, conn)
