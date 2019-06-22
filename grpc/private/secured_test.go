@@ -20,7 +20,6 @@ import (
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/status"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -34,7 +33,6 @@ func securedServerSetup(t *testing.T, app *app.App) (authnpb.SecuredAdminAuthNCl
 
 	srvCtx := context.Background()
 	srv := grpc.NewServer(
-		grpc.Creds(credentials.NewServerTLSFromCert(&grpctest.Cert)),
 		grpc_middleware.WithUnaryServerChain(
 			grpc_ctxtags.UnaryServerInterceptor(),
 			grpc_logrus.UnaryServerInterceptor(logrus.NewEntry(logrus.StandardLogger())),
@@ -59,11 +57,11 @@ func securedServerSetup(t *testing.T, app *app.App) (authnpb.SecuredAdminAuthNCl
 
 	clientConn, err := grpc.Dial(
 		conn.Addr().String(),
-		grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(grpctest.CertPool, "")),
 		grpc.WithPerRPCCredentials(basicAuth{
 			username: app.Config.AuthUsername,
 			password: app.Config.AuthPassword,
 		}),
+		grpc.WithInsecure(),
 	)
 	if err != nil {
 		t.Fatalf("error dialing: %s", err)

@@ -5,8 +5,6 @@ import (
 	"net"
 	"testing"
 
-	"google.golang.org/grpc/credentials"
-
 	"github.com/keratin/authn-server/app"
 	authnpb "github.com/keratin/authn-server/grpc"
 	grpctest "github.com/keratin/authn-server/grpc/test"
@@ -38,7 +36,7 @@ func (b basicAuth) GetRequestMetadata(ctx context.Context, in ...string) (map[st
 }
 
 func (basicAuth) RequireTransportSecurity() bool {
-	return true
+	return false
 }
 
 func statServerSetup(t *testing.T, app *app.App) (authnpb.AuthNActivesClient, func()) {
@@ -47,7 +45,6 @@ func statServerSetup(t *testing.T, app *app.App) (authnpb.AuthNActivesClient, fu
 
 	srvCtx := context.Background()
 	srv := grpc.NewServer(
-		grpc.Creds(credentials.NewServerTLSFromCert(&grpctest.Cert)),
 		grpc_middleware.WithUnaryServerChain(
 			grpc_ctxtags.UnaryServerInterceptor(),
 			grpc_logrus.UnaryServerInterceptor(logrus.NewEntry(logrus.StandardLogger())),
@@ -72,11 +69,11 @@ func statServerSetup(t *testing.T, app *app.App) (authnpb.AuthNActivesClient, fu
 
 	clientConn, err := grpc.Dial(
 		conn.Addr().String(),
-		grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(grpctest.CertPool, "")),
 		grpc.WithPerRPCCredentials(basicAuth{
 			username: app.Config.AuthUsername,
 			password: app.Config.AuthPassword,
 		}),
+		grpc.WithInsecure(),
 	)
 	if err != nil {
 		t.Fatalf("error dialing: %s", err)
