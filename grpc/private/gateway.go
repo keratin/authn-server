@@ -1,7 +1,6 @@
 package private
 
 import (
-	"bytes"
 	"net"
 	"net/http"
 
@@ -13,7 +12,6 @@ import (
 	authnpb "github.com/keratin/authn-server/grpc"
 	"github.com/keratin/authn-server/grpc/internal/gateway"
 	"github.com/keratin/authn-server/grpc/public"
-	"github.com/keratin/authn-server/server/views"
 	"golang.org/x/net/context"
 	grpc "google.golang.org/grpc"
 )
@@ -28,18 +26,6 @@ func RunPrivateGateway(ctx context.Context, app *app.App, r *mux.Router, conn *g
 		runtime.WithMarshalerOption(runtime.MIMEWildcard, gateway.JSONMarshaler()),
 		runtime.WithMetadata(gateway.CookieAnnotator(app)),
 	)
-
-	r.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		if req.URL.Path == "/" {
-			var buf bytes.Buffer
-			views.Root(&buf)
-
-			w.Header().Set("Content-Type", "text/html")
-			w.WriteHeader(http.StatusOK)
-			w.Write(buf.Bytes())
-			return
-		}
-	})
 
 	public.RegisterPublicGatewayHandlers(ctx, app, r, gmux, conn)
 	public.RegisterRoutes(r, app, gmux)

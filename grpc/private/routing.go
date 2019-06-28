@@ -7,6 +7,7 @@ import (
 	"github.com/keratin/authn-server/grpc/internal/gateway"
 	"github.com/keratin/authn-server/grpc/public"
 	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/server/handlers"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
@@ -37,6 +38,9 @@ func metaRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 	}
 
 	routes = append(routes,
+		route.Get("/").
+			SecuredWith(route.Unsecured()).
+			Handle(handlers.GetRoot(app)),
 		route.Get("/jwks").
 			SecuredWith(route.Unsecured()).
 			Handle(gateway.TrimSubpath(app, gmux)),
