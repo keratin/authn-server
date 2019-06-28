@@ -546,7 +546,7 @@ func TestImportAccount(t *testing.T) {
 		{
 			name: "importing someone",
 			testFunc: func(t *testing.T) {
-				req := &authnpb.ImportAccountRequst{
+				req := &authnpb.ImportAccountRequest{
 					Username: "someone@app.com",
 					Password: "secret",
 				}
@@ -561,7 +561,7 @@ func TestImportAccount(t *testing.T) {
 		{
 			name: "importing a locked user",
 			testFunc: func(t *testing.T) {
-				req := &authnpb.ImportAccountRequst{
+				req := &authnpb.ImportAccountRequest{
 					Username: "locked@app.com",
 					Password: "secret",
 					Locked:   true,
@@ -579,7 +579,7 @@ func TestImportAccount(t *testing.T) {
 		{
 			name: "importing an unlocked user",
 			testFunc: func(t *testing.T) {
-				req := &authnpb.ImportAccountRequst{
+				req := &authnpb.ImportAccountRequest{
 					Username: "unlocked@app.com",
 					Password: "secret",
 					Locked:   false,
@@ -597,7 +597,7 @@ func TestImportAccount(t *testing.T) {
 		{
 			name: "importing an invalid user",
 			testFunc: func(t *testing.T) {
-				req := &authnpb.ImportAccountRequst{
+				req := &authnpb.ImportAccountRequest{
 					Username: "unlocked@app.com",
 					Password: "",
 				}

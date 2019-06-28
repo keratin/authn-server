@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-const wwwAuthneticate = `WWW-Authenticate`
+const wwwAuthenticate = `WWW-Authenticate`
 
 func ToFieldErrors(errs *errdetails.BadRequest) services.FieldErrors {
 	fes := services.FieldErrors{}
@@ -43,13 +43,13 @@ func ToStatusErrorWithDetails(fes services.FieldErrors, errCode codes.Code) *sta
 func CustomHTTPError(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, req *http.Request, err error) {
 
 	md, _ := runtime.ServerMetadataFromContext(ctx)
-	authen := md.HeaderMD.Get(wwwAuthneticate)
+	authen := md.HeaderMD.Get(wwwAuthenticate)
 
 	statusError := status.Convert(err)
 
 	// Basic-Auth failure
 	if statusError.Code() == codes.Unauthenticated && len(authen) > 0 {
-		w.Header().Set(wwwAuthneticate, `Basic realm="Private AuthN Realm"`)
+		w.Header().Set(wwwAuthenticate, `Basic realm="Private AuthN Realm"`)
 		w.WriteHeader(401)
 		w.Write([]byte("Unauthorized.\n"))
 		return

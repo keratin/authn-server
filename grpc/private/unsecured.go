@@ -12,8 +12,8 @@ type unsecuredServer struct {
 	app *app.App
 }
 
-func (ss unsecuredServer) ServiceConfiguration(context.Context, *authnpb.ServiceConfigurationRequest) (*authnpb.Configuration, error) {
-	return &authnpb.Configuration{
+func (ss unsecuredServer) ServiceConfiguration(context.Context, *authnpb.ServiceConfigurationRequest) (*authnpb.ServiceConfigurationResponse, error) {
+	return &authnpb.ServiceConfigurationResponse{
 		Issuer:                           ss.app.Config.AuthNURL.String(),
 		ResponseTypesSupported:           []string{"id_token"},
 		SubjectTypesSupported:            []string{"public"},

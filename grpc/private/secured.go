@@ -95,7 +95,7 @@ func (ss securedServer) ArchiveAccount(ctx context.Context, req *authnpb.Archive
 	return &authnpb.ArchiveAccountResponse{}, nil
 }
 
-func (ss securedServer) ImportAccount(ctx context.Context, req *authnpb.ImportAccountRequst) (*authnpb.ImportAccountResponseEnvelope, error) {
+func (ss securedServer) ImportAccount(ctx context.Context, req *authnpb.ImportAccountRequest) (*authnpb.ImportAccountResponseEnvelope, error) {
 	account, err := services.AccountImporter(
 		ss.app.AccountStore,
 		ss.app.Config,

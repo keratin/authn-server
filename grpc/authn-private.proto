@@ -45,7 +45,7 @@ message UnlockAccountResponse {}
 message ArchiveAccountRequest { int64 id = 1; }
 message ArchiveAccountResponse {}
 
-message ImportAccountRequst {
+message ImportAccountRequest {
   string username = 1;
   string password = 2;
   bool locked = 3;
@@ -70,16 +70,16 @@ message JWKSResponse { repeated Key keys = 1; }
 
 message ServiceStatsRequest {}
 message ServiceStatsResponse {
-  message active_stats {
+  message ActiveStats {
     map<string, int64> daily = 1;
     map<string, int64> weekly = 2;
     map<string, int64> monthly = 3;
   }
-  active_stats actives = 1;
+  ActiveStats actives = 1;
 }
 
 message ServiceConfigurationRequest {}
-message Configuration {
+message ServiceConfigurationResponse {
   string issuer = 1;
   repeated string response_types_supported = 2;
   repeated string subject_types_supported = 3;
@@ -96,7 +96,7 @@ service UnsecuredAdminAuthN {
   }
 
   rpc ServiceConfiguration(ServiceConfigurationRequest)
-      returns (Configuration) {
+      returns (ServiceConfigurationResponse) {
     option (google.api.http) = {
       get : "/configuration"
     };
@@ -104,7 +104,7 @@ service UnsecuredAdminAuthN {
 }
 
 service SecuredAdminAuthN {
-  rpc ImportAccount(ImportAccountRequst)
+  rpc ImportAccount(ImportAccountRequest)
       returns (ImportAccountResponseEnvelope) {
     option (google.api.http) = {
       post : "/accounts/import"

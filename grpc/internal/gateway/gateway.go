@@ -25,7 +25,7 @@ func JSONMarshaler() runtime.Marshaler {
 	return new(customJSONMarshaler)
 }
 
-// StatusCodeMutator changes the HTTP Repsonse status code to the desired mapping. The default mapping
+// StatusCodeMutator changes the HTTP Response status code to the desired mapping. The default mapping
 // by gRPC-Gateway doesn't have some of the desired responses (e.g. 201), which is why this function is needed.
 func StatusCodeMutator(ctx context.Context, response http.ResponseWriter, m proto.Message) error {
 	switch m.(type) {

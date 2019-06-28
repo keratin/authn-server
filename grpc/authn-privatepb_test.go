@@ -364,15 +364,15 @@ func TestArchiveAccountResponseProto(t *testing.T) {
 	}
 }
 
-func TestImportAccountRequstProto(t *testing.T) {
+func TestImportAccountRequestProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedImportAccountRequst(popr, false)
+	p := NewPopulatedImportAccountRequest(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ImportAccountRequst{}
+	msg := &ImportAccountRequest{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -674,15 +674,15 @@ func TestServiceStatsResponseProto(t *testing.T) {
 	}
 }
 
-func TestServiceStatsResponseActiveStatsProto(t *testing.T) {
+func TestServiceStatsResponse_ActiveStatsProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedServiceStatsResponseActiveStats(popr, false)
+	p := NewPopulatedServiceStatsResponse_ActiveStats(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ServiceStatsResponseActiveStats{}
+	msg := &ServiceStatsResponse_ActiveStats{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -736,15 +736,15 @@ func TestServiceConfigurationRequestProto(t *testing.T) {
 	}
 }
 
-func TestConfigurationProto(t *testing.T) {
+func TestServiceConfigurationResponseProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedConfiguration(popr, false)
+	p := NewPopulatedServiceConfigurationResponse(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &Configuration{}
+	msg := &ServiceConfigurationResponse{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -965,16 +965,16 @@ func TestArchiveAccountResponseJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestImportAccountRequstJSON(t *testing.T) {
+func TestImportAccountRequestJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedImportAccountRequst(popr, true)
+	p := NewPopulatedImportAccountRequest(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ImportAccountRequst{}
+	msg := &ImportAccountRequest{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -1145,16 +1145,16 @@ func TestServiceStatsResponseJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestServiceStatsResponseActiveStatsJSON(t *testing.T) {
+func TestServiceStatsResponse_ActiveStatsJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedServiceStatsResponseActiveStats(popr, true)
+	p := NewPopulatedServiceStatsResponse_ActiveStats(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &ServiceStatsResponseActiveStats{}
+	msg := &ServiceStatsResponse_ActiveStats{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -1181,16 +1181,16 @@ func TestServiceConfigurationRequestJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestConfigurationJSON(t *testing.T) {
+func TestServiceConfigurationResponseJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedConfiguration(popr, true)
+	p := NewPopulatedServiceConfigurationResponse(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &Configuration{}
+	msg := &ServiceConfigurationResponse{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -1507,12 +1507,12 @@ func TestArchiveAccountResponseProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestImportAccountRequstProtoText(t *testing.T) {
+func TestImportAccountRequestProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedImportAccountRequst(popr, true)
+	p := NewPopulatedImportAccountRequest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &ImportAccountRequst{}
+	msg := &ImportAccountRequest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1521,12 +1521,12 @@ func TestImportAccountRequstProtoText(t *testing.T) {
 	}
 }
 
-func TestImportAccountRequstProtoCompactText(t *testing.T) {
+func TestImportAccountRequestProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedImportAccountRequst(popr, true)
+	p := NewPopulatedImportAccountRequest(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &ImportAccountRequst{}
+	msg := &ImportAccountRequest{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1787,12 +1787,12 @@ func TestServiceStatsResponseProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestServiceStatsResponseActiveStatsProtoText(t *testing.T) {
+func TestServiceStatsResponse_ActiveStatsProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedServiceStatsResponseActiveStats(popr, true)
+	p := NewPopulatedServiceStatsResponse_ActiveStats(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &ServiceStatsResponseActiveStats{}
+	msg := &ServiceStatsResponse_ActiveStats{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1801,12 +1801,12 @@ func TestServiceStatsResponseActiveStatsProtoText(t *testing.T) {
 	}
 }
 
-func TestServiceStatsResponseActiveStatsProtoCompactText(t *testing.T) {
+func TestServiceStatsResponse_ActiveStatsProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedServiceStatsResponseActiveStats(popr, true)
+	p := NewPopulatedServiceStatsResponse_ActiveStats(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &ServiceStatsResponseActiveStats{}
+	msg := &ServiceStatsResponse_ActiveStats{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1843,12 +1843,12 @@ func TestServiceConfigurationRequestProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestConfigurationProtoText(t *testing.T) {
+func TestServiceConfigurationResponseProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedConfiguration(popr, true)
+	p := NewPopulatedServiceConfigurationResponse(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &Configuration{}
+	msg := &ServiceConfigurationResponse{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1857,12 +1857,12 @@ func TestConfigurationProtoText(t *testing.T) {
 	}
 }
 
-func TestConfigurationProtoCompactText(t *testing.T) {
+func TestServiceConfigurationResponseProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedConfiguration(popr, true)
+	p := NewPopulatedServiceConfigurationResponse(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &Configuration{}
+	msg := &ServiceConfigurationResponse{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1970,9 +1970,9 @@ func TestArchiveAccountResponseStringer(t *testing.T) {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestImportAccountRequstStringer(t *testing.T) {
+func TestImportAccountRequestStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedImportAccountRequst(popr, false)
+	p := NewPopulatedImportAccountRequest(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
@@ -2060,9 +2060,9 @@ func TestServiceStatsResponseStringer(t *testing.T) {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestServiceStatsResponseActiveStatsStringer(t *testing.T) {
+func TestServiceStatsResponse_ActiveStatsStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedServiceStatsResponseActiveStats(popr, false)
+	p := NewPopulatedServiceStatsResponse_ActiveStats(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
@@ -2078,9 +2078,9 @@ func TestServiceConfigurationRequestStringer(t *testing.T) {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestConfigurationStringer(t *testing.T) {
+func TestServiceConfigurationResponseStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedConfiguration(popr, false)
+	p := NewPopulatedServiceConfigurationResponse(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {

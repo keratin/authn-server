@@ -47,7 +47,7 @@ func request_UnsecuredAdminAuthN_ServiceConfiguration_0(ctx context.Context, mar
 }
 
 func request_SecuredAdminAuthN_ImportAccount_0(ctx context.Context, marshaler runtime.Marshaler, client SecuredAdminAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq ImportAccountRequst
+	var protoReq ImportAccountRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)

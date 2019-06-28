@@ -35,7 +35,7 @@ func (ss statsServer) ServiceStats(ctx context.Context, req *authnpb.ServiceStat
 	}
 
 	return &authnpb.ServiceStatsResponse{
-		Actives: &authnpb.ServiceStatsResponseActiveStats{
+		Actives: &authnpb.ServiceStatsResponse_ActiveStats{
 			Daily:   toMapStringInt64(daily),
 			Weekly:  toMapStringInt64(weekly),
 			Monthly: toMapStringInt64(monthly),
