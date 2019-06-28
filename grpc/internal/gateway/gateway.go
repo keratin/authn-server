@@ -70,13 +70,18 @@ func CookieAnnotator(app *app.App) func(ctx context.Context, req *http.Request) 
 }
 
 // FormWrapper takes form values from application/x-www-form-urlencoded and converts it to JSON
-// Workaround from: https://github.com/grpc-ecosystem/grpc-gateway/issues/7#issuecomment-358569373
+// Workaround adapted from: https://github.com/grpc-ecosystem/grpc-gateway/issues/7#issuecomment-358569373
 func FormWrapper(mux http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.ToLower(strings.Split(r.Header.Get("Content-Type"), ";")[0]) == "application/x-www-form-urlencoded" {
 			if err := r.ParseForm(); err != nil {
+				// deliberately omit including the form from
+				// logging to avoid leaking sensetive data
+				log.WithError(err).WithFields(log.Fields{
+					"url":    r.URL,
+					"method": r.Method,
+				}).Warn("error parsing form")
 				http.Error(w, err.Error(), http.StatusBadRequest)
-				log.Println("Bad form request", err.Error())
 				return
 			}
 			jsonMap := make(map[string]interface{}, len(r.Form))
@@ -87,7 +92,14 @@ func FormWrapper(mux http.Handler) http.Handler {
 			}
 			jsonBody, err := json.Marshal(jsonMap)
 			if err != nil {
+				// deliberately omit including the form from
+				// logging to avoid leaking sensetive data
+				log.WithError(err).WithFields(log.Fields{
+					"url":    r.URL,
+					"method": r.Method,
+				}).Warn("error encoding form into JSON")
 				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
 			}
 			r.Body = ioutil.NopCloser(bytes.NewReader(jsonBody))
 			r.ContentLength = int64(len(jsonBody))
