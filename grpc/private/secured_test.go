@@ -103,7 +103,7 @@ func TestGetAccount(t *testing.T) {
 				}
 				assert.Equal(t, s.Code(), codes.NotFound)
 
-				expectedErr := errors.FieldErrors{
+				expectedErr := services.FieldErrors{
 					{
 						Field:   "account",
 						Message: services.ErrNotFound,
@@ -173,8 +173,8 @@ func TestUpdateAccount(t *testing.T) {
 				}
 				assert.Equal(t, s.Code(), codes.NotFound)
 
-				expectedErr := errors.FieldErrors{
-					errors.FieldError{
+				expectedErr := services.FieldErrors{
+					services.FieldError{
 						Field:   "account",
 						Message: services.ErrNotFound,
 					},
@@ -231,8 +231,8 @@ func TestUpdateAccount(t *testing.T) {
 				}
 				assert.Equal(t, s.Code(), codes.FailedPrecondition)
 
-				expectedErr := errors.FieldErrors{
-					errors.FieldError{
+				expectedErr := services.FieldErrors{
+					services.FieldError{
 						Field:   "username",
 						Message: services.ErrMissing,
 					},
@@ -284,8 +284,8 @@ func TestLockAccount(t *testing.T) {
 				}
 				assert.Equal(t, s.Code(), codes.NotFound)
 
-				expectedErr := errors.FieldErrors{
-					errors.FieldError{
+				expectedErr := services.FieldErrors{
+					services.FieldError{
 						Field:   "account",
 						Message: services.ErrNotFound,
 					},
@@ -376,8 +376,8 @@ func TestUnlockAccount(t *testing.T) {
 				}
 				assert.Equal(t, s.Code(), codes.NotFound)
 
-				expectedErr := errors.FieldErrors{
-					errors.FieldError{
+				expectedErr := services.FieldErrors{
+					services.FieldError{
 						Field:   "account",
 						Message: services.ErrNotFound,
 					},
@@ -468,8 +468,8 @@ func TestArchiveAccount(t *testing.T) {
 				}
 				assert.Equal(t, s.Code(), codes.FailedPrecondition)
 
-				expectedErr := errors.FieldErrors{
-					errors.FieldError{
+				expectedErr := services.FieldErrors{
+					services.FieldError{
 						Field:   "account",
 						Message: services.ErrNotFound,
 					},
@@ -613,8 +613,8 @@ func TestImportAccount(t *testing.T) {
 				}
 				assert.Equal(t, s.Code(), codes.FailedPrecondition)
 
-				expectedErr := errors.FieldErrors{
-					errors.FieldError{
+				expectedErr := services.FieldErrors{
+					services.FieldError{
 						Field:   "password",
 						Message: services.ErrMissing,
 					},
@@ -667,8 +667,8 @@ func TestExpirePassword(t *testing.T) {
 				}
 				assert.Equal(t, s.Code(), codes.NotFound)
 
-				expectedErr := errors.FieldErrors{
-					errors.FieldError{
+				expectedErr := services.FieldErrors{
+					services.FieldError{
 						Field:   "account",
 						Message: services.ErrNotFound,
 					},

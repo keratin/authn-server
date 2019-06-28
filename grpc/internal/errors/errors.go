@@ -2,13 +2,12 @@ package errors
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/keratin/authn-server/app/services"
+	"github.com/keratin/authn-server/server/handlers"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -16,33 +15,10 @@ import (
 
 const wwwAuthneticate = `WWW-Authenticate`
 
-type FieldError struct {
-	Field   string `json:"field"`
-	Message string `json:"message"`
-}
-
-func (e FieldError) String() string {
-	return fmt.Sprintf("%v: %v", e.Field, e.Message)
-}
-
-type FieldErrors []FieldError
-
-type ServiceErrors struct {
-	Errors FieldErrors `json:"errors"`
-}
-
-func (es FieldErrors) Error() string {
-	var buf = make([]string, len(es))
-	for i, e := range es {
-		buf[i] = e.String()
-	}
-	return strings.Join(buf, ", ")
-}
-
-func ToFieldErrors(errs *errdetails.BadRequest) FieldErrors {
-	fes := FieldErrors{}
+func ToFieldErrors(errs *errdetails.BadRequest) services.FieldErrors {
+	fes := services.FieldErrors{}
 	for _, violation := range errs.GetFieldViolations() {
-		fes = append(fes, FieldError{Field: violation.GetField(), Message: violation.GetDescription()})
+		fes = append(fes, services.FieldError{Field: violation.GetField(), Message: violation.GetDescription()})
 	}
 	return fes
 }
@@ -89,21 +65,13 @@ func CustomHTTPError(ctx context.Context, mux *runtime.ServeMux, marshaler runti
 
 		switch t := detail.(type) {
 		case *errdetails.BadRequest:
-
-			if statusError.Code() == codes.NotFound {
-				w.WriteHeader(http.StatusNotFound)
-			} else {
-				w.WriteHeader(http.StatusUnprocessableEntity)
-			}
-
 			// Convert the errors back to AuthN's custom error responses to preserve the shape of the returned error
 			fes := ToFieldErrors(t)
-			j, er := json.Marshal(ServiceErrors{fes})
-			if er != nil {
-				panic(er)
+			if statusError.Code() == codes.NotFound {
+				handlers.WriteNotFound(w, fes[0].Field)
+			} else {
+				handlers.WriteErrors(w, fes)
 			}
-			w.Header().Set("Content-Type", "application/json")
-			w.Write(j)
 
 		default:
 			// Fallback to the default error handler

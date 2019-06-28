@@ -12,6 +12,7 @@ import (
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/models"
+	"github.com/keratin/authn-server/app/services"
 	"github.com/keratin/authn-server/app/tokens/passwordless"
 	"github.com/keratin/authn-server/app/tokens/sessions"
 	authnpb "github.com/keratin/authn-server/grpc"
@@ -132,7 +133,7 @@ func TestSubmitPasswordlessLogin(t *testing.T) {
 			Token: "invalid",
 		}
 
-		expect := errors.FieldErrors{{"token", "INVALID_OR_EXPIRED"}}
+		expect := services.FieldErrors{{"token", services.ErrInvalidOrExpired}}
 
 		// invoking the endpoint
 		_, err := client.SubmitPasswordlessLogin(context.TODO(), req)

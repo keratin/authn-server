@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/keratin/authn-server/app"
+	"github.com/keratin/authn-server/app/services"
 	"github.com/keratin/authn-server/grpc/internal/errors"
 
 	"github.com/stretchr/testify/assert"
@@ -63,7 +64,7 @@ func TestSignup(t *testing.T) {
 		name    string
 		args    args
 		wantErr bool
-		err     errors.FieldErrors
+		err     services.FieldErrors
 	}{
 		{
 			name: "Signup with correct input is successfull",
@@ -86,10 +87,10 @@ func TestSignup(t *testing.T) {
 				},
 			},
 			wantErr: true,
-			err: errors.FieldErrors{
-				errors.FieldError{
+			err: services.FieldErrors{
+				services.FieldError{
 					Field:   "username",
-					Message: "TAKEN",
+					Message: services.ErrTaken,
 				},
 			},
 		},
@@ -103,14 +104,14 @@ func TestSignup(t *testing.T) {
 				},
 			},
 			wantErr: true,
-			err: errors.FieldErrors{
-				errors.FieldError{
+			err: services.FieldErrors{
+				services.FieldError{
 					Field:   "username",
-					Message: "FORMAT_INVALID",
+					Message: services.ErrFormatInvalid,
 				},
-				errors.FieldError{
+				services.FieldError{
 					Field:   "password",
-					Message: "INSECURE",
+					Message: services.ErrInsecure,
 				},
 			},
 		},
@@ -168,7 +169,7 @@ func TestIsUsernameAvailable(t *testing.T) {
 		args    args
 		want    *authnpb.IsUsernameAvailableResponseEnvelope
 		wantErr bool
-		err     errors.FieldErrors
+		err     services.FieldErrors
 	}{
 		{
 			name: "known username",
@@ -183,10 +184,10 @@ func TestIsUsernameAvailable(t *testing.T) {
 			},
 			want:    nil,
 			wantErr: true,
-			err: errors.FieldErrors{
-				errors.FieldError{
+			err: services.FieldErrors{
+				services.FieldError{
 					Field:   "username",
-					Message: "TAKEN",
+					Message: services.ErrTaken,
 				},
 			},
 		},

@@ -7,6 +7,7 @@ import (
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/models"
+	"github.com/keratin/authn-server/app/services"
 	"github.com/keratin/authn-server/app/tokens/resets"
 	"github.com/keratin/authn-server/app/tokens/sessions"
 	authnpb "github.com/keratin/authn-server/grpc"
@@ -126,10 +127,10 @@ func TestLogin(t *testing.T) {
 			Username: "",
 			Password: "",
 		}
-		expect := errors.FieldErrors{
-			errors.FieldError{
+		expect := services.FieldErrors{
+			services.FieldError{
 				Field:   "credentials",
-				Message: "FAILED",
+				Message: services.ErrFailed,
 			},
 		}
 
@@ -334,7 +335,7 @@ func TestChangePassword(t *testing.T) {
 					return
 				}
 				fes := errors.ToFieldErrors(br)
-				assert.Equal(t, errors.FieldErrors{{Field: "token", Message: "INVALID_OR_EXPIRED"}}, fes)
+				assert.Equal(t, services.FieldErrors{{Field: "token", Message: services.ErrInvalidOrExpired}}, fes)
 			}
 		} else {
 			t.Error("unexpected error type")
@@ -406,7 +407,7 @@ func TestChangePassword(t *testing.T) {
 					return
 				}
 				fes := errors.ToFieldErrors(br)
-				assert.Equal(t, errors.FieldErrors{{Field: "password", Message: "INSECURE"}}, fes)
+				assert.Equal(t, services.FieldErrors{{Field: "password", Message: services.ErrInsecure}}, fes)
 			}
 		} else {
 			t.Error("unexpected error type")
@@ -444,7 +445,7 @@ func TestChangePassword(t *testing.T) {
 					return
 				}
 				fes := errors.ToFieldErrors(br)
-				assert.Equal(t, errors.FieldErrors{{Field: "credentials", Message: "FAILED"}}, fes)
+				assert.Equal(t, services.FieldErrors{{Field: "credentials", Message: services.ErrFailed}}, fes)
 			}
 		} else {
 			t.Error("unexpected error type")

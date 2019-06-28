@@ -18,16 +18,16 @@ var ErrExpired = "EXPIRED"
 var ErrNotFound = "NOT_FOUND"
 var ErrInvalidOrExpired = "INVALID_OR_EXPIRED"
 
-type fieldError struct {
+type FieldError struct {
 	Field   string `json:"field"`
 	Message string `json:"message"`
 }
 
-func (e fieldError) String() string {
+func (e FieldError) String() string {
 	return fmt.Sprintf("%v: %v", e.Field, e.Message)
 }
 
-type FieldErrors []fieldError
+type FieldErrors []FieldError
 
 func (es FieldErrors) Error() string {
 	var buf = make([]string, len(es))
@@ -37,9 +37,9 @@ func (es FieldErrors) Error() string {
 	return strings.Join(buf, ", ")
 }
 
-func passwordValidator(cfg *app.Config, password string) *fieldError {
+func passwordValidator(cfg *app.Config, password string) *FieldError {
 	if password == "" {
-		return &fieldError{"password", ErrMissing}
+		return &FieldError{"password", ErrMissing}
 	}
 
 	// SECURITY: only score the first 100 characters of a password. cheap benchmarks on my current
@@ -51,26 +51,26 @@ func passwordValidator(cfg *app.Config, password string) *fieldError {
 
 	strength := zxcvbn.PasswordStrength(password, []string{})
 	if strength.Score < cfg.PasswordMinComplexity {
-		return &fieldError{"password", ErrInsecure}
+		return &FieldError{"password", ErrInsecure}
 	}
 
 	return nil
 }
 
-func usernameValidator(cfg *app.Config, username string) *fieldError {
+func usernameValidator(cfg *app.Config, username string) *FieldError {
 	if cfg.UsernameIsEmail {
 		if !isEmail(username) {
-			return &fieldError{"username", ErrFormatInvalid}
+			return &FieldError{"username", ErrFormatInvalid}
 		}
 		if len(cfg.UsernameDomains) > 0 && !hasDomain(username, cfg.UsernameDomains) {
-			return &fieldError{"username", ErrFormatInvalid}
+			return &FieldError{"username", ErrFormatInvalid}
 		}
 	} else {
 		if username == "" {
-			return &fieldError{"username", ErrMissing}
+			return &FieldError{"username", ErrMissing}
 		}
 		if len(username) < cfg.UsernameMinLength {
-			return &fieldError{"username", ErrFormatInvalid}
+			return &FieldError{"username", ErrFormatInvalid}
 		}
 	}
 	return nil
