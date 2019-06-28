@@ -16,8 +16,9 @@ for delivery.
 ### Backend
 
 Your application must implement an endpoint (secured by SSL & HTTP Basic Auth) that expects a `POST`
-request with `account_id` and `token` params. It should use the `account_id` to decide where to
-deliver the `token`.
+webhook with `account_id` and `token` params. It should use the `account_id` to decide where to
+deliver the `token`. When it is complete, it must return a 2xx status code or else AuthN will retry
+the notification.
 
 For example, a Rails application might use these params to send an email:
 

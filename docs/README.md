@@ -1,6 +1,6 @@
 # Introduction
 
-AuthN is an accounts microservice. It's what you get when you treat passwords like credit cards.
+AuthN is an accounts microservice. It removes passwords and authentication security from your app.
 
 An AuthN account is a login identity: username/password, plus optional connected OAuth identities.
 
@@ -12,6 +12,30 @@ An AuthN account is a login identity: username/password, plus optional connected
 * **Security:** Your application's security perimeter depends on the code your team writes and the
   code your team finds.
 * **Architecture:** Your application may be small now, but when it grows up you want to be ready.
+
+## Integration Diagram
+
+<img src="assets/host-authn-client.svg" alt="Host and AuthN both communicate with Client">
+
+#### AuthN Server
+
+* Owns all accounts (credentials) data.
+* Communicates directly with client to reduce host app's exposure to password data and session tokens in transit.
+* Relies on SQL database (PostgreSQL, MySQL, SQLite) for long-term accounts and credentials data.
+* Relies on key/value database (Redis) for sessions, metrics, and ephemeral storage.
+
+#### Host App
+
+* Owns all user data (not credentials). Every user has one AuthN account ID.
+* Extracts AuthN accountID from access token to identify user after verifying token using public key cryptography.
+* Sends emails like password resets when prompted by AuthN.
+* Integrates admin functionality like account locking and archival against private AuthN endpoints.
+
+#### Client
+
+* Only sends password data to AuthN, in exchange for a refresh token and an access token.
+* Only sends access token to host app, limiting host app's exposure and responsibilities.
+* Periodically refreshes access token from AuthN server.
 
 ## Users and Accounts
 
@@ -34,13 +58,10 @@ class ApplicationController
     @current_user ||= current_account_id && User.find_by_account_id(current_account_id)
   end
 
-  # if your authn-js client is configured to use localstorage then `cookies[:authn]` may
-  # need to be replaced by something like `request.headers['Authorization']`
   def current_account_id
+    # if your client sends a cookie named "authn" containing the access token
     Keratin::AuthN.subject_from(cookies[:authn])
-  end
-
-  def bearer_token
+    # OR if your client uses localStorage and sends an Authorization header
     (request.headers['Authorization'] || '').sub(/^Bearer /, '')
   end
 end
