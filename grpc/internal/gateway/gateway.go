@@ -81,7 +81,7 @@ func FormWrapper(mux http.Handler) http.Handler {
 					"url":    r.URL,
 					"method": r.Method,
 				}).Warn("error parsing form")
-				http.Error(w, err.Error(), http.StatusBadRequest)
+				http.Error(w, "", http.StatusBadRequest)
 				return
 			}
 			jsonMap := make(map[string]interface{}, len(r.Form))
@@ -98,7 +98,7 @@ func FormWrapper(mux http.Handler) http.Handler {
 					"url":    r.URL,
 					"method": r.Method,
 				}).Warn("error encoding form into JSON")
-				http.Error(w, err.Error(), http.StatusBadRequest)
+				http.Error(w, "", http.StatusBadRequest)
 				return
 			}
 			r.Body = ioutil.NopCloser(bytes.NewReader(jsonBody))
