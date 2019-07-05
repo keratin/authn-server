@@ -102,12 +102,12 @@ func Server(ctx context.Context, app *app.App) {
 
 	tcpm := cmux.New(tcpl)
 	grpcl := tcpm.MatchWithWriters(cmux.HTTP2MatchHeaderFieldSendSettings("content-type", "application/grpc"))
-	httpNoTLSL := tcpm.Match(cmux.HTTP1Fast())
+	httpl := tcpm.Match(cmux.HTTP1Fast())
 	go func() {
 		if err := tcpm.Serve(); !strings.Contains(err.Error(), "use of closed network connection") {
 			panic(err)
 		}
 	}()
 
-	log.Fatal(runPrivateService(ctx, app, grpcl, httpNoTLSL))
+	log.Fatal(runPrivateService(ctx, app, grpcl, httpl))
 }
