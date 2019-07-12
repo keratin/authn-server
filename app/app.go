@@ -3,9 +3,8 @@ package app
 import (
 	"os"
 
-	"github.com/jmoiron/sqlx"
-
 	"github.com/go-redis/redis"
+	"github.com/jmoiron/sqlx"
 	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/ops"
