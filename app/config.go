@@ -68,6 +68,7 @@ type Config struct {
 	GoogleOauthCredentials      *oauth.Credentials
 	GitHubOauthCredentials      *oauth.Credentials
 	FacebookOauthCredentials    *oauth.Credentials
+	DiscordOauthCredentials     *oauth.Credentials
 }
 
 var configurers = []configurer{
@@ -506,6 +507,19 @@ var configurers = []configurer{
 			credentials, err := oauth.NewCredentials(val)
 			if err == nil {
 				c.FacebookOauthCredentials = credentials
+			}
+			return err
+		}
+		return nil
+	},
+
+	// DISCORD_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
+	// AuthN will enable routes for Discord OAuth signin.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("DISCORD_OAUTH_CREDENTIALS"); ok {
+			credentials, err := oauth.NewCredentials(val)
+			if err == nil {
+				c.DiscordOauthCredentials = credentials
 			}
 			return err
 		}
