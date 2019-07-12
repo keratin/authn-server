@@ -15,9 +15,6 @@ import (
 
 	"github.com/keratin/authn-server/app/data/private"
 
-	"github.com/airbrake/gobrake"
-	raven "github.com/getsentry/raven-go"
-
 	// a .env file is extremely useful during development
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/keratin/authn-server/lib/oauth"
@@ -416,11 +413,11 @@ var configurers = []configurer{
 	// errors and panics will be reported asynchronously.
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("SENTRY_DSN"); ok {
-			client, err := raven.New(val)
+			reporter, err := ops.NewSentryReporter(val)
 			if err != nil {
 				return err
 			}
-			c.ErrorReporter = &ops.SentryReporter{Client: client}
+			c.ErrorReporter = reporter
 		}
 		return nil
 	},
@@ -429,15 +426,11 @@ var configurers = []configurer{
 	// provided, errors and panics will be reported asynchronously.
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("AIRBRAKE_CREDENTIALS"); ok {
-			bits := strings.SplitN(val, ":", 2)
-			projectID, err := strconv.Atoi(bits[0])
+			reporter, err := ops.NewAirbrakeReporter(val)
 			if err != nil {
 				return err
 			}
-			projectKey := bits[1]
-
-			client := gobrake.NewNotifier(int64(projectID), projectKey)
-			c.ErrorReporter = &ops.AirbrakeReporter{Notifier: client}
+			c.ErrorReporter = reporter
 		}
 		return nil
 	},
