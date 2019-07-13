@@ -58,7 +58,8 @@ type Config struct {
 	StatisticsTimeZone          *time.Location
 	DailyActivesRetention       int
 	WeeklyActivesRetention      int
-	ErrorReporter               ops.ErrorReporter
+	ErrorReporterCredentials    string
+	ErrorReporterType           ops.ErrorReporterType
 	ServerPort                  int
 	PublicPort                  int
 	Proxied                     bool
@@ -413,11 +414,8 @@ var configurers = []configurer{
 	// errors and panics will be reported asynchronously.
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("SENTRY_DSN"); ok {
-			reporter, err := ops.NewSentryReporter(val)
-			if err != nil {
-				return err
-			}
-			c.ErrorReporter = reporter
+			c.ErrorReporterCredentials = val
+			c.ErrorReporterType = ops.Sentry
 		}
 		return nil
 	},
@@ -426,11 +424,8 @@ var configurers = []configurer{
 	// provided, errors and panics will be reported asynchronously.
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("AIRBRAKE_CREDENTIALS"); ok {
-			reporter, err := ops.NewAirbrakeReporter(val)
-			if err != nil {
-				return err
-			}
-			c.ErrorReporter = reporter
+			c.ErrorReporterCredentials = val
+			c.ErrorReporterType = ops.Airbrake
 		}
 		return nil
 	},

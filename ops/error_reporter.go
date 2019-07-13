@@ -6,11 +6,32 @@ import (
 	"net/http"
 )
 
+// ErrorReporterType exists to provide context for plain strings in configuration
+type ErrorReporterType int
+
+// all known types of ErrorReporter
+const (
+	Sentry ErrorReporterType = iota
+	Airbrake
+)
+
 // ErrorReporter is a thing that exports details about errors and panics to another service. Care
 // must be taken by each implementation to ensure that passwords are not leaked.
 type ErrorReporter interface {
 	ReportError(err error)
 	ReportRequestError(err error, r *http.Request)
+}
+
+// NewErrorReporter will instantiate an ErrorReporter for a known type
+func NewErrorReporter(credentials string, t ErrorReporterType) (ErrorReporter, error) {
+	switch t {
+	case Sentry:
+		return NewSentryReporter(credentials)
+	case Airbrake:
+		return NewAirbrakeReporter(credentials)
+	default:
+		return &LogReporter{}, nil
+	}
 }
 
 // PanicHandler returns a http.Handler that will recover any panics and report them as request
