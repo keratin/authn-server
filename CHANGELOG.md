@@ -4,6 +4,10 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+### Added
+
+* OAuth authentication through Discord [#116]
+
 ## 1.6.0
 
 ### Added
