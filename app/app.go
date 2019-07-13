@@ -1,10 +1,10 @@
 package app
 
 import (
-	"github.com/jmoiron/sqlx"
 	"os"
 
 	"github.com/go-redis/redis"
+	"github.com/jmoiron/sqlx"
 	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/ops"
@@ -96,6 +96,9 @@ func NewApp(cfg *Config) (*App, error) {
 	}
 	if cfg.FacebookOauthCredentials != nil {
 		oauthProviders["facebook"] = *oauth.NewFacebookProvider(cfg.FacebookOauthCredentials)
+	}
+	if cfg.DiscordOauthCredentials != nil {
+		oauthProviders["discord"] = *oauth.NewDiscordProvider(cfg.DiscordOauthCredentials)
 	}
 
 	return &App{
