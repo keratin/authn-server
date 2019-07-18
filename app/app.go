@@ -34,6 +34,8 @@ func NewApp(cfg *Config) (*App, error) {
 	logrus.SetLevel(logrus.DebugLevel)
 	logrus.SetOutput(os.Stdout)
 
+	errorReporter, err := ops.NewErrorReporter(cfg.ErrorReporterCredentials, cfg.ErrorReporterType)
+
 	db, err := data.NewDB(cfg.DatabaseURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "data.NewDB")
@@ -52,12 +54,12 @@ func NewApp(cfg *Config) (*App, error) {
 		return nil, errors.Wrap(err, "NewAccountStore")
 	}
 
-	tokenStore, err := data.NewRefreshTokenStore(db, redis, cfg.ErrorReporter, cfg.RefreshTokenTTL)
+	tokenStore, err := data.NewRefreshTokenStore(db, redis, errorReporter, cfg.RefreshTokenTTL)
 	if err != nil {
 		return nil, errors.Wrap(err, "NewRefreshTokenStore")
 	}
 
-	blobStore, err := data.NewBlobStore(cfg.AccessTokenTTL, redis, db, cfg.ErrorReporter)
+	blobStore, err := data.NewBlobStore(cfg.AccessTokenTTL, redis, db, errorReporter)
 	if err != nil {
 		return nil, errors.Wrap(err, "NewBlobStore")
 	}
@@ -68,7 +70,7 @@ func NewApp(cfg *Config) (*App, error) {
 			data.NewEncryptedBlobStore(blobStore, cfg.DBEncryptionKey),
 			cfg.AccessTokenTTL,
 		)
-		err := m.Maintain(keyStore, cfg.ErrorReporter)
+		err := m.Maintain(keyStore, errorReporter)
 		if err != nil {
 			return nil, errors.Wrap(err, "Maintain")
 		}
@@ -111,7 +113,7 @@ func NewApp(cfg *Config) (*App, error) {
 		RefreshTokenStore: tokenStore,
 		KeyStore:          keyStore,
 		Actives:           actives,
-		Reporter:          cfg.ErrorReporter,
+		Reporter:          errorReporter,
 		OauthProviders:    oauthProviders,
 	}, nil
 }
