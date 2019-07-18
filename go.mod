@@ -10,7 +10,7 @@ require (
 	github.com/felixge/httpsnoop v1.0.0
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
 	github.com/getsentry/raven-go v0.0.0-20170614100719-d175f85701df
-	github.com/go-redis/redis v6.10.2+incompatible
+	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/go-sql-driver/mysql v1.3.0
 	github.com/golang/protobuf v0.0.0-20171021043952-1643683e1b54 // indirect
 	github.com/google/go-cmp v0.3.0 // indirect
