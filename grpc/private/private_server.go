@@ -64,16 +64,6 @@ func RunPrivateGRPC(ctx context.Context, app *app.App, l net.Listener) error {
 	return nil
 }
 
-func logInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	log.Infof("calling method: %s", info.FullMethod)
-
-	res, err := handler(ctx, req)
-	if err != nil {
-		log.Errorf("error from method: %s", err)
-	}
-	return res, err
-}
-
 func basicAuthCheck(ctx context.Context, matcher basicAuthMatcher) (context.Context, error) {
 	token, err := grpc_auth.AuthFromMD(ctx, "basic")
 	if err != nil {
