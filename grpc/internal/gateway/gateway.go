@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"regexp"
+	"strconv"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -72,6 +74,11 @@ func CookieAnnotator(app *app.App) func(ctx context.Context, req *http.Request) 
 // FormWrapper takes form values from application/x-www-form-urlencoded and converts it to JSON
 // Workaround adapted from: https://github.com/grpc-ecosystem/grpc-gateway/issues/7#issuecomment-358569373
 func FormWrapper(mux http.Handler) http.Handler {
+	// We can't use strconv#ParseBool because
+	// our assumption for `true` values don't match.
+	// strconv.ParseBool considers the following as `true`: 1, t, T, TRUE, true, True
+	boolRegexp := regexp.MustCompile("^(?i:t|true|yes)$")
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if strings.ToLower(strings.Split(r.Header.Get("Content-Type"), ";")[0]) == "application/x-www-form-urlencoded" {
 			if err := r.ParseForm(); err != nil {
@@ -87,7 +94,33 @@ func FormWrapper(mux http.Handler) http.Handler {
 			jsonMap := make(map[string]interface{}, len(r.Form))
 			for k, v := range r.Form {
 				if len(v) > 0 {
-					jsonMap[k] = v[0]
+					/*
+					* We have a special case of converting form data to JSON. Our
+					* type conversion is only concerned with limited set of keys,
+					* so it's simpler to just check for these and convert the values
+					* if those exist.
+					**/
+					switch k {
+					case "id":
+						val, err := strconv.ParseInt(v[0], 10, 64)
+						if err != nil {
+							log.WithError(err).WithFields(log.Fields{
+								"url":    r.URL,
+								"method": r.Method,
+							}).Warn("error converting field `id` to int64")
+							http.Error(w, "", http.StatusBadRequest)
+							return
+						}
+						jsonMap[k] = val
+						continue
+
+					case "locked":
+						jsonMap[k] = boolRegexp.MatchString(v[0])
+						continue
+
+					default:
+						jsonMap[k] = v[0]
+					}
 				}
 			}
 			jsonBody, err := json.Marshal(jsonMap)
