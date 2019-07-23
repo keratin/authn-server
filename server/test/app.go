@@ -9,6 +9,7 @@ import (
 	"github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
+	"github.com/sirupsen/logrus"
 )
 
 func App() *app.App {
@@ -35,13 +36,15 @@ func App() *app.App {
 		EnableSignup:            true,
 	}
 
+	logger := logrus.New()
 	return &app.App{
 		Config:            &cfg,
 		KeyStore:          mock.NewKeyStore(weakKey),
 		AccountStore:      mock.NewAccountStore(),
 		RefreshTokenStore: mock.NewRefreshTokenStore(),
 		Actives:           mock.NewActives(),
-		Reporter:          &ops.LogReporter{},
+		Reporter:          &ops.LogReporter{logger},
 		OauthProviders:    map[string]oauth.Provider{},
+		Logger:            logger,
 	}
 }

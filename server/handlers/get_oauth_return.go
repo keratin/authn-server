@@ -6,9 +6,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/keratin/authn-server/server/sessions"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/services"
+	"github.com/keratin/authn-server/server/sessions"
 )
 
 func GetOauthReturn(app *app.App, providerName string) http.HandlerFunc {

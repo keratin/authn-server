@@ -10,6 +10,7 @@ import (
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/models"
 	"github.com/keratin/authn-server/app/services"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -39,7 +40,7 @@ func TestPasswordResetSender(t *testing.T) {
 			ResetSigningKey:     []byte("resets"),
 			ResetTokenTTL:       time.Minute,
 		}
-		return services.PasswordResetSender(cfg, account)
+		return services.PasswordResetSender(cfg, account, logrus.New())
 	}
 
 	t.Run("posting to remote app", func(t *testing.T) {

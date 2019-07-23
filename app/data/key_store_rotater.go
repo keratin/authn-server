@@ -7,12 +7,10 @@ import (
 	"time"
 
 	"github.com/keratin/authn-server/app/data/private"
-
 	"github.com/keratin/authn-server/lib"
-
 	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 // NewKeyStoreRotater creates a KeyStoreRotater.
@@ -20,11 +18,12 @@ import (
 // The rotation interval should match the lifetime of an access token. This means a key can be used
 // to sign tokens for one time period, remain available to verify tokens for another time period,
 // and be discarded during the third.
-func NewKeyStoreRotater(blobStore *EncryptedBlobStore, interval time.Duration) *KeyStoreRotater {
+func NewKeyStoreRotater(blobStore *EncryptedBlobStore, interval time.Duration, logger logrus.FieldLogger) *KeyStoreRotater {
 	return &KeyStoreRotater{
 		store:       blobStore,
 		interval:    interval,
 		keyStrength: 2048,
+		logger:      logger.WithField("scope", "NewKeyStoreRotater"),
 	}
 }
 
@@ -34,6 +33,7 @@ type KeyStoreRotater struct {
 	interval    time.Duration
 	keyStrength int
 	store       *EncryptedBlobStore
+	logger      logrus.FieldLogger
 }
 
 // Maintain will restore and rotate a keyStore at periodic intervals. It will return an error only
@@ -49,14 +49,14 @@ func (m *KeyStoreRotater) Maintain(ks *RotatingKeyStore, r ops.ErrorReporter) er
 	if keys[0] != nil {
 		ks.Rotate(keys[0])
 
-		log.WithFields(log.Fields{"keyID": keys[0].JWK.KeyID}).Info("previous key restored")
+		m.logger.WithField("keyID", keys[0].JWK.KeyID).Info("previous key restored")
 	}
 
 	// ensure and rotate in the current key
 	if keys[1] != nil {
 		ks.Rotate(keys[1])
 
-		log.WithFields(log.Fields{"keyID": keys[1].JWK.KeyID}).Info("current key restored")
+		m.logger.WithField("keyID", keys[1].JWK.KeyID).Info("current key restored")
 	} else {
 		newKey, err := m.generate()
 		if err != nil {
@@ -126,7 +126,7 @@ func (m *KeyStoreRotater) generate() (*private.Key, error) {
 	}
 
 	if ok {
-		log.WithFields(log.Fields{"keyID": key.JWK.KeyID, "keyName": keyName}).Info("new key generated")
+		m.logger.WithFields(logrus.Fields{"keyID": key.JWK.KeyID, "keyName": keyName}).Info("new key generated")
 	} else {
 		keyBlob, err := m.store.Read(keyName)
 		if err != nil {
@@ -134,7 +134,7 @@ func (m *KeyStoreRotater) generate() (*private.Key, error) {
 		}
 		key = bytesToKey(keyBlob)
 
-		log.WithFields(log.Fields{"keyID": key.JWK.KeyID}).Info("key synchronized")
+		m.logger.WithField("keyID", key.JWK.KeyID).Info("key synchronized")
 	}
 
 	return key, nil

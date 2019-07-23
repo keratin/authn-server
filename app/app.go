@@ -27,13 +27,10 @@ type App struct {
 	Actives           data.Actives
 	Reporter          ops.ErrorReporter
 	OauthProviders    map[string]oauth.Provider
+	Logger            logrus.FieldLogger
 }
 
 func NewApp(cfg *Config) (*App, error) {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-	logrus.SetLevel(logrus.DebugLevel)
-	logrus.SetOutput(os.Stdout)
-
 	errorReporter, err := ops.NewErrorReporter(cfg.ErrorReporterCredentials, cfg.ErrorReporterType)
 
 	db, err := data.NewDB(cfg.DatabaseURL)
@@ -64,11 +61,18 @@ func NewApp(cfg *Config) (*App, error) {
 		return nil, errors.Wrap(err, "NewBlobStore")
 	}
 
+	// Default logger
+	logger := logrus.New()
+	logger.Formatter = &logrus.JSONFormatter{}
+	logger.Level = logrus.DebugLevel
+	logger.Out = os.Stdout
+
 	keyStore := data.NewRotatingKeyStore()
 	if cfg.IdentitySigningKey == nil {
 		m := data.NewKeyStoreRotater(
 			data.NewEncryptedBlobStore(blobStore, cfg.DBEncryptionKey),
 			cfg.AccessTokenTTL,
+			logger,
 		)
 		err := m.Maintain(keyStore, errorReporter)
 		if err != nil {
