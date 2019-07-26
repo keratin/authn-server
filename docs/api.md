@@ -559,12 +559,12 @@ Redirect a user to this URL when you want to authenticate them with OAuth, and i
 
 #### Success:
 
-    304 See Other
+    303 See Other
     Location: (OAuth provider)
 
 #### Failure:
 
-    304 See Other
+    303 See Other
     Location: (redirect URI)
 
 #### OAuth Return
