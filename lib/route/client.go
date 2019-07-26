@@ -109,6 +109,12 @@ func (c *Client) Patch(path string, form url.Values) (*http.Response, error) {
 	return c.do(patch, path, strings.NewReader(form.Encode()))
 }
 
+// Put issues a PUT to the specified path like net/http's PostForm, but with any
+// modifications configured for the current client.
+func (c *Client) Put(path string, form url.Values) (*http.Response, error) {
+	return c.do(put, path, strings.NewReader(form.Encode()))
+}
+
 // Preflight issues a CORS OPTIONS request
 func (c *Client) Preflight(domain *Domain, verb string, path string) (*http.Response, error) {
 	cPreflight := c.Referred(domain).With(func(req *http.Request) *http.Request {
