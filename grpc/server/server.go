@@ -36,7 +36,7 @@ func runPrivateService(ctx context.Context, app *app.App, grpcListener net.Liste
 		return private.RunPrivateGRPC(ctx, app, grpcListener)
 	})
 
-	privClientConn, err := grpc.DialContext(ctx, grpcListener.Addr().String(), grpc.WithInsecure())
+	privClientConn, err := grpc.DialContext(ctx, grpcListener.Addr().String(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -59,7 +59,7 @@ func runPublicService(ctx context.Context, app *app.App, grpcListener net.Listen
 		return public.RunPublicGRPC(ctx, app, grpcListener)
 	})
 
-	clientConn, err := grpc.DialContext(ctx, grpcListener.Addr().String(), grpc.WithInsecure())
+	clientConn, err := grpc.DialContext(ctx, grpcListener.Addr().String(), grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatal(err)
 	}
