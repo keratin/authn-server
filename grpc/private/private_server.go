@@ -64,17 +64,20 @@ func RunPrivateGRPC(ctx context.Context, app *app.App, l net.Listener) error {
 	return nil
 }
 
+const wwwAuthenticate = "WWW-Authenticate"
+const authnRealm = `Basic realm="Private AuthN Realm"`
+
 func basicAuthCheck(ctx context.Context, matcher basicAuthMatcher) (context.Context, error) {
 	token, err := grpc_auth.AuthFromMD(ctx, "basic")
 	if err != nil {
-		header := metadata.Pairs("WWW-authenticate", `Basic realm="Private AuthN Realm"`)
+		header := metadata.Pairs(wwwAuthenticate, authnRealm)
 		grpc.SendHeader(ctx, header)
 		return ctx, grpc.Errorf(codes.Unauthenticated, "missing context metadata")
 	}
 
 	c, err := base64.StdEncoding.DecodeString(token)
 	if err != nil {
-		header := metadata.Pairs("WWW-authenticate", `Basic realm="Private AuthN Realm"`)
+		header := metadata.Pairs(wwwAuthenticate, authnRealm)
 		grpc.SendHeader(ctx, header)
 		return ctx, status.Error(codes.Unauthenticated, `invalid base64 in header`)
 	}
@@ -82,18 +85,18 @@ func basicAuthCheck(ctx context.Context, matcher basicAuthMatcher) (context.Cont
 	cs := string(c)
 	s := strings.IndexByte(cs, ':')
 	if s < 0 {
-		header := metadata.Pairs("WWW-authenticate", `Basic realm="Private AuthN Realm"`)
+		header := metadata.Pairs(wwwAuthenticate, authnRealm)
 		grpc.SendHeader(ctx, header)
 		return ctx, status.Error(codes.Unauthenticated, `invalid basic auth format`)
 	}
 
 	user, password := cs[:s], cs[s+1:]
 	if !matcher(user, password) {
-		err := grpc.SetHeader(ctx, metadata.Pairs("www-authenticate", `Basic realm="Private AuthN Realm"`))
+		err := grpc.SetHeader(ctx, metadata.Pairs(wwwAuthenticate, authnRealm))
 		if err != nil {
 			log.Errorf("error setting header: %s", err)
 		}
-		ctx = metadata.AppendToOutgoingContext(ctx, "WWW-Authenticate", `Basic realm="Private AuthN Realm"`)
+		ctx = metadata.AppendToOutgoingContext(ctx, wwwAuthenticate, authnRealm)
 		return ctx, status.Error(codes.Unauthenticated, "invalid user or password")
 	}
 	return ctx, nil
