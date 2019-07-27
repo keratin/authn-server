@@ -42,7 +42,7 @@ func StatusCodeMutator(ctx context.Context, response http.ResponseWriter, m prot
 func CookieSetter(cfg *app.Config) ResponseMiddleware {
 	return func(ctx context.Context, response http.ResponseWriter, m proto.Message) error {
 		switch m.(type) {
-		case *authnpb.LogoutResponse, *authnpb.SignupResponseEnvelope, *authnpb.LoginResponseEnvelope:
+		case *authnpb.LogoutResponse, *authnpb.SignupResponseEnvelope, *authnpb.LoginResponseEnvelope, *authnpb.SubmitPasswordlessLoginResponseEnvelope, *authnpb.ChangePasswordResponseEnvelope:
 			md, ok := runtime.ServerMetadataFromContext(ctx)
 			if !ok {
 				return fmt.Errorf("Failed to extract ServerMetadata from context")
