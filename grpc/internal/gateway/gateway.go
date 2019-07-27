@@ -21,7 +21,7 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-type GatewayResponseMiddleware func(ctx context.Context, response http.ResponseWriter, m proto.Message) error
+type ResponseMiddleware func(ctx context.Context, response http.ResponseWriter, m proto.Message) error
 
 func JSONMarshaler() runtime.Marshaler {
 	return new(customJSONMarshaler)
@@ -39,7 +39,7 @@ func StatusCodeMutator(ctx context.Context, response http.ResponseWriter, m prot
 
 // CookieSetter extracts the session cookie from metadata and assigns it to a cookie. If the session
 // value is an empty string, then the cookie is marked to be removed.
-func CookieSetter(cfg *app.Config) GatewayResponseMiddleware {
+func CookieSetter(cfg *app.Config) ResponseMiddleware {
 	return func(ctx context.Context, response http.ResponseWriter, m proto.Message) error {
 		switch m.(type) {
 		case *authnpb.LogoutResponse, *authnpb.SignupResponseEnvelope, *authnpb.LoginResponseEnvelope:
