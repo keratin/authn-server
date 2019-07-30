@@ -11,6 +11,7 @@ import (
 	"github.com/keratin/authn-server/app/tokens/sessions"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -23,7 +24,7 @@ func TestSessionRefresher(t *testing.T) {
 		AuthNURL: &url.URL{Scheme: "http", Host: "authn.example.com"},
 	}
 	refreshStore := mock.NewRefreshTokenStore()
-	reporter := &ops.LogReporter{}
+	reporter := &ops.LogReporter{logrus.New()}
 
 	accountID := 0
 	audience := &route.Domain{"authn.example.com", "8080"}

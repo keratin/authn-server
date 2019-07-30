@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/keratin/authn-server/app/data/private"
+	"github.com/sirupsen/logrus"
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data/mock"
@@ -20,6 +21,7 @@ func TestGetJWKs(t *testing.T) {
 	app := &app.App{
 		KeyStore: mock.NewKeyStore(rsaKey),
 		Config:   &app.Config{},
+		Logger:   logrus.New(),
 	}
 
 	server := test.Server(app)

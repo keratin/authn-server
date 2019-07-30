@@ -8,10 +8,10 @@ import (
 	"github.com/keratin/authn-server/app/models"
 	"github.com/keratin/authn-server/app/tokens/resets"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
-func PasswordResetSender(cfg *app.Config, account *models.Account) error {
+func PasswordResetSender(cfg *app.Config, account *models.Account, logger logrus.FieldLogger) error {
 	if account == nil || account.Locked {
 		return nil
 	}
@@ -33,7 +33,7 @@ func PasswordResetSender(cfg *app.Config, account *models.Account) error {
 		return errors.Wrap(err, "Webhook")
 	}
 
-	log.WithFields(log.Fields{"accountID": account.ID}).Info("sent password reset token")
+	logger.WithField("accountID", account.ID).Info("sent password reset token")
 
 	return nil
 }
