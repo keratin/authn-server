@@ -1,12 +1,14 @@
 package server
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"net/http/cookiejar"
 	"net/http/httptest"
@@ -19,14 +21,20 @@ import (
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data"
+	"github.com/keratin/authn-server/app/models"
 	"github.com/keratin/authn-server/app/services"
 	"github.com/keratin/authn-server/app/tokens/identities"
+	"github.com/keratin/authn-server/app/tokens/passwordless"
+	"github.com/keratin/authn-server/app/tokens/resets"
 	"github.com/keratin/authn-server/app/tokens/sessions"
 	authngrpc "github.com/keratin/authn-server/grpc"
 	oauthlib "github.com/keratin/authn-server/lib/oauth"
+	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/server/test"
+	"github.com/keratin/authn-server/server/views"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -578,4 +586,897 @@ func TestServer(t *testing.T) {
 			assert.NotEmpty(t, res)
 		})
 	})
+}
+
+func TestRESTInterfaces(t *testing.T) {
+	// setup test app
+	testApp := test.App() // Can be setup(t)?
+	testApp.Config.UsernameIsEmail = true
+
+	// The ports are hardcoded because the Server() function blackboxes our
+	// access to the listeners, so we can't get their address dynamically.
+	testApp.Config.PublicPort = 8080
+	testApp.Config.ServerPort = 9090
+
+	// parent context for servers
+	ctx := context.Background()
+	rootCtx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	go Server(rootCtx, testApp)
+
+	jar, _ := cookiejar.New(nil)
+	privateClient := route.NewClient(
+		fmt.Sprintf("http://127.0.0.1:%d", testApp.Config.ServerPort),
+	).
+		WithClient(&http.Client{
+			Jar: jar,
+		}).
+		Referred(&testApp.Config.ApplicationDomains[0]).
+		Authenticated(testApp.Config.AuthUsername, testApp.Config.AuthPassword)
+
+	jar, _ = cookiejar.New(nil)
+	publicClient := route.NewClient(
+		fmt.Sprintf("http://127.0.0.1:%d", testApp.Config.PublicPort),
+	).
+		WithClient(&http.Client{
+			Jar: jar,
+		}).
+		Referred(&testApp.Config.ApplicationDomains[0])
+
+	// Give the server some time to be scheduled and run.
+	// TODO: This feels icky, but a cleaner way is yet to be figured out.
+	time.Sleep(time.Second * 2)
+
+	t.Run("Private", testPrivateInterface(testApp, privateClient))
+	t.Run("Public", testPublicInterface(testApp, publicClient))
+}
+
+func testPrivateInterface(testApp *app.App, client *route.Client) func(*testing.T) {
+	return func(t *testing.T) {
+		t.Run("Private-Only Routes", func(t *testing.T) {
+			t.Run("Index", func(t *testing.T) {
+				resp, err := client.Get("/")
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+				buf := &bytes.Buffer{}
+				buf.ReadFrom(resp.Body)
+				assert.NotZero(t, buf.Len())
+				nominal := &bytes.Buffer{}
+				views.Root(nominal)
+				assert.Equal(t, nominal.Bytes(), buf.Bytes())
+				resp.Body.Close()
+			})
+			t.Run("JWKS", func(t *testing.T) {
+				resp, err := client.Get("/jwks")
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+				buf := &bytes.Buffer{}
+				buf.ReadFrom(resp.Body)
+				assert.NotZero(t, buf.Len())
+				resp.Body.Close()
+			})
+			t.Run("Configurations", func(t *testing.T) {
+				resp, err := client.Get("/configuration")
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+				buf := &bytes.Buffer{}
+				buf.ReadFrom(resp.Body)
+				assert.NotZero(t, buf.Len())
+				resp.Body.Close()
+			})
+			t.Run("Server Stats", func(t *testing.T) {
+				resp, err := client.Get("/metrics")
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+				buf := &bytes.Buffer{}
+				buf.ReadFrom(resp.Body)
+				assert.NotZero(t, buf.Len())
+				resp.Body.Close()
+			})
+			t.Run("Service Stats", func(t *testing.T) {
+				resp, err := client.Get("/stats")
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+				buf := &bytes.Buffer{}
+				buf.ReadFrom(resp.Body)
+				assert.NotZero(t, buf.Len())
+				resp.Body.Close()
+			})
+			t.Run("Import Account - Locked", func(t *testing.T) {
+				username := generateUsername()
+				data := url.Values{
+					"username": {username},
+					"password": {"11aa22!bb33cc"},
+					"locked":   {"true"},
+				}
+
+				resp, err := client.PostForm("/accounts/import", data)
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+				defer resp.Body.Close()
+
+				buf := &bytes.Buffer{}
+				buf.ReadFrom(resp.Body)
+				assert.NotZero(t, buf.Len())
+				var response struct {
+					Result struct {
+						ID int
+					}
+				}
+				assert.NoError(t, json.Unmarshal(buf.Bytes(), &response))
+				assert.NotEmpty(t, response)
+
+				account, err := testApp.AccountStore.Find(response.Result.ID)
+				require.NoError(t, err)
+				assert.Equal(t, username, account.Username)
+				assert.True(t, account.Locked)
+			})
+			t.Run("Import Account - Unlocked", func(t *testing.T) {
+				username := generateUsername()
+				data := url.Values{
+					"username": {username},
+					"password": {"11aa22!bb33cc"},
+					"locked":   {"false"},
+				}
+
+				resp, err := client.PostForm("/accounts/import", data)
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+				defer resp.Body.Close()
+
+				buf := &bytes.Buffer{}
+				buf.ReadFrom(resp.Body)
+				assert.NotZero(t, buf.Len())
+				var response struct {
+					Result struct {
+						ID int
+					}
+				}
+				assert.NoError(t, json.Unmarshal(buf.Bytes(), &response))
+				assert.NotEmpty(t, response)
+
+				account, err := testApp.AccountStore.Find(response.Result.ID)
+				require.NoError(t, err)
+				assert.Equal(t, username, account.Username)
+				assert.False(t, account.Locked)
+			})
+			t.Run("Import Account - Absent Lock Marker", func(t *testing.T) {
+				username := generateUsername()
+				data := url.Values{
+					"username": {username},
+					"password": {"11aa22!bb33cc"},
+				}
+
+				resp, err := client.PostForm("/accounts/import", data)
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+				defer resp.Body.Close()
+
+				buf := &bytes.Buffer{}
+				buf.ReadFrom(resp.Body)
+				assert.NotZero(t, buf.Len())
+				var response struct {
+					Result struct {
+						ID int
+					}
+				}
+				assert.NoError(t, json.Unmarshal(buf.Bytes(), &response))
+				assert.NotEmpty(t, response)
+
+				account, err := testApp.AccountStore.Find(response.Result.ID)
+				require.NoError(t, err)
+				assert.Equal(t, username, account.Username)
+				assert.False(t, account.Locked)
+			})
+			t.Run("Get Locked Account", func(t *testing.T) {
+				// Prep
+				acc, _ := createUser(t, testApp)
+				locked, err := testApp.AccountStore.Lock(acc.ID)
+				require.NoError(t, err)
+				require.True(t, locked)
+
+				// Test
+				resp, err := client.Get(fmt.Sprintf("/accounts/%d", acc.ID))
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+				defer resp.Body.Close()
+
+				buf := &bytes.Buffer{}
+				buf.ReadFrom(resp.Body)
+				assert.NotZero(t, buf.Len())
+				var response struct {
+					Result struct {
+						ID       int
+						Username string
+						Locked   bool
+						Deleted  bool
+					}
+				}
+				assert.NoError(t, json.Unmarshal(buf.Bytes(), &response))
+				assert.NotEmpty(t, response)
+				assert.True(t, response.Result.Locked)
+			})
+			t.Run("PATCH: Update Account", func(t *testing.T) {
+				// Prep
+				acc, _ := createUser(t, testApp)
+
+				// Test
+				newUsername := generateUsername()
+				data := url.Values{
+					"username": {newUsername},
+				}
+
+				resp, err := client.Patch(fmt.Sprintf("/accounts/%d", acc.ID), data)
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+				io.Copy(ioutil.Discard, resp.Body)
+				resp.Body.Close()
+
+				account, err := testApp.AccountStore.Find(acc.ID)
+				require.NoError(t, err)
+				assert.Equal(t, newUsername, account.Username)
+			})
+			t.Run("PUT: Update Account", func(t *testing.T) {
+				// Prep
+				acc, _ := createUser(t, testApp)
+
+				// Test
+				newUsername := generateUsername()
+				data := url.Values{
+					"username": {newUsername},
+				}
+
+				resp, err := client.Put(fmt.Sprintf("/accounts/%d", acc.ID), data)
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+				io.Copy(ioutil.Discard, resp.Body)
+				resp.Body.Close()
+
+				account, err := testApp.AccountStore.Find(acc.ID)
+				require.NoError(t, err)
+				assert.Equal(t, newUsername, account.Username)
+			})
+			t.Run("PATCH: Lock Account", func(t *testing.T) {
+				// Prep
+				acc, _ := createUser(t, testApp)
+
+				// Test
+				resp, err := client.Patch(fmt.Sprintf("/accounts/%d/lock", acc.ID), nil)
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+				io.Copy(ioutil.Discard, resp.Body)
+				resp.Body.Close()
+
+				account, err := testApp.AccountStore.Find(acc.ID)
+				require.NoError(t, err)
+				assert.True(t, account.Locked)
+			})
+			t.Run("PUT: Unlock Account", func(t *testing.T) {
+				// Prep
+				acc, _ := createUser(t, testApp)
+				locked, err := testApp.AccountStore.Lock(acc.ID)
+				require.NoError(t, err)
+				require.True(t, locked)
+
+				// Test
+				resp, err := client.Put(fmt.Sprintf("/accounts/%d/unlock", acc.ID), nil)
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+				io.Copy(ioutil.Discard, resp.Body)
+				resp.Body.Close()
+
+				account, err := testApp.AccountStore.Find(acc.ID)
+				require.NoError(t, err)
+				assert.False(t, account.Locked)
+			})
+			t.Run("PUT: Lock Account", func(t *testing.T) {
+				// Prep
+				acc, _ := createUser(t, testApp)
+
+				// Test
+				resp, err := client.Put(fmt.Sprintf("/accounts/%d/lock", acc.ID), nil)
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+				io.Copy(ioutil.Discard, resp.Body)
+				resp.Body.Close()
+
+				account, err := testApp.AccountStore.Find(acc.ID)
+				require.NoError(t, err)
+				assert.True(t, account.Locked)
+			})
+			t.Run("PATCH: Unlock Account", func(t *testing.T) {
+				// Prep
+				acc, _ := createUser(t, testApp)
+				locked, err := testApp.AccountStore.Lock(acc.ID)
+				require.NoError(t, err)
+				require.True(t, locked)
+
+				// Test
+				resp, err := client.Patch(fmt.Sprintf("/accounts/%d/unlock", acc.ID), nil)
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+				io.Copy(ioutil.Discard, resp.Body)
+				resp.Body.Close()
+
+				account, err := testApp.AccountStore.Find(acc.ID)
+				require.NoError(t, err)
+				assert.False(t, account.Locked)
+			})
+			t.Run("PUT: Expire Password", func(t *testing.T) {
+				// Prep
+				acc, _ := createUser(t, testApp)
+
+				// Test
+				resp, err := client.Put(fmt.Sprintf("/accounts/%d/expire_password", acc.ID), nil)
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+				io.Copy(ioutil.Discard, resp.Body)
+				resp.Body.Close()
+
+				account, err := testApp.AccountStore.Find(acc.ID)
+				require.NoError(t, err)
+				assert.True(t, account.RequireNewPassword)
+			})
+			t.Run("PATCH: Expire Password", func(t *testing.T) {
+				// Prep
+				acc, _ := createUser(t, testApp)
+
+				// Test
+				resp, err := client.Patch(fmt.Sprintf("/accounts/%d/expire_password", acc.ID), nil)
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+				io.Copy(ioutil.Discard, resp.Body)
+				resp.Body.Close()
+
+				account, err := testApp.AccountStore.Find(acc.ID)
+				require.NoError(t, err)
+				assert.True(t, account.RequireNewPassword)
+			})
+			t.Run("Archive Account", func(t *testing.T) {
+				// Prep
+				acc, _ := createUser(t, testApp)
+
+				// Test
+				resp, err := client.Delete(fmt.Sprintf("/accounts/%d", acc.ID))
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+				io.Copy(ioutil.Discard, resp.Body)
+				resp.Body.Close()
+
+				acc, err = testApp.AccountStore.Find(acc.ID)
+				assert.NoError(t, err)
+				assert.True(t, acc.Archived())
+			})
+		})
+		t.Run("Public Routes", testPublicInterface(testApp, client))
+	}
+}
+
+func testPublicInterface(testApp *app.App, client *route.Client) func(*testing.T) {
+	return func(t *testing.T) {
+		t.Run("Health", func(t *testing.T) {
+			resp, err := client.Get("/health")
+			assert.NoError(t, err)
+			assert.Equal(t, http.StatusOK, resp.StatusCode)
+
+			buf := &bytes.Buffer{}
+			buf.ReadFrom(resp.Body)
+			assert.NotZero(t, buf.Len())
+			resp.Body.Close()
+		})
+		t.Run("Signup", func(t *testing.T) {
+			t.Run("Successful", func(t *testing.T) {
+				newUsername := generateUsername()
+				data := url.Values{
+					"username": {newUsername},
+					"password": {"aa11bb22!cc"},
+				}
+
+				resp, err := client.PostForm("/accounts", data)
+				assert.NoError(t, err)
+				if assert.Equal(t, http.StatusCreated, resp.StatusCode) {
+					test.AssertSession(t, testApp.Config, resp.Cookies())
+					test.AssertIDTokenResponse(t, resp, testApp.KeyStore, testApp.Config)
+				}
+			})
+			t.Run("Missing Username & Password", func(t *testing.T) {
+				// Temporary disbale the requirement
+				testApp.Config.UsernameIsEmail = false
+				defer func() {
+					testApp.Config.UsernameIsEmail = true
+				}()
+
+				data := url.Values{
+					"username": {""},
+					"password": {""},
+				}
+
+				resp, err := client.PostForm("/accounts", data)
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusUnprocessableEntity, resp.StatusCode)
+
+				test.AssertErrors(t, resp, services.FieldErrors{{"username", "MISSING"}, {"password", "MISSING"}})
+			})
+			t.Run("Invalid Format", func(t *testing.T) {
+				data := url.Values{
+					"username": {"test"},
+					"password": {"aa11bb22!cc"},
+				}
+
+				resp, err := client.PostForm("/accounts", data)
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusUnprocessableEntity, resp.StatusCode)
+
+				test.AssertErrors(t, resp, services.FieldErrors{{"username", "FORMAT_INVALID"}})
+			})
+			t.Run("Taken Username", func(t *testing.T) {
+				// Prep
+				acc, _ := createUser(t, testApp)
+
+				// Test
+				data := url.Values{
+					"username": {acc.Username},
+					"password": {"aa11bb22!cc"},
+				}
+
+				resp, err := client.PostForm("/accounts", data)
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusUnprocessableEntity, resp.StatusCode)
+
+				test.AssertErrors(t, resp, services.FieldErrors{{"username", "TAKEN"}})
+			})
+			t.Run("Missing Password", func(t *testing.T) {
+				data := url.Values{
+					"username": {generateUsername()},
+				}
+
+				resp, err := client.PostForm("/accounts", data)
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusUnprocessableEntity, resp.StatusCode)
+
+				test.AssertErrors(t, resp, services.FieldErrors{{"password", "MISSING"}})
+			})
+			t.Run("Insecure Password", func(t *testing.T) {
+				data := url.Values{
+					"username": {generateUsername()},
+					"password": {"1"},
+				}
+
+				resp, err := client.PostForm("/accounts", data)
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusUnprocessableEntity, resp.StatusCode)
+
+				test.AssertErrors(t, resp, services.FieldErrors{{"password", "INSECURE"}})
+			})
+		})
+		t.Run("Username Availability", func(t *testing.T) {
+			t.Run("Available", func(t *testing.T) {
+				resp, err := client.Get(fmt.Sprintf("/accounts/available?username=%s", generateUsername()))
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, resp.StatusCode)
+			})
+			t.Run("Taken", func(t *testing.T) {
+				// Prep
+				acc, _ := createUser(t, testApp)
+
+				// Test
+				resp, err := client.Get(fmt.Sprintf("/accounts/available?username=%s", acc.Username))
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusUnprocessableEntity, resp.StatusCode)
+				test.AssertErrors(t, resp, services.FieldErrors{{"username", "TAKEN"}})
+			})
+		})
+		t.Run("Login", func(t *testing.T) {
+			t.Run("Successful", func(t *testing.T) {
+				// Prep
+				acc, password := createUser(t, testApp)
+
+				// Test
+				resp, err := client.PostForm("/session", url.Values{
+					"username": {acc.Username},
+					"password": {password},
+				})
+				assert.NoError(t, err)
+				assertSuccessfulSession(t, testApp, resp, acc)
+			})
+			t.Run("Failed", func(t *testing.T) {
+				// Prep
+				acc, _ := createUser(t, testApp)
+
+				// Test
+				resp, err := client.PostForm("/session", url.Values{
+					"username": {acc.Username},
+				})
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusUnprocessableEntity, resp.StatusCode)
+
+				test.AssertErrors(t, resp, services.FieldErrors{{"credentials", "FAILED"}})
+			})
+			t.Run("Expired", func(t *testing.T) {
+				// Prep
+				acc, password := createUser(t, testApp)
+				testApp.AccountStore.RequireNewPassword(acc.ID)
+
+				// Test
+				resp, err := client.PostForm("/session", url.Values{
+					"username": {acc.Username},
+					"password": {password},
+				})
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusUnprocessableEntity, resp.StatusCode)
+
+				test.AssertErrors(t, resp, services.FieldErrors{{"credentials", "EXPIRED"}})
+			})
+			t.Run("Locked", func(t *testing.T) {
+				// Prep
+				acc, password := createUser(t, testApp)
+				locked, err := testApp.AccountStore.Lock(acc.ID)
+				require.NoError(t, err)
+				require.True(t, locked)
+
+				// Test
+				resp, err := client.PostForm("/session", url.Values{
+					"username": {acc.Username},
+					"password": {password},
+				})
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusUnprocessableEntity, resp.StatusCode)
+
+				test.AssertErrors(t, resp, services.FieldErrors{{"account", "LOCKED"}})
+			})
+		})
+		t.Run("Refresh Session", func(t *testing.T) {
+			t.Run("Successful", func(t *testing.T) {
+				// Prep
+				acc, _ := createUser(t, testApp)
+
+				// Test
+				existingSession := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, acc.ID)
+				resp, err := client.WithCookie(existingSession).Get("/session/refresh")
+				assert.NoError(t, err)
+
+				if assert.Equal(t, http.StatusCreated, resp.StatusCode) {
+					test.AssertIDTokenResponse(t, resp, testApp.KeyStore, testApp.Config)
+				}
+			})
+			t.Run("Failed", func(t *testing.T) {
+				// Lifted from: servers/handlers/get_session_refresh_test.go#TestGetSessionRefreshFailure
+				testCases := []struct {
+					signingKey []byte
+					liveToken  bool
+				}{
+					// cookie with the wrong signature
+					{[]byte("wrong"), true},
+					// cookie with a revoked refresh token
+					{testApp.Config.SessionSigningKey, false},
+				}
+
+				for idx, tc := range testCases {
+					tcCfg := &app.Config{
+						AuthNURL:           testApp.Config.AuthNURL,
+						SessionCookieName:  testApp.Config.SessionCookieName,
+						SessionSigningKey:  tc.signingKey,
+						ApplicationDomains: []route.Domain{{Hostname: "test.com"}},
+					}
+					existingSession := test.CreateSession(testApp.RefreshTokenStore, tcCfg, idx+100)
+					if !tc.liveToken {
+						test.RevokeSession(testApp.RefreshTokenStore, testApp.Config, existingSession)
+					}
+
+					client := client.WithCookie(existingSession)
+					res, err := client.Get("/session/refresh")
+					require.NoError(t, err)
+
+					assert.Equal(t, http.StatusUnauthorized, res.StatusCode)
+				}
+			})
+		})
+		t.Run("Logout", func(t *testing.T) {
+			t.Run("Successful", func(t *testing.T) {
+				// Prep
+				acc, _ := createUser(t, testApp)
+				session := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, acc.ID)
+
+				// token exists
+				claims, err := sessions.Parse(session.Value, testApp.Config)
+				require.NoError(t, err)
+				id, err := testApp.RefreshTokenStore.Find(models.RefreshToken(claims.Subject))
+				require.NoError(t, err)
+				assert.NotEmpty(t, id)
+
+				// Test
+				res, err := client.WithCookie(session).Delete("/session")
+				assert.NoError(t, err)
+
+				// request always succeeds
+				assert.Equal(t, http.StatusOK, res.StatusCode)
+
+				// token no longer exists
+				id, err = testApp.RefreshTokenStore.Find(models.RefreshToken(claims.Subject))
+				require.NoError(t, err)
+				assert.Empty(t, id)
+			})
+			t.Run("Failure", func(t *testing.T) {
+				// Prep
+				badCfg := &app.Config{
+					AuthNURL:           testApp.Config.AuthNURL,
+					SessionCookieName:  testApp.Config.SessionCookieName,
+					SessionSigningKey:  []byte("wrong"),
+					ApplicationDomains: testApp.Config.ApplicationDomains,
+				}
+				session := test.CreateSession(testApp.RefreshTokenStore, badCfg, 123)
+
+				// Test
+				res, err := client.WithCookie(session).Delete("/session")
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, res.StatusCode)
+			})
+		})
+		t.Run("Passwordless", func(t *testing.T) {
+			t.Run("Request", func(t *testing.T) {
+				t.Run("Known Account", func(t *testing.T) {
+					acc, _ := createUser(t, testApp)
+
+					res, err := client.Get("/session/token?username=" + acc.Username)
+					require.NoError(t, err)
+					assert.Equal(t, http.StatusOK, res.StatusCode)
+				})
+				t.Run("Unknown Account", func(t *testing.T) {
+					res, err := client.Get("/session/token?username=" + generateUsername())
+					require.NoError(t, err)
+					assert.Equal(t, http.StatusOK, res.StatusCode)
+				})
+			})
+			t.Run("Submit", func(t *testing.T) {
+				t.Run("Successful - Valid Token", func(t *testing.T) {
+					acc, _ := createUser(t, testApp)
+
+					// given a passwordless token
+					token, err := passwordless.New(testApp.Config, acc.ID)
+					require.NoError(t, err)
+					tokenStr, err := token.Sign(testApp.Config.PasswordlessTokenSigningKey)
+					require.NoError(t, err)
+
+					// invoking the endpoint
+					res, err := client.PostForm("/session/token", url.Values{
+						"token": []string{tokenStr},
+					})
+					require.NoError(t, err)
+
+					// works
+					assertSuccessfulSession(t, testApp, res, acc)
+				})
+				t.Run("Failure - Invalid Token", func(t *testing.T) {
+					// invoking the endpoint
+					res, err := client.PostForm("/session/token", url.Values{
+						"token": []string{"invalid"},
+					})
+					require.NoError(t, err)
+
+					// does not work
+					assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
+					test.AssertErrors(t, res, services.FieldErrors{{"token", "INVALID_OR_EXPIRED"}})
+				})
+				t.Run("Successful - Valid Session", func(t *testing.T) {
+					acc, _ := createUser(t, testApp)
+
+					// given a session
+					session := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, acc.ID)
+
+					// given a passwordless token
+					token, err := passwordless.New(testApp.Config, acc.ID)
+					require.NoError(t, err)
+					tokenStr, err := token.Sign(testApp.Config.PasswordlessTokenSigningKey)
+					require.NoError(t, err)
+
+					// invoking the endpoint
+					res, err := client.WithCookie(session).PostForm("/session/token", url.Values{
+						"token": []string{tokenStr},
+					})
+					require.NoError(t, err)
+
+					// works
+					assertSuccessfulSession(t, testApp, res, acc)
+
+					// invalidates old session
+					claims, err := sessions.Parse(session.Value, testApp.Config)
+					require.NoError(t, err)
+					id, err := testApp.RefreshTokenStore.Find(models.RefreshToken(claims.Subject))
+					require.NoError(t, err)
+					assert.Empty(t, id)
+				})
+			})
+		})
+		t.Run("Change Password", func(t *testing.T) {
+			// Lifted from server/handlers/post_password_test.go
+
+			_ = func(t *testing.T, res *http.Response, account *models.Account) {
+				assert.Equal(t, http.StatusCreated, res.StatusCode)
+				test.AssertSession(t, testApp.Config, res.Cookies())
+				test.AssertIDTokenResponse(t, res, testApp.KeyStore, testApp.Config)
+				found, err := testApp.AccountStore.Find(account.ID)
+				require.NoError(t, err)
+				assert.NotEqual(t, found.Password, account.Password)
+			}
+
+			t.Run("Successful - Valid Reset Token", func(t *testing.T) {
+				// Prep
+				acc, _ := createUser(t, testApp)
+				token, err := resets.New(testApp.Config, acc.ID, acc.PasswordChangedAt)
+				require.NoError(t, err)
+				tokenStr, err := token.Sign(testApp.Config.ResetSigningKey)
+				require.NoError(t, err)
+
+				// Test
+				res, err := client.PostForm("/password", url.Values{
+					"token":    {tokenStr},
+					"password": {"0a0b!c0d0"},
+				})
+				assert.NoError(t, err)
+
+				assertSuccessfulSession(t, testApp, res, acc)
+				assertChangedPassword(t, testApp, acc)
+			})
+			t.Run("Failure - Invalid Reset Token", func(t *testing.T) {
+				res, err := client.PostForm("/password", url.Values{
+					"token":    {"invalid"},
+					"password": {"0a0b!c0d0"},
+				})
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
+				test.AssertErrors(t, res, services.FieldErrors{{"token", "INVALID_OR_EXPIRED"}})
+			})
+			t.Run("Successful - Valid Session", func(t *testing.T) {
+				acc, password := createUser(t, testApp)
+
+				// given a session
+				session := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, acc.ID)
+
+				// invoking the endpoint
+				res, err := client.WithCookie(session).PostForm("/password", url.Values{
+					"currentPassword": {password},
+					"password":        {"0a0b0c0d0"},
+				})
+				require.NoError(t, err)
+
+				// works
+				assertSuccessfulSession(t, testApp, res, acc)
+				assertChangedPassword(t, testApp, acc)
+
+				// invalidates old session
+				claims, err := sessions.Parse(session.Value, testApp.Config)
+				require.NoError(t, err)
+				id, err := testApp.RefreshTokenStore.Find(models.RefreshToken(claims.Subject))
+				require.NoError(t, err)
+				assert.Empty(t, id)
+			})
+			t.Run("Failure - Valid Session & Insecure Password", func(t *testing.T) {
+				acc, password := createUser(t, testApp)
+
+				// given a session
+				session := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, acc.ID)
+
+				// invoking the endpoint
+				res, err := client.WithCookie(session).PostForm("/password", url.Values{
+					"currentPassword": {password},
+					"password":        {"a"},
+				})
+				require.NoError(t, err)
+
+				assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
+				test.AssertErrors(t, res, services.FieldErrors{{"password", "INSECURE"}})
+			})
+			t.Run("Failure - Valid Session & Invalid Current Password", func(t *testing.T) {
+				acc, _ := createUser(t, testApp)
+
+				// given a session
+				session := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, acc.ID)
+
+				// invoking the endpoint
+				res, err := client.WithCookie(session).PostForm("/password", url.Values{
+					"currentPassword": {"wrong"},
+					"password":        {"0a0b0c0d0"},
+				})
+				require.NoError(t, err)
+
+				assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
+				test.AssertErrors(t, res, services.FieldErrors{{"credentials", "FAILED"}})
+			})
+			t.Run("Failure - Invalid Session", func(t *testing.T) {
+				session := &http.Cookie{
+					Name:  testApp.Config.SessionCookieName,
+					Value: "invalid",
+				}
+
+				res, err := client.WithCookie(session).PostForm("/password", url.Values{
+					"currentPassword": {"oldpwd"},
+					"password":        {"0a0b0c0d0"},
+				})
+				require.NoError(t, err)
+
+				assert.Equal(t, http.StatusUnauthorized, res.StatusCode)
+			})
+			t.Run("Successful - Valid Token & Session", func(t *testing.T) {
+				// Token account
+				tokenAccount, password := createUser(t, testApp)
+
+				token, err := resets.New(testApp.Config, tokenAccount.ID, tokenAccount.PasswordChangedAt)
+				require.NoError(t, err)
+				tokenStr, err := token.Sign(testApp.Config.ResetSigningKey)
+				require.NoError(t, err)
+
+				// given another account
+				sessionAccount, _ := createUser(t, testApp)
+				require.NoError(t, err)
+				// with a session
+				session := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, sessionAccount.ID)
+
+				// invoking the endpoint
+				res, err := client.WithCookie(session).PostForm("/password", url.Values{
+					"token":           {tokenStr},
+					"currentPassword": {password},
+					"password":        {"0a0b0c0d0"},
+				})
+				require.NoError(t, err)
+
+				// works
+				assertSuccessfulSession(t, testApp, res, tokenAccount)
+				assertChangedPassword(t, testApp, tokenAccount)
+			})
+		})
+		t.Run("Password Reset", func(t *testing.T) {
+			t.Run("Known Account", func(t *testing.T) {
+				acc, _ := createUser(t, testApp)
+
+				res, err := client.Get(fmt.Sprintf("/password/reset?username=%s", acc.Username))
+				assert.NoError(t, err)
+				assert.Equal(t, http.StatusOK, res.StatusCode)
+			})
+			t.Run("Unknown Account", func(t *testing.T) {
+				res, err := client.Get(fmt.Sprintf("/password/reset?username=%s", generateUsername()))
+				require.NoError(t, err)
+				assert.Equal(t, http.StatusOK, res.StatusCode)
+			})
+		})
+		//TODO: Add OAuth tests
+	}
+}
+
+func assertSuccessfulSession(t *testing.T, testApp *app.App, res *http.Response, account *models.Account) {
+	assert.Equal(t, http.StatusCreated, res.StatusCode)
+	test.AssertSession(t, testApp.Config, res.Cookies())
+	test.AssertIDTokenResponse(t, res, testApp.KeyStore, testApp.Config)
+}
+
+func assertChangedPassword(t *testing.T, testApp *app.App, account *models.Account) {
+	found, err := testApp.AccountStore.Find(account.ID)
+	require.NoError(t, err)
+	assert.NotEqual(t, found.Password, account.Password)
+}
+
+const letters = `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`
+
+// generateUsername returns a username of 5 random letters appended with `@example.com`
+func generateUsername() string {
+	u := strings.Builder{}
+	for i := 0; i < 5; i++ {
+		u.WriteByte(letters[rand.Intn(len(letters))])
+	}
+	return fmt.Sprintf("%s@example.com", u.String())
+}
+
+// createUser creates a user and returns the resulting account and plaintext password
+func createUser(t *testing.T, app *app.App) (*models.Account, string) {
+	username := generateUsername()
+	password := "aa11bb!cc"
+	b, _ := bcrypt.GenerateFromPassword([]byte(password), app.Config.BcryptCost)
+	acc, err := app.AccountStore.Create(username, b)
+	require.NoError(t, err)
+	return acc, password
 }
