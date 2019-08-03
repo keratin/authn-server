@@ -1,12 +1,10 @@
 package public
 
 import (
-	"fmt"
 	"net"
 
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
-	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -78,19 +76,7 @@ func (s publicServer) Login(ctx context.Context, req *authnpb.LoginRequest) (*au
 	)
 	if err != nil {
 		if fe, ok := err.(services.FieldErrors); ok {
-			br := &errdetails.BadRequest{}
-			for _, fe := range fe {
-				br.FieldViolations = append(br.FieldViolations, &errdetails.BadRequest_FieldViolation{
-					Field:       fe.Field,
-					Description: fe.Message,
-				})
-			}
-			statusError := status.New(codes.FailedPrecondition, fe.Error())
-			statusEr, e := statusError.WithDetails(br)
-			if e != nil {
-				panic(fmt.Sprintf("Unexpected error attaching metadata: %v", e))
-			}
-			return nil, statusEr.Err()
+			return nil, errors.ToStatusErrorWithDetails(fe, codes.FailedPrecondition).Err()
 		}
 		panic(err)
 	}
