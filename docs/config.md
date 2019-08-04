@@ -28,7 +28,7 @@ This specifies the base URL of the AuthN service. It will be embedded in all iss
 |           |    |
 | --------- | --- |
 | Required? | Yes |
-| Value | comma-delimited list of domains (scheme & host, no path) |
+| Value | comma-delimited list of domains (host and optionally port, no path) |
 
 Any domain listed in this variable will be trusted for three things:
 
