@@ -15,12 +15,12 @@ func AccountCreator(store data.AccountStore, cfg *app.Config, username string, p
 
 	errs := FieldErrors{}
 
-	fieldError := usernameValidator(cfg, username)
+	fieldError := UsernameValidator(cfg, username)
 	if fieldError != nil {
 		errs = append(errs, *fieldError)
 	}
 
-	fieldError = passwordValidator(cfg, password)
+	fieldError = PasswordValidator(cfg, password)
 	if fieldError != nil {
 		errs = append(errs, *fieldError)
 	}
