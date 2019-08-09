@@ -41,19 +41,7 @@ func ToStatusErrorWithDetails(fes services.FieldErrors, errCode codes.Code) *sta
 
 // CustomHTTPError is a custom error handler to write the error JSON obeying the pre-defined error JSON structure
 func CustomHTTPError(ctx context.Context, mux *runtime.ServeMux, marshaler runtime.Marshaler, w http.ResponseWriter, req *http.Request, err error) {
-
-	md, _ := runtime.ServerMetadataFromContext(ctx)
-	authen := md.HeaderMD.Get(wwwAuthenticate)
-
 	statusError := status.Convert(err)
-
-	// Basic-Auth failure
-	if statusError.Code() == codes.Unauthenticated && len(authen) > 0 {
-		w.Header().Set(wwwAuthenticate, `Basic realm="Private AuthN Realm"`)
-		w.WriteHeader(401)
-		w.Write([]byte("Unauthorized.\n"))
-		return
-	}
 
 	// Non-Basic-Auth authentication failure (only possible in /session/refresh)
 	if statusError.Code() == codes.Unauthenticated {
@@ -62,7 +50,6 @@ func CustomHTTPError(ctx context.Context, mux *runtime.ServeMux, marshaler runti
 	}
 
 	for _, detail := range statusError.Details() {
-
 		switch t := detail.(type) {
 		case *errdetails.BadRequest:
 			// Convert the errors back to AuthN's custom error responses to preserve the shape of the returned error
