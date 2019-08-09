@@ -5,6 +5,7 @@ import (
 
 	"github.com/keratin/authn-server/app"
 	authnpb "github.com/keratin/authn-server/grpc"
+	"github.com/keratin/authn-server/grpc/internal/meta"
 	"golang.org/x/net/context"
 )
 
@@ -23,7 +24,7 @@ func (ss unsecuredServer) ServiceConfiguration(context.Context, *authnpb.Service
 	}, nil
 }
 
-func (ss unsecuredServer) JWKS(ctx context.Context, _ *authnpb.JWKSRequest) (*authnpb.JWKSResponse, error) {
+func (ss unsecuredServer) JWKS(ctx context.Context, req *authnpb.JWKSRequest) (*authnpb.JWKSResponse, error) {
 	keys := []*authnpb.Key{}
 	for _, key := range ss.app.KeyStore.Keys() {
 		// There are no proto definitions for jose.JSONWebKey and the marshalled version
@@ -31,13 +32,15 @@ func (ss unsecuredServer) JWKS(ctx context.Context, _ *authnpb.JWKSRequest) (*au
 		// marshal it , then unmarshal it into our message.
 		k, err := key.JWK.MarshalJSON()
 		if err != nil {
-			ss.app.Reporter.ReportError(err)
+			info := meta.GetUnaryServerInfo(ctx)
+			ss.app.Reporter.ReportGRPCError(err, info, req)
 			continue
 		}
 		pkey := &authnpb.Key{}
 		err = json.Unmarshal(k, pkey)
 		if err != nil {
-			ss.app.Reporter.ReportError(err)
+			info := meta.GetUnaryServerInfo(ctx)
+			ss.app.Reporter.ReportGRPCError(err, info, req)
 			continue
 		}
 		keys = append(keys, pkey)

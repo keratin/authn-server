@@ -27,7 +27,8 @@ func (s passwordlessServer) RequestPasswordlessLogin(ctx context.Context, req *a
 	go func() {
 		err := services.PasswordlessTokenSender(s.app.Config, account)
 		if err != nil {
-			s.app.Reporter.ReportError(err)
+			info := meta.GetUnaryServerInfo(ctx)
+			s.app.Reporter.ReportGRPCError(err, info, req)
 		}
 	}()
 

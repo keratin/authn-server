@@ -4,6 +4,7 @@ import (
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/services"
 	authnpb "github.com/keratin/authn-server/grpc"
+	"github.com/keratin/authn-server/grpc/internal/meta"
 	context "golang.org/x/net/context"
 )
 
@@ -24,7 +25,8 @@ func (s passwordResetServer) RequestPasswordReset(ctx context.Context, req *auth
 	go func() {
 		err := services.PasswordResetSender(s.app.Config, account)
 		if err != nil {
-			s.app.Reporter.ReportError(err)
+			info := meta.GetUnaryServerInfo(ctx)
+			s.app.Reporter.ReportGRPCError(err, info, req)
 		}
 	}()
 

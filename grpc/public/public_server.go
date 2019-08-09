@@ -123,11 +123,12 @@ func (s publicServer) RefreshSession(ctx context.Context, _ *authnpb.RefreshSess
 	}, nil
 }
 
-func (s publicServer) Logout(ctx context.Context, _ *authnpb.LogoutRequest) (*authnpb.LogoutResponse, error) {
+func (s publicServer) Logout(ctx context.Context, req *authnpb.LogoutRequest) (*authnpb.LogoutResponse, error) {
 
 	err := services.SessionEnder(s.app.RefreshTokenStore, meta.GetRefreshToken(ctx))
 	if err != nil {
-		s.app.Reporter.ReportError(err)
+		info := meta.GetUnaryServerInfo(ctx)
+		s.app.Reporter.ReportGRPCError(err, info, req)
 	}
 
 	meta.SetSession(ctx, s.app.Config.SessionCookieName, "")
