@@ -1,8 +1,6 @@
 package app
 
 import (
-	"os"
-
 	"github.com/go-redis/redis"
 	"github.com/jmoiron/sqlx"
 	"github.com/keratin/authn-server/app/data"
@@ -30,8 +28,8 @@ type App struct {
 	Logger            logrus.FieldLogger
 }
 
-func NewApp(cfg *Config) (*App, error) {
-	errorReporter, err := ops.NewErrorReporter(cfg.ErrorReporterCredentials, cfg.ErrorReporterType)
+func NewApp(cfg *Config, logger logrus.FieldLogger) (*App, error) {
+	errorReporter, err := ops.NewErrorReporter(cfg.ErrorReporterCredentials, cfg.ErrorReporterType, logger)
 
 	db, err := data.NewDB(cfg.DatabaseURL)
 	if err != nil {
@@ -60,12 +58,6 @@ func NewApp(cfg *Config) (*App, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "NewBlobStore")
 	}
-
-	// Default logger
-	logger := logrus.New()
-	logger.Formatter = &logrus.JSONFormatter{}
-	logger.Level = logrus.DebugLevel
-	logger.Out = os.Stdout
 
 	keyStore := data.NewRotatingKeyStore()
 	if cfg.IdentitySigningKey == nil {

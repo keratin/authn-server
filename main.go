@@ -5,6 +5,8 @@ import (
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/server"
+	"github.com/sirupsen/logrus"
+
 	"os"
 	"path"
 )
@@ -39,7 +41,13 @@ func main() {
 }
 
 func serve(cfg *app.Config) {
-	app, err := app.NewApp(cfg)
+	// Default logger
+	logger := logrus.New()
+	logger.Formatter = &logrus.JSONFormatter{}
+	logger.Level = logrus.DebugLevel
+	logger.Out = os.Stdout
+
+	app, err := app.NewApp(cfg, logger)
 	if err != nil {
 		fmt.Println(err)
 		return

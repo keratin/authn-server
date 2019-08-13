@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 // ErrorReporterType exists to provide context for plain strings in configuration
@@ -11,7 +13,8 @@ type ErrorReporterType int
 
 // all known types of ErrorReporter
 const (
-	Sentry ErrorReporterType = iota
+	Log ErrorReporterType = iota
+	Sentry
 	Airbrake
 )
 
@@ -23,14 +26,16 @@ type ErrorReporter interface {
 }
 
 // NewErrorReporter will instantiate an ErrorReporter for a known type
-func NewErrorReporter(credentials string, t ErrorReporterType) (ErrorReporter, error) {
+func NewErrorReporter(credentials string, t ErrorReporterType, logger logrus.FieldLogger) (ErrorReporter, error) {
 	switch t {
 	case Sentry:
 		return NewSentryReporter(credentials)
 	case Airbrake:
 		return NewAirbrakeReporter(credentials)
 	default:
-		return &LogReporter{}, nil
+		return &LogReporter{
+			FieldLogger: logger.WithField("scope", "NewErrorReporter"),
+		}, nil
 	}
 }
 
