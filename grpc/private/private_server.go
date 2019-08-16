@@ -62,9 +62,6 @@ func RunPrivateGRPC(ctx context.Context, app *app.App, l net.Listener) error {
 	return nil
 }
 
-const wwwAuthenticate = "WWW-Authenticate"
-const authnRealm = `Basic realm="Private AuthN Realm"`
-
 func basicAuthCheck(ctx context.Context, matcher basicAuthMatcher) (context.Context, error) {
 	token, err := grpc_auth.AuthFromMD(ctx, "basic")
 	if err != nil {

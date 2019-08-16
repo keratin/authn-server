@@ -13,8 +13,6 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-const wwwAuthenticate = `WWW-Authenticate`
-
 func ToFieldErrors(errs *errdetails.BadRequest) services.FieldErrors {
 	fes := services.FieldErrors{}
 	for _, violation := range errs.GetFieldViolations() {
