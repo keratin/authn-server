@@ -15,7 +15,7 @@ import (
 type sessionKey int
 type accountIDKey int
 
-func SessionInterceptor(app *app.App) grpc.UnaryServerInterceptor {
+func sessionInterceptor(app *app.App) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		var session *sessions.Claims
 		var parseOnce sync.Once

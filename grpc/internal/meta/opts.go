@@ -29,7 +29,7 @@ func PrivateServerOptions(app *app.App) []grpc.ServerOption {
 			grpc_auth.UnaryServerInterceptor(func(ctx context.Context) (context.Context, error) {
 				return ctx, nil
 			}),
-			SessionInterceptor(app),
+			sessionInterceptor(app),
 		),
 	}
 }
@@ -44,7 +44,7 @@ func PublicServerOptions(app *app.App) []grpc.ServerOption {
 			grpc_ctxtags.UnaryServerInterceptor(),
 			grpc_logrus.UnaryServerInterceptor(logrus.NewEntry(logrus.StandardLogger())),
 			grpc_prometheus.UnaryServerInterceptor,
-			SessionInterceptor(app),
+			sessionInterceptor(app),
 		),
 	}
 }
