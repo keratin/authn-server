@@ -50,7 +50,7 @@ func RunPublicGateway(ctx context.Context, app *app.App, r *mux.Router, conn *gr
 	go func() {
 		<-ctx.Done()
 		if err := s.Shutdown(context.Background()); err != nil {
-			log.Printf("HTTP server Shutdown:: %v", err)
+			log.Printf("HTTP server Shutdown: %v", err)
 		}
 	}()
 
