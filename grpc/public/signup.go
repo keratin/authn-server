@@ -30,7 +30,7 @@ func (s signupServiceServer) Signup(ctx context.Context, req *authnpb.SignupRequ
 
 	sessionToken, identityToken, err := services.SessionCreator(
 		s.app.AccountStore, s.app.RefreshTokenStore, s.app.KeyStore, s.app.Actives, s.app.Config, s.app.Reporter,
-		account.ID, &s.app.Config.ApplicationDomains[0], meta.GetRefreshToken(ctx),
+		account.ID, meta.MatchedDomain(ctx), meta.GetRefreshToken(ctx),
 	)
 	if err != nil {
 		panic(err)

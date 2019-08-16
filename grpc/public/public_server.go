@@ -83,7 +83,7 @@ func (s publicServer) Login(ctx context.Context, req *authnpb.LoginRequest) (*au
 
 	sessionToken, identityToken, err := services.SessionCreator(
 		s.app.AccountStore, s.app.RefreshTokenStore, s.app.KeyStore, s.app.Actives, s.app.Config, s.app.Reporter,
-		account.ID, &s.app.Config.ApplicationDomains[0], meta.GetRefreshToken(ctx),
+		account.ID, meta.MatchedDomain(ctx), meta.GetRefreshToken(ctx),
 	)
 	if err != nil {
 		panic(err)
@@ -110,7 +110,7 @@ func (s publicServer) RefreshSession(ctx context.Context, _ *authnpb.RefreshSess
 
 	identityToken, err := services.SessionRefresher(
 		s.app.RefreshTokenStore, s.app.KeyStore, s.app.Actives, s.app.Config, s.app.Reporter,
-		meta.GetSession(ctx), accountID, &s.app.Config.ApplicationDomains[0],
+		meta.GetSession(ctx), accountID, meta.MatchedDomain(ctx),
 	)
 	if err != nil {
 		panic(pkgerrors.Wrap(err, "IdentityForSession"))
@@ -172,7 +172,7 @@ func (s publicServer) ChangePassword(ctx context.Context, req *authnpb.ChangePas
 
 	sessionToken, identityToken, err := services.SessionCreator(
 		s.app.AccountStore, s.app.RefreshTokenStore, s.app.KeyStore, s.app.Actives, s.app.Config, s.app.Reporter,
-		accountID, &s.app.Config.ApplicationDomains[0], meta.GetRefreshToken(ctx),
+		accountID, meta.MatchedDomain(ctx), meta.GetRefreshToken(ctx),
 	)
 	if err != nil {
 		panic(err)

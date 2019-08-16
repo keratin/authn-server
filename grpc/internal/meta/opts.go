@@ -21,6 +21,7 @@ func PrivateServerOptions(app *app.App) []grpc.ServerOption {
 		grpc_middleware.WithUnaryServerChain(
 			ops.GRPCRecoveryInterceptor(app.Reporter),
 			unaryServerInfoInjector,
+			audienceMatcher(app),
 			grpc_ctxtags.UnaryServerInterceptor(),
 			grpc_logrus.UnaryServerInterceptor(logrus.NewEntry(logrus.StandardLogger())),
 			grpc_prometheus.UnaryServerInterceptor,
@@ -39,6 +40,7 @@ func PublicServerOptions(app *app.App) []grpc.ServerOption {
 		grpc_middleware.WithUnaryServerChain(
 			ops.GRPCRecoveryInterceptor(app.Reporter),
 			unaryServerInfoInjector,
+			audienceMatcher(app),
 			grpc_ctxtags.UnaryServerInterceptor(),
 			grpc_logrus.UnaryServerInterceptor(logrus.NewEntry(logrus.StandardLogger())),
 			grpc_prometheus.UnaryServerInterceptor,
