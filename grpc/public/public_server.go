@@ -1,11 +1,7 @@
 package public
 
 import (
-	"net"
-
-	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -23,48 +19,6 @@ var _ authnpb.PublicAuthNServer = publicServer{}
 
 type publicServer struct {
 	app *app.App
-}
-
-func RunPublicGRPC(ctx context.Context, app *app.App, l net.Listener) error {
-	opts := meta.PublicServerOptions(app)
-	srv := grpc.NewServer(opts...)
-
-	RegisterPublicGRPCMethods(srv, app)
-
-	go func() {
-		<-ctx.Done()
-		srv.GracefulStop()
-	}()
-
-	if err := srv.Serve(l); err != nil {
-		log.Printf("serve error: %s", err)
-		return err
-	}
-	return nil
-}
-
-func RegisterPublicGRPCMethods(srv *grpc.Server, app *app.App) {
-	authnpb.RegisterPublicAuthNServer(srv, publicServer{
-		app: app,
-	})
-
-	if app.Config.EnableSignup {
-		authnpb.RegisterSignupServiceServer(srv, signupServiceServer{
-			app: app,
-		})
-	}
-
-	if app.Config.AppPasswordResetURL != nil {
-		authnpb.RegisterPasswordResetServiceServer(srv, passwordResetServer{
-			app: app,
-		})
-	}
-
-	if app.Config.AppPasswordlessTokenURL != nil {
-		authnpb.RegisterPasswordlessServiceServer(srv, passwordlessServer{
-			app: app,
-		})
-	}
 }
 
 func (s publicServer) Login(ctx context.Context, req *authnpb.LoginRequest) (*authnpb.LoginResponseEnvelope, error) {
