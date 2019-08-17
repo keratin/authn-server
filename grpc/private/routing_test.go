@@ -69,7 +69,7 @@ func TestRegisterRoutes(t *testing.T) {
 		app := test.App()
 		app.Config.EnableSignup = true
 		app.OauthProviders["test"] = *testOAuthProvider
-		RegisterRoutes(router, app, gmux)
+		registerRoutes(router, app, gmux)
 
 		// to collect all the registered routes of *mux.Router
 		registered := make(map[string]bool)
@@ -91,7 +91,7 @@ func TestRegisterRoutes(t *testing.T) {
 		router := mux.NewRouter()
 		app := test.App()
 		app.Config.EnableSignup = false
-		RegisterRoutes(router, app, gmux)
+		registerRoutes(router, app, gmux)
 
 		// to collect all the registered routes of *mux.Router
 		registered := make(map[string]bool)
@@ -120,7 +120,7 @@ func TestRegisterRoutes(t *testing.T) {
 		app := test.App()
 		app.Config.AppPasswordlessTokenURL = nil
 		app.OauthProviders["test"] = *testOAuthProvider
-		RegisterRoutes(router, app, gmux)
+		registerRoutes(router, app, gmux)
 
 		// to collect all the registered routes of *mux.Router
 		registered := make(map[string]bool)
@@ -150,7 +150,7 @@ func TestRegisterRoutes(t *testing.T) {
 		app := test.App()
 		app.Config.AppPasswordResetURL = nil
 		app.OauthProviders["test"] = *testOAuthProvider
-		RegisterRoutes(router, app, gmux)
+		registerRoutes(router, app, gmux)
 
 		// to collect all the registered routes of *mux.Router
 		registered := make(map[string]bool)
@@ -177,7 +177,7 @@ func TestRegisterRoutes(t *testing.T) {
 		router := mux.NewRouter()
 		app := test.App()
 		require.Len(t, app.OauthProviders, 0)
-		RegisterRoutes(router, app, gmux)
+		registerRoutes(router, app, gmux)
 
 		// to collect all the registered routes of *mux.Router
 		registered := make(map[string]bool)
@@ -208,7 +208,7 @@ func TestRegisterRoutes(t *testing.T) {
 		app := test.App()
 		app.Actives = nil
 		app.OauthProviders["test"] = *testOAuthProvider
-		RegisterRoutes(router, app, gmux)
+		registerRoutes(router, app, gmux)
 
 		// to collect all the registered routes of *mux.Router
 		registered := make(map[string]bool)

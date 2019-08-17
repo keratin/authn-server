@@ -47,7 +47,7 @@ func RunPrivateGateway(ctx context.Context, app *app.App, r *mux.Router, conn *g
 		panic(err)
 	}
 
-	RegisterRoutes(r, app, gmux)
+	registerRoutes(r, app, gmux)
 
 	s := &http.Server{
 		Addr:    l.Addr().String(),

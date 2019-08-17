@@ -16,7 +16,7 @@ import (
 */
 
 // RegisterRoutes registers gmux as the handler for the private routes on router
-func RegisterRoutes(router *mux.Router, app *app.App, gmux *runtime.ServeMux) {
+func registerRoutes(router *mux.Router, app *app.App, gmux *runtime.ServeMux) {
 	public.RegisterRoutes(router, app, gmux)
 
 	route.Attach(router, app.Config.MountedPath, metaRoutes(app, gmux)...)
