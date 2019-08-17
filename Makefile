@@ -2,7 +2,7 @@ ORG := keratin
 PROJECT := authn-server
 NAME := $(ORG)/$(PROJECT)
 VERSION := 1.6.0
-MAIN := main.go routing.go
+MAIN := main.go
 
 .PHONY: clean
 clean:
@@ -43,7 +43,7 @@ dist/authn-windows64.exe: init
 # The Docker target wraps the linux/amd64 binary
 .PHONY: dist/docker
 dist/docker: dist/authn-linux64
-	docker build --tag $(NAME):latest .
+	docker build --tag $(NAME):latest --tag $(NAME):$(VERSION) .
 
 # Build all distributables
 .PHONY: dist

@@ -1,6 +1,7 @@
 package app
 
 import (
+	"io/ioutil"
 	"net/url"
 	"os"
 	"regexp"
@@ -40,6 +41,17 @@ func lookupBool(name string, def bool) (bool, error) {
 func lookupURL(name string) (*url.URL, error) {
 	if val, ok := os.LookupEnv(name); ok {
 		return url.Parse(val)
+	}
+	return nil, nil
+}
+
+func lookupSecureURL(name string) (*url.URL, error) {
+	if fileName, ok := os.LookupEnv(name); ok {
+		val, err := ioutil.ReadFile(fileName)
+		if err != nil {
+			return nil, err
+		}
+		return url.Parse(string(val))
 	}
 	return nil, nil
 }

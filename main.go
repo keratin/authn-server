@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/server"
@@ -15,6 +16,8 @@ import (
 var VERSION string
 
 func main() {
+	fmt.Println(fmt.Sprintf("~*~ Keratin AuthN v%s ~*~", VERSION))
+
 	var cmd string
 	if len(os.Args) == 1 {
 		cmd = "server"
@@ -53,7 +56,6 @@ func serve(cfg *app.Config) {
 		return
 	}
 
-	fmt.Println(fmt.Sprintf("~*~ Keratin AuthN v%s ~*~", VERSION))
 	fmt.Println(fmt.Sprintf("AUTHN_URL: %s", cfg.AuthNURL))
 	fmt.Println(fmt.Sprintf("PORT: %d", cfg.ServerPort))
 	if app.Config.PublicPort != 0 {

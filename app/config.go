@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"io/ioutil"
 	"math/big"
 	"net/url"
 	"os"
@@ -119,15 +120,30 @@ var configurers = []configurer{
 	// and it does protect from escalating an attack on one derived key into an
 	// attack on all of the derived keys.
 	func(c *Config) error {
-		val, err := requireEnv("SECRET_KEY_BASE")
-		if err == nil {
+		fileName, err := requireEnv("SECRET_KEY_BASE_FILE")
+		if err != nil {
+			fmt.Printf("Failed to load SECRET_KEY_BASE_FILE: %v", err)
+			val, err := requireEnv("SECRET_KEY_BASE")
+			if err != nil {
+				return err
+			}
 			c.SessionSigningKey = derive([]byte(val), "session-key-salt")
 			c.ResetSigningKey = derive([]byte(val), "password-reset-token-key-salt")
 			c.PasswordlessTokenSigningKey = derive([]byte(val), "passwordless-token-key-salt")
 			c.DBEncryptionKey = derive([]byte(val), "db-encryption-key-salt")[:32]
 			c.OAuthSigningKey = derive([]byte(val), "oauth-key-salt")
+			return nil
 		}
-		return err
+		val, err := ioutil.ReadFile(fileName)
+		if err != nil {
+			return err
+		}
+		c.SessionSigningKey = derive(val, "session-key-salt")
+		c.ResetSigningKey = derive(val, "password-reset-token-key-salt")
+		c.PasswordlessTokenSigningKey = derive(val, "passwordless-token-key-salt")
+		c.DBEncryptionKey = derive(val, "db-encryption-key-salt")[:32]
+		c.OAuthSigningKey = derive(val, "oauth-key-salt")
+		return nil
 	},
 
 	// BCRYPT_COST describes how many times a password should be hashed. Costs are
@@ -173,14 +189,21 @@ var configurers = []configurer{
 	//
 	// Example: sqlite3://localhost/authn-go
 	func(c *Config) error {
-		val, err := lookupURL("DATABASE_URL")
-		if err == nil {
-			if val == nil {
-				return ErrMissingEnvVar("DATABASE_URL")
+		val, err := lookupSecureURL("DATABASE_URL_FILE")
+		if err != nil {
+			// fallback
+			fmt.Printf("DATABASE_URL_FILE error, falling back to DATABASE_URL: %v\n", err)
+			val, err := lookupURL("DATABASE_URL")
+			if err == nil {
+				if val == nil {
+					return ErrMissingEnvVar("DATABASE_URL")
+				}
+				c.DatabaseURL = val
+				return nil
 			}
-			c.DatabaseURL = val
 		}
-		return err
+		c.DatabaseURL = val
+		return nil
 	},
 
 	// REDIS_URL is a string format that can specify any option for connecting to
