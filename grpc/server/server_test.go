@@ -33,6 +33,7 @@ import (
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/server/test"
 	"github.com/keratin/authn-server/server/views"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/crypto/bcrypt"
@@ -79,7 +80,7 @@ type account struct {
 	Deleted  bool
 }
 
-func setup(t *testing.T) *app.App {
+func setup(t *testing.T, logger *logrus.Logger) *app.App {
 	configMap := map[string]string{
 		"SECRET_KEY_BASE":            "TestKey",
 		"DATABASE_URL":               os.Getenv("TEST_POSTGRES_URL"),
@@ -107,7 +108,7 @@ func setup(t *testing.T) *app.App {
 	err = data.MigrateDB(cfg.DatabaseURL)
 	require.NoError(t, err)
 
-	app, err := app.NewApp(cfg)
+	app, err := app.NewApp(cfg, logger)
 	require.NoError(t, err)
 
 	return app
@@ -116,6 +117,12 @@ func setup(t *testing.T) *app.App {
 // TestServer is end-to-end test of gRPC and REST services and cross-interface verification.
 // The goal here is to ensure both interfaces function simultaneously and consistently.
 func TestServer(t *testing.T) {
+	// Default logger
+	logger := logrus.New()
+	logger.Formatter = &logrus.JSONFormatter{}
+	logger.Level = logrus.DebugLevel
+	logger.Out = os.Stdout
+
 	// setup test app
 	app := test.App()
 	app.DbCheck = func() bool {
@@ -124,14 +131,17 @@ func TestServer(t *testing.T) {
 	app.RedisCheck = func() bool {
 		return true
 	}
+	app.Logger = logger
+
 	// The ports are hardcoded because the Server() function blackboxes our
 	// access to the listeners, so we can't get their address dynamically.
 	app.Config.PublicPort = 8080
 	app.Config.ServerPort = 9090
+	app.Config.UsernameIsEmail = true
 
 	// run against a real database if the test isn't run with -test.short flag
 	if !testing.Short() {
-		app = setup(t)
+		app = setup(t, logger)
 	}
 
 	// start a fake oauth provider
@@ -585,8 +595,8 @@ func TestServer(t *testing.T) {
 		res.Body.Close()
 	})
 	t.Run("Service Stats are available when Redis is available", func(t *testing.T) {
-		if !app.RedisCheck() {
-			t.Skip("Redis is not available")
+		if testing.Short() {
+			t.Skip("Redis is not available in short test")
 		}
 		t.Run("REST call to Service Stats is successful", func(t *testing.T) {
 			res, err := httpClient.Get(privateURLBase + "/stats")
@@ -604,14 +614,31 @@ func TestServer(t *testing.T) {
 }
 
 func TestRESTInterface(t *testing.T) {
+	// Default logger
+	logger := logrus.New()
+	logger.Formatter = &logrus.JSONFormatter{}
+	logger.Level = logrus.DebugLevel
+	logger.Out = os.Stdout
+
 	// setup test app
-	testApp := test.App() // Can be setup(t)?
-	testApp.Config.UsernameIsEmail = true
+	testApp := test.App()
+	testApp.DbCheck = func() bool {
+		return true
+	}
+	testApp.RedisCheck = func() bool {
+		return true
+	}
+	testApp.Logger = logger
 
 	// The ports are hardcoded because the Server() function blackboxes our
 	// access to the listeners, so we can't get their address dynamically.
 	testApp.Config.PublicPort = 8080
 	testApp.Config.ServerPort = 9090
+
+	// run against a real database if the test isn't run with -test.short flag
+	if !testing.Short() {
+		testApp = setup(t, logger)
+	}
 
 	// parent context for servers
 	ctx := context.Background()
@@ -1455,6 +1482,12 @@ func testPublicRESTInterface(testApp *app.App, client *route.Client) func(*testi
 }
 
 func TestGRPCInterface(t *testing.T) {
+	// Default logger
+	logger := logrus.New()
+	logger.Formatter = &logrus.JSONFormatter{}
+	logger.Level = logrus.DebugLevel
+	logger.Out = os.Stdout
+
 	// setup test app
 	testApp := test.App()
 	testApp.DbCheck = func() bool {
@@ -1463,6 +1496,8 @@ func TestGRPCInterface(t *testing.T) {
 	testApp.RedisCheck = func() bool {
 		return true
 	}
+	testApp.Logger = logger
+
 	// The ports are hardcoded because the Server() function blackboxes our
 	// access to the listeners, so we can't get their address dynamically.
 	testApp.Config.PublicPort = 8080
@@ -1470,7 +1505,7 @@ func TestGRPCInterface(t *testing.T) {
 
 	// run against a real database if the test isn't run with -test.short flag
 	if !testing.Short() {
-		testApp = setup(t)
+		testApp = setup(t, logger)
 	}
 
 	// We still want the username to be an email for testing purposes
@@ -1520,8 +1555,8 @@ func testPrivateGRPCInterface(testApp *app.App, client *grpc.ClientConn) func(*t
 				})
 			})
 			t.Run("AuthNActives Service", func(t *testing.T) {
-				if testApp.Actives == nil {
-					t.Skip()
+				if testing.Short() {
+					t.Skip("Redis is not available in short test")
 				}
 				svcClient := authngrpc.NewAuthNActivesClient(client)
 				t.Run("Service Stats", func(t *testing.T) {

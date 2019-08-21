@@ -23,7 +23,7 @@ func (s passwordResetServer) RequestPasswordReset(ctx context.Context, req *auth
 
 	// run in the background so that a timing attack can't enumerate usernames
 	go func() {
-		err := services.PasswordResetSender(s.app.Config, account)
+		err := services.PasswordResetSender(s.app.Config, account, s.app.Logger)
 		if err != nil {
 			info := meta.GetUnaryServerInfo(ctx)
 			s.app.Reporter.ReportGRPCError(err, info, req)

@@ -32,7 +32,7 @@ func metaRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 }
 
 func accountRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
-	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
+	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains, app.Logger)
 
 	routes := []*route.HandledRoute{}
 
@@ -51,7 +51,7 @@ func accountRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
 }
 
 func sessionsRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
-	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
+	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains, app.Logger)
 
 	routes := []*route.HandledRoute{
 		route.Post("/session").
@@ -83,7 +83,7 @@ func sessionsRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute 
 }
 
 func passwordsRoutes(app *app.App, gmux *runtime.ServeMux) []*route.HandledRoute {
-	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
+	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains, app.Logger)
 
 	routes := []*route.HandledRoute{
 		route.Post("/password").

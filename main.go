@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"path"
@@ -72,8 +71,8 @@ func serve(cfg *app.Config) {
 			grpcserver.Server(ctx, app)
 		}()
 		<-gracefulStop
-		log.Println("kill signal received")
-		log.Println("gracefully stopping")
+		logger.Info("kill signal received")
+		logger.Info("gracefully stopping")
 		cancel()
 		return
 	}
