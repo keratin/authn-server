@@ -140,9 +140,9 @@ func TestServer(t *testing.T) {
 	app.Config.UsernameIsEmail = true
 
 	// run against a real database if the test isn't run with -test.short flag
-	if !testing.Short() {
-		app = setup(t, logger)
-	}
+	// if !testing.Short() {
+	// 	app = setup(t, logger)
+	// }
 
 	// start a fake oauth provider
 	providerServer := httptest.NewServer(test.ProviderApp())
@@ -154,7 +154,11 @@ func TestServer(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	go Server(ctx, app)
-	defer cancel()
+	defer func() {
+		cancel()
+
+		time.Sleep(time.Second * 2)
+	}()
 
 	// to use with REST API
 	jar, err := cookiejar.New(nil)
@@ -632,13 +636,13 @@ func TestRESTInterface(t *testing.T) {
 
 	// The ports are hardcoded because the Server() function blackboxes our
 	// access to the listeners, so we can't get their address dynamically.
-	testApp.Config.PublicPort = 8080
-	testApp.Config.ServerPort = 9090
+	testApp.Config.PublicPort = 8181
+	testApp.Config.ServerPort = 9191
 
 	// run against a real database if the test isn't run with -test.short flag
-	if !testing.Short() {
-		testApp = setup(t, logger)
-	}
+	// if !testing.Short() {
+	// 	testApp = setup(t, logger)
+	// }
 
 	// parent context for servers
 	ctx := context.Background()
@@ -1500,13 +1504,13 @@ func TestGRPCInterface(t *testing.T) {
 
 	// The ports are hardcoded because the Server() function blackboxes our
 	// access to the listeners, so we can't get their address dynamically.
-	testApp.Config.PublicPort = 8080
-	testApp.Config.ServerPort = 9090
+	testApp.Config.PublicPort = 8282
+	testApp.Config.ServerPort = 9292
 
 	// run against a real database if the test isn't run with -test.short flag
-	if !testing.Short() {
-		testApp = setup(t, logger)
-	}
+	// if !testing.Short() {
+	// 	testApp = setup(t, logger)
+	// }
 
 	// We still want the username to be an email for testing purposes
 	testApp.Config.UsernameIsEmail = true
