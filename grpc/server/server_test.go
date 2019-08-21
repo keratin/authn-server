@@ -140,9 +140,9 @@ func TestServer(t *testing.T) {
 	app.Config.UsernameIsEmail = true
 
 	// run against a real database if the test isn't run with -test.short flag
-	// if !testing.Short() {
-	// 	app = setup(t, logger)
-	// }
+	if !testing.Short() {
+		app = setup(t, logger)
+	}
 
 	// start a fake oauth provider
 	providerServer := httptest.NewServer(test.ProviderApp())
@@ -611,46 +611,19 @@ func TestServer(t *testing.T) {
 			assert.NotEmpty(t, res)
 		})
 	})
-	t.Run("testRESTInterface", testRESTInterface)
+	t.Run("Test REST Interface", func(t *testing.T) {
+		testRESTInterface(t, app)
+	})
+	t.Run("Test gRPC Interface", func(t *testing.T) {
+		testGRPCInterface(t, app)
+	})
 }
 
-func testRESTInterface(t *testing.T) {
-	// Default logger
-	logger := logrus.New()
-	logger.Formatter = &logrus.JSONFormatter{}
-	logger.Level = logrus.DebugLevel
-	logger.Out = os.Stdout
-
-	// setup test app
-	testApp := test.App()
-	testApp.DbCheck = func() bool {
-		return true
-	}
-	testApp.RedisCheck = func() bool {
-		return true
-	}
-	testApp.Logger = logger
-
-	// The ports are hardcoded because the Server() function blackboxes our
-	// access to the listeners, so we can't get their address dynamically.
-	testApp.Config.PublicPort = 8181
-	testApp.Config.ServerPort = 9191
-
-	// run against a real database if the test isn't run with -test.short flag
-	// if !testing.Short() {
-	// 	testApp = setup(t, logger)
-	// }
-
-	// parent context for servers
-	ctx := context.Background()
-	rootCtx, cancel := context.WithCancel(ctx)
-	defer cancel()
-
-	go Server(rootCtx, testApp)
+func testRESTInterface(t *testing.T, testApp *app.App) {
 
 	jar, _ := cookiejar.New(nil)
 	privateClient := route.NewClient(
-		fmt.Sprintf("http://127.0.0.1:%d", testApp.Config.ServerPort),
+		fmt.Sprintf("http://localhost:%d", testApp.Config.ServerPort),
 	).
 		WithClient(&http.Client{
 			Jar: jar,
@@ -660,16 +633,12 @@ func testRESTInterface(t *testing.T) {
 
 	jar, _ = cookiejar.New(nil)
 	publicClient := route.NewClient(
-		fmt.Sprintf("http://127.0.0.1:%d", testApp.Config.PublicPort),
+		fmt.Sprintf("http://localhost:%d", testApp.Config.PublicPort),
 	).
 		WithClient(&http.Client{
 			Jar: jar,
 		}).
 		Referred(&testApp.Config.ApplicationDomains[0])
-
-	// Give the server some time to be scheduled and run.
-	// TODO: This feels icky, but a cleaner way is yet to be figured out.
-	time.Sleep(time.Second * 2)
 
 	t.Run("Private REST", testPrivateRESTInterface(testApp, privateClient))
 	t.Run("Public REST", testPublicRESTInterface(testApp, publicClient))
@@ -1482,42 +1451,8 @@ func testPublicRESTInterface(testApp *app.App, client *route.Client) func(*testi
 	}
 }
 
-func TestGRPCInterface(t *testing.T) {
-	// Default logger
-	logger := logrus.New()
-	logger.Formatter = &logrus.JSONFormatter{}
-	logger.Level = logrus.DebugLevel
-	logger.Out = os.Stdout
-
-	// setup test app
-	testApp := test.App()
-	testApp.DbCheck = func() bool {
-		return true
-	}
-	testApp.RedisCheck = func() bool {
-		return true
-	}
-	testApp.Logger = logger
-
-	// The ports are hardcoded because the Server() function blackboxes our
-	// access to the listeners, so we can't get their address dynamically.
-	testApp.Config.PublicPort = 8282
-	testApp.Config.ServerPort = 9292
-
-	// run against a real database if the test isn't run with -test.short flag
-	// if !testing.Short() {
-	// 	testApp = setup(t, logger)
-	// }
-
-	// We still want the username to be an email for testing purposes
-	testApp.Config.UsernameIsEmail = true
-
-	// parent context for servers
+func testGRPCInterface(t *testing.T, testApp *app.App) {
 	ctx := context.Background()
-	rootCtx, cancel := context.WithCancel(ctx)
-	defer cancel()
-
-	go Server(rootCtx, testApp)
 
 	publicClientConn, err := grpc.DialContext(ctx, fmt.Sprintf("localhost:%d", testApp.Config.PublicPort), grpc.WithInsecure(), grpc.WithBlock())
 	require.NoError(t, err)
