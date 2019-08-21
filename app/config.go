@@ -15,9 +15,6 @@ import (
 
 	"github.com/keratin/authn-server/app/data/private"
 
-	"github.com/airbrake/gobrake"
-	raven "github.com/getsentry/raven-go"
-
 	// a .env file is extremely useful during development
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/keratin/authn-server/lib/oauth"
@@ -61,7 +58,8 @@ type Config struct {
 	StatisticsTimeZone          *time.Location
 	DailyActivesRetention       int
 	WeeklyActivesRetention      int
-	ErrorReporter               ops.ErrorReporter
+	ErrorReporterCredentials    string
+	ErrorReporterType           ops.ErrorReporterType
 	ServerPort                  int
 	PublicPort                  int
 	Proxied                     bool
@@ -69,6 +67,7 @@ type Config struct {
 	GitHubOauthCredentials      *oauth.Credentials
 	FacebookOauthCredentials    *oauth.Credentials
 	EnableGRPC                  bool
+	DiscordOauthCredentials     *oauth.Credentials
 }
 
 var configurers = []configurer{
@@ -416,11 +415,8 @@ var configurers = []configurer{
 	// errors and panics will be reported asynchronously.
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("SENTRY_DSN"); ok {
-			client, err := raven.New(val)
-			if err != nil {
-				return err
-			}
-			c.ErrorReporter = &ops.SentryReporter{Client: client}
+			c.ErrorReporterCredentials = val
+			c.ErrorReporterType = ops.Sentry
 		}
 		return nil
 	},
@@ -429,15 +425,8 @@ var configurers = []configurer{
 	// provided, errors and panics will be reported asynchronously.
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("AIRBRAKE_CREDENTIALS"); ok {
-			bits := strings.SplitN(val, ":", 2)
-			projectID, err := strconv.Atoi(bits[0])
-			if err != nil {
-				return err
-			}
-			projectKey := bits[1]
-
-			client := gobrake.NewNotifier(int64(projectID), projectKey)
-			c.ErrorReporter = &ops.AirbrakeReporter{Notifier: client}
+			c.ErrorReporterCredentials = val
+			c.ErrorReporterType = ops.Airbrake
 		}
 		return nil
 	},
@@ -519,6 +508,19 @@ var configurers = []configurer{
 			val, err := lookupBool("ENABLE_GRPC", false)
 			if err == nil {
 				c.EnableGRPC = val
+			}
+			return err
+		}
+		return nil
+	},
+
+	// DISCORD_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
+	// AuthN will enable routes for Discord OAuth signin.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("DISCORD_OAUTH_CREDENTIALS"); ok {
+			credentials, err := oauth.NewCredentials(val)
+			if err == nil {
+				c.DiscordOauthCredentials = credentials
 			}
 			return err
 		}

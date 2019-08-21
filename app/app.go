@@ -1,10 +1,8 @@
 package app
 
 import (
-	"github.com/jmoiron/sqlx"
-	"os"
-
 	"github.com/go-redis/redis"
+	"github.com/jmoiron/sqlx"
 	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/ops"
@@ -27,12 +25,11 @@ type App struct {
 	Actives           data.Actives
 	Reporter          ops.ErrorReporter
 	OauthProviders    map[string]oauth.Provider
+	Logger            logrus.FieldLogger
 }
 
-func NewApp(cfg *Config) (*App, error) {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-	logrus.SetLevel(logrus.DebugLevel)
-	logrus.SetOutput(os.Stdout)
+func NewApp(cfg *Config, logger logrus.FieldLogger) (*App, error) {
+	errorReporter, err := ops.NewErrorReporter(cfg.ErrorReporterCredentials, cfg.ErrorReporterType, logger)
 
 	db, err := data.NewDB(cfg.DatabaseURL)
 	if err != nil {
@@ -52,12 +49,12 @@ func NewApp(cfg *Config) (*App, error) {
 		return nil, errors.Wrap(err, "NewAccountStore")
 	}
 
-	tokenStore, err := data.NewRefreshTokenStore(db, redis, cfg.ErrorReporter, cfg.RefreshTokenTTL)
+	tokenStore, err := data.NewRefreshTokenStore(db, redis, errorReporter, cfg.RefreshTokenTTL)
 	if err != nil {
 		return nil, errors.Wrap(err, "NewRefreshTokenStore")
 	}
 
-	blobStore, err := data.NewBlobStore(cfg.AccessTokenTTL, redis, db, cfg.ErrorReporter)
+	blobStore, err := data.NewBlobStore(cfg.AccessTokenTTL, redis, db, errorReporter)
 	if err != nil {
 		return nil, errors.Wrap(err, "NewBlobStore")
 	}
@@ -67,8 +64,9 @@ func NewApp(cfg *Config) (*App, error) {
 		m := data.NewKeyStoreRotater(
 			data.NewEncryptedBlobStore(blobStore, cfg.DBEncryptionKey),
 			cfg.AccessTokenTTL,
+			logger,
 		)
-		err := m.Maintain(keyStore, cfg.ErrorReporter)
+		err := m.Maintain(keyStore, errorReporter)
 		if err != nil {
 			return nil, errors.Wrap(err, "Maintain")
 		}
@@ -97,6 +95,9 @@ func NewApp(cfg *Config) (*App, error) {
 	if cfg.FacebookOauthCredentials != nil {
 		oauthProviders["facebook"] = *oauth.NewFacebookProvider(cfg.FacebookOauthCredentials)
 	}
+	if cfg.DiscordOauthCredentials != nil {
+		oauthProviders["discord"] = *oauth.NewDiscordProvider(cfg.DiscordOauthCredentials)
+	}
 
 	return &App{
 		// Provide access to root DB - useful when extending AccountStore functionality
@@ -108,7 +109,7 @@ func NewApp(cfg *Config) (*App, error) {
 		RefreshTokenStore: tokenStore,
 		KeyStore:          keyStore,
 		Actives:           actives,
-		Reporter:          cfg.ErrorReporter,
+		Reporter:          errorReporter,
 		OauthProviders:    oauthProviders,
 	}, nil
 }

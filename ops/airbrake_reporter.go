@@ -3,6 +3,8 @@ package ops
 import (
 	"fmt"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/airbrake/gobrake"
 	"google.golang.org/grpc"
@@ -12,6 +14,19 @@ import (
 // AirbrakeReporter is an ErrorReporter for the Airbrake service (airbrake.io)
 type AirbrakeReporter struct {
 	*gobrake.Notifier
+}
+
+// NewAirbrakeReporter builds an AirbrakeReporter from a credentials string. The credentials string
+// should be in the pattern $PROJECT_ID:$PROJECT_KEY (aka username:password).
+func NewAirbrakeReporter(credentials string) (*AirbrakeReporter, error) {
+	bits := strings.SplitN(credentials, ":", 2)
+	projectID, err := strconv.Atoi(bits[0])
+	if err != nil {
+		return nil, err
+	}
+	projectKey := bits[1]
+	client := gobrake.NewNotifier(int64(projectID), projectKey)
+	return &AirbrakeReporter{Notifier: client}, nil
 }
 
 // ReportError will deliver the given error to Airbrake in a background routine

@@ -10,6 +10,7 @@ import (
 	"github.com/keratin/authn-server/app/services"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -23,7 +24,7 @@ func TestSessionCreator(t *testing.T) {
 	keyStore := mock.NewKeyStore(rsaKey)
 	refreshStore := mock.NewRefreshTokenStore()
 	accountStore := mock.NewAccountStore()
-	reporter := &ops.LogReporter{}
+	reporter := &ops.LogReporter{logrus.New()}
 
 	audience := &route.Domain{"authn.example.com", "8080"}
 	account, err := accountStore.Create("existing", []byte("secret"))

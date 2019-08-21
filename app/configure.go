@@ -1,13 +1,10 @@
 package app
 
-import "github.com/keratin/authn-server/ops"
-
 type configurer func(c *Config) error
 
 func configure(fns []configurer) (*Config, error) {
 	var err error
 	c := Config{
-		ErrorReporter:     &ops.LogReporter{},
 		UsernameMinLength: 3,
 		SessionCookieName: "authn",
 		OAuthCookieName:   "authn-oauth-nonce",

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/keratin/authn-server/lib/route"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -32,7 +33,7 @@ func TestOriginSecurity(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.domain, func(t *testing.T) {
-			adapter := route.OriginSecurity([]route.Domain{route.ParseDomain(tc.domain)})
+			adapter := route.OriginSecurity([]route.Domain{route.ParseDomain(tc.domain)}, logrus.New())
 
 			server := httptest.NewServer(adapter(nextHandler))
 			defer server.Close()

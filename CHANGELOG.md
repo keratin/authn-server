@@ -4,6 +4,10 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+### Added
+
+* OAuth authentication through Discord [#116]
+
 ## 1.6.0
 
 ### Added
@@ -26,8 +30,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-* Passwordless Logins (aka Magic Links) [#71] - @etruta
-* New field: `accounts.last_login_at` [#71] - @etruta
+* Passwordless Logins (aka Magic Links) [#71]
+* New field: `accounts.last_login_at` [#71]
 * Windows build
 
 ### Changed
@@ -42,14 +46,14 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
-* connection leak with Postgres adapter [#60] - @shashankmehra
+* connection leak with Postgres adapter [#60]
 
 ## 1.4.0
 
 ### Added
 
 * OAuth authentication via Facebook, GitHub, and Google [#50]
-* PostgreSQL support [#47] - @Mohammed90
+* PostgreSQL support [#47]
 
 ## 1.3.0
 
@@ -61,7 +65,7 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-* ability to control location of sqlite3 database [#43] - @akhedrane
+* ability to control location of sqlite3 database [#43]
 
 ### Fixed
 
@@ -78,7 +82,7 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-* `GET /accounts/:id` endpoint [#30] - @shashankmehra
+* `GET /accounts/:id` endpoint [#30]
 * Airbrake error reporting [#32]
 * AuthN version number is now printed on startup
 

@@ -6,19 +6,23 @@ import (
 	"time"
 
 	"google.golang.org/grpc"
+
+	"github.com/sirupsen/logrus"
 )
 
 // LogReporter is an ErrorReporter that prints to the log (likely STDOUT)
-type LogReporter struct{}
+type LogReporter struct {
+	logrus.FieldLogger
+}
 
 // ReportError logs error information. The printed details are not robust.
 func (r *LogReporter) ReportError(err error) {
-	log.Printf("[%v] %v\n", time.Now(), err)
+	r.Error(err)
 }
 
 // ReportRequestError logs error information. The printed details are not robust.
 func (r *LogReporter) ReportRequestError(err error, req *http.Request) {
-	log.Printf("[%v][%v %v] %v\n", time.Now(), req.Method, req.URL, err)
+	r.WithFields(logrus.Fields{"method": req.Method, "URL": req.URL}).Error(err)
 }
 
 // ReportGRPCError logs information of gRPC request.

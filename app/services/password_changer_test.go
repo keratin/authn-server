@@ -8,9 +8,10 @@ import (
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data/mock"
 	"github.com/keratin/authn-server/app/models"
-	"github.com/keratin/authn-server/ops"
 	"github.com/keratin/authn-server/app/services"
+	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -23,7 +24,7 @@ func TestPasswordChanger(t *testing.T) {
 	}
 
 	invoke := func(id int, currentPassword string, password string) error {
-		return services.PasswordChanger(accountStore, &ops.LogReporter{}, cfg, id, currentPassword, password)
+		return services.PasswordChanger(accountStore, &ops.LogReporter{logrus.New()}, cfg, id, currentPassword, password)
 	}
 
 	factory := func(username string, password string) (*models.Account, error) {

@@ -14,6 +14,15 @@ type SentryReporter struct {
 	*raven.Client
 }
 
+// NewSentryReporter builds a SentryReporter from a credentials string
+func NewSentryReporter(dsn string) (*SentryReporter, error) {
+	client, err := raven.New(dsn)
+	if err != nil {
+		return nil, err
+	}
+	return &SentryReporter{Client: client}, nil
+}
+
 // ReportError will deliver the given error to Sentry in a background routine.
 func (r *SentryReporter) ReportError(err error) {
 	r.CaptureError(err, map[string]string{})

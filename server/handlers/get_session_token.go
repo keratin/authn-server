@@ -16,7 +16,7 @@ func GetSessionToken(app *app.App) http.HandlerFunc {
 
 		// run in the background so that a timing attack can't enumerate usernames
 		go func() {
-			err := services.PasswordlessTokenSender(app.Config, account)
+			err := services.PasswordlessTokenSender(app.Config, account, app.Logger)
 			if err != nil {
 				app.Reporter.ReportRequestError(err, r)
 			}

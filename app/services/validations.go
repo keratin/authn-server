@@ -37,7 +37,7 @@ func (es FieldErrors) Error() string {
 	return strings.Join(buf, ", ")
 }
 
-func passwordValidator(cfg *app.Config, password string) *FieldError {
+func PasswordValidator(cfg *app.Config, password string) *FieldError {
 	if password == "" {
 		return &FieldError{"password", ErrMissing}
 	}
@@ -57,7 +57,7 @@ func passwordValidator(cfg *app.Config, password string) *FieldError {
 	return nil
 }
 
-func usernameValidator(cfg *app.Config, username string) *FieldError {
+func UsernameValidator(cfg *app.Config, username string) *FieldError {
 	if cfg.UsernameIsEmail {
 		if !isEmail(username) {
 			return &FieldError{"username", ErrFormatInvalid}

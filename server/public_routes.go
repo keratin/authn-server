@@ -8,7 +8,7 @@ import (
 
 func PublicRoutes(app *app.App) []*route.HandledRoute {
 	var routes []*route.HandledRoute
-	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains)
+	originSecurity := route.OriginSecurity(app.Config.ApplicationDomains, app.Logger)
 
 	routes = append(routes,
 		route.Get("/health").
