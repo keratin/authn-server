@@ -5,14 +5,15 @@ import (
 	"net/http"
 	"testing"
 
+	"google.golang.org/grpc/metadata"
 	jwt "gopkg.in/square/go-jose.v2/jwt"
 
-	"github.com/keratin/authn-server/server/handlers"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/app/services"
 	"github.com/keratin/authn-server/app/tokens/identities"
 	"github.com/keratin/authn-server/app/tokens/sessions"
+	"github.com/keratin/authn-server/server/handlers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -41,6 +42,13 @@ func AssertSession(t *testing.T, cfg *app.Config, cookies []*http.Cookie) {
 	assert.NoError(t, err)
 }
 
+func AssertGRPCSession(t *testing.T, cfg *app.Config, header metadata.MD) {
+	session := header.Get(cfg.SessionCookieName)[0]
+
+	_, err := sessions.Parse(session, cfg)
+	assert.NoError(t, err)
+}
+
 func AssertIDTokenResponse(t *testing.T, res *http.Response, keyStore data.KeyStore, cfg *app.Config) {
 	// check that the response contains the expected json
 	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
@@ -51,6 +59,18 @@ func AssertIDTokenResponse(t *testing.T, res *http.Response, keyStore data.KeySt
 	assert.NoError(t, err)
 
 	tok, err := jwt.ParseSigned(responseData.IDToken)
+	assert.NoError(t, err)
+
+	claims := identities.Claims{}
+	err = tok.Claims(keyStore.Key().Public(), &claims)
+	if assert.NoError(t, err) {
+		// check that the JWT contains nice things
+		assert.Equal(t, cfg.AuthNURL.String(), claims.Issuer)
+	}
+}
+
+func AssertGRPCIDTokenResponse(t *testing.T, token string, keyStore data.KeyStore, cfg *app.Config) {
+	tok, err := jwt.ParseSigned(token)
 	assert.NoError(t, err)
 
 	claims := identities.Claims{}

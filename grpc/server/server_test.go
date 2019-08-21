@@ -28,6 +28,7 @@ import (
 	"github.com/keratin/authn-server/app/tokens/resets"
 	"github.com/keratin/authn-server/app/tokens/sessions"
 	authngrpc "github.com/keratin/authn-server/grpc"
+	"github.com/keratin/authn-server/grpc/internal/errors"
 	oauthlib "github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/server/test"
@@ -35,6 +36,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -114,8 +116,22 @@ func setup(t *testing.T) *app.App {
 // TestServer is end-to-end test of gRPC and REST services and cross-interface verification.
 // The goal here is to ensure both interfaces function simultaneously and consistently.
 func TestServer(t *testing.T) {
-	if testing.Short() {
-		t.SkipNow()
+	// setup test app
+	app := test.App()
+	app.DbCheck = func() bool {
+		return true
+	}
+	app.RedisCheck = func() bool {
+		return true
+	}
+	// The ports are hardcoded because the Server() function blackboxes our
+	// access to the listeners, so we can't get their address dynamically.
+	app.Config.PublicPort = 8080
+	app.Config.ServerPort = 9090
+
+	// run against a real database if the test isn't run with -test.short flag
+	if !testing.Short() {
+		app = setup(t)
 	}
 
 	// start a fake oauth provider
@@ -124,7 +140,6 @@ func TestServer(t *testing.T) {
 	// configure a client for the fake oauth provider
 	providerClient := oauthlib.NewTestProvider(providerServer)
 
-	app := setup(t)
 	app.OauthProviders["test"] = *providerClient
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -588,7 +603,7 @@ func TestServer(t *testing.T) {
 	})
 }
 
-func TestRESTInterfaces(t *testing.T) {
+func TestRESTInterface(t *testing.T) {
 	// setup test app
 	testApp := test.App() // Can be setup(t)?
 	testApp.Config.UsernameIsEmail = true
@@ -628,11 +643,11 @@ func TestRESTInterfaces(t *testing.T) {
 	// TODO: This feels icky, but a cleaner way is yet to be figured out.
 	time.Sleep(time.Second * 2)
 
-	t.Run("Private", testPrivateInterface(testApp, privateClient))
-	t.Run("Public", testPublicInterface(testApp, publicClient))
+	t.Run("Private REST", testPrivateRESTInterface(testApp, privateClient))
+	t.Run("Public REST", testPublicRESTInterface(testApp, publicClient))
 }
 
-func testPrivateInterface(testApp *app.App, client *route.Client) func(*testing.T) {
+func testPrivateRESTInterface(testApp *app.App, client *route.Client) func(*testing.T) {
 	return func(t *testing.T) {
 		t.Run("Private-Only Routes", func(t *testing.T) {
 			t.Run("Index", func(t *testing.T) {
@@ -954,11 +969,11 @@ func testPrivateInterface(testApp *app.App, client *route.Client) func(*testing.
 				assert.True(t, acc.Archived())
 			})
 		})
-		t.Run("Public Routes", testPublicInterface(testApp, client))
+		t.Run("Public Routes", testPublicRESTInterface(testApp, client))
 	}
 }
 
-func testPublicInterface(testApp *app.App, client *route.Client) func(*testing.T) {
+func testPublicRESTInterface(testApp *app.App, client *route.Client) func(*testing.T) {
 	return func(t *testing.T) {
 		t.Run("Health", func(t *testing.T) {
 			resp, err := client.Get("/health")
@@ -1296,15 +1311,6 @@ func testPublicInterface(testApp *app.App, client *route.Client) func(*testing.T
 		t.Run("Change Password", func(t *testing.T) {
 			// Lifted from server/handlers/post_password_test.go
 
-			_ = func(t *testing.T, res *http.Response, account *models.Account) {
-				assert.Equal(t, http.StatusCreated, res.StatusCode)
-				test.AssertSession(t, testApp.Config, res.Cookies())
-				test.AssertIDTokenResponse(t, res, testApp.KeyStore, testApp.Config)
-				found, err := testApp.AccountStore.Find(account.ID)
-				require.NoError(t, err)
-				assert.NotEqual(t, found.Password, account.Password)
-			}
-
 			t.Run("Successful - Valid Reset Token", func(t *testing.T) {
 				// Prep
 				acc, _ := createUser(t, testApp)
@@ -1448,10 +1454,768 @@ func testPublicInterface(testApp *app.App, client *route.Client) func(*testing.T
 	}
 }
 
+func TestGRPCInterface(t *testing.T) {
+	// setup test app
+	testApp := test.App()
+	testApp.DbCheck = func() bool {
+		return true
+	}
+	testApp.RedisCheck = func() bool {
+		return true
+	}
+	// The ports are hardcoded because the Server() function blackboxes our
+	// access to the listeners, so we can't get their address dynamically.
+	testApp.Config.PublicPort = 8080
+	testApp.Config.ServerPort = 9090
+
+	// run against a real database if the test isn't run with -test.short flag
+	if !testing.Short() {
+		testApp = setup(t)
+	}
+
+	// We still want the username to be an email for testing purposes
+	testApp.Config.UsernameIsEmail = true
+
+	// parent context for servers
+	ctx := context.Background()
+	rootCtx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	go Server(rootCtx, testApp)
+
+	publicClientConn, err := grpc.DialContext(ctx, fmt.Sprintf("localhost:%d", testApp.Config.PublicPort), grpc.WithInsecure(), grpc.WithBlock())
+	require.NoError(t, err)
+
+	privateClientConn, err := grpc.DialContext(ctx, fmt.Sprintf("localhost:%d", testApp.Config.ServerPort), grpc.WithInsecure(), grpc.WithBlock(), grpc.WithPerRPCCredentials(basicAuth{
+		username: testApp.Config.AuthUsername,
+		password: testApp.Config.AuthPassword,
+	}))
+	require.NoError(t, err)
+
+	// Give the server some time to be scheduled and run.
+	// TODO: This feels icky, but a cleaner way is yet to be figured out.
+	time.Sleep(time.Second * 2)
+
+	t.Run("Private", testPrivateGRPCInterface(testApp, privateClientConn))
+	t.Run("Public", testPublicGRPCInterface(testApp, publicClientConn))
+}
+
+func testPrivateGRPCInterface(testApp *app.App, client *grpc.ClientConn) func(*testing.T) {
+	return func(t *testing.T) {
+		t.Run("Private-Only Services", func(t *testing.T) {
+			t.Run("UnsecuredAdminAuthN Service", func(t *testing.T) {
+				svcClient := authngrpc.NewUnsecuredAdminAuthNClient(client)
+				t.Run("JWKS", func(t *testing.T) {
+					resp, err := svcClient.JWKS(context.Background(), &authngrpc.JWKSRequest{})
+					assert.NoError(t, err)
+
+					assert.NotNil(t, resp)
+					assert.NotZero(t, len(resp.GetKeys()))
+				})
+				t.Run("Configurations", func(t *testing.T) {
+					resp, err := svcClient.ServiceConfiguration(context.Background(), &authngrpc.ServiceConfigurationRequest{})
+					assert.NoError(t, err)
+
+					assert.NotEmpty(t, resp)
+				})
+			})
+			t.Run("AuthNActives Service", func(t *testing.T) {
+				if testApp.Actives == nil {
+					t.Skip()
+				}
+				svcClient := authngrpc.NewAuthNActivesClient(client)
+				t.Run("Service Stats", func(t *testing.T) {
+					resp, err := svcClient.ServiceStats(context.Background(), &authngrpc.ServiceStatsRequest{})
+					assert.NoError(t, err)
+					assert.NotEmpty(t, resp)
+				})
+			})
+
+			t.Run("SecuredAdminAuthN Service", func(t *testing.T) {
+				svcClient := authngrpc.NewSecuredAdminAuthNClient(client)
+				t.Run("Import Account - Locked", func(t *testing.T) {
+					username := generateUsername()
+
+					resp, err := svcClient.ImportAccount(context.Background(), &authngrpc.ImportAccountRequest{
+						Username: username,
+						Password: "11aa22!bb33cc",
+						Locked:   true,
+					})
+					assert.NoError(t, err)
+					assert.NotEmpty(t, resp)
+
+					account, err := testApp.AccountStore.Find(int(resp.GetResult().GetId()))
+					require.NoError(t, err)
+					assert.Equal(t, username, account.Username)
+					assert.True(t, account.Locked)
+				})
+				t.Run("Import Account - Unlocked", func(t *testing.T) {
+					username := generateUsername()
+					resp, err := svcClient.ImportAccount(context.Background(), &authngrpc.ImportAccountRequest{
+						Username: username,
+						Password: "11aa22!bb33cc",
+						Locked:   false,
+					})
+					assert.NoError(t, err)
+					assert.NotEmpty(t, resp)
+
+					account, err := testApp.AccountStore.Find(int(resp.Result.Id))
+					require.NoError(t, err)
+					assert.Equal(t, username, account.Username)
+					assert.False(t, account.Locked)
+				})
+				t.Run("Import Account - Absent Lock Marker", func(t *testing.T) {
+					username := generateUsername()
+					resp, err := svcClient.ImportAccount(context.Background(), &authngrpc.ImportAccountRequest{
+						Username: username,
+						Password: "11aa22!bb33cc",
+					})
+					assert.NoError(t, err)
+					assert.NotEmpty(t, resp)
+
+					account, err := testApp.AccountStore.Find(int(resp.Result.Id))
+					require.NoError(t, err)
+					assert.Equal(t, username, account.Username)
+					assert.False(t, account.Locked)
+				})
+				t.Run("Get Locked Account", func(t *testing.T) {
+					// Prep
+					acc, _ := createUser(t, testApp)
+					locked, err := testApp.AccountStore.Lock(acc.ID)
+					require.NoError(t, err)
+					require.True(t, locked)
+
+					// Test
+					resp, err := svcClient.GetAccount(context.Background(), &authngrpc.GetAccountRequest{
+						Id: int64(acc.ID),
+					})
+					assert.NoError(t, err)
+
+					assert.True(t, resp.Result.Locked)
+				})
+				t.Run("Update Account", func(t *testing.T) {
+					// Prep
+					acc, _ := createUser(t, testApp)
+
+					// Test
+					username := generateUsername()
+					_, err := svcClient.UpdateAccount(context.Background(), &authngrpc.UpdateAccountRequest{
+						Id:       int64(acc.ID),
+						Username: username,
+					})
+					assert.NoError(t, err)
+
+					account, err := testApp.AccountStore.Find(acc.ID)
+					require.NoError(t, err)
+					assert.Equal(t, username, account.Username)
+				})
+				t.Run("Lock Account", func(t *testing.T) {
+					// Prep
+					acc, _ := createUser(t, testApp)
+
+					// Test
+					_, err := svcClient.LockAccount(context.Background(), &authngrpc.LockAccountRequest{
+						Id: int64(acc.ID),
+					})
+					assert.NoError(t, err)
+
+					account, err := testApp.AccountStore.Find(acc.ID)
+					require.NoError(t, err)
+					assert.True(t, account.Locked)
+				})
+				t.Run("Unlock Account", func(t *testing.T) {
+					// Prep
+					acc, _ := createUser(t, testApp)
+					locked, err := testApp.AccountStore.Lock(acc.ID)
+					require.NoError(t, err)
+					require.True(t, locked)
+
+					// Test
+					_, err = svcClient.UnlockAccount(context.Background(), &authngrpc.UnlockAccountRequest{
+						Id: int64(acc.ID),
+					})
+					assert.NoError(t, err)
+
+					account, err := testApp.AccountStore.Find(acc.ID)
+					require.NoError(t, err)
+					assert.False(t, account.Locked)
+				})
+				t.Run("Expire Password", func(t *testing.T) {
+					// Prep
+					acc, _ := createUser(t, testApp)
+
+					// Test
+					_, err := svcClient.ExpirePassword(context.Background(), &authngrpc.ExpirePasswordRequest{
+						Id: int64(acc.ID),
+					})
+					assert.NoError(t, err)
+
+					account, err := testApp.AccountStore.Find(acc.ID)
+					require.NoError(t, err)
+					assert.True(t, account.RequireNewPassword)
+				})
+				t.Run("Archive Account", func(t *testing.T) {
+					// Prep
+					acc, _ := createUser(t, testApp)
+
+					// Test
+					_, err := svcClient.ArchiveAccount(context.Background(), &authngrpc.ArchiveAccountRequest{
+						Id: int64(acc.ID),
+					})
+					assert.NoError(t, err)
+
+					acc, err = testApp.AccountStore.Find(acc.ID)
+					assert.NoError(t, err)
+					assert.True(t, acc.Archived())
+				})
+			})
+		})
+		t.Run("Public Routes", testPublicGRPCInterface(testApp, client))
+	}
+}
+
+func testPublicGRPCInterface(testApp *app.App, client *grpc.ClientConn) func(*testing.T) {
+	return func(t *testing.T) {
+		t.Run("SignupService Service", func(t *testing.T) {
+			svcClient := authngrpc.NewSignupServiceClient(client)
+			t.Run("Signup", func(t *testing.T) {
+				t.Run("Successful", func(t *testing.T) {
+					username := generateUsername()
+					var header metadata.MD
+					resp, err := svcClient.Signup(context.Background(), &authngrpc.SignupRequest{
+						Username: username,
+						Password: "aa11bb22!cc",
+					}, grpc.Header(&header))
+
+					assert.NoError(t, err)
+
+					assert.NotZero(t, len(header.Get(testApp.Config.SessionCookieName)))
+					test.AssertGRPCSession(t, testApp.Config, header)
+					test.AssertGRPCIDTokenResponse(t, resp.GetResult().GetIdToken(), testApp.KeyStore, testApp.Config)
+
+				})
+				t.Run("Missing Username & Password", func(t *testing.T) {
+					// Temporary disbale the requirement
+					testApp.Config.UsernameIsEmail = false
+					defer func() {
+						testApp.Config.UsernameIsEmail = true
+					}()
+
+					_, err := svcClient.Signup(context.Background(), &authngrpc.SignupRequest{})
+					assert.Error(t, err)
+
+					st := status.Convert(err)
+					assert.Equal(t, codes.FailedPrecondition, st.Code())
+
+					errorDetails := st.Details()[0].(*errdetails.BadRequest)
+					fes := errors.ToFieldErrors(errorDetails)
+					assert.EqualValues(t, services.FieldErrors{{"username", "MISSING"}, {"password", "MISSING"}}, fes)
+				})
+				t.Run("Invalid Format", func(t *testing.T) {
+
+					_, err := svcClient.Signup(context.Background(), &authngrpc.SignupRequest{
+						Username: "test",
+						Password: "aa11bb22!cc",
+					})
+					assert.Error(t, err)
+					st := status.Convert(err)
+					assert.Equal(t, codes.FailedPrecondition, st.Code())
+
+					errorDetails := st.Details()[0].(*errdetails.BadRequest)
+					fes := errors.ToFieldErrors(errorDetails)
+					assert.EqualValues(t, services.FieldErrors{{"username", "FORMAT_INVALID"}}, fes)
+				})
+				t.Run("Taken Username", func(t *testing.T) {
+					// Prep
+					acc, _ := createUser(t, testApp)
+
+					// Test
+					_, err := svcClient.Signup(context.Background(), &authngrpc.SignupRequest{
+						Username: acc.Username,
+						Password: "aa11bb22!cc",
+					})
+					assert.Error(t, err)
+					st := status.Convert(err)
+					assert.Equal(t, codes.FailedPrecondition, st.Code())
+					errorDetails := st.Details()[0].(*errdetails.BadRequest)
+					fes := errors.ToFieldErrors(errorDetails)
+					assert.EqualValues(t, services.FieldErrors{{"username", "TAKEN"}}, fes)
+				})
+				t.Run("Missing Password", func(t *testing.T) {
+					_, err := svcClient.Signup(context.Background(), &authngrpc.SignupRequest{
+						Username: generateUsername(),
+					})
+					assert.Error(t, err)
+					st := status.Convert(err)
+					assert.Equal(t, codes.FailedPrecondition, st.Code())
+
+					errorDetails := st.Details()[0].(*errdetails.BadRequest)
+					fes := errors.ToFieldErrors(errorDetails)
+					assert.EqualValues(t, services.FieldErrors{{"password", "MISSING"}}, fes)
+				})
+				t.Run("Insecure Password", func(t *testing.T) {
+					_, err := svcClient.Signup(context.Background(), &authngrpc.SignupRequest{
+						Username: generateUsername(),
+						Password: "1",
+					}) // client.PostForm("/accounts", data)
+					assert.Error(t, err)
+					st := status.Convert(err)
+					assert.Equal(t, codes.FailedPrecondition, st.Code())
+
+					errorDetails := st.Details()[0].(*errdetails.BadRequest)
+					fes := errors.ToFieldErrors(errorDetails)
+					assert.EqualValues(t, services.FieldErrors{{"password", "INSECURE"}}, fes)
+				})
+			})
+			t.Run("IsUsernameAvailable", func(t *testing.T) {
+				t.Run("Available", func(t *testing.T) {
+					resp, err := svcClient.IsUsernameAvailable(context.Background(), &authngrpc.IsUsernameAvailableRequest{
+						Username: generateUsername(),
+					})
+					assert.NoError(t, err)
+					assert.True(t, resp.GetResult())
+				})
+				t.Run("Taken", func(t *testing.T) {
+					// Prep
+					acc, _ := createUser(t, testApp)
+
+					// Test
+					_, err := svcClient.IsUsernameAvailable(context.Background(), &authngrpc.IsUsernameAvailableRequest{
+						Username: acc.Username,
+					})
+					assert.Error(t, err)
+					st := status.Convert(err)
+					assert.Equal(t, codes.FailedPrecondition, st.Code())
+
+					errorDetails := st.Details()[0].(*errdetails.BadRequest)
+					fes := errors.ToFieldErrors(errorDetails)
+					assert.EqualValues(t, services.FieldErrors{{"username", "TAKEN"}}, fes)
+				})
+			})
+		})
+		t.Run("PublicAuthN", func(t *testing.T) {
+			svcClient := authngrpc.NewPublicAuthNClient(client)
+			t.Run("Health", func(t *testing.T) {
+				resp, err := svcClient.HealthCheck(context.Background(), &authngrpc.HealthCheckRequest{})
+				assert.NoError(t, err)
+				assert.NotEmpty(t, resp)
+			})
+			t.Run("Login", func(t *testing.T) {
+				t.Run("Successful", func(t *testing.T) {
+					// Prep
+					acc, password := createUser(t, testApp)
+
+					// Test
+					var header metadata.MD
+					resp, err := svcClient.Login(context.Background(), &authngrpc.LoginRequest{
+						Username: acc.Username,
+						Password: password,
+					}, grpc.Header(&header))
+					assert.NoError(t, err)
+					test.AssertGRPCSession(t, testApp.Config, header)
+					test.AssertGRPCIDTokenResponse(t, resp.GetResult().GetIdToken(), testApp.KeyStore, testApp.Config)
+				})
+				t.Run("Failed", func(t *testing.T) {
+					// Prep
+					acc, _ := createUser(t, testApp)
+
+					// Test
+					_, err := svcClient.Login(context.Background(), &authngrpc.LoginRequest{
+						Username: acc.Username,
+					})
+					assert.Error(t, err)
+					st := status.Convert(err)
+					assert.Equal(t, codes.FailedPrecondition, st.Code())
+
+					errorDetails := st.Details()[0].(*errdetails.BadRequest)
+					fes := errors.ToFieldErrors(errorDetails)
+					assert.EqualValues(t, services.FieldErrors{{"credentials", "FAILED"}}, fes)
+				})
+				t.Run("Expired", func(t *testing.T) {
+					// Prep
+					acc, password := createUser(t, testApp)
+					testApp.AccountStore.RequireNewPassword(acc.ID)
+
+					// Test
+					_, err := svcClient.Login(context.Background(), &authngrpc.LoginRequest{
+						Username: acc.Username,
+						Password: password,
+					})
+					assert.Error(t, err)
+					st := status.Convert(err)
+					assert.Equal(t, codes.FailedPrecondition, st.Code())
+
+					errorDetails := st.Details()[0].(*errdetails.BadRequest)
+					fes := errors.ToFieldErrors(errorDetails)
+					assert.EqualValues(t, services.FieldErrors{{"credentials", "EXPIRED"}}, fes)
+				})
+				t.Run("Locked", func(t *testing.T) {
+					// Prep
+					acc, password := createUser(t, testApp)
+					locked, err := testApp.AccountStore.Lock(acc.ID)
+					require.NoError(t, err)
+					require.True(t, locked)
+
+					// Test
+					_, err = svcClient.Login(context.Background(), &authngrpc.LoginRequest{
+						Username: acc.Username,
+						Password: password,
+					})
+					assert.Error(t, err)
+					st := status.Convert(err)
+					assert.Equal(t, codes.FailedPrecondition, st.Code())
+
+					errorDetails := st.Details()[0].(*errdetails.BadRequest)
+					fes := errors.ToFieldErrors(errorDetails)
+					assert.EqualValues(t, services.FieldErrors{{"account", "LOCKED"}}, fes)
+				})
+			})
+			t.Run("Refresh Session", func(t *testing.T) {
+				t.Run("Successful", func(t *testing.T) {
+					// Prep
+					acc, _ := createUser(t, testApp)
+					ctx := context.Background()
+
+					// Test
+					existingSession := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, acc.ID)
+					ctx = metadata.AppendToOutgoingContext(ctx, testApp.Config.SessionCookieName, existingSession.Value)
+					resp, err := svcClient.RefreshSession(ctx, &authngrpc.RefreshSessionRequest{})
+					assert.NoError(t, err)
+
+					test.AssertGRPCIDTokenResponse(t, resp.GetResult().GetIdToken(), testApp.KeyStore, testApp.Config)
+				})
+				t.Run("Failed", func(t *testing.T) {
+					// Lifted from: servers/handlers/get_session_refresh_test.go#TestGetSessionRefreshFailure
+					testCases := []struct {
+						signingKey []byte
+						liveToken  bool
+					}{
+						// cookie with the wrong signature
+						{[]byte("wrong"), true},
+						// cookie with a revoked refresh token
+						{testApp.Config.SessionSigningKey, false},
+					}
+
+					for idx, tc := range testCases {
+						tcCfg := &app.Config{
+							AuthNURL:           testApp.Config.AuthNURL,
+							SessionCookieName:  testApp.Config.SessionCookieName,
+							SessionSigningKey:  tc.signingKey,
+							ApplicationDomains: []route.Domain{{Hostname: "test.com"}},
+						}
+						existingSession := test.CreateSession(testApp.RefreshTokenStore, tcCfg, idx+100)
+						if !tc.liveToken {
+							test.RevokeSession(testApp.RefreshTokenStore, testApp.Config, existingSession)
+						}
+
+						ctx := context.Background()
+						ctx = metadata.AppendToOutgoingContext(ctx, tcCfg.SessionCookieName, existingSession.Value)
+						_, err := svcClient.RefreshSession(ctx, &authngrpc.RefreshSessionRequest{}) // client.Get("/session/refresh")
+						require.Error(t, err)
+						st := status.Convert(err)
+						assert.Equal(t, codes.Unauthenticated, st.Code())
+					}
+				})
+			})
+			t.Run("Logout", func(t *testing.T) {
+				t.Run("Successful", func(t *testing.T) {
+					// Prep
+					acc, _ := createUser(t, testApp)
+					session := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, acc.ID)
+
+					// token exists
+					claims, err := sessions.Parse(session.Value, testApp.Config)
+					require.NoError(t, err)
+					id, err := testApp.RefreshTokenStore.Find(models.RefreshToken(claims.Subject))
+					require.NoError(t, err)
+					assert.NotEmpty(t, id)
+
+					// Test
+					ctx := context.Background()
+					ctx = metadata.AppendToOutgoingContext(ctx, testApp.Config.SessionCookieName, session.Value)
+					_, err = svcClient.Logout(ctx, &authngrpc.LogoutRequest{})
+					assert.NoError(t, err)
+
+					// token no longer exists
+					id, err = testApp.RefreshTokenStore.Find(models.RefreshToken(claims.Subject))
+					require.NoError(t, err)
+					assert.Empty(t, id)
+				})
+				t.Run("Failure", func(t *testing.T) {
+					// Prep
+					badCfg := &app.Config{
+						AuthNURL:           testApp.Config.AuthNURL,
+						SessionCookieName:  testApp.Config.SessionCookieName,
+						SessionSigningKey:  []byte("wrong"),
+						ApplicationDomains: testApp.Config.ApplicationDomains,
+					}
+					session := test.CreateSession(testApp.RefreshTokenStore, badCfg, 123)
+
+					// Test
+					ctx := context.Background()
+					ctx = metadata.AppendToOutgoingContext(ctx, testApp.Config.SessionCookieName, session.Value)
+					_, err := svcClient.Logout(ctx, &authngrpc.LogoutRequest{})
+
+					// This method never returns an error
+					assert.NoError(t, err)
+				})
+			})
+			t.Run("Change Password", func(t *testing.T) {
+				// Lifted from server/handlers/post_password_test.go
+
+				t.Run("Successful - Valid Reset Token", func(t *testing.T) {
+					// Prep
+					acc, _ := createUser(t, testApp)
+					token, err := resets.New(testApp.Config, acc.ID, acc.PasswordChangedAt)
+					require.NoError(t, err)
+					tokenStr, err := token.Sign(testApp.Config.ResetSigningKey)
+					require.NoError(t, err)
+
+					// Test
+					var header metadata.MD
+					res, err := svcClient.ChangePassword(context.Background(), &authngrpc.ChangePasswordRequest{
+						Token:    tokenStr,
+						Password: "0a0b!c0d0",
+					}, grpc.Header(&header))
+					assert.NoError(t, err)
+
+					assertSuccessfulGRPCSession(t, testApp, res.GetResult().GetIdToken(), header, acc)
+					assertChangedPassword(t, testApp, acc)
+				})
+				t.Run("Failure - Invalid Reset Token", func(t *testing.T) {
+					_, err := svcClient.ChangePassword(context.Background(), &authngrpc.ChangePasswordRequest{
+						Token:    "invalid",
+						Password: "0a0b!c0d0",
+					})
+
+					assert.Error(t, err)
+					st := status.Convert(err)
+					assert.Equal(t, codes.FailedPrecondition, st.Code())
+					fes := errors.ToFieldErrors(st.Details()[0].(*errdetails.BadRequest))
+					assert.EqualValues(t, services.FieldErrors{{"token", "INVALID_OR_EXPIRED"}}, fes)
+				})
+				t.Run("Successful - Valid Session", func(t *testing.T) {
+					acc, password := createUser(t, testApp)
+
+					// given a session
+					session := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, acc.ID)
+
+					ctx := metadata.AppendToOutgoingContext(context.Background(), testApp.Config.SessionCookieName, session.Value)
+					var header metadata.MD
+
+					// invoking the endpoint
+					res, err := svcClient.ChangePassword(ctx, &authngrpc.ChangePasswordRequest{
+						CurrentPassword: password,
+						Password:        "0a0b0c0d0",
+					}, grpc.Header(&header))
+					assert.NoError(t, err)
+
+					// works
+					assertSuccessfulGRPCSession(t, testApp, res.GetResult().GetIdToken(), header, acc)
+					assertChangedPassword(t, testApp, acc)
+
+					// invalidates old session
+					claims, err := sessions.Parse(session.Value, testApp.Config)
+					require.NoError(t, err)
+					id, err := testApp.RefreshTokenStore.Find(models.RefreshToken(claims.Subject))
+					require.NoError(t, err)
+					assert.Empty(t, id)
+				})
+				t.Run("Failure - Valid Session & Insecure Password", func(t *testing.T) {
+					acc, password := createUser(t, testApp)
+
+					// given a session
+					session := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, acc.ID)
+					ctx := metadata.AppendToOutgoingContext(context.Background(), testApp.Config.SessionCookieName, session.Value)
+
+					// invoking the endpoint
+					_, err := svcClient.ChangePassword(ctx, &authngrpc.ChangePasswordRequest{
+						CurrentPassword: password,
+						Password:        "a",
+					})
+					require.Error(t, err)
+					st := status.Convert(err)
+					assert.Equal(t, codes.FailedPrecondition, st.Code())
+					fes := errors.ToFieldErrors(st.Details()[0].(*errdetails.BadRequest))
+					assert.EqualValues(t, services.FieldErrors{{"password", "INSECURE"}}, fes)
+				})
+				t.Run("Failure - Valid Session & Invalid Current Password", func(t *testing.T) {
+					acc, _ := createUser(t, testApp)
+
+					// given a session
+					session := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, acc.ID)
+					ctx := metadata.AppendToOutgoingContext(context.Background(), testApp.Config.SessionCookieName, session.Value)
+
+					// invoking the endpoint
+					_, err := svcClient.ChangePassword(ctx, &authngrpc.ChangePasswordRequest{
+						CurrentPassword: "wrong",
+						Password:        "0a0b0c0d0",
+					})
+					require.Error(t, err)
+
+					st := status.Convert(err)
+					assert.Equal(t, codes.FailedPrecondition, st.Code())
+					fes := errors.ToFieldErrors(st.Details()[0].(*errdetails.BadRequest))
+					assert.EqualValues(t, services.FieldErrors{{"credentials", "FAILED"}}, fes)
+				})
+				t.Run("Failure - Invalid Session", func(t *testing.T) {
+					ctx := metadata.AppendToOutgoingContext(context.Background(), testApp.Config.SessionCookieName, "invalid")
+					_, err := svcClient.ChangePassword(ctx, &authngrpc.ChangePasswordRequest{
+						CurrentPassword: "oldpwd",
+						Password:        "0a0b0c0d0",
+					})
+					require.Error(t, err)
+
+					st := status.Convert(err)
+					assert.Equal(t, codes.Unauthenticated, st.Code())
+				})
+				t.Run("Successful - Valid Token & Session", func(t *testing.T) {
+					// Token account
+					tokenAccount, password := createUser(t, testApp)
+
+					token, err := resets.New(testApp.Config, tokenAccount.ID, tokenAccount.PasswordChangedAt)
+					require.NoError(t, err)
+					tokenStr, err := token.Sign(testApp.Config.ResetSigningKey)
+					require.NoError(t, err)
+
+					// given another account
+					sessionAccount, _ := createUser(t, testApp)
+					require.NoError(t, err)
+					// with a session
+					session := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, sessionAccount.ID)
+
+					ctx := metadata.AppendToOutgoingContext(context.Background(), testApp.Config.SessionCookieName, session.Value)
+					var header metadata.MD
+
+					// invoking the endpoint
+					res, err := svcClient.ChangePassword(ctx, &authngrpc.ChangePasswordRequest{
+						Token:           tokenStr,
+						CurrentPassword: password,
+						Password:        "0a0b0c0d0",
+					}, grpc.Header(&header))
+					require.NoError(t, err)
+
+					// works
+					assertSuccessfulGRPCSession(t, testApp, res.GetResult().GetIdToken(), header, tokenAccount)
+					assertChangedPassword(t, testApp, tokenAccount)
+				})
+			})
+		})
+		t.Run("Password Reset", func(t *testing.T) {
+			svcClient := authngrpc.NewPasswordResetServiceClient(client)
+			t.Run("Known Account", func(t *testing.T) {
+				acc, _ := createUser(t, testApp)
+
+				_, err := svcClient.RequestPasswordReset(context.Background(), &authngrpc.PasswordResetRequest{
+					Username: acc.Username,
+				})
+				assert.NoError(t, err)
+			})
+			t.Run("Unknown Account", func(t *testing.T) {
+				_, err := svcClient.RequestPasswordReset(context.Background(), &authngrpc.PasswordResetRequest{
+					Username: generateUsername(),
+				})
+				assert.NoError(t, err)
+			})
+		})
+		t.Run("Passwordless", func(t *testing.T) {
+			svcClient := authngrpc.NewPasswordlessServiceClient(client)
+			t.Run("Request", func(t *testing.T) {
+				t.Run("Known Account", func(t *testing.T) {
+					acc, _ := createUser(t, testApp)
+
+					_, err := svcClient.RequestPasswordlessLogin(context.Background(), &authngrpc.RequestPasswordlessLoginRequest{
+						Username: acc.Username,
+					})
+					require.NoError(t, err)
+				})
+				t.Run("Unknown Account", func(t *testing.T) {
+					_, err := svcClient.RequestPasswordlessLogin(context.Background(), &authngrpc.RequestPasswordlessLoginRequest{
+						Username: generateUsername(),
+					})
+					require.NoError(t, err)
+				})
+			})
+			t.Run("Submit", func(t *testing.T) {
+				t.Run("Successful - Valid Token", func(t *testing.T) {
+					acc, _ := createUser(t, testApp)
+
+					// given a passwordless token
+					token, err := passwordless.New(testApp.Config, acc.ID)
+					require.NoError(t, err)
+					tokenStr, err := token.Sign(testApp.Config.PasswordlessTokenSigningKey)
+					require.NoError(t, err)
+
+					var header metadata.MD
+					// invoking the endpoint
+					res, err := svcClient.SubmitPasswordlessLogin(context.Background(), &authngrpc.SubmitPasswordlessLoginRequest{
+						Token: tokenStr,
+					}, grpc.Header(&header))
+					require.NoError(t, err)
+
+					// works
+					assertSuccessfulGRPCSession(t, testApp, res.GetResult().GetIdToken(), header, acc)
+				})
+				t.Run("Failure - Invalid Token", func(t *testing.T) {
+					// invoking the endpoint
+					_, err := svcClient.SubmitPasswordlessLogin(context.Background(), &authngrpc.SubmitPasswordlessLoginRequest{
+						Token: "invalid",
+					})
+					assert.Error(t, err)
+
+					st := status.Convert(err)
+
+					// does not work
+					assert.Equal(t, codes.FailedPrecondition, st.Code())
+
+					fes := errors.ToFieldErrors(st.Details()[0].(*errdetails.BadRequest))
+					assert.EqualValues(t, services.FieldErrors{{"token", "INVALID_OR_EXPIRED"}}, fes)
+				})
+				t.Run("Successful - Valid Session", func(t *testing.T) {
+					acc, _ := createUser(t, testApp)
+
+					// given a session
+					session := test.CreateSession(testApp.RefreshTokenStore, testApp.Config, acc.ID)
+
+					// given a passwordless token
+					token, err := passwordless.New(testApp.Config, acc.ID)
+					require.NoError(t, err)
+					tokenStr, err := token.Sign(testApp.Config.PasswordlessTokenSigningKey)
+					require.NoError(t, err)
+
+					ctx := metadata.AppendToOutgoingContext(context.Background(), testApp.Config.SessionCookieName, session.Value)
+					var header metadata.MD
+
+					// invoking the endpoint
+					res, err := svcClient.SubmitPasswordlessLogin(ctx, &authngrpc.SubmitPasswordlessLoginRequest{
+						Token: tokenStr,
+					}, grpc.Header(&header))
+					require.NoError(t, err)
+
+					// works
+					assertSuccessfulGRPCSession(t, testApp, res.GetResult().GetIdToken(), header, acc)
+
+					// invalidates old session
+					claims, err := sessions.Parse(session.Value, testApp.Config)
+					require.NoError(t, err)
+					id, err := testApp.RefreshTokenStore.Find(models.RefreshToken(claims.Subject))
+					require.NoError(t, err)
+					assert.Empty(t, id)
+				})
+			})
+		})
+	}
+}
+
 func assertSuccessfulSession(t *testing.T, testApp *app.App, res *http.Response, account *models.Account) {
 	assert.Equal(t, http.StatusCreated, res.StatusCode)
 	test.AssertSession(t, testApp.Config, res.Cookies())
 	test.AssertIDTokenResponse(t, res, testApp.KeyStore, testApp.Config)
+}
+
+func assertSuccessfulGRPCSession(t *testing.T, testApp *app.App, idToken string, header metadata.MD, account *models.Account) {
+	test.AssertGRPCSession(t, testApp.Config, header)
+	test.AssertGRPCIDTokenResponse(t, idToken, testApp.KeyStore, testApp.Config)
 }
 
 func assertChangedPassword(t *testing.T, testApp *app.App, account *models.Account) {
