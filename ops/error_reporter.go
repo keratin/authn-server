@@ -45,15 +45,10 @@ func PanicHandler(r ErrorReporter, next http.Handler) http.Handler {
 func GRPCRecoveryInterceptor(r ErrorReporter) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (_ interface{}, err error) {
 		defer func() {
-			val := recover()
-			switch errValue := val.(type) {
-			case nil:
-				return
-			case error:
-			default:
-				err = grpc.Errorf(codes.Internal, "%v", errValue)
+			if er := recover(); er != nil {
+				err = grpc.Errorf(codes.Internal, "%v", er)
+				r.ReportGRPCError(err, info, req)
 			}
-			r.ReportGRPCError(err, info, req)
 		}()
 		return handler(ctx, req)
 	}
