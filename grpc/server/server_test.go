@@ -154,11 +154,7 @@ func TestServer(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	go Server(ctx, app)
-	defer func() {
-		cancel()
-
-		time.Sleep(time.Second * 2)
-	}()
+	defer cancel()
 
 	// to use with REST API
 	jar, err := cookiejar.New(nil)
@@ -615,9 +611,10 @@ func TestServer(t *testing.T) {
 			assert.NotEmpty(t, res)
 		})
 	})
+	t.Run("testRESTInterface", testRESTInterface)
 }
 
-func TestRESTInterface(t *testing.T) {
+func testRESTInterface(t *testing.T) {
 	// Default logger
 	logger := logrus.New()
 	logger.Formatter = &logrus.JSONFormatter{}
