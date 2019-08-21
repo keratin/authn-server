@@ -96,7 +96,7 @@ test-ci: init
 	TEST_REDIS_URL=redis://127.0.0.1/1 \
 	  TEST_MYSQL_URL=mysql://root@127.0.0.1/test \
 	  TEST_POSTGRES_URL=postgres://postgres@127.0.0.1/postgres?sslmode=disable \
-	  go test -v -covermode=count -coverprofile=coverage.out ./...
+	  go test -v -timeout 20m -covermode=count -coverprofile=coverage.out ./...
 
 # Run benchmarks
 .PHONY: benchmarks
