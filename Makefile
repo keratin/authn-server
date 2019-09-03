@@ -2,7 +2,7 @@ ORG := keratin
 PROJECT := authn-server
 NAME := $(ORG)/$(PROJECT)
 VERSION := 1.6.0
-MAIN := main.go routing.go
+MAIN := main.go
 
 .PHONY: clean
 clean:
