@@ -1,10 +1,14 @@
 # Passwordless Logins
 
-If passwords are an obstacle in your application, you may prefer to offer a passwordless login. In
-this login process, a user must simply click a link from their email.
+If passwords are an obstacle in your application, you may prefer to offer a passwordless login. An
+example of this process might involve users clicking a link from their email.
 
-AuthN takes care of generating a secure one-use token while safeguarding against user enumeration.
-Your application is responsible for delivering the token to the user by email.
+AuthN takes care of generating a secure one-use token, while safeguarding against user enumeration.
+Your application is responsible for delivering the token to the user with something like an email
+link.
+
+Users must have an account before they may log in without a password. You may also be interested in
+[passwordless signup](guide-implementing_passwordless_signup.md).
 
 ## Configuration
 
@@ -49,10 +53,16 @@ APP_PASSWORDLESS_TOKEN_URL=https://user:pass@myapp.io/authn/passwordless_login
 
 First, create a place for users to begin the process:
 
-1. Create a form where the user may enter an account email.
-2. Submit the email to AuthN. Note that AuthN always reports success.
+1. Create a form where the user may enter an account name.
+2. Submit the account name to AuthN.
 
-Then, create a page that exchanges the token for a session after users click through an email:
+  NOTE: AuthN always reports success, even if the account has not registered.
 
-3. When the page loads, use submit the `token` to AuthN
+Then, create a page that exchanges the token for a session after users click through an email link:
+
+3. When the page loads, submit the `token` to AuthN
 4. If successful, the user will be logged in.
+
+## Related Guides
+
+* [Passwordless Signup](guide-implementing_passwordless_signup.md)
