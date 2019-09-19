@@ -111,5 +111,6 @@ func NewApp(cfg *Config, logger logrus.FieldLogger) (*App, error) {
 		Actives:           actives,
 		Reporter:          errorReporter,
 		OauthProviders:    oauthProviders,
+		Logger:            logger,
 	}, nil
 }
