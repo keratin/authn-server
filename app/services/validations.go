@@ -27,12 +27,16 @@ func (e FieldError) String() string {
 	return fmt.Sprintf("%v: %v", e.Field, e.Message)
 }
 
+func (e FieldError) Error() string {
+	return e.String()
+}
+
 type FieldErrors []FieldError
 
 func (es FieldErrors) Error() string {
 	var buf = make([]string, len(es))
 	for i, e := range es {
-		buf[i] = e.String()
+		buf[i] = e.Error()
 	}
 	return strings.Join(buf, ", ")
 }

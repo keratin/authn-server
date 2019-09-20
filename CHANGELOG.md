@@ -8,6 +8,10 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 * OAuth authentication through Discord [#116]
 
+### Fixed
+
+* Email validations no longer allow misplaced periods in the domain
+
 ## 1.6.0
 
 ### Added
