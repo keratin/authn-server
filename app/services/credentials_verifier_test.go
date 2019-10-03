@@ -97,7 +97,7 @@ func TestCredentialsVerifierWithTOTPFailure(t *testing.T) {
 		code   string
 		errors services.FieldErrors
 	}{
-		{code: "12345", errors: services.FieldErrors{{"totp", "FAILED"}}}, //Invaild totp code
+		{code: "12345", errors: services.FieldErrors{{"totp", "INVALID_OR_EXPIRED"}}}, //Invaild totp code
 	}
 
 	for _, tc := range testCases {

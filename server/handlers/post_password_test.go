@@ -216,7 +216,7 @@ func TestPostPasswordWithTOTP(t *testing.T) {
 		return app.AccountStore.Create(username, hash)
 	}
 
-	t.Run("valid totp token", func(t *testing.T) {
+	t.Run("valid totp code", func(t *testing.T) {
 		// given an account
 		account, err := factory("valid@authn.tech", "oldpwd")
 		app.AccountStore.SetTOTPSecret(account.ID, totpSecretEnc)
@@ -244,7 +244,7 @@ func TestPostPasswordWithTOTP(t *testing.T) {
 		assertSuccess(t, res, account)
 	})
 
-	t.Run("invalid totp token", func(t *testing.T) {
+	t.Run("invalid totp code", func(t *testing.T) {
 		// given an account
 		account, err := factory("invaild@authn.tech", "oldpwd")
 		app.AccountStore.SetTOTPSecret(account.ID, totpSecretEnc)
