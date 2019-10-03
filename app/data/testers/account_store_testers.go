@@ -18,6 +18,7 @@ var AccountStoreTesters = []func(*testing.T, data.AccountStore){
 	testArchiveWithOauth,
 	testRequireNewPassword,
 	testSetPassword,
+	testSetAndDeleteTOTP,
 	testUpdateUsername,
 	testAddOauthAccount,
 	testFindByOauthAccount,
@@ -189,6 +190,37 @@ func testSetPassword(t *testing.T, store data.AccountStore) {
 	assert.Equal(t, []byte("new"), after.Password)
 	assert.False(t, after.RequireNewPassword)
 	assert.NotEqual(t, account.PasswordChangedAt, after.PasswordChangedAt)
+
+	// Assert that db connections are released to pool
+	assert.Equal(t, 1, getOpenConnectionCount(store))
+}
+
+func testSetAndDeleteTOTP(t *testing.T, store data.AccountStore) {
+	account, err := store.Create("authn@keratin.tech", []byte("password"))
+	require.NoError(t, err)
+	assert.False(t, account.TOTPEnabled())
+	assert.False(t, account.TOTPSecret.Valid)
+
+	//Check set
+	ok, err := store.SetTOTPSecret(account.ID, []byte("secret"))
+	assert.True(t, ok)
+	require.NoError(t, err)
+
+	after, err := store.Find(account.ID)
+	require.NoError(t, err)
+	assert.Equal(t, "secret", after.TOTPSecret.String)
+	assert.True(t, after.TOTPEnabled())
+	assert.True(t, after.TOTPSecret.Valid)
+
+	//Check delete
+	ok, err = store.DeleteTOTPSecret(account.ID)
+	assert.True(t, ok)
+	require.NoError(t, err)
+
+	after, err = store.Find(account.ID)
+	require.NoError(t, err)
+	assert.False(t, after.TOTPEnabled())
+	assert.False(t, after.TOTPSecret.Valid)
 
 	// Assert that db connections are released to pool
 	assert.Equal(t, 1, getOpenConnectionCount(store))

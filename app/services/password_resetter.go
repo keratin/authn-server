@@ -3,7 +3,9 @@ package services
 import (
 	"strconv"
 
+	"github.com/keratin/authn-server/lib/compat"
 	"github.com/keratin/authn-server/ops"
+	"github.com/pquerna/otp/totp"
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data"
@@ -11,7 +13,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func PasswordResetter(store data.AccountStore, r ops.ErrorReporter, cfg *app.Config, token string, password string) (int, error) {
+func PasswordResetter(store data.AccountStore, r ops.ErrorReporter, cfg *app.Config, token string, password string, totpCode string) (int, error) {
 	claims, err := resets.Parse(token, cfg)
 	if err != nil {
 		return 0, FieldErrors{{"token", ErrInvalidOrExpired}}
@@ -36,6 +38,17 @@ func PasswordResetter(store data.AccountStore, r ops.ErrorReporter, cfg *app.Con
 
 	if claims.LockExpired(account.PasswordChangedAt) {
 		return 0, FieldErrors{{"token", ErrInvalidOrExpired}}
+	}
+
+	//Check TOTP MFA
+	if account.TOTPEnabled() {
+		secret, err := compat.Decrypt([]byte(account.TOTPSecret.String), cfg.DBEncryptionKey)
+		if err != nil {
+			return 0, errors.Wrap(err, "TOTPDecrypt")
+		}
+		if !totp.Validate(totpCode, secret) {
+			return 0, FieldErrors{{"totp", ErrInvalidOrExpired}}
+		}
 	}
 
 	return account.ID, PasswordSetter(store, r, cfg, id, password)

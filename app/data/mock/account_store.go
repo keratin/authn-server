@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"database/sql"
 	"fmt"
 	"strings"
 	"time"
@@ -201,6 +202,28 @@ func (s *accountStore) SetLastLogin(id int) (bool, error) {
 
 	now := time.Now()
 	account.LastLoginAt = &now
+	return true, nil
+}
+
+func (s *accountStore) SetTOTPSecret(id int, secret []byte) (bool, error) {
+	account := s.accountsByID[id]
+	if account == nil {
+		return false, nil
+	}
+
+	account.TOTPSecret = sql.NullString{String: string(secret), Valid: true}
+
+	return true, nil
+}
+
+func (s *accountStore) DeleteTOTPSecret(id int) (bool, error) {
+	account := s.accountsByID[id]
+	if account == nil {
+		return false, nil
+	}
+
+	account.TOTPSecret = sql.NullString{}
+
 	return true, nil
 }
 

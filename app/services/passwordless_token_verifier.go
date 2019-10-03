@@ -3,7 +3,9 @@ package services
 import (
 	"strconv"
 
+	"github.com/keratin/authn-server/lib/compat"
 	"github.com/keratin/authn-server/ops"
+	"github.com/pquerna/otp/totp"
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data"
@@ -11,7 +13,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func PasswordlessTokenVerifier(store data.AccountStore, r ops.ErrorReporter, cfg *app.Config, token string) (int, error) {
+func PasswordlessTokenVerifier(store data.AccountStore, r ops.ErrorReporter, cfg *app.Config, token string, totpCode string) (int, error) {
 	claims, err := passwordless.Parse(token, cfg)
 	if err != nil {
 		return 0, FieldErrors{{"token", ErrInvalidOrExpired}}
@@ -34,6 +36,17 @@ func PasswordlessTokenVerifier(store data.AccountStore, r ops.ErrorReporter, cfg
 		return 0, FieldErrors{{"account", ErrLocked}}
 	} else if account.LastLoginAt != nil && account.LastLoginAt.After(claims.IssuedAt.Time()) {
 		return 0, FieldErrors{{"token", ErrInvalidOrExpired}}
+	}
+
+	//Check TOTP MFA
+	if account.TOTPEnabled() {
+		secret, err := compat.Decrypt([]byte(account.TOTPSecret.String), cfg.DBEncryptionKey)
+		if err != nil {
+			return -1, errors.Wrap(err, "TOTPDecrypt")
+		}
+		if !totp.Validate(totpCode, secret) {
+			return -1, FieldErrors{{"totp", ErrInvalidOrExpired}}
+		}
 	}
 
 	return account.ID, nil

@@ -3,10 +3,9 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/keratin/authn-server/lib/parse"
-
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/services"
+	"github.com/keratin/authn-server/lib/parse"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/server/sessions"
 )
@@ -17,6 +16,7 @@ func PostPassword(app *app.App) http.HandlerFunc {
 			Token           string
 			Password        string
 			CurrentPassword string
+			TOTP            string
 		}
 		if err := parse.Payload(r, &credentials); err != nil {
 			WriteErrors(w, err)
@@ -32,6 +32,7 @@ func PostPassword(app *app.App) http.HandlerFunc {
 				app.Config,
 				credentials.Token,
 				credentials.Password,
+				credentials.TOTP,
 			)
 		} else {
 			accountID = sessions.GetAccountID(r)
@@ -46,6 +47,7 @@ func PostPassword(app *app.App) http.HandlerFunc {
 				accountID,
 				credentials.CurrentPassword,
 				credentials.Password,
+				credentials.TOTP,
 			)
 		}
 
