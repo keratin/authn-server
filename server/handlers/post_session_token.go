@@ -1,8 +1,9 @@
 package handlers
 
 import (
-	"github.com/keratin/authn-server/lib/parse"
 	"net/http"
+
+	"github.com/keratin/authn-server/lib/parse"
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/services"
@@ -12,7 +13,10 @@ import (
 
 func PostSessionToken(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var credentials struct{ Token string }
+		var credentials struct {
+			Token string
+			TOTP  string
+		}
 		if err := parse.Payload(r, &credentials); err != nil {
 			WriteErrors(w, err)
 			return
@@ -25,6 +29,7 @@ func PostSessionToken(app *app.App) http.HandlerFunc {
 			app.Reporter,
 			app.Config,
 			credentials.Token,
+			credentials.TOTP,
 		)
 
 		if err != nil {

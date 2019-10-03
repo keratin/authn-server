@@ -12,6 +12,7 @@ func MigrateDB(db *sqlx.DB) error {
 		createOauthAccounts,
 		createAccountLastLoginAtField,
 		caseInsensitiveUsername,
+		createAccountTOTPFields,
 	}
 	for _, m := range migrations {
 		if err := m(db); err != nil {
@@ -20,6 +21,7 @@ func MigrateDB(db *sqlx.DB) error {
 	}
 	return nil
 }
+
 func migrateAccounts(db *sqlx.DB) error {
 	_, err := db.Exec(`
         CREATE TABLE IF NOT EXISTS accounts (
@@ -67,4 +69,13 @@ func caseInsensitiveUsername(db *sqlx.DB) error {
         ALTER TABLE accounts ALTER COLUMN username TYPE CITEXT;
     `)
 	return err
+}
+
+func createAccountTOTPFields(db *sqlx.DB) error {
+	if _, err := db.Exec(`
+        ALTER TABLE accounts ADD COLUMN IF NOT EXISTS totp_secret TEXT DEFAULT NULL
+    `); err != nil {
+		return err
+	}
+	return nil
 }
