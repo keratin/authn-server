@@ -3,7 +3,6 @@ module github.com/keratin/authn-server
 require (
 	cloud.google.com/go v0.0.0-20180417120045-d19004dbbee5 // indirect
 	github.com/airbrake/gobrake v3.5.0+incompatible
-	github.com/benbjohnson/ego v0.3.0 // indirect
 	github.com/beorn7/perks v0.0.0-20160804104726-4c0e84591b9a // indirect
 	github.com/certifi/gocertifi v0.0.0-20170727155124-3fd9e1adb12b // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
