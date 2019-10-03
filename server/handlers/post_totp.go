@@ -18,11 +18,6 @@ func PostTOTP(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		if r.FormValue("code") == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
 		if err := services.TOTPSetter(app.AccountStore, app.TOTPCache, app.Config, accountID, r.FormValue("code")); err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			if fe, ok := err.(services.FieldErrors); ok {

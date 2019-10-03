@@ -10,6 +10,10 @@ import (
 
 //TOTPSetter persists the TOTP secret to the accountID if code is correct
 func TOTPSetter(accountStore data.AccountStore, totpCache data.TOTPCache, cfg *app.Config, accountID int, code string) error {
+	if code == "" { //Fail early if code is empty
+		return FieldErrors{{"totp", ErrInvalidOrExpired}}
+	}
+
 	account, err := AccountGetter(accountStore, accountID)
 	if err != nil {
 		return err

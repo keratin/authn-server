@@ -2,6 +2,8 @@ cloud.google.com/go v0.0.0-20180417120045-d19004dbbee5 h1:rTagvm4LF13YHJQRHt6EAf
 cloud.google.com/go v0.0.0-20180417120045-d19004dbbee5/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/airbrake/gobrake v3.5.0+incompatible h1:nm6Oxkzo1sKW3mpB9A+seVJJ289s4Dq/hXqktIByCew=
 github.com/airbrake/gobrake v3.5.0+incompatible/go.mod h1:wM4gu3Cn0W0K7GUuVWnlXZU11AGBXMILnrdOU8Kn00o=
+github.com/benbjohnson/ego v0.3.0 h1:nFecrEww4ijgW17qYfjGSmSbxFXUCiPkRjaQd9/8UpA=
+github.com/benbjohnson/ego v0.3.0/go.mod h1:6Qzj43pKX58WdlHDZKZS4Q/XXYwz6toIqXqNjzt4mNA=
 github.com/beorn7/perks v0.0.0-20160804104726-4c0e84591b9a h1:BtpsbiV638WQZwhA98cEZw2BsbnQJrbd0BI7tsy0W1c=
 github.com/beorn7/perks v0.0.0-20160804104726-4c0e84591b9a/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc h1:biVzkmvwrH8WK8raXaxBx6fRVTlJILwEwQGL1I/ByEI=
