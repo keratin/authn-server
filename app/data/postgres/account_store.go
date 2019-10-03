@@ -165,12 +165,12 @@ func (db *AccountStore) SetLastLogin(id int) (bool, error) {
 }
 
 func (db *AccountStore) SetTOTPSecret(id int, secret []byte) (bool, error) {
-	result, err := db.Exec("UPDATE accounts SET totp_secret = $1, totp_enabled=true WHERE id = $2", secret, id)
+	result, err := db.Exec("UPDATE accounts SET totp_secret = $1 WHERE id = $2", secret, id)
 	return ok(result, err)
 }
 
 func (db *AccountStore) DeleteTOTPSecret(id int) (bool, error) {
-	result, err := db.Exec("UPDATE accounts SET totp_secret = NULL, totp_enabled=false WHERE id = $1", id)
+	result, err := db.Exec("UPDATE accounts SET totp_secret = NULL WHERE id = $1", id)
 	return ok(result, err)
 }
 

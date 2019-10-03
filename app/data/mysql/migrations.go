@@ -75,17 +75,6 @@ func createAccountLastLoginAtField(db *sqlx.DB) error {
 
 func createAccountTOTPFields(db *sqlx.DB) error {
 	_, err := db.Exec(`
-        ALTER TABLE accounts ADD totp_enabled BOOLEAN DEFAULT false
-    `)
-	if mysqlError, ok := err.(*mysql.MySQLError); ok {
-		if mysqlError.Number == 1060 { // 1060 = Duplicate column name
-			err = nil
-		}
-	}
-	if err != nil {
-		return err
-	}
-	_, err = db.Exec(`
         ALTER TABLE accounts ADD totp_secret VARCHAR(255) DEFAULT NULL
     `)
 	if mysqlError, ok := err.(*mysql.MySQLError); ok {

@@ -63,11 +63,6 @@ func createAccountLastLoginAtField(db *sqlx.DB) error {
 
 func createAccountTOTPFields(db *sqlx.DB) error {
 	if _, err := db.Exec(`
-        ALTER TABLE accounts ADD COLUMN IF NOT EXISTS totp_enabled boolean DEFAULT false
-    `); err != nil {
-		return err
-	}
-	if _, err := db.Exec(`
         ALTER TABLE accounts ADD COLUMN IF NOT EXISTS totp_secret TEXT DEFAULT NULL
     `); err != nil {
 		return err

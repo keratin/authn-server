@@ -209,7 +209,6 @@ func (s *accountStore) SetTOTPSecret(id int, secret []byte) (bool, error) {
 		return false, nil
 	}
 
-	account.TOTPEnabled = true
 	account.TOTPSecret = sql.NullString{String: string(secret), Valid: true}
 
 	return true, nil
@@ -221,7 +220,6 @@ func (s *accountStore) DeleteTOTPSecret(id int) (bool, error) {
 		return false, nil
 	}
 
-	account.TOTPEnabled = false
 	account.TOTPSecret = sql.NullString{}
 
 	return true, nil

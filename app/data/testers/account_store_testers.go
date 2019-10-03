@@ -186,7 +186,7 @@ func testSetPassword(t *testing.T, store data.AccountStore) {
 func testSetAndDeleteTOTP(t *testing.T, store data.AccountStore) {
 	account, err := store.Create("authn@keratin.tech", []byte("password"))
 	require.NoError(t, err)
-	assert.False(t, account.TOTPEnabled)
+	assert.False(t, account.TOTPEnabled())
 	assert.False(t, account.TOTPSecret.Valid)
 
 	//Check set
@@ -205,7 +205,7 @@ func testSetAndDeleteTOTP(t *testing.T, store data.AccountStore) {
 
 	after, err = store.Find(account.ID)
 	require.NoError(t, err)
-	assert.False(t, after.TOTPEnabled)
+	assert.False(t, after.TOTPEnabled())
 	assert.False(t, after.TOTPSecret.Valid)
 
 	// Assert that db connections are released to pool
