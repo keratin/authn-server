@@ -11,6 +11,7 @@ func MigrateDB(db *sqlx.DB) error {
 		migrateAccounts,
 		createOauthAccounts,
 		createAccountLastLoginAtField,
+		createAccountTOTPFields,
 	}
 	for _, m := range migrations {
 		if err := m(db); err != nil {
@@ -58,4 +59,18 @@ func createAccountLastLoginAtField(db *sqlx.DB) error {
         ALTER TABLE accounts ADD COLUMN IF NOT EXISTS last_login_at timestamptz DEFAULT NULL
     `)
 	return err
+}
+
+func createAccountTOTPFields(db *sqlx.DB) error {
+	if _, err := db.Exec(`
+        ALTER TABLE accounts ADD COLUMN IF NOT EXISTS totp_enabled boolean DEFAULT false
+    `); err != nil {
+		return err
+	}
+	if _, err := db.Exec(`
+        ALTER TABLE accounts ADD COLUMN IF NOT EXISTS totp_secret TEXT DEFAULT NULL
+    `); err != nil {
+		return err
+	}
+	return nil
 }

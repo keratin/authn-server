@@ -52,3 +52,12 @@ func (s *BlobStore) WriteNX(name string, blob []byte) (bool, error) {
 	}
 	return true, nil
 }
+
+func (s *BlobStore) Write(name string, blob []byte) (bool, error) {
+	expiresAt := time.Now().Add(s.TTL)
+	_, err := s.DB.Exec("INSERT or REPLACE INTO blobs (name, blob, expires_at) VALUES (?, ?, ?)", name, blob, expiresAt, blob, expiresAt, name)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}

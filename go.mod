@@ -3,6 +3,7 @@ module github.com/keratin/authn-server
 require (
 	cloud.google.com/go v0.0.0-20180417120045-d19004dbbee5 // indirect
 	github.com/airbrake/gobrake v3.5.0+incompatible
+	github.com/benbjohnson/ego v0.3.0 // indirect
 	github.com/beorn7/perks v0.0.0-20160804104726-4c0e84591b9a // indirect
 	github.com/certifi/gocertifi v0.0.0-20170727155124-3fd9e1adb12b // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -26,13 +27,13 @@ require (
 	github.com/onsi/ginkgo v1.6.0 // indirect
 	github.com/onsi/gomega v1.4.1 // indirect
 	github.com/pkg/errors v0.8.0
-	github.com/pmezard/go-difflib v0.0.0-20151028094244-d8ed2627bdf0 // indirect
+	github.com/pquerna/otp v1.2.0
 	github.com/prometheus/client_golang v0.9.0-pre1
 	github.com/prometheus/client_model v0.0.0-20170216185247-6f3806018612 // indirect
 	github.com/prometheus/common v0.0.0-20171104095907-e3fb1a1acd76 // indirect
 	github.com/prometheus/procfs v0.0.0-20171017214025-a6e9df898b13 // indirect
 	github.com/sirupsen/logrus v1.0.5
-	github.com/stretchr/testify v1.2.1
+	github.com/stretchr/testify v1.3.0
 	github.com/test-go/testify v1.1.4 // indirect
 	github.com/trustelem/zxcvbn v1.0.1
 	golang.org/x/crypto v0.0.0-20170619204222-adbae1b6b6fb
@@ -49,3 +50,5 @@ require (
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.2.1 // indirect
 )
+
+go 1.13

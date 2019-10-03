@@ -13,6 +13,7 @@ func MigrateDB(db *sqlx.DB) error {
 		createBlobs,
 		createOauthAccounts,
 		createAccountLastLoginAtField,
+		createAccountTOTPFields,
 	}
 	for _, m := range migrations {
 		if err := m(db); err != nil {
@@ -89,4 +90,18 @@ func createAccountLastLoginAtField(db *sqlx.DB) error {
         ALTER TABLE accounts ADD last_login_at DATETIME
     `)
 	return err
+}
+
+func createAccountTOTPFields(db *sqlx.DB) error {
+	if _, err := db.Exec(`
+        ALTER TABLE accounts ADD totp_enabled BOOLEAN DEFAULT false
+    `); err != nil {
+		return err
+	}
+	if _, err := db.Exec(`
+        ALTER TABLE accounts ADD totp_secret VARCHAR(255) DEFAULT NULL
+    `); err != nil {
+		return err
+	}
+	return nil
 }

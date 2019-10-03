@@ -30,6 +30,18 @@ func PublicRoutes(app *app.App) []*route.HandledRoute {
 		route.Get("/session/refresh").
 			SecuredWith(originSecurity).
 			Handle(handlers.GetSessionRefresh(app)),
+
+		route.Get("/totp").
+			SecuredWith(originSecurity).
+			Handle(handlers.GetTOTP(app)),
+
+		route.Post("/totp").
+			SecuredWith(originSecurity).
+			Handle(handlers.PostTOTP(app)),
+
+		route.Delete("/totp").
+			SecuredWith(originSecurity).
+			Handle(handlers.DeleteTOTP(app)),
 	)
 
 	if app.Config.EnableSignup {
