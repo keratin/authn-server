@@ -20,11 +20,11 @@ func TOTPSetter(accountStore data.AccountStore, totpCache data.TOTPCache, cfg *a
 	}
 
 	secret, err := totpCache.LoadTOTPSecret(account.ID)
-	if err != nil {
+	if err != nil { //Error with redis itself
 		return err
 	}
 
-	if !totp.Validate(code, string(secret)) {
+	if !totp.Validate(code, string(secret)) { //Either cache expiry or validation error
 		return FieldErrors{{"totp", ErrInvalidOrExpired}}
 	}
 
