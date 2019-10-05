@@ -236,7 +236,7 @@ func TestServer(t *testing.T) {
 			assert.NoError(t, err)
 
 			// Valid access/identity token is received
-			id, err := jwt.ParseSigned(signupResponse.Result.IdToken)
+			id, err := jwt.ParseSigned(signupResponse.IdToken)
 			assert.NoError(t, err)
 			claims := identities.Claims{}
 			err = id.Claims(app.KeyStore.Key().Public(), &claims)
@@ -416,7 +416,7 @@ func TestServer(t *testing.T) {
 				Username: "test@example.com",
 				Locked:   true,
 				Deleted:  false,
-			}, getActResponse.Result)
+			}, getActResponse)
 
 			// locking account clears all active sessions
 			rSessions, err := app.RefreshTokenStore.FindAll(testSubjectID)
@@ -1515,7 +1515,7 @@ func testPrivateGRPCInterface(testApp *app.App, client *grpc.ClientConn) func(*t
 					assert.NoError(t, err)
 					assert.NotEmpty(t, resp)
 
-					account, err := testApp.AccountStore.Find(int(resp.GetResult().GetId()))
+					account, err := testApp.AccountStore.Find(int(resp.GetId()))
 					require.NoError(t, err)
 					assert.Equal(t, username, account.Username)
 					assert.True(t, account.Locked)
@@ -1530,7 +1530,7 @@ func testPrivateGRPCInterface(testApp *app.App, client *grpc.ClientConn) func(*t
 					assert.NoError(t, err)
 					assert.NotEmpty(t, resp)
 
-					account, err := testApp.AccountStore.Find(int(resp.Result.Id))
+					account, err := testApp.AccountStore.Find(int(resp.Id))
 					require.NoError(t, err)
 					assert.Equal(t, username, account.Username)
 					assert.False(t, account.Locked)
@@ -1544,7 +1544,7 @@ func testPrivateGRPCInterface(testApp *app.App, client *grpc.ClientConn) func(*t
 					assert.NoError(t, err)
 					assert.NotEmpty(t, resp)
 
-					account, err := testApp.AccountStore.Find(int(resp.Result.Id))
+					account, err := testApp.AccountStore.Find(int(resp.Id))
 					require.NoError(t, err)
 					assert.Equal(t, username, account.Username)
 					assert.False(t, account.Locked)
@@ -1562,7 +1562,7 @@ func testPrivateGRPCInterface(testApp *app.App, client *grpc.ClientConn) func(*t
 					})
 					assert.NoError(t, err)
 
-					assert.True(t, resp.Result.Locked)
+					assert.True(t, resp.Locked)
 				})
 				t.Run("Update Account", func(t *testing.T) {
 					// Prep
@@ -1662,7 +1662,7 @@ func testPublicGRPCInterface(testApp *app.App, client *grpc.ClientConn) func(*te
 
 					assert.NotZero(t, len(header.Get(testApp.Config.SessionCookieName)))
 					test.AssertGRPCSession(t, testApp.Config, header)
-					test.AssertGRPCIDTokenResponse(t, resp.GetResult().GetIdToken(), testApp.KeyStore, testApp.Config)
+					test.AssertGRPCIDTokenResponse(t, resp.GetIdToken(), testApp.KeyStore, testApp.Config)
 
 				})
 				t.Run("Missing Username & Password", func(t *testing.T) {
@@ -1784,7 +1784,7 @@ func testPublicGRPCInterface(testApp *app.App, client *grpc.ClientConn) func(*te
 					}, grpc.Header(&header))
 					assert.NoError(t, err)
 					test.AssertGRPCSession(t, testApp.Config, header)
-					test.AssertGRPCIDTokenResponse(t, resp.GetResult().GetIdToken(), testApp.KeyStore, testApp.Config)
+					test.AssertGRPCIDTokenResponse(t, resp.GetIdToken(), testApp.KeyStore, testApp.Config)
 				})
 				t.Run("Failed", func(t *testing.T) {
 					// Prep
@@ -1853,7 +1853,7 @@ func testPublicGRPCInterface(testApp *app.App, client *grpc.ClientConn) func(*te
 					resp, err := svcClient.RefreshSession(ctx, &authngrpc.RefreshSessionRequest{})
 					assert.NoError(t, err)
 
-					test.AssertGRPCIDTokenResponse(t, resp.GetResult().GetIdToken(), testApp.KeyStore, testApp.Config)
+					test.AssertGRPCIDTokenResponse(t, resp.GetIdToken(), testApp.KeyStore, testApp.Config)
 				})
 				t.Run("Failed", func(t *testing.T) {
 					// Lifted from: servers/handlers/get_session_refresh_test.go#TestGetSessionRefreshFailure
@@ -1950,7 +1950,7 @@ func testPublicGRPCInterface(testApp *app.App, client *grpc.ClientConn) func(*te
 					}, grpc.Header(&header))
 					assert.NoError(t, err)
 
-					assertSuccessfulGRPCSession(t, testApp, res.GetResult().GetIdToken(), header, acc)
+					assertSuccessfulGRPCSession(t, testApp, res.GetIdToken(), header, acc)
 					assertChangedPassword(t, testApp, acc)
 				})
 				t.Run("Failure - Invalid Reset Token", func(t *testing.T) {
@@ -1982,7 +1982,7 @@ func testPublicGRPCInterface(testApp *app.App, client *grpc.ClientConn) func(*te
 					assert.NoError(t, err)
 
 					// works
-					assertSuccessfulGRPCSession(t, testApp, res.GetResult().GetIdToken(), header, acc)
+					assertSuccessfulGRPCSession(t, testApp, res.GetIdToken(), header, acc)
 					assertChangedPassword(t, testApp, acc)
 
 					// invalidates old session
@@ -2067,7 +2067,7 @@ func testPublicGRPCInterface(testApp *app.App, client *grpc.ClientConn) func(*te
 					require.NoError(t, err)
 
 					// works
-					assertSuccessfulGRPCSession(t, testApp, res.GetResult().GetIdToken(), header, tokenAccount)
+					assertSuccessfulGRPCSession(t, testApp, res.GetIdToken(), header, tokenAccount)
 					assertChangedPassword(t, testApp, tokenAccount)
 				})
 			})
@@ -2125,7 +2125,7 @@ func testPublicGRPCInterface(testApp *app.App, client *grpc.ClientConn) func(*te
 					require.NoError(t, err)
 
 					// works
-					assertSuccessfulGRPCSession(t, testApp, res.GetResult().GetIdToken(), header, acc)
+					assertSuccessfulGRPCSession(t, testApp, res.GetIdToken(), header, acc)
 				})
 				t.Run("Failure - Invalid Token", func(t *testing.T) {
 					// invoking the endpoint
@@ -2164,7 +2164,7 @@ func testPublicGRPCInterface(testApp *app.App, client *grpc.ClientConn) func(*te
 					require.NoError(t, err)
 
 					// works
-					assertSuccessfulGRPCSession(t, testApp, res.GetResult().GetIdToken(), header, acc)
+					assertSuccessfulGRPCSession(t, testApp, res.GetIdToken(), header, acc)
 
 					// invalidates old session
 					claims, err := sessions.Parse(session.Value, testApp.Config)
