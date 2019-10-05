@@ -1,8 +1,8 @@
 ORG := keratin
 PROJECT := authn-server
 NAME := $(ORG)/$(PROJECT)
-VERSION := 1.6.0
-MAIN := main.go routing.go
+VERSION := 1.7.0
+MAIN := main.go
 
 # https://github.com/TheThingsIndustries/docker-protobuf
 # versions of binaries in image:

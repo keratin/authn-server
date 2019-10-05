@@ -16,7 +16,7 @@ func GetPasswordReset(app *app.App) http.HandlerFunc {
 
 		// run in the background so that a timing attack can't enumerate usernames
 		go func() {
-			err := services.PasswordResetSender(app.Config, account)
+			err := services.PasswordResetSender(app.Config, account, app.Logger)
 			if err != nil {
 				app.Reporter.ReportRequestError(err, r)
 			}

@@ -19,6 +19,6 @@ func TestBlobStore(t *testing.T) {
 	}
 	for _, tester := range testers.BlobStoreTesters {
 		tester(t, store)
-		client.FlushDb()
+		client.FlushDB()
 	}
 }

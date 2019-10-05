@@ -25,7 +25,7 @@ func (s passwordlessServer) RequestPasswordlessLogin(ctx context.Context, req *a
 
 	// run in the background so that a timing attack can't enumerate usernames
 	go func() {
-		err := services.PasswordlessTokenSender(s.app.Config, account)
+		err := services.PasswordlessTokenSender(s.app.Config, account, s.app.Logger)
 		if err != nil {
 			info := meta.GetUnaryServerInfo(ctx)
 			s.app.Reporter.ReportGRPCError(err, info, req)

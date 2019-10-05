@@ -27,17 +27,21 @@ func (e FieldError) String() string {
 	return fmt.Sprintf("%v: %v", e.Field, e.Message)
 }
 
+func (e FieldError) Error() string {
+	return e.String()
+}
+
 type FieldErrors []FieldError
 
 func (es FieldErrors) Error() string {
 	var buf = make([]string, len(es))
 	for i, e := range es {
-		buf[i] = e.String()
+		buf[i] = e.Error()
 	}
 	return strings.Join(buf, ", ")
 }
 
-func passwordValidator(cfg *app.Config, password string) *FieldError {
+func PasswordValidator(cfg *app.Config, password string) *FieldError {
 	if password == "" {
 		return &FieldError{"password", ErrMissing}
 	}
@@ -57,7 +61,7 @@ func passwordValidator(cfg *app.Config, password string) *FieldError {
 	return nil
 }
 
-func usernameValidator(cfg *app.Config, username string) *FieldError {
+func UsernameValidator(cfg *app.Config, username string) *FieldError {
 	if cfg.UsernameIsEmail {
 		if !isEmail(username) {
 			return &FieldError{"username", ErrFormatInvalid}

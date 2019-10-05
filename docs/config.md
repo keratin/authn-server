@@ -4,7 +4,7 @@
 * Databases: [`DATABASE_URL`](#database_url) • [`REDIS_URL`](#redis_url)
 * Sessions:
 [`ACCESS_TOKEN_TTL`](#access_token_ttl) • [`REFRESH_TOKEN_TTL`](#refresh_token_ttl) • [`SESSION_KEY_SALT`](#session_key_salt) • [`DB_ENCRYPTION_KEY_SALT`](#db_encryption_key_salt) • [`RSA_PRIVATE_KEY`](#rsa_private_key)
-* OAuth Clients: [`FACEBOOK_OAUTH_CREDENTIALS`](#facebook_oauth_credentials) • [`GITHUB_OAUTH_CREDENTIALS`](#github_oauth_credentials) • [`GOOGLE_OAUTH_CREDENTIALS`](#google_oauth_credentials)
+* OAuth Clients: [`FACEBOOK_OAUTH_CREDENTIALS`](#facebook_oauth_credentials) • [`GITHUB_OAUTH_CREDENTIALS`](#github_oauth_credentials) • [`GOOGLE_OAUTH_CREDENTIALS`](#google_oauth_credentials) • [`DISCORD_OAUTH_CREDENTIALS`](#discord_oauth_credentials)
 * Username Policy: [`USERNAME_IS_EMAIL`](#username_is_email) • [`EMAIL_USERNAME_DOMAINS`](#email_username_domains)
 * Password Policy: [`PASSWORD_POLICY_SCORE`](#password_policy_score) • [`BCRYPT_COST`](#bcrypt_cost)
 * Password Resets: [`APP_PASSWORD_RESET_URL`](#app_password_reset_url) • [`PASSWORD_RESET_TOKEN_TTL`](#password_reset_token_ttl) • [`APP_PASSWORD_CHANGED_URL`](#app_password_changed_url)
@@ -28,7 +28,7 @@ This specifies the base URL of the AuthN service. It will be embedded in all iss
 |           |    |
 | --------- | --- |
 | Required? | Yes |
-| Value | comma-delimited list of domains (scheme & host, no path) |
+| Value | comma-delimited list of domains (host and optionally port, no path) |
 
 Any domain listed in this variable will be trusted for three things:
 
@@ -194,6 +194,16 @@ Sign up for GitHub OAuth 2.0 credentials with the instructions here: https://dev
 | Default | nil |
 
 Sign up for Google OAuth 2.0 credentials with the instructions here: https://developers.google.com/identity/protocols/OpenIDConnect. Your client's ID and secret must be joined together with a `:` and provided to AuthN as a single variable.
+
+### `DISCORD_OAUTH_CREDENTIALS`
+
+|           |    |
+| --------- | --- |
+| Required? | No |
+| Value | ClientID:ClientSecret |
+| Default | nil |
+
+Sign up for Discord OAuth 2.0 credentials with the instructions here: https://discordapp.com/developers/docs/topics/oauth2. Your client's ID and secret must be joined together with a `:` and provided to AuthN as a single variable.
 
 ## Username Policy
 

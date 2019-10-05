@@ -6,12 +6,13 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/keratin/authn-server/server/sessions"
-	"github.com/keratin/authn-server/server/test"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data/mock"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
+	"github.com/keratin/authn-server/server/sessions"
+	"github.com/keratin/authn-server/server/test"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -25,7 +26,7 @@ func TestSession(t *testing.T) {
 			ApplicationDomains: []route.Domain{{Hostname: "example.com"}},
 		},
 		RefreshTokenStore: mock.NewRefreshTokenStore(),
-		Reporter:          &ops.LogReporter{},
+		Reporter:          &ops.LogReporter{logrus.New()},
 	}
 
 	t.Run("valid session", func(t *testing.T) {

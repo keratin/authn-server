@@ -5,6 +5,7 @@
   * [Logout](guide-implementing_logout.md)
   * [Reset Passwords](guide-implementing_forgotten_passwords.md)
   * [Change Password](guide-implementing_change_password.md)
+  * [Passwordless Signup](guide-implementing_passwordless_signup.md)
   * [Passwordless Login](guide-implementing_passwordless_logins.md)
 
 * **Common Patterns**
@@ -14,6 +15,7 @@
   * [Single Domain Signups](guide-restrict_signups_by_domain.md)
   * [Inactive Session Timeout](guide-make_sessions_timeout_from_inactivity.md)
   * [Password Confirmation](guide-confirm-password.md)
+  * [OAuth2 Provider](guide-integrating_oauth2_provider.md)
 
 * **Deployment**
   * [Basics](guide-deployment.md)

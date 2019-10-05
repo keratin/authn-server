@@ -11,7 +11,7 @@ import (
 func AccountUpdater(store data.AccountStore, cfg *app.Config, accountID int, username string) error {
 	username = strings.TrimSpace(username)
 
-	fieldError := usernameValidator(cfg, username)
+	fieldError := UsernameValidator(cfg, username)
 	if fieldError != nil {
 		return FieldErrors{*fieldError}
 	}

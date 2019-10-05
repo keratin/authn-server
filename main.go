@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"path"
@@ -11,7 +12,7 @@ import (
 	"github.com/keratin/authn-server/app/data"
 	grpcserver "github.com/keratin/authn-server/grpc/server"
 	"github.com/keratin/authn-server/server"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 // VERSION is a value injected at build time with ldflags
@@ -44,13 +45,20 @@ func main() {
 }
 
 func serve(cfg *app.Config) {
-	app, err := app.NewApp(cfg)
+	fmt.Println(fmt.Sprintf("~*~ Keratin AuthN v%s ~*~", VERSION))
+
+	// Default logger
+	logger := logrus.New()
+	logger.Formatter = &logrus.JSONFormatter{}
+	logger.Level = logrus.DebugLevel
+	logger.Out = os.Stdout
+
+	app, err := app.NewApp(cfg, logger)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	fmt.Println(fmt.Sprintf("~*~ Keratin AuthN v%s ~*~", VERSION))
 	fmt.Println(fmt.Sprintf("AUTHN_URL: %s", cfg.AuthNURL))
 	fmt.Println(fmt.Sprintf("PORT: %d", cfg.ServerPort))
 	if app.Config.PublicPort != 0 {
