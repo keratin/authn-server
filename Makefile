@@ -6,27 +6,27 @@ MAIN := main.go routing.go
 
 # https://github.com/TheThingsIndustries/docker-protobuf
 # versions of binaries in image:
-# ALPINE_VERSION ?= 3.8
-# GO_VERSION ?= 1.11.10
-# GRPC_GATEWAY_VERSION ?= 1.9.0
-# GRPC_JAVA_VERSION ?= 1.20.0
+# ALPINE_VERSION ?= 3.10
+# GO_VERSION ?= 1.13.0
+# GRPC_GATEWAY_VERSION ?= 1.11.2
+# GRPC_JAVA_VERSION ?= 1.23.0
 # GRPC_RUST_VERSION ?= 0.6.1
-# GRPC_SWIFT_VERSION ?= 0.9.0
-# GRPC_VERSION ?= 1.19.1
-# GRPC_WEB_VERSION ?= 1.0.4
-# PROTOBUF_C_VERSION ?= 1.3.1
+# GRPC_SWIFT_VERSION ?= 0.9.1
+# GRPC_VERSION ?= 1.23.0
+# GRPC_WEB_VERSION ?= 1.0.6
+# PROTOBUF_C_VERSION ?= 1.3.2
 # PROTOC_GEN_DOC_VERSION ?= 1.3.0
-# PROTOC_GEN_FIELDMASK_VERSION ?= 0.1.2
-# PROTOC_GEN_GO_VERSION ?= 1.3.1
-# PROTOC_GEN_GOGO_VERSION ?= 1.2.1
-# PROTOC_GEN_GOGOTTN_VERSION ?= 3.0.12
+# PROTOC_GEN_FIELDMASK_VERSION ?= 0.2.0
+# PROTOC_GEN_GO_VERSION ?= 1.3.2
+# PROTOC_GEN_GOGO_VERSION ?= 1.3.0
+# PROTOC_GEN_GOGOTTN_VERSION ?= 3.0.13
 # PROTOC_GEN_LINT_VERSION ?= 0.2.1
-# PROTOC_GEN_VALIDATE_VERSION ?= 0.0.14
-# RUST_PROTOBUF_VERSION ?= 2.6.0
-# RUST_VERSION ?= 1.34.2
-# SWIFT_VERSION ?= 5.0.1
+# PROTOC_GEN_VALIDATE_VERSION ?= 0.2.0-java
+# RUST_PROTOBUF_VERSION ?= 2.8.1
+# RUST_VERSION ?= 1.37.0
+# SWIFT_VERSION ?= 5.0.3
 # UPX_VERSION ?= 3.95
-PROTOC := docker run --user `id -u` --rm --mount type=bind,src=$(PWD)/grpc,dst=$(PWD)/grpc -w $(PWD) thethingsindustries/protoc:3.1.5
+PROTOC := docker run --user `id -u` --rm --mount type=bind,src=$(PWD)/grpc,dst=$(PWD)/grpc -w $(PWD) thethingsindustries/protoc:3.1.12
 
 .PHONY: clean
 clean:

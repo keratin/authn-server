@@ -88,9 +88,9 @@ func TestSubmitPasswordlessLogin(t *testing.T) {
 	client, teardown := passwordlessServerSetup(t, testApp)
 	defer teardown()
 
-	assertSuccess := func(t *testing.T, res *authnpb.SubmitPasswordlessLoginResponseEnvelope, md metadata.MD, account *models.Account) {
+	assertSuccess := func(t *testing.T, res *authnpb.SubmitPasswordlessLoginResponse, md metadata.MD, account *models.Account) {
 		grpctest.AssertSession(t, testApp.Config, md)
-		grpctest.AssertIDTokenResponse(t, res.Result.GetIdToken(), testApp.KeyStore, testApp.Config)
+		grpctest.AssertIDTokenResponse(t, res.GetIdToken(), testApp.KeyStore, testApp.Config)
 		found, err := testApp.AccountStore.Find(account.ID)
 		require.NoError(t, err)
 		assert.Equal(t, found.Password, account.Password)

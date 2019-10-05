@@ -130,11 +130,11 @@ func TestGetAccount(t *testing.T) {
 				res, err := client.GetAccount(context.TODO(), req)
 				require.NoError(t, err)
 
-				require.NotNil(t, res.GetResult())
-				assert.Equal(t, account.Username, res.GetResult().GetUsername())
-				assert.Equal(t, int64(account.ID), res.GetResult().GetId())
-				assert.Equal(t, false, res.GetResult().GetLocked())
-				assert.Equal(t, false, res.GetResult().GetDeleted())
+				assert.NotNil(t, res)
+				assert.Equal(t, account.Username, res.GetUsername())
+				assert.Equal(t, int64(account.ID), res.GetId())
+				assert.Equal(t, false, res.GetLocked())
+				assert.Equal(t, false, res.GetDeleted())
 			},
 		},
 	}
@@ -555,7 +555,7 @@ func TestImportAccount(t *testing.T) {
 
 				account, err := app.AccountStore.FindByUsername("someone@app.com")
 				require.NoError(t, err)
-				assert.Equal(t, res.Result.Id, int64(account.ID))
+				assert.Equal(t, res.GetId(), int64(account.ID))
 			},
 		},
 		{
@@ -572,7 +572,7 @@ func TestImportAccount(t *testing.T) {
 
 				account, err := app.AccountStore.FindByUsername("locked@app.com")
 				require.NoError(t, err)
-				assert.Equal(t, res.Result.Id, int64(account.ID))
+				assert.Equal(t, res.Id, int64(account.ID))
 				assert.True(t, account.Locked)
 			},
 		},
@@ -590,7 +590,7 @@ func TestImportAccount(t *testing.T) {
 
 				account, err := app.AccountStore.FindByUsername("unlocked@app.com")
 				require.NoError(t, err)
-				assert.Equal(t, res.Result.Id, int64(account.ID))
+				assert.Equal(t, res.GetId(), int64(account.ID))
 				assert.False(t, account.Locked)
 			},
 		},

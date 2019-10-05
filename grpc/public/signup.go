@@ -18,7 +18,7 @@ type signupServiceServer struct {
 
 var _ authnpb.SignupServiceServer = signupServiceServer{}
 
-func (s signupServiceServer) Signup(ctx context.Context, req *authnpb.SignupRequest) (*authnpb.SignupResponseEnvelope, error) {
+func (s signupServiceServer) Signup(ctx context.Context, req *authnpb.SignupRequest) (*authnpb.SignupResponse, error) {
 
 	account, err := services.AccountCreator(s.app.AccountStore, s.app.Config, req.GetUsername(), req.GetPassword())
 	if err != nil {
@@ -39,21 +39,19 @@ func (s signupServiceServer) Signup(ctx context.Context, req *authnpb.SignupRequ
 	header := metadata.Pairs(s.app.Config.SessionCookieName, sessionToken)
 	grpc.SendHeader(ctx, header)
 
-	return &authnpb.SignupResponseEnvelope{
-		Result: &authnpb.SignupResponse{
-			IdToken: identityToken,
-		},
+	return &authnpb.SignupResponse{
+		IdToken: identityToken,
 	}, nil
 }
 
-func (s signupServiceServer) IsUsernameAvailable(ctx context.Context, req *authnpb.IsUsernameAvailableRequest) (*authnpb.IsUsernameAvailableResponseEnvelope, error) {
+func (s signupServiceServer) IsUsernameAvailable(ctx context.Context, req *authnpb.IsUsernameAvailableRequest) (*authnpb.IsUsernameAvailableResponse, error) {
 	account, err := s.app.AccountStore.FindByUsername(req.GetUsername())
 	if err != nil {
 		panic(err)
 	}
 
 	if account == nil {
-		return &authnpb.IsUsernameAvailableResponseEnvelope{
+		return &authnpb.IsUsernameAvailableResponse{
 			Result: true,
 		}, nil
 	}

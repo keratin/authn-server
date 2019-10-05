@@ -21,7 +21,7 @@ type publicServer struct {
 	app *app.App
 }
 
-func (s publicServer) Login(ctx context.Context, req *authnpb.LoginRequest) (*authnpb.LoginResponseEnvelope, error) {
+func (s publicServer) Login(ctx context.Context, req *authnpb.LoginRequest) (*authnpb.LoginResponse, error) {
 	account, err := services.CredentialsVerifier(
 		s.app.AccountStore,
 		s.app.Config,
@@ -47,14 +47,12 @@ func (s publicServer) Login(ctx context.Context, req *authnpb.LoginRequest) (*au
 	meta.SetSession(ctx, s.app.Config.SessionCookieName, sessionToken)
 
 	// Return the signed identity token in the body
-	return &authnpb.LoginResponseEnvelope{
-		Result: &authnpb.LoginResponse{
-			IdToken: identityToken,
-		},
+	return &authnpb.LoginResponse{
+		IdToken: identityToken,
 	}, nil
 }
 
-func (s publicServer) RefreshSession(ctx context.Context, _ *authnpb.RefreshSessionRequest) (*authnpb.RefreshSessionResponseEnvelope, error) {
+func (s publicServer) RefreshSession(ctx context.Context, _ *authnpb.RefreshSessionRequest) (*authnpb.RefreshSessionResponse, error) {
 
 	// check for valid session with live token
 	accountID := meta.GetSessionAccountID(ctx)
@@ -70,10 +68,8 @@ func (s publicServer) RefreshSession(ctx context.Context, _ *authnpb.RefreshSess
 		panic(pkgerrors.Wrap(err, "IdentityForSession"))
 	}
 
-	return &authnpb.RefreshSessionResponseEnvelope{
-		Result: &authnpb.RefreshSessionResponse{
-			IdToken: identityToken,
-		},
+	return &authnpb.RefreshSessionResponse{
+		IdToken: identityToken,
 	}, nil
 }
 
@@ -90,7 +86,7 @@ func (s publicServer) Logout(ctx context.Context, req *authnpb.LogoutRequest) (*
 	return &authnpb.LogoutResponse{}, nil
 }
 
-func (s publicServer) ChangePassword(ctx context.Context, req *authnpb.ChangePasswordRequest) (*authnpb.ChangePasswordResponseEnvelope, error) {
+func (s publicServer) ChangePassword(ctx context.Context, req *authnpb.ChangePasswordRequest) (*authnpb.ChangePasswordResponse, error) {
 
 	var err error
 	var accountID int
@@ -136,10 +132,8 @@ func (s publicServer) ChangePassword(ctx context.Context, req *authnpb.ChangePas
 	meta.SetSession(ctx, s.app.Config.SessionCookieName, sessionToken)
 
 	// Return the signed identity token in the body
-	return &authnpb.ChangePasswordResponseEnvelope{
-		Result: &authnpb.ChangePasswordResponse{
-			IdToken: identityToken,
-		},
+	return &authnpb.ChangePasswordResponse{
+		IdToken: identityToken,
 	}, nil
 }
 

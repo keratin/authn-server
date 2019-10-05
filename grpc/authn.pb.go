@@ -11,6 +11,8 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	golang_proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 	reflect "reflect"
 	strings "strings"
@@ -26,7 +28,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type SignupRequest struct {
 	Username string `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
@@ -104,40 +106,6 @@ func (m *SignupResponse) GetIdToken() string {
 	return ""
 }
 
-type SignupResponseEnvelope struct {
-	Result *SignupResponse `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
-}
-
-func (m *SignupResponseEnvelope) Reset()      { *m = SignupResponseEnvelope{} }
-func (*SignupResponseEnvelope) ProtoMessage() {}
-func (*SignupResponseEnvelope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{2}
-}
-func (m *SignupResponseEnvelope) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SignupResponseEnvelope.Unmarshal(m, b)
-}
-func (m *SignupResponseEnvelope) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SignupResponseEnvelope.Marshal(b, m, deterministic)
-}
-func (m *SignupResponseEnvelope) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SignupResponseEnvelope.Merge(m, src)
-}
-func (m *SignupResponseEnvelope) XXX_Size() int {
-	return xxx_messageInfo_SignupResponseEnvelope.Size(m)
-}
-func (m *SignupResponseEnvelope) XXX_DiscardUnknown() {
-	xxx_messageInfo_SignupResponseEnvelope.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SignupResponseEnvelope proto.InternalMessageInfo
-
-func (m *SignupResponseEnvelope) GetResult() *SignupResponse {
-	if m != nil {
-		return m.Result
-	}
-	return nil
-}
-
 type IsUsernameAvailableRequest struct {
 	Username string `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
 }
@@ -145,7 +113,7 @@ type IsUsernameAvailableRequest struct {
 func (m *IsUsernameAvailableRequest) Reset()      { *m = IsUsernameAvailableRequest{} }
 func (*IsUsernameAvailableRequest) ProtoMessage() {}
 func (*IsUsernameAvailableRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{3}
+	return fileDescriptor_b40bfba985381dd1, []int{2}
 }
 func (m *IsUsernameAvailableRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_IsUsernameAvailableRequest.Unmarshal(m, b)
@@ -172,34 +140,34 @@ func (m *IsUsernameAvailableRequest) GetUsername() string {
 	return ""
 }
 
-type IsUsernameAvailableResponseEnvelope struct {
+type IsUsernameAvailableResponse struct {
 	Result bool `protobuf:"varint,1,opt,name=result,proto3" json:"result"`
 }
 
-func (m *IsUsernameAvailableResponseEnvelope) Reset()      { *m = IsUsernameAvailableResponseEnvelope{} }
-func (*IsUsernameAvailableResponseEnvelope) ProtoMessage() {}
-func (*IsUsernameAvailableResponseEnvelope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{4}
+func (m *IsUsernameAvailableResponse) Reset()      { *m = IsUsernameAvailableResponse{} }
+func (*IsUsernameAvailableResponse) ProtoMessage() {}
+func (*IsUsernameAvailableResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b40bfba985381dd1, []int{3}
 }
-func (m *IsUsernameAvailableResponseEnvelope) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_IsUsernameAvailableResponseEnvelope.Unmarshal(m, b)
+func (m *IsUsernameAvailableResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IsUsernameAvailableResponse.Unmarshal(m, b)
 }
-func (m *IsUsernameAvailableResponseEnvelope) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_IsUsernameAvailableResponseEnvelope.Marshal(b, m, deterministic)
+func (m *IsUsernameAvailableResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IsUsernameAvailableResponse.Marshal(b, m, deterministic)
 }
-func (m *IsUsernameAvailableResponseEnvelope) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IsUsernameAvailableResponseEnvelope.Merge(m, src)
+func (m *IsUsernameAvailableResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IsUsernameAvailableResponse.Merge(m, src)
 }
-func (m *IsUsernameAvailableResponseEnvelope) XXX_Size() int {
-	return xxx_messageInfo_IsUsernameAvailableResponseEnvelope.Size(m)
+func (m *IsUsernameAvailableResponse) XXX_Size() int {
+	return xxx_messageInfo_IsUsernameAvailableResponse.Size(m)
 }
-func (m *IsUsernameAvailableResponseEnvelope) XXX_DiscardUnknown() {
-	xxx_messageInfo_IsUsernameAvailableResponseEnvelope.DiscardUnknown(m)
+func (m *IsUsernameAvailableResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_IsUsernameAvailableResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_IsUsernameAvailableResponseEnvelope proto.InternalMessageInfo
+var xxx_messageInfo_IsUsernameAvailableResponse proto.InternalMessageInfo
 
-func (m *IsUsernameAvailableResponseEnvelope) GetResult() bool {
+func (m *IsUsernameAvailableResponse) GetResult() bool {
 	if m != nil {
 		return m.Result
 	}
@@ -213,7 +181,7 @@ type PasswordResetRequest struct {
 func (m *PasswordResetRequest) Reset()      { *m = PasswordResetRequest{} }
 func (*PasswordResetRequest) ProtoMessage() {}
 func (*PasswordResetRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{5}
+	return fileDescriptor_b40bfba985381dd1, []int{4}
 }
 func (m *PasswordResetRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PasswordResetRequest.Unmarshal(m, b)
@@ -246,7 +214,7 @@ type PasswordResetResponse struct {
 func (m *PasswordResetResponse) Reset()      { *m = PasswordResetResponse{} }
 func (*PasswordResetResponse) ProtoMessage() {}
 func (*PasswordResetResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{6}
+	return fileDescriptor_b40bfba985381dd1, []int{5}
 }
 func (m *PasswordResetResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PasswordResetResponse.Unmarshal(m, b)
@@ -273,7 +241,7 @@ type RequestPasswordlessLoginRequest struct {
 func (m *RequestPasswordlessLoginRequest) Reset()      { *m = RequestPasswordlessLoginRequest{} }
 func (*RequestPasswordlessLoginRequest) ProtoMessage() {}
 func (*RequestPasswordlessLoginRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{7}
+	return fileDescriptor_b40bfba985381dd1, []int{6}
 }
 func (m *RequestPasswordlessLoginRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RequestPasswordlessLoginRequest.Unmarshal(m, b)
@@ -306,7 +274,7 @@ type RequestPasswordlessLoginResponse struct {
 func (m *RequestPasswordlessLoginResponse) Reset()      { *m = RequestPasswordlessLoginResponse{} }
 func (*RequestPasswordlessLoginResponse) ProtoMessage() {}
 func (*RequestPasswordlessLoginResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{8}
+	return fileDescriptor_b40bfba985381dd1, []int{7}
 }
 func (m *RequestPasswordlessLoginResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RequestPasswordlessLoginResponse.Unmarshal(m, b)
@@ -333,7 +301,7 @@ type SubmitPasswordlessLoginRequest struct {
 func (m *SubmitPasswordlessLoginRequest) Reset()      { *m = SubmitPasswordlessLoginRequest{} }
 func (*SubmitPasswordlessLoginRequest) ProtoMessage() {}
 func (*SubmitPasswordlessLoginRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{9}
+	return fileDescriptor_b40bfba985381dd1, []int{8}
 }
 func (m *SubmitPasswordlessLoginRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubmitPasswordlessLoginRequest.Unmarshal(m, b)
@@ -367,7 +335,7 @@ type SubmitPasswordlessLoginResponse struct {
 func (m *SubmitPasswordlessLoginResponse) Reset()      { *m = SubmitPasswordlessLoginResponse{} }
 func (*SubmitPasswordlessLoginResponse) ProtoMessage() {}
 func (*SubmitPasswordlessLoginResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{10}
+	return fileDescriptor_b40bfba985381dd1, []int{9}
 }
 func (m *SubmitPasswordlessLoginResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubmitPasswordlessLoginResponse.Unmarshal(m, b)
@@ -394,42 +362,6 @@ func (m *SubmitPasswordlessLoginResponse) GetIdToken() string {
 	return ""
 }
 
-type SubmitPasswordlessLoginResponseEnvelope struct {
-	Result *SubmitPasswordlessLoginResponse `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
-}
-
-func (m *SubmitPasswordlessLoginResponseEnvelope) Reset() {
-	*m = SubmitPasswordlessLoginResponseEnvelope{}
-}
-func (*SubmitPasswordlessLoginResponseEnvelope) ProtoMessage() {}
-func (*SubmitPasswordlessLoginResponseEnvelope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{11}
-}
-func (m *SubmitPasswordlessLoginResponseEnvelope) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SubmitPasswordlessLoginResponseEnvelope.Unmarshal(m, b)
-}
-func (m *SubmitPasswordlessLoginResponseEnvelope) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SubmitPasswordlessLoginResponseEnvelope.Marshal(b, m, deterministic)
-}
-func (m *SubmitPasswordlessLoginResponseEnvelope) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SubmitPasswordlessLoginResponseEnvelope.Merge(m, src)
-}
-func (m *SubmitPasswordlessLoginResponseEnvelope) XXX_Size() int {
-	return xxx_messageInfo_SubmitPasswordlessLoginResponseEnvelope.Size(m)
-}
-func (m *SubmitPasswordlessLoginResponseEnvelope) XXX_DiscardUnknown() {
-	xxx_messageInfo_SubmitPasswordlessLoginResponseEnvelope.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SubmitPasswordlessLoginResponseEnvelope proto.InternalMessageInfo
-
-func (m *SubmitPasswordlessLoginResponseEnvelope) GetResult() *SubmitPasswordlessLoginResponse {
-	if m != nil {
-		return m.Result
-	}
-	return nil
-}
-
 type LoginRequest struct {
 	Username string `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
 	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
@@ -438,7 +370,7 @@ type LoginRequest struct {
 func (m *LoginRequest) Reset()      { *m = LoginRequest{} }
 func (*LoginRequest) ProtoMessage() {}
 func (*LoginRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{12}
+	return fileDescriptor_b40bfba985381dd1, []int{10}
 }
 func (m *LoginRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_LoginRequest.Unmarshal(m, b)
@@ -479,7 +411,7 @@ type LoginResponse struct {
 func (m *LoginResponse) Reset()      { *m = LoginResponse{} }
 func (*LoginResponse) ProtoMessage() {}
 func (*LoginResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{13}
+	return fileDescriptor_b40bfba985381dd1, []int{11}
 }
 func (m *LoginResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_LoginResponse.Unmarshal(m, b)
@@ -506,47 +438,13 @@ func (m *LoginResponse) GetIdToken() string {
 	return ""
 }
 
-type LoginResponseEnvelope struct {
-	Result *LoginResponse `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
-}
-
-func (m *LoginResponseEnvelope) Reset()      { *m = LoginResponseEnvelope{} }
-func (*LoginResponseEnvelope) ProtoMessage() {}
-func (*LoginResponseEnvelope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{14}
-}
-func (m *LoginResponseEnvelope) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_LoginResponseEnvelope.Unmarshal(m, b)
-}
-func (m *LoginResponseEnvelope) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_LoginResponseEnvelope.Marshal(b, m, deterministic)
-}
-func (m *LoginResponseEnvelope) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_LoginResponseEnvelope.Merge(m, src)
-}
-func (m *LoginResponseEnvelope) XXX_Size() int {
-	return xxx_messageInfo_LoginResponseEnvelope.Size(m)
-}
-func (m *LoginResponseEnvelope) XXX_DiscardUnknown() {
-	xxx_messageInfo_LoginResponseEnvelope.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_LoginResponseEnvelope proto.InternalMessageInfo
-
-func (m *LoginResponseEnvelope) GetResult() *LoginResponse {
-	if m != nil {
-		return m.Result
-	}
-	return nil
-}
-
 type LogoutRequest struct {
 }
 
 func (m *LogoutRequest) Reset()      { *m = LogoutRequest{} }
 func (*LogoutRequest) ProtoMessage() {}
 func (*LogoutRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{15}
+	return fileDescriptor_b40bfba985381dd1, []int{12}
 }
 func (m *LogoutRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_LogoutRequest.Unmarshal(m, b)
@@ -572,7 +470,7 @@ type LogoutResponse struct {
 func (m *LogoutResponse) Reset()      { *m = LogoutResponse{} }
 func (*LogoutResponse) ProtoMessage() {}
 func (*LogoutResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{16}
+	return fileDescriptor_b40bfba985381dd1, []int{13}
 }
 func (m *LogoutResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_LogoutResponse.Unmarshal(m, b)
@@ -598,7 +496,7 @@ type RefreshSessionRequest struct {
 func (m *RefreshSessionRequest) Reset()      { *m = RefreshSessionRequest{} }
 func (*RefreshSessionRequest) ProtoMessage() {}
 func (*RefreshSessionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{17}
+	return fileDescriptor_b40bfba985381dd1, []int{14}
 }
 func (m *RefreshSessionRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RefreshSessionRequest.Unmarshal(m, b)
@@ -625,7 +523,7 @@ type RefreshSessionResponse struct {
 func (m *RefreshSessionResponse) Reset()      { *m = RefreshSessionResponse{} }
 func (*RefreshSessionResponse) ProtoMessage() {}
 func (*RefreshSessionResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{18}
+	return fileDescriptor_b40bfba985381dd1, []int{15}
 }
 func (m *RefreshSessionResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RefreshSessionResponse.Unmarshal(m, b)
@@ -652,40 +550,6 @@ func (m *RefreshSessionResponse) GetIdToken() string {
 	return ""
 }
 
-type RefreshSessionResponseEnvelope struct {
-	Result *RefreshSessionResponse `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
-}
-
-func (m *RefreshSessionResponseEnvelope) Reset()      { *m = RefreshSessionResponseEnvelope{} }
-func (*RefreshSessionResponseEnvelope) ProtoMessage() {}
-func (*RefreshSessionResponseEnvelope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{19}
-}
-func (m *RefreshSessionResponseEnvelope) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_RefreshSessionResponseEnvelope.Unmarshal(m, b)
-}
-func (m *RefreshSessionResponseEnvelope) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_RefreshSessionResponseEnvelope.Marshal(b, m, deterministic)
-}
-func (m *RefreshSessionResponseEnvelope) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RefreshSessionResponseEnvelope.Merge(m, src)
-}
-func (m *RefreshSessionResponseEnvelope) XXX_Size() int {
-	return xxx_messageInfo_RefreshSessionResponseEnvelope.Size(m)
-}
-func (m *RefreshSessionResponseEnvelope) XXX_DiscardUnknown() {
-	xxx_messageInfo_RefreshSessionResponseEnvelope.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_RefreshSessionResponseEnvelope proto.InternalMessageInfo
-
-func (m *RefreshSessionResponseEnvelope) GetResult() *RefreshSessionResponse {
-	if m != nil {
-		return m.Result
-	}
-	return nil
-}
-
 type ChangePasswordRequest struct {
 	Password        string `protobuf:"bytes,1,opt,name=password,proto3" json:"password,omitempty"`
 	Token           string `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
@@ -695,7 +559,7 @@ type ChangePasswordRequest struct {
 func (m *ChangePasswordRequest) Reset()      { *m = ChangePasswordRequest{} }
 func (*ChangePasswordRequest) ProtoMessage() {}
 func (*ChangePasswordRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{20}
+	return fileDescriptor_b40bfba985381dd1, []int{16}
 }
 func (m *ChangePasswordRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ChangePasswordRequest.Unmarshal(m, b)
@@ -743,7 +607,7 @@ type ChangePasswordResponse struct {
 func (m *ChangePasswordResponse) Reset()      { *m = ChangePasswordResponse{} }
 func (*ChangePasswordResponse) ProtoMessage() {}
 func (*ChangePasswordResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{21}
+	return fileDescriptor_b40bfba985381dd1, []int{17}
 }
 func (m *ChangePasswordResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ChangePasswordResponse.Unmarshal(m, b)
@@ -770,47 +634,13 @@ func (m *ChangePasswordResponse) GetIdToken() string {
 	return ""
 }
 
-type ChangePasswordResponseEnvelope struct {
-	Result *ChangePasswordResponse `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
-}
-
-func (m *ChangePasswordResponseEnvelope) Reset()      { *m = ChangePasswordResponseEnvelope{} }
-func (*ChangePasswordResponseEnvelope) ProtoMessage() {}
-func (*ChangePasswordResponseEnvelope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{22}
-}
-func (m *ChangePasswordResponseEnvelope) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ChangePasswordResponseEnvelope.Unmarshal(m, b)
-}
-func (m *ChangePasswordResponseEnvelope) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ChangePasswordResponseEnvelope.Marshal(b, m, deterministic)
-}
-func (m *ChangePasswordResponseEnvelope) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ChangePasswordResponseEnvelope.Merge(m, src)
-}
-func (m *ChangePasswordResponseEnvelope) XXX_Size() int {
-	return xxx_messageInfo_ChangePasswordResponseEnvelope.Size(m)
-}
-func (m *ChangePasswordResponseEnvelope) XXX_DiscardUnknown() {
-	xxx_messageInfo_ChangePasswordResponseEnvelope.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ChangePasswordResponseEnvelope proto.InternalMessageInfo
-
-func (m *ChangePasswordResponseEnvelope) GetResult() *ChangePasswordResponse {
-	if m != nil {
-		return m.Result
-	}
-	return nil
-}
-
 type HealthCheckRequest struct {
 }
 
 func (m *HealthCheckRequest) Reset()      { *m = HealthCheckRequest{} }
 func (*HealthCheckRequest) ProtoMessage() {}
 func (*HealthCheckRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{23}
+	return fileDescriptor_b40bfba985381dd1, []int{18}
 }
 func (m *HealthCheckRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_HealthCheckRequest.Unmarshal(m, b)
@@ -839,7 +669,7 @@ type HealthCheckResponse struct {
 func (m *HealthCheckResponse) Reset()      { *m = HealthCheckResponse{} }
 func (*HealthCheckResponse) ProtoMessage() {}
 func (*HealthCheckResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b40bfba985381dd1, []int{24}
+	return fileDescriptor_b40bfba985381dd1, []int{19}
 }
 func (m *HealthCheckResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_HealthCheckResponse.Unmarshal(m, b)
@@ -885,12 +715,10 @@ func init() {
 	golang_proto.RegisterType((*SignupRequest)(nil), "keratin.authn.SignupRequest")
 	proto.RegisterType((*SignupResponse)(nil), "keratin.authn.SignupResponse")
 	golang_proto.RegisterType((*SignupResponse)(nil), "keratin.authn.SignupResponse")
-	proto.RegisterType((*SignupResponseEnvelope)(nil), "keratin.authn.SignupResponseEnvelope")
-	golang_proto.RegisterType((*SignupResponseEnvelope)(nil), "keratin.authn.SignupResponseEnvelope")
 	proto.RegisterType((*IsUsernameAvailableRequest)(nil), "keratin.authn.IsUsernameAvailableRequest")
 	golang_proto.RegisterType((*IsUsernameAvailableRequest)(nil), "keratin.authn.IsUsernameAvailableRequest")
-	proto.RegisterType((*IsUsernameAvailableResponseEnvelope)(nil), "keratin.authn.IsUsernameAvailableResponseEnvelope")
-	golang_proto.RegisterType((*IsUsernameAvailableResponseEnvelope)(nil), "keratin.authn.IsUsernameAvailableResponseEnvelope")
+	proto.RegisterType((*IsUsernameAvailableResponse)(nil), "keratin.authn.IsUsernameAvailableResponse")
+	golang_proto.RegisterType((*IsUsernameAvailableResponse)(nil), "keratin.authn.IsUsernameAvailableResponse")
 	proto.RegisterType((*PasswordResetRequest)(nil), "keratin.authn.PasswordResetRequest")
 	golang_proto.RegisterType((*PasswordResetRequest)(nil), "keratin.authn.PasswordResetRequest")
 	proto.RegisterType((*PasswordResetResponse)(nil), "keratin.authn.PasswordResetResponse")
@@ -903,14 +731,10 @@ func init() {
 	golang_proto.RegisterType((*SubmitPasswordlessLoginRequest)(nil), "keratin.authn.SubmitPasswordlessLoginRequest")
 	proto.RegisterType((*SubmitPasswordlessLoginResponse)(nil), "keratin.authn.SubmitPasswordlessLoginResponse")
 	golang_proto.RegisterType((*SubmitPasswordlessLoginResponse)(nil), "keratin.authn.SubmitPasswordlessLoginResponse")
-	proto.RegisterType((*SubmitPasswordlessLoginResponseEnvelope)(nil), "keratin.authn.SubmitPasswordlessLoginResponseEnvelope")
-	golang_proto.RegisterType((*SubmitPasswordlessLoginResponseEnvelope)(nil), "keratin.authn.SubmitPasswordlessLoginResponseEnvelope")
 	proto.RegisterType((*LoginRequest)(nil), "keratin.authn.LoginRequest")
 	golang_proto.RegisterType((*LoginRequest)(nil), "keratin.authn.LoginRequest")
 	proto.RegisterType((*LoginResponse)(nil), "keratin.authn.LoginResponse")
 	golang_proto.RegisterType((*LoginResponse)(nil), "keratin.authn.LoginResponse")
-	proto.RegisterType((*LoginResponseEnvelope)(nil), "keratin.authn.LoginResponseEnvelope")
-	golang_proto.RegisterType((*LoginResponseEnvelope)(nil), "keratin.authn.LoginResponseEnvelope")
 	proto.RegisterType((*LogoutRequest)(nil), "keratin.authn.LogoutRequest")
 	golang_proto.RegisterType((*LogoutRequest)(nil), "keratin.authn.LogoutRequest")
 	proto.RegisterType((*LogoutResponse)(nil), "keratin.authn.LogoutResponse")
@@ -919,14 +743,10 @@ func init() {
 	golang_proto.RegisterType((*RefreshSessionRequest)(nil), "keratin.authn.RefreshSessionRequest")
 	proto.RegisterType((*RefreshSessionResponse)(nil), "keratin.authn.RefreshSessionResponse")
 	golang_proto.RegisterType((*RefreshSessionResponse)(nil), "keratin.authn.RefreshSessionResponse")
-	proto.RegisterType((*RefreshSessionResponseEnvelope)(nil), "keratin.authn.RefreshSessionResponseEnvelope")
-	golang_proto.RegisterType((*RefreshSessionResponseEnvelope)(nil), "keratin.authn.RefreshSessionResponseEnvelope")
 	proto.RegisterType((*ChangePasswordRequest)(nil), "keratin.authn.ChangePasswordRequest")
 	golang_proto.RegisterType((*ChangePasswordRequest)(nil), "keratin.authn.ChangePasswordRequest")
 	proto.RegisterType((*ChangePasswordResponse)(nil), "keratin.authn.ChangePasswordResponse")
 	golang_proto.RegisterType((*ChangePasswordResponse)(nil), "keratin.authn.ChangePasswordResponse")
-	proto.RegisterType((*ChangePasswordResponseEnvelope)(nil), "keratin.authn.ChangePasswordResponseEnvelope")
-	golang_proto.RegisterType((*ChangePasswordResponseEnvelope)(nil), "keratin.authn.ChangePasswordResponseEnvelope")
 	proto.RegisterType((*HealthCheckRequest)(nil), "keratin.authn.HealthCheckRequest")
 	golang_proto.RegisterType((*HealthCheckRequest)(nil), "keratin.authn.HealthCheckRequest")
 	proto.RegisterType((*HealthCheckResponse)(nil), "keratin.authn.HealthCheckResponse")
@@ -937,67 +757,61 @@ func init() { proto.RegisterFile("authn.proto", fileDescriptor_b40bfba985381dd1)
 func init() { golang_proto.RegisterFile("authn.proto", fileDescriptor_b40bfba985381dd1) }
 
 var fileDescriptor_b40bfba985381dd1 = []byte{
-	// 950 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x56, 0x41, 0x6f, 0xdc, 0x44,
-	0x14, 0x8e, 0x97, 0x34, 0xdd, 0xbc, 0x34, 0x9b, 0x30, 0xbb, 0x9b, 0x2c, 0x6e, 0xea, 0x94, 0x69,
-	0xab, 0x96, 0x48, 0x59, 0x4b, 0x0b, 0x54, 0xa5, 0x52, 0x0f, 0x49, 0x45, 0xa1, 0x08, 0x68, 0xe5,
-	0x80, 0x90, 0xb8, 0x44, 0x5e, 0xef, 0xd4, 0xb6, 0xb2, 0xf1, 0x6c, 0x3d, 0x76, 0x90, 0xe0, 0x00,
-	0xe2, 0xc4, 0x11, 0xe8, 0x91, 0x3f, 0xc0, 0x81, 0x1f, 0xc0, 0x91, 0x2b, 0x37, 0x24, 0x2e, 0x3d,
-	0x55, 0x6a, 0xc2, 0xa9, 0xbf, 0x80, 0x63, 0xb5, 0x33, 0x9e, 0xc9, 0x7a, 0xd6, 0xde, 0x3a, 0xbd,
-	0x79, 0xe6, 0xcd, 0x7b, 0xef, 0x7b, 0xdf, 0x7b, 0xf3, 0x8d, 0x61, 0xc9, 0x4d, 0x93, 0x20, 0xea,
-	0x8e, 0x62, 0x9a, 0x50, 0xb4, 0x7c, 0x40, 0x62, 0x37, 0x09, 0xa3, 0x2e, 0xdf, 0x34, 0xb7, 0xfd,
-	0x30, 0x09, 0xd2, 0x7e, 0xd7, 0xa3, 0x87, 0xb6, 0x4f, 0x7d, 0x6a, 0xf3, 0x53, 0xfd, 0xf4, 0x11,
-	0x5f, 0xf1, 0x05, 0xff, 0x12, 0xde, 0xe6, 0x86, 0x4f, 0xa9, 0x3f, 0x24, 0xb6, 0x3b, 0x0a, 0x6d,
-	0x37, 0x8a, 0x68, 0xe2, 0x26, 0x21, 0x8d, 0x98, 0xb0, 0xe2, 0x8f, 0x60, 0x79, 0x2f, 0xf4, 0xa3,
-	0x74, 0xe4, 0x90, 0xc7, 0x29, 0x61, 0x09, 0x32, 0xa1, 0x9e, 0x32, 0x12, 0x47, 0xee, 0x21, 0xe9,
-	0x18, 0x97, 0x8d, 0x1b, 0x8b, 0x8e, 0x5a, 0x8f, 0x6d, 0x23, 0x97, 0xb1, 0x6f, 0x68, 0x3c, 0xe8,
-	0xd4, 0x84, 0x4d, 0xae, 0xf1, 0x07, 0xd0, 0x90, 0x81, 0xd8, 0x88, 0x46, 0x8c, 0xa0, 0xeb, 0x50,
-	0x0f, 0x07, 0xfb, 0x09, 0x3d, 0x20, 0x91, 0x88, 0xb4, 0x7b, 0xe1, 0xc5, 0xb3, 0x4d, 0xb5, 0xe7,
-	0x9c, 0x0f, 0x07, 0x5f, 0x8c, 0x3f, 0xf0, 0x03, 0x58, 0xcb, 0xbb, 0x7e, 0x18, 0x1d, 0x91, 0x21,
-	0x1d, 0x11, 0xf4, 0x3e, 0x2c, 0xc4, 0x84, 0xa5, 0xc3, 0x84, 0x07, 0x58, 0xea, 0x5d, 0xea, 0xe6,
-	0xa8, 0xe8, 0xe6, 0xdd, 0x9c, 0xec, 0x30, 0xbe, 0x05, 0xe6, 0x7d, 0xf6, 0x65, 0x86, 0x7a, 0xe7,
-	0xc8, 0x0d, 0x87, 0x6e, 0x7f, 0x48, 0x2a, 0x54, 0x88, 0xef, 0xc3, 0x95, 0x42, 0x4f, 0x0d, 0x17,
-	0xce, 0xe1, 0xaa, 0xef, 0xc2, 0x8b, 0x67, 0x9b, 0xd9, 0x8e, 0x02, 0xd1, 0x83, 0xd6, 0xc3, 0x8c,
-	0x1c, 0x87, 0x30, 0x92, 0x54, 0x49, 0xbf, 0x0e, 0x6d, 0xcd, 0x47, 0x24, 0xc6, 0x77, 0x60, 0x33,
-	0xf3, 0x97, 0xf6, 0x21, 0x61, 0xec, 0x53, 0xea, 0x87, 0x51, 0x95, 0xb8, 0x18, 0x2e, 0x97, 0xbb,
-	0x67, 0x29, 0x6e, 0x82, 0xb5, 0x97, 0xf6, 0x0f, 0xc3, 0xf2, 0x0c, 0x2d, 0x38, 0x37, 0xd1, 0x4d,
-	0x47, 0x2c, 0xf0, 0x27, 0xb0, 0x59, 0xea, 0x77, 0xd6, 0x49, 0x78, 0x0c, 0xd7, 0x5f, 0x11, 0x4b,
-	0xb5, 0xe0, 0x9e, 0x36, 0x1a, 0x5d, 0x7d, 0x34, 0x66, 0xc7, 0x51, 0x6d, 0xba, 0x07, 0x17, 0xaa,
-	0xd2, 0x38, 0x73, 0xfe, 0x6f, 0xc1, 0xf2, 0x6b, 0x16, 0xfd, 0x19, 0xb4, 0x8b, 0x4b, 0x7c, 0x4f,
-	0x2b, 0x71, 0x43, 0x2b, 0xb1, 0xb8, 0xa0, 0x15, 0x0e, 0x84, 0xa6, 0x72, 0xe0, 0xf0, 0x2a, 0x34,
-	0xe4, 0x46, 0xd6, 0xea, 0x75, 0x68, 0x3b, 0xe4, 0x51, 0x4c, 0x58, 0xb0, 0x47, 0x18, 0x0b, 0xa9,
-	0x2c, 0x1e, 0xef, 0xc0, 0x9a, 0x6e, 0x38, 0x6b, 0x35, 0xfb, 0x60, 0x15, 0x87, 0x50, 0x65, 0xdd,
-	0xd1, 0xca, 0xba, 0xa6, 0x95, 0x55, 0xec, 0xae, 0xea, 0x63, 0xd0, 0xbe, 0x1b, 0xb8, 0x91, 0x4f,
-	0x4e, 0x6f, 0x8a, 0xea, 0x9c, 0xea, 0x8e, 0x91, 0xef, 0xce, 0xe9, 0xe8, 0xd6, 0x26, 0x46, 0x17,
-	0xdd, 0x80, 0x15, 0x2f, 0x8d, 0x63, 0x12, 0xa9, 0x39, 0xe9, 0xbc, 0xc1, 0xed, 0xfa, 0xf6, 0x98,
-	0x18, 0x3d, 0xe9, 0x6b, 0x10, 0x53, 0x1c, 0xa2, 0x32, 0x31, 0xc5, 0xee, 0x8a, 0x98, 0x16, 0xa0,
-	0x8f, 0x89, 0x3b, 0x4c, 0x82, 0xbb, 0x01, 0xf1, 0x0e, 0x64, 0x4b, 0x1f, 0x40, 0x33, 0xb7, 0x9b,
-	0xc1, 0x46, 0x30, 0x1f, 0x24, 0xc9, 0x48, 0xe8, 0x97, 0xc3, 0xbf, 0x51, 0x03, 0x6a, 0x83, 0x3e,
-	0x67, 0xa8, 0xee, 0xd4, 0x06, 0xfd, 0x31, 0x69, 0x31, 0x19, 0x84, 0x8c, 0x93, 0x52, 0x77, 0xc4,
-	0xa2, 0xf7, 0x53, 0x4d, 0x3e, 0x19, 0x7b, 0x24, 0x3e, 0x0a, 0x3d, 0x82, 0x3c, 0x58, 0x10, 0x1b,
-	0x68, 0xa3, 0x44, 0x9f, 0x39, 0x14, 0xf3, 0xda, 0x4c, 0xf5, 0x96, 0x34, 0xe0, 0xd6, 0x8f, 0xff,
-	0xfe, 0xf7, 0xa4, 0xd6, 0xc0, 0x8b, 0xb6, 0xeb, 0x79, 0x34, 0x8d, 0x12, 0x76, 0xdb, 0xd8, 0x42,
-	0xbf, 0x18, 0xd0, 0x2c, 0x90, 0x66, 0xf4, 0x8e, 0x16, 0xb4, 0x5c, 0xf8, 0xcd, 0x5e, 0x95, 0xa3,
-	0x1a, 0x98, 0x8b, 0x1c, 0x4c, 0x1b, 0x35, 0x15, 0x18, 0xdb, 0x95, 0x87, 0x7b, 0xbf, 0x1a, 0x9a,
-	0xc6, 0x4b, 0x46, 0xbe, 0x85, 0x96, 0xa6, 0xb7, 0xdc, 0x8c, 0xae, 0x68, 0x08, 0x8a, 0x1e, 0x08,
-	0xf3, 0xea, 0xec, 0x43, 0xf2, 0x0e, 0x73, 0x60, 0x6f, 0xa2, 0x15, 0x5b, 0x0e, 0xb9, 0x1d, 0x8f,
-	0x0f, 0xf4, 0xfe, 0xae, 0x41, 0x73, 0x52, 0xf6, 0x24, 0xa6, 0x27, 0x06, 0x74, 0xca, 0x1e, 0x01,
-	0xd4, 0x9d, 0xba, 0x83, 0x33, 0x1f, 0x1b, 0xd3, 0xae, 0x7c, 0x3e, 0x83, 0xbb, 0xc6, 0xe1, 0xae,
-	0xa2, 0x86, 0xcd, 0xc4, 0xbd, 0xb6, 0xc5, 0x15, 0xfc, 0xcd, 0x80, 0xf5, 0x12, 0xa9, 0x46, 0xdb,
-	0x55, 0x25, 0x5d, 0x60, 0xba, 0x79, 0xb6, 0x17, 0x40, 0xb5, 0xf8, 0x2d, 0x0e, 0xad, 0x89, 0x35,
-	0x68, 0xb7, 0x8d, 0xad, 0xde, 0x1f, 0xf3, 0xb0, 0xf4, 0x30, 0xed, 0x0f, 0x43, 0x6f, 0x27, 0x4d,
-	0x82, 0xcf, 0xd1, 0x3e, 0x9c, 0x13, 0xd0, 0x2e, 0x16, 0x4b, 0x71, 0x71, 0x03, 0x8b, 0xd3, 0x36,
-	0x79, 0xda, 0x65, 0x5c, 0x97, 0x69, 0xc7, 0x53, 0xfe, 0x15, 0x2c, 0x08, 0xad, 0x46, 0x05, 0x62,
-	0x7f, 0xaa, 0xe9, 0xe6, 0xa5, 0x12, 0x6b, 0xc6, 0xf6, 0x2a, 0x8f, 0x0d, 0x5b, 0x2a, 0x36, 0xfa,
-	0x1e, 0x1a, 0x79, 0x5d, 0x45, 0x57, 0x5f, 0x21, 0xbb, 0x22, 0xd1, 0x76, 0x25, 0x71, 0x56, 0x45,
-	0x75, 0x78, 0x62, 0x84, 0x56, 0x15, 0x97, 0xb1, 0x70, 0x40, 0xdf, 0x41, 0x23, 0xaf, 0x5f, 0x53,
-	0x00, 0x0a, 0x55, 0x7d, 0x0a, 0xc0, 0x6c, 0x0d, 0x9d, 0x10, 0x0f, 0x79, 0x2d, 0xc6, 0xb4, 0x12,
-	0x58, 0x9a, 0x10, 0x41, 0xf4, 0xb6, 0x16, 0x73, 0x5a, 0x36, 0x4d, 0x3c, 0xeb, 0x48, 0xc6, 0xf2,
-	0x0a, 0xcf, 0xb5, 0x88, 0xce, 0xdb, 0x01, 0xb7, 0xee, 0x6e, 0x3d, 0x7d, 0x6e, 0xcd, 0xfd, 0xff,
-	0xdc, 0x32, 0x7e, 0x38, 0xb6, 0x8c, 0xdf, 0x8f, 0x2d, 0xe3, 0xcf, 0x63, 0xcb, 0xf8, 0xf9, 0xc4,
-	0x9a, 0xfb, 0xeb, 0xc4, 0x32, 0xfe, 0x39, 0xb1, 0xe6, 0x9e, 0x9e, 0x58, 0x73, 0x5f, 0xcf, 0xfb,
-	0xf1, 0xc8, 0xeb, 0x2f, 0xf0, 0xff, 0xef, 0x77, 0x5f, 0x06, 0x00, 0x00, 0xff, 0xff, 0x8e, 0x28,
-	0x9d, 0xbf, 0xea, 0x0b, 0x00, 0x00,
+	// 856 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x56, 0x4d, 0x4f, 0xe3, 0x46,
+	0x18, 0x8e, 0x53, 0x08, 0xe1, 0x85, 0x7c, 0x74, 0x92, 0x40, 0x6a, 0xa8, 0x43, 0x5d, 0xaa, 0xd2,
+	0x48, 0xc4, 0x52, 0x2a, 0x55, 0x14, 0xa9, 0x87, 0x80, 0xd4, 0x2f, 0x55, 0x2d, 0x72, 0x5a, 0x21,
+	0xb5, 0x87, 0xca, 0x76, 0x06, 0xdb, 0x22, 0x78, 0xb2, 0x1e, 0x1b, 0xa4, 0x3d, 0xad, 0xf6, 0xb6,
+	0xb7, 0xd5, 0xb2, 0x3f, 0x62, 0x7f, 0xc2, 0x1e, 0x77, 0xff, 0xc1, 0x4a, 0x7b, 0xe1, 0x84, 0x04,
+	0xd9, 0x13, 0xbf, 0x80, 0xe3, 0x2a, 0xe3, 0xb1, 0x49, 0x1c, 0x27, 0x84, 0x3d, 0xc5, 0xf3, 0x7e,
+	0x3d, 0xcf, 0xbc, 0xef, 0x3b, 0x8f, 0x02, 0x4b, 0x9a, 0xef, 0x59, 0x4e, 0xa3, 0xe7, 0x12, 0x8f,
+	0xa0, 0xdc, 0x31, 0x76, 0x35, 0xcf, 0x76, 0x1a, 0xcc, 0x28, 0x6e, 0x9b, 0xb6, 0x67, 0xf9, 0x7a,
+	0xc3, 0x20, 0x27, 0x8a, 0x49, 0x4c, 0xa2, 0xb0, 0x28, 0xdd, 0x3f, 0x62, 0x27, 0x76, 0x60, 0x5f,
+	0x41, 0xb6, 0xb8, 0x6e, 0x12, 0x62, 0x76, 0xb1, 0xa2, 0xf5, 0x6c, 0x45, 0x73, 0x1c, 0xe2, 0x69,
+	0x9e, 0x4d, 0x1c, 0x1a, 0x78, 0xe5, 0x5f, 0x20, 0xd7, 0xb6, 0x4d, 0xc7, 0xef, 0xa9, 0xf8, 0x91,
+	0x8f, 0xa9, 0x87, 0x44, 0xc8, 0xfa, 0x14, 0xbb, 0x8e, 0x76, 0x82, 0xab, 0xc2, 0x86, 0xb0, 0xb5,
+	0xa8, 0x46, 0xe7, 0x81, 0xaf, 0xa7, 0x51, 0x7a, 0x46, 0xdc, 0x4e, 0x35, 0x1d, 0xf8, 0xc2, 0xb3,
+	0xfc, 0x23, 0xe4, 0xc3, 0x42, 0xb4, 0x47, 0x1c, 0x8a, 0xd1, 0xb7, 0x90, 0xb5, 0x3b, 0xff, 0x7b,
+	0xe4, 0x18, 0x3b, 0x41, 0xa5, 0xbd, 0xe5, 0x9b, 0xcb, 0x5a, 0x64, 0x53, 0x17, 0xec, 0xce, 0xdf,
+	0x83, 0x0f, 0x79, 0x07, 0xc4, 0xdf, 0xe8, 0x3f, 0x1c, 0xa4, 0x75, 0xaa, 0xd9, 0x5d, 0x4d, 0xef,
+	0xe2, 0x19, 0x08, 0xc9, 0x2d, 0x58, 0x4b, 0xcc, 0xe4, 0x0c, 0x64, 0xc8, 0xb8, 0x98, 0xfa, 0x5d,
+	0x8f, 0x25, 0x66, 0xf7, 0xe0, 0xe6, 0xb2, 0xc6, 0x2d, 0x2a, 0xff, 0x95, 0x9b, 0x50, 0x3e, 0xe0,
+	0x77, 0x50, 0x31, 0xc5, 0xde, 0x2c, 0xb0, 0xab, 0x50, 0x89, 0xe5, 0x04, 0x80, 0xf2, 0x4f, 0x50,
+	0xe3, 0xf9, 0xa1, 0xbf, 0x8b, 0x29, 0xfd, 0x83, 0x98, 0xb6, 0x33, 0x4b, 0x5d, 0x19, 0x36, 0x26,
+	0xa7, 0x73, 0x88, 0x1f, 0x40, 0x6a, 0xfb, 0xfa, 0x89, 0x3d, 0x19, 0xa1, 0x0c, 0xf3, 0x43, 0x4d,
+	0x57, 0x83, 0x83, 0xfc, 0x3b, 0xd4, 0x26, 0xe6, 0x3d, 0x74, 0x60, 0x3f, 0xc3, 0xf2, 0xac, 0x77,
+	0x9a, 0xba, 0x33, 0x3b, 0x90, 0xfb, 0x44, 0x06, 0x05, 0x96, 0x49, 0xfc, 0x70, 0x5c, 0x72, 0x11,
+	0xf2, 0xa1, 0x81, 0x37, 0x6a, 0x15, 0x2a, 0x2a, 0x3e, 0x72, 0x31, 0xb5, 0xda, 0x98, 0x52, 0x9b,
+	0x84, 0x6c, 0xe5, 0x16, 0xac, 0xc4, 0x1d, 0x0f, 0x85, 0xa7, 0x50, 0xd9, 0xb7, 0x34, 0xc7, 0xc4,
+	0x77, 0x6b, 0x10, 0x75, 0x22, 0xba, 0xad, 0x30, 0x7a, 0xdb, 0xbb, 0xb9, 0xa4, 0x87, 0xe6, 0x82,
+	0xb6, 0xa0, 0x60, 0xf8, 0xae, 0x8b, 0x9d, 0x68, 0x30, 0xd5, 0xcf, 0x98, 0x3f, 0x6e, 0x1e, 0xf0,
+	0x8e, 0x83, 0x3e, 0x94, 0x77, 0x19, 0xd0, 0xaf, 0x58, 0xeb, 0x7a, 0xd6, 0xbe, 0x85, 0x8d, 0xe3,
+	0xb0, 0x21, 0x7f, 0x41, 0x69, 0xc4, 0xca, 0xab, 0x22, 0x98, 0xb3, 0x3c, 0xaf, 0x17, 0xbc, 0x1d,
+	0x95, 0x7d, 0xa3, 0x3c, 0xa4, 0x3b, 0x3a, 0xbb, 0x40, 0x56, 0x4d, 0x77, 0xf4, 0xc1, 0x9d, 0x5c,
+	0xdc, 0xb1, 0x29, 0xe3, 0x9c, 0x55, 0x83, 0x43, 0xf3, 0x56, 0x08, 0x55, 0xa5, 0x8d, 0xdd, 0x53,
+	0xdb, 0xc0, 0xe8, 0x3f, 0xc8, 0x04, 0x06, 0xb4, 0xde, 0x18, 0x51, 0xb3, 0xc6, 0x88, 0xfa, 0x88,
+	0x5f, 0x4e, 0xf0, 0xf2, 0x99, 0x96, 0x9f, 0xbe, 0xff, 0x70, 0x9e, 0xce, 0xcb, 0x8b, 0x8a, 0x66,
+	0x18, 0xc4, 0x77, 0x3c, 0xba, 0x2b, 0xd4, 0xd1, 0x33, 0x01, 0x4a, 0x09, 0x32, 0x80, 0xbe, 0x8b,
+	0x15, 0x9b, 0x2c, 0x32, 0x62, 0x7d, 0x96, 0x50, 0x4e, 0x62, 0x8d, 0x91, 0xa8, 0xa0, 0x52, 0x44,
+	0x42, 0xd1, 0xc2, 0xa0, 0xe6, 0x0b, 0x21, 0xa6, 0x27, 0x61, 0x07, 0x1e, 0x43, 0x39, 0xf6, 0xb6,
+	0x99, 0x1b, 0x7d, 0x1d, 0x43, 0x4e, 0x12, 0x23, 0x71, 0x73, 0x7a, 0x50, 0xb8, 0xf1, 0x8c, 0xd8,
+	0xe7, 0xa8, 0xa0, 0x84, 0x3b, 0xa7, 0xb8, 0x83, 0x80, 0xe6, 0xdb, 0x34, 0x94, 0x86, 0x9f, 0x7d,
+	0xc8, 0xe9, 0x5c, 0x80, 0xea, 0x24, 0xc1, 0x41, 0x8d, 0x18, 0xe6, 0x3d, 0xc2, 0x26, 0x2a, 0x33,
+	0xc7, 0x73, 0xba, 0x2b, 0x8c, 0x6e, 0x11, 0xe5, 0x15, 0x1a, 0xbc, 0x43, 0x25, 0x78, 0x11, 0xe7,
+	0x02, 0xac, 0x4e, 0x90, 0x2a, 0xb4, 0x1d, 0xdf, 0x8f, 0xa9, 0x52, 0x28, 0x36, 0x66, 0x0d, 0xe7,
+	0x94, 0xbe, 0x60, 0x94, 0x4a, 0x72, 0x8c, 0xd2, 0xae, 0x50, 0x6f, 0xbe, 0x9c, 0x83, 0xa5, 0x03,
+	0x5f, 0xef, 0xda, 0x46, 0xcb, 0xf7, 0xac, 0x3f, 0xd1, 0x21, 0xcc, 0x07, 0x94, 0xd6, 0x62, 0x18,
+	0x23, 0x04, 0xd6, 0x93, 0x9d, 0x1c, 0xae, 0xc4, 0xe0, 0x72, 0x72, 0x36, 0x84, 0x1b, 0x6c, 0xf3,
+	0x21, 0x64, 0x02, 0x25, 0x43, 0x09, 0xc9, 0x77, 0x8a, 0x37, 0xf6, 0x54, 0x62, 0xf2, 0x57, 0x64,
+	0xb5, 0xa1, 0x1e, 0xd5, 0x46, 0x67, 0x90, 0x1f, 0xd5, 0x3d, 0xb4, 0x39, 0x36, 0xb2, 0x04, 0xbd,
+	0x14, 0xbf, 0xb9, 0x27, 0x8a, 0x03, 0x56, 0x19, 0x20, 0x42, 0xc5, 0xa8, 0x77, 0x6e, 0x10, 0x88,
+	0x28, 0xe4, 0x47, 0x85, 0x6b, 0x0c, 0x38, 0x51, 0x4c, 0xc7, 0x80, 0x93, 0xd5, 0x6f, 0x48, 0x14,
+	0xc2, 0xb5, 0x1f, 0xb4, 0x11, 0xc3, 0xd2, 0x90, 0xa8, 0xa1, 0xaf, 0x62, 0xb5, 0xc6, 0x65, 0x50,
+	0x94, 0xa7, 0x85, 0x70, 0xac, 0x02, 0xc3, 0x5a, 0x44, 0x0b, 0x8a, 0xc5, 0xbc, 0x7b, 0xf5, 0x8b,
+	0x2b, 0x29, 0x75, 0x7b, 0x25, 0x09, 0x4f, 0xae, 0x25, 0xe1, 0xd5, 0xb5, 0x24, 0xbc, 0xbe, 0x96,
+	0x84, 0xe7, 0x7d, 0x29, 0xf5, 0xa6, 0x2f, 0x09, 0xef, 0xfa, 0x52, 0xea, 0xa2, 0x2f, 0xa5, 0xfe,
+	0x9d, 0x33, 0xdd, 0x9e, 0xa1, 0x67, 0xd8, 0x5f, 0xae, 0xef, 0x3f, 0x06, 0x00, 0x00, 0xff, 0xff,
+	0xaf, 0xbe, 0x3d, 0x1c, 0xdd, 0x09, 0x00, 0x00,
 }
 
 func (this *SignupRequest) Equal(that interface{}) bool {
@@ -1051,30 +865,6 @@ func (this *SignupResponse) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *SignupResponseEnvelope) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*SignupResponseEnvelope)
-	if !ok {
-		that2, ok := that.(SignupResponseEnvelope)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if !this.Result.Equal(that1.Result) {
-		return false
-	}
-	return true
-}
 func (this *IsUsernameAvailableRequest) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
@@ -1099,14 +889,14 @@ func (this *IsUsernameAvailableRequest) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *IsUsernameAvailableResponseEnvelope) Equal(that interface{}) bool {
+func (this *IsUsernameAvailableResponse) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*IsUsernameAvailableResponseEnvelope)
+	that1, ok := that.(*IsUsernameAvailableResponse)
 	if !ok {
-		that2, ok := that.(IsUsernameAvailableResponseEnvelope)
+		that2, ok := that.(IsUsernameAvailableResponse)
 		if ok {
 			that1 = &that2
 		} else {
@@ -1261,30 +1051,6 @@ func (this *SubmitPasswordlessLoginResponse) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *SubmitPasswordlessLoginResponseEnvelope) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*SubmitPasswordlessLoginResponseEnvelope)
-	if !ok {
-		that2, ok := that.(SubmitPasswordlessLoginResponseEnvelope)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if !this.Result.Equal(that1.Result) {
-		return false
-	}
-	return true
-}
 func (this *LoginRequest) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
@@ -1332,30 +1098,6 @@ func (this *LoginResponse) Equal(that interface{}) bool {
 		return false
 	}
 	if this.IdToken != that1.IdToken {
-		return false
-	}
-	return true
-}
-func (this *LoginResponseEnvelope) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*LoginResponseEnvelope)
-	if !ok {
-		that2, ok := that.(LoginResponseEnvelope)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if !this.Result.Equal(that1.Result) {
 		return false
 	}
 	return true
@@ -1447,30 +1189,6 @@ func (this *RefreshSessionResponse) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *RefreshSessionResponseEnvelope) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*RefreshSessionResponseEnvelope)
-	if !ok {
-		that2, ok := that.(RefreshSessionResponseEnvelope)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if !this.Result.Equal(that1.Result) {
-		return false
-	}
-	return true
-}
 func (this *ChangePasswordRequest) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
@@ -1521,30 +1239,6 @@ func (this *ChangePasswordResponse) Equal(that interface{}) bool {
 		return false
 	}
 	if this.IdToken != that1.IdToken {
-		return false
-	}
-	return true
-}
-func (this *ChangePasswordResponseEnvelope) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*ChangePasswordResponseEnvelope)
-	if !ok {
-		that2, ok := that.(ChangePasswordResponseEnvelope)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if !this.Result.Equal(that1.Result) {
 		return false
 	}
 	return true
@@ -1613,8 +1307,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type SignupServiceClient interface {
-	Signup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*SignupResponseEnvelope, error)
-	IsUsernameAvailable(ctx context.Context, in *IsUsernameAvailableRequest, opts ...grpc.CallOption) (*IsUsernameAvailableResponseEnvelope, error)
+	Signup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*SignupResponse, error)
+	IsUsernameAvailable(ctx context.Context, in *IsUsernameAvailableRequest, opts ...grpc.CallOption) (*IsUsernameAvailableResponse, error)
 }
 
 type signupServiceClient struct {
@@ -1625,8 +1319,8 @@ func NewSignupServiceClient(cc *grpc.ClientConn) SignupServiceClient {
 	return &signupServiceClient{cc}
 }
 
-func (c *signupServiceClient) Signup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*SignupResponseEnvelope, error) {
-	out := new(SignupResponseEnvelope)
+func (c *signupServiceClient) Signup(ctx context.Context, in *SignupRequest, opts ...grpc.CallOption) (*SignupResponse, error) {
+	out := new(SignupResponse)
 	err := c.cc.Invoke(ctx, "/keratin.authn.SignupService/Signup", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1634,8 +1328,8 @@ func (c *signupServiceClient) Signup(ctx context.Context, in *SignupRequest, opt
 	return out, nil
 }
 
-func (c *signupServiceClient) IsUsernameAvailable(ctx context.Context, in *IsUsernameAvailableRequest, opts ...grpc.CallOption) (*IsUsernameAvailableResponseEnvelope, error) {
-	out := new(IsUsernameAvailableResponseEnvelope)
+func (c *signupServiceClient) IsUsernameAvailable(ctx context.Context, in *IsUsernameAvailableRequest, opts ...grpc.CallOption) (*IsUsernameAvailableResponse, error) {
+	out := new(IsUsernameAvailableResponse)
 	err := c.cc.Invoke(ctx, "/keratin.authn.SignupService/IsUsernameAvailable", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1645,8 +1339,19 @@ func (c *signupServiceClient) IsUsernameAvailable(ctx context.Context, in *IsUse
 
 // SignupServiceServer is the server API for SignupService service.
 type SignupServiceServer interface {
-	Signup(context.Context, *SignupRequest) (*SignupResponseEnvelope, error)
-	IsUsernameAvailable(context.Context, *IsUsernameAvailableRequest) (*IsUsernameAvailableResponseEnvelope, error)
+	Signup(context.Context, *SignupRequest) (*SignupResponse, error)
+	IsUsernameAvailable(context.Context, *IsUsernameAvailableRequest) (*IsUsernameAvailableResponse, error)
+}
+
+// UnimplementedSignupServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedSignupServiceServer struct {
+}
+
+func (*UnimplementedSignupServiceServer) Signup(ctx context.Context, req *SignupRequest) (*SignupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Signup not implemented")
+}
+func (*UnimplementedSignupServiceServer) IsUsernameAvailable(ctx context.Context, req *IsUsernameAvailableRequest) (*IsUsernameAvailableResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IsUsernameAvailable not implemented")
 }
 
 func RegisterSignupServiceServer(s *grpc.Server, srv SignupServiceServer) {
@@ -1735,6 +1440,14 @@ type PasswordResetServiceServer interface {
 	RequestPasswordReset(context.Context, *PasswordResetRequest) (*PasswordResetResponse, error)
 }
 
+// UnimplementedPasswordResetServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedPasswordResetServiceServer struct {
+}
+
+func (*UnimplementedPasswordResetServiceServer) RequestPasswordReset(ctx context.Context, req *PasswordResetRequest) (*PasswordResetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestPasswordReset not implemented")
+}
+
 func RegisterPasswordResetServiceServer(s *grpc.Server, srv PasswordResetServiceServer) {
 	s.RegisterService(&_PasswordResetService_serviceDesc, srv)
 }
@@ -1775,7 +1488,7 @@ var _PasswordResetService_serviceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type PasswordlessServiceClient interface {
 	RequestPasswordlessLogin(ctx context.Context, in *RequestPasswordlessLoginRequest, opts ...grpc.CallOption) (*RequestPasswordlessLoginResponse, error)
-	SubmitPasswordlessLogin(ctx context.Context, in *SubmitPasswordlessLoginRequest, opts ...grpc.CallOption) (*SubmitPasswordlessLoginResponseEnvelope, error)
+	SubmitPasswordlessLogin(ctx context.Context, in *SubmitPasswordlessLoginRequest, opts ...grpc.CallOption) (*SubmitPasswordlessLoginResponse, error)
 }
 
 type passwordlessServiceClient struct {
@@ -1795,8 +1508,8 @@ func (c *passwordlessServiceClient) RequestPasswordlessLogin(ctx context.Context
 	return out, nil
 }
 
-func (c *passwordlessServiceClient) SubmitPasswordlessLogin(ctx context.Context, in *SubmitPasswordlessLoginRequest, opts ...grpc.CallOption) (*SubmitPasswordlessLoginResponseEnvelope, error) {
-	out := new(SubmitPasswordlessLoginResponseEnvelope)
+func (c *passwordlessServiceClient) SubmitPasswordlessLogin(ctx context.Context, in *SubmitPasswordlessLoginRequest, opts ...grpc.CallOption) (*SubmitPasswordlessLoginResponse, error) {
+	out := new(SubmitPasswordlessLoginResponse)
 	err := c.cc.Invoke(ctx, "/keratin.authn.PasswordlessService/SubmitPasswordlessLogin", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1807,7 +1520,18 @@ func (c *passwordlessServiceClient) SubmitPasswordlessLogin(ctx context.Context,
 // PasswordlessServiceServer is the server API for PasswordlessService service.
 type PasswordlessServiceServer interface {
 	RequestPasswordlessLogin(context.Context, *RequestPasswordlessLoginRequest) (*RequestPasswordlessLoginResponse, error)
-	SubmitPasswordlessLogin(context.Context, *SubmitPasswordlessLoginRequest) (*SubmitPasswordlessLoginResponseEnvelope, error)
+	SubmitPasswordlessLogin(context.Context, *SubmitPasswordlessLoginRequest) (*SubmitPasswordlessLoginResponse, error)
+}
+
+// UnimplementedPasswordlessServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedPasswordlessServiceServer struct {
+}
+
+func (*UnimplementedPasswordlessServiceServer) RequestPasswordlessLogin(ctx context.Context, req *RequestPasswordlessLoginRequest) (*RequestPasswordlessLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestPasswordlessLogin not implemented")
+}
+func (*UnimplementedPasswordlessServiceServer) SubmitPasswordlessLogin(ctx context.Context, req *SubmitPasswordlessLoginRequest) (*SubmitPasswordlessLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubmitPasswordlessLogin not implemented")
 }
 
 func RegisterPasswordlessServiceServer(s *grpc.Server, srv PasswordlessServiceServer) {
@@ -1871,10 +1595,10 @@ var _PasswordlessService_serviceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type PublicAuthNClient interface {
-	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponseEnvelope, error)
+	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
-	RefreshSession(ctx context.Context, in *RefreshSessionRequest, opts ...grpc.CallOption) (*RefreshSessionResponseEnvelope, error)
-	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponseEnvelope, error)
+	RefreshSession(ctx context.Context, in *RefreshSessionRequest, opts ...grpc.CallOption) (*RefreshSessionResponse, error)
+	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
 	HealthCheck(ctx context.Context, in *HealthCheckRequest, opts ...grpc.CallOption) (*HealthCheckResponse, error)
 }
 
@@ -1886,8 +1610,8 @@ func NewPublicAuthNClient(cc *grpc.ClientConn) PublicAuthNClient {
 	return &publicAuthNClient{cc}
 }
 
-func (c *publicAuthNClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponseEnvelope, error) {
-	out := new(LoginResponseEnvelope)
+func (c *publicAuthNClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
+	out := new(LoginResponse)
 	err := c.cc.Invoke(ctx, "/keratin.authn.PublicAuthN/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1904,8 +1628,8 @@ func (c *publicAuthNClient) Logout(ctx context.Context, in *LogoutRequest, opts 
 	return out, nil
 }
 
-func (c *publicAuthNClient) RefreshSession(ctx context.Context, in *RefreshSessionRequest, opts ...grpc.CallOption) (*RefreshSessionResponseEnvelope, error) {
-	out := new(RefreshSessionResponseEnvelope)
+func (c *publicAuthNClient) RefreshSession(ctx context.Context, in *RefreshSessionRequest, opts ...grpc.CallOption) (*RefreshSessionResponse, error) {
+	out := new(RefreshSessionResponse)
 	err := c.cc.Invoke(ctx, "/keratin.authn.PublicAuthN/RefreshSession", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1913,8 +1637,8 @@ func (c *publicAuthNClient) RefreshSession(ctx context.Context, in *RefreshSessi
 	return out, nil
 }
 
-func (c *publicAuthNClient) ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponseEnvelope, error) {
-	out := new(ChangePasswordResponseEnvelope)
+func (c *publicAuthNClient) ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error) {
+	out := new(ChangePasswordResponse)
 	err := c.cc.Invoke(ctx, "/keratin.authn.PublicAuthN/ChangePassword", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1933,11 +1657,31 @@ func (c *publicAuthNClient) HealthCheck(ctx context.Context, in *HealthCheckRequ
 
 // PublicAuthNServer is the server API for PublicAuthN service.
 type PublicAuthNServer interface {
-	Login(context.Context, *LoginRequest) (*LoginResponseEnvelope, error)
+	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
-	RefreshSession(context.Context, *RefreshSessionRequest) (*RefreshSessionResponseEnvelope, error)
-	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponseEnvelope, error)
+	RefreshSession(context.Context, *RefreshSessionRequest) (*RefreshSessionResponse, error)
+	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
 	HealthCheck(context.Context, *HealthCheckRequest) (*HealthCheckResponse, error)
+}
+
+// UnimplementedPublicAuthNServer can be embedded to have forward compatible implementations.
+type UnimplementedPublicAuthNServer struct {
+}
+
+func (*UnimplementedPublicAuthNServer) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (*UnimplementedPublicAuthNServer) Logout(ctx context.Context, req *LogoutRequest) (*LogoutResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (*UnimplementedPublicAuthNServer) RefreshSession(ctx context.Context, req *RefreshSessionRequest) (*RefreshSessionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RefreshSession not implemented")
+}
+func (*UnimplementedPublicAuthNServer) ChangePassword(ctx context.Context, req *ChangePasswordRequest) (*ChangePasswordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
+}
+func (*UnimplementedPublicAuthNServer) HealthCheck(ctx context.Context, req *HealthCheckRequest) (*HealthCheckResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HealthCheck not implemented")
 }
 
 func RegisterPublicAuthNServer(s *grpc.Server, srv PublicAuthNServer) {
@@ -2080,16 +1824,6 @@ func NewPopulatedSignupResponse(r randyAuthn, easy bool) *SignupResponse {
 	return this
 }
 
-func NewPopulatedSignupResponseEnvelope(r randyAuthn, easy bool) *SignupResponseEnvelope {
-	this := &SignupResponseEnvelope{}
-	if r.Intn(10) != 0 {
-		this.Result = NewPopulatedSignupResponse(r, easy)
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
 func NewPopulatedIsUsernameAvailableRequest(r randyAuthn, easy bool) *IsUsernameAvailableRequest {
 	this := &IsUsernameAvailableRequest{}
 	this.Username = string(randStringAuthn(r))
@@ -2098,8 +1832,8 @@ func NewPopulatedIsUsernameAvailableRequest(r randyAuthn, easy bool) *IsUsername
 	return this
 }
 
-func NewPopulatedIsUsernameAvailableResponseEnvelope(r randyAuthn, easy bool) *IsUsernameAvailableResponseEnvelope {
-	this := &IsUsernameAvailableResponseEnvelope{}
+func NewPopulatedIsUsernameAvailableResponse(r randyAuthn, easy bool) *IsUsernameAvailableResponse {
+	this := &IsUsernameAvailableResponse{}
 	this.Result = bool(bool(r.Intn(2) == 0))
 	if !easy && r.Intn(10) != 0 {
 	}
@@ -2152,16 +1886,6 @@ func NewPopulatedSubmitPasswordlessLoginResponse(r randyAuthn, easy bool) *Submi
 	return this
 }
 
-func NewPopulatedSubmitPasswordlessLoginResponseEnvelope(r randyAuthn, easy bool) *SubmitPasswordlessLoginResponseEnvelope {
-	this := &SubmitPasswordlessLoginResponseEnvelope{}
-	if r.Intn(10) != 0 {
-		this.Result = NewPopulatedSubmitPasswordlessLoginResponse(r, easy)
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
 func NewPopulatedLoginRequest(r randyAuthn, easy bool) *LoginRequest {
 	this := &LoginRequest{}
 	this.Username = string(randStringAuthn(r))
@@ -2174,16 +1898,6 @@ func NewPopulatedLoginRequest(r randyAuthn, easy bool) *LoginRequest {
 func NewPopulatedLoginResponse(r randyAuthn, easy bool) *LoginResponse {
 	this := &LoginResponse{}
 	this.IdToken = string(randStringAuthn(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedLoginResponseEnvelope(r randyAuthn, easy bool) *LoginResponseEnvelope {
-	this := &LoginResponseEnvelope{}
-	if r.Intn(10) != 0 {
-		this.Result = NewPopulatedLoginResponse(r, easy)
-	}
 	if !easy && r.Intn(10) != 0 {
 	}
 	return this
@@ -2218,16 +1932,6 @@ func NewPopulatedRefreshSessionResponse(r randyAuthn, easy bool) *RefreshSession
 	return this
 }
 
-func NewPopulatedRefreshSessionResponseEnvelope(r randyAuthn, easy bool) *RefreshSessionResponseEnvelope {
-	this := &RefreshSessionResponseEnvelope{}
-	if r.Intn(10) != 0 {
-		this.Result = NewPopulatedRefreshSessionResponse(r, easy)
-	}
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
 func NewPopulatedChangePasswordRequest(r randyAuthn, easy bool) *ChangePasswordRequest {
 	this := &ChangePasswordRequest{}
 	this.Password = string(randStringAuthn(r))
@@ -2241,16 +1945,6 @@ func NewPopulatedChangePasswordRequest(r randyAuthn, easy bool) *ChangePasswordR
 func NewPopulatedChangePasswordResponse(r randyAuthn, easy bool) *ChangePasswordResponse {
 	this := &ChangePasswordResponse{}
 	this.IdToken = string(randStringAuthn(r))
-	if !easy && r.Intn(10) != 0 {
-	}
-	return this
-}
-
-func NewPopulatedChangePasswordResponseEnvelope(r randyAuthn, easy bool) *ChangePasswordResponseEnvelope {
-	this := &ChangePasswordResponseEnvelope{}
-	if r.Intn(10) != 0 {
-		this.Result = NewPopulatedChangePasswordResponse(r, easy)
-	}
 	if !easy && r.Intn(10) != 0 {
 	}
 	return this
@@ -2366,16 +2060,6 @@ func (this *SignupResponse) String() string {
 	}, "")
 	return s
 }
-func (this *SignupResponseEnvelope) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&SignupResponseEnvelope{`,
-		`Result:` + strings.Replace(fmt.Sprintf("%v", this.Result), "SignupResponse", "SignupResponse", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
 func (this *IsUsernameAvailableRequest) String() string {
 	if this == nil {
 		return "nil"
@@ -2386,11 +2070,11 @@ func (this *IsUsernameAvailableRequest) String() string {
 	}, "")
 	return s
 }
-func (this *IsUsernameAvailableResponseEnvelope) String() string {
+func (this *IsUsernameAvailableResponse) String() string {
 	if this == nil {
 		return "nil"
 	}
-	s := strings.Join([]string{`&IsUsernameAvailableResponseEnvelope{`,
+	s := strings.Join([]string{`&IsUsernameAvailableResponse{`,
 		`Result:` + fmt.Sprintf("%v", this.Result) + `,`,
 		`}`,
 	}, "")
@@ -2454,16 +2138,6 @@ func (this *SubmitPasswordlessLoginResponse) String() string {
 	}, "")
 	return s
 }
-func (this *SubmitPasswordlessLoginResponseEnvelope) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&SubmitPasswordlessLoginResponseEnvelope{`,
-		`Result:` + strings.Replace(fmt.Sprintf("%v", this.Result), "SubmitPasswordlessLoginResponse", "SubmitPasswordlessLoginResponse", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
 func (this *LoginRequest) String() string {
 	if this == nil {
 		return "nil"
@@ -2481,16 +2155,6 @@ func (this *LoginResponse) String() string {
 	}
 	s := strings.Join([]string{`&LoginResponse{`,
 		`IdToken:` + fmt.Sprintf("%v", this.IdToken) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *LoginResponseEnvelope) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&LoginResponseEnvelope{`,
-		`Result:` + strings.Replace(fmt.Sprintf("%v", this.Result), "LoginResponse", "LoginResponse", 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -2532,16 +2196,6 @@ func (this *RefreshSessionResponse) String() string {
 	}, "")
 	return s
 }
-func (this *RefreshSessionResponseEnvelope) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&RefreshSessionResponseEnvelope{`,
-		`Result:` + strings.Replace(fmt.Sprintf("%v", this.Result), "RefreshSessionResponse", "RefreshSessionResponse", 1) + `,`,
-		`}`,
-	}, "")
-	return s
-}
 func (this *ChangePasswordRequest) String() string {
 	if this == nil {
 		return "nil"
@@ -2560,16 +2214,6 @@ func (this *ChangePasswordResponse) String() string {
 	}
 	s := strings.Join([]string{`&ChangePasswordResponse{`,
 		`IdToken:` + fmt.Sprintf("%v", this.IdToken) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *ChangePasswordResponseEnvelope) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&ChangePasswordResponseEnvelope{`,
-		`Result:` + strings.Replace(fmt.Sprintf("%v", this.Result), "ChangePasswordResponse", "ChangePasswordResponse", 1) + `,`,
 		`}`,
 	}, "")
 	return s

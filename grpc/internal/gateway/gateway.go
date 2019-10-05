@@ -31,7 +31,7 @@ func JSONMarshaler() runtime.Marshaler {
 // by gRPC-Gateway doesn't have some of the desired responses (e.g. 201), which is why this function is needed.
 func StatusCodeMutator(ctx context.Context, response http.ResponseWriter, m proto.Message) error {
 	switch m.(type) {
-	case *authnpb.SignupResponseEnvelope, *authnpb.LoginResponseEnvelope, *authnpb.RefreshSessionResponseEnvelope, *authnpb.SubmitPasswordlessLoginResponseEnvelope, *authnpb.ChangePasswordResponseEnvelope:
+	case *authnpb.SignupResponse, *authnpb.LoginResponse, *authnpb.RefreshSessionResponse, *authnpb.SubmitPasswordlessLoginResponse, *authnpb.ChangePasswordResponse:
 		response.WriteHeader(http.StatusCreated)
 	}
 	return nil
@@ -42,7 +42,7 @@ func StatusCodeMutator(ctx context.Context, response http.ResponseWriter, m prot
 func CookieSetter(cfg *app.Config) ResponseMiddleware {
 	return func(ctx context.Context, response http.ResponseWriter, m proto.Message) error {
 		switch m.(type) {
-		case *authnpb.LogoutResponse, *authnpb.SignupResponseEnvelope, *authnpb.LoginResponseEnvelope, *authnpb.SubmitPasswordlessLoginResponseEnvelope, *authnpb.ChangePasswordResponseEnvelope:
+		case *authnpb.LogoutResponse, *authnpb.SignupResponse, *authnpb.LoginResponse, *authnpb.SubmitPasswordlessLoginResponse, *authnpb.ChangePasswordResponse:
 			md, ok := runtime.ServerMetadataFromContext(ctx)
 			if !ok {
 				return fmt.Errorf("Failed to extract ServerMetadata from context")

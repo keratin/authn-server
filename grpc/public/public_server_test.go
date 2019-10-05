@@ -81,7 +81,7 @@ func TestLogin(t *testing.T) {
 		}
 
 		grpctest.AssertSession(t, app.Config, header)
-		grpctest.AssertIDTokenResponse(t, got.Result.GetIdToken(), app.KeyStore, app.Config)
+		grpctest.AssertIDTokenResponse(t, got.GetIdToken(), app.KeyStore, app.Config)
 	})
 
 	t.Run("TestPostSessionSuccessWithSession", func(t *testing.T) {
@@ -114,7 +114,7 @@ func TestLogin(t *testing.T) {
 		}
 
 		grpctest.AssertSession(t, app.Config, header)
-		grpctest.AssertIDTokenResponse(t, got.Result.GetIdToken(), app.KeyStore, app.Config)
+		grpctest.AssertIDTokenResponse(t, got.GetIdToken(), app.KeyStore, app.Config)
 
 		// after
 		id, err := app.RefreshTokenStore.Find(refreshToken)
@@ -177,8 +177,7 @@ func TestRefreshSession(t *testing.T) {
 
 		res, err := client.RefreshSession(ctx, req)
 		require.NoError(t, err)
-		t.Log(res.Result.GetIdToken())
-		grpctest.AssertIDTokenResponse(t, res.Result.GetIdToken(), testApp.KeyStore, testApp.Config)
+		grpctest.AssertIDTokenResponse(t, res.GetIdToken(), testApp.KeyStore, testApp.Config)
 	})
 
 	t.Run("TestGetSessionRefreshFailure", func(t *testing.T) {
@@ -277,9 +276,9 @@ func TestChangePassword(t *testing.T) {
 	client, teardown := publicServerSetup(t, testApp)
 	defer teardown()
 
-	assertSuccess := func(t *testing.T, res *authnpb.ChangePasswordResponseEnvelope, md metadata.MD, account *models.Account) {
+	assertSuccess := func(t *testing.T, res *authnpb.ChangePasswordResponse, md metadata.MD, account *models.Account) {
 		grpctest.AssertSession(t, testApp.Config, md)
-		grpctest.AssertIDTokenResponse(t, res.Result.GetIdToken(), testApp.KeyStore, testApp.Config)
+		grpctest.AssertIDTokenResponse(t, res.GetIdToken(), testApp.KeyStore, testApp.Config)
 		found, err := testApp.AccountStore.Find(account.ID)
 		require.NoError(t, err)
 		assert.NotEqual(t, found.Password, account.Password)

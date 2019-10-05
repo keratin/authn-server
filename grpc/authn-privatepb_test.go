@@ -85,37 +85,6 @@ func TestGetAccountResponseProto(t *testing.T) {
 	}
 }
 
-func TestGetAccountResponseEnvelopeProto(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedGetAccountResponseEnvelope(popr, false)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &GetAccountResponseEnvelope{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	littlefuzz := make([]byte, len(dAtA))
-	copy(littlefuzz, dAtA)
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-	if len(littlefuzz) > 0 {
-		fuzzamount := 100
-		for i := 0; i < fuzzamount; i++ {
-			littlefuzz[popr.Intn(len(littlefuzz))] = byte(popr.Intn(256))
-			littlefuzz = append(littlefuzz, byte(popr.Intn(256)))
-		}
-		// shouldn't panic
-		_ = github_com_gogo_protobuf_proto.Unmarshal(littlefuzz, msg)
-	}
-}
-
 func TestUpdateAccountRequestProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -404,37 +373,6 @@ func TestImportAccountResponseProto(t *testing.T) {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
 	msg := &ImportAccountResponse{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	littlefuzz := make([]byte, len(dAtA))
-	copy(littlefuzz, dAtA)
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-	if len(littlefuzz) > 0 {
-		fuzzamount := 100
-		for i := 0; i < fuzzamount; i++ {
-			littlefuzz[popr.Intn(len(littlefuzz))] = byte(popr.Intn(256))
-			littlefuzz = append(littlefuzz, byte(popr.Intn(256)))
-		}
-		// shouldn't panic
-		_ = github_com_gogo_protobuf_proto.Unmarshal(littlefuzz, msg)
-	}
-}
-
-func TestImportAccountResponseEnvelopeProto(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedImportAccountResponseEnvelope(popr, false)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &ImportAccountResponseEnvelope{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -803,24 +741,6 @@ func TestGetAccountResponseJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestGetAccountResponseEnvelopeJSON(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedGetAccountResponseEnvelope(popr, true)
-	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
-	jsondata, err := marshaler.MarshalToString(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &GetAccountResponseEnvelope{}
-	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
-	}
-}
 func TestUpdateAccountRequestJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -993,24 +913,6 @@ func TestImportAccountResponseJSON(t *testing.T) {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
 	msg := &ImportAccountResponse{}
-	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
-	}
-}
-func TestImportAccountResponseEnvelopeJSON(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedImportAccountResponseEnvelope(popr, true)
-	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
-	jsondata, err := marshaler.MarshalToString(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &ImportAccountResponseEnvelope{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -1247,34 +1149,6 @@ func TestGetAccountResponseProtoCompactText(t *testing.T) {
 	p := NewPopulatedGetAccountResponse(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
 	msg := &GetAccountResponse{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestGetAccountResponseEnvelopeProtoText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedGetAccountResponseEnvelope(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &GetAccountResponseEnvelope{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestGetAccountResponseEnvelopeProtoCompactText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedGetAccountResponseEnvelope(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &GetAccountResponseEnvelope{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1555,34 +1429,6 @@ func TestImportAccountResponseProtoCompactText(t *testing.T) {
 	p := NewPopulatedImportAccountResponse(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
 	msg := &ImportAccountResponse{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestImportAccountResponseEnvelopeProtoText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedImportAccountResponseEnvelope(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &ImportAccountResponseEnvelope{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestImportAccountResponseEnvelopeProtoCompactText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedImportAccountResponseEnvelope(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &ImportAccountResponseEnvelope{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1889,15 +1735,6 @@ func TestGetAccountResponseStringer(t *testing.T) {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestGetAccountResponseEnvelopeStringer(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedGetAccountResponseEnvelope(popr, false)
-	s1 := p.String()
-	s2 := fmt.Sprintf("%v", p)
-	if s1 != s2 {
-		t.Fatalf("String want %v got %v", s1, s2)
-	}
-}
 func TestUpdateAccountRequestStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
 	p := NewPopulatedUpdateAccountRequest(popr, false)
@@ -1982,15 +1819,6 @@ func TestImportAccountRequestStringer(t *testing.T) {
 func TestImportAccountResponseStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
 	p := NewPopulatedImportAccountResponse(popr, false)
-	s1 := p.String()
-	s2 := fmt.Sprintf("%v", p)
-	if s1 != s2 {
-		t.Fatalf("String want %v got %v", s1, s2)
-	}
-}
-func TestImportAccountResponseEnvelopeStringer(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedImportAccountResponseEnvelope(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {

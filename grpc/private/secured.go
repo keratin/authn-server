@@ -22,7 +22,7 @@ func (ss securedServer) AuthFuncOverride(ctx context.Context, fullMethodName str
 	return basicAuthCheck(ctx, ss.matcher)
 }
 
-func (ss securedServer) GetAccount(ctx context.Context, req *authnpb.GetAccountRequest) (*authnpb.GetAccountResponseEnvelope, error) {
+func (ss securedServer) GetAccount(ctx context.Context, req *authnpb.GetAccountRequest) (*authnpb.GetAccountResponse, error) {
 
 	account, err := services.AccountGetter(ss.app.AccountStore, int(req.GetId()))
 	if err != nil {
@@ -32,13 +32,11 @@ func (ss securedServer) GetAccount(ctx context.Context, req *authnpb.GetAccountR
 		panic(err)
 	}
 
-	return &authnpb.GetAccountResponseEnvelope{
-		Result: &authnpb.GetAccountResponse{
-			Id:       int64(account.ID),
-			Username: account.Username,
-			Locked:   account.Locked,
-			Deleted:  account.DeletedAt != nil,
-		},
+	return &authnpb.GetAccountResponse{
+		Id:       int64(account.ID),
+		Username: account.Username,
+		Locked:   account.Locked,
+		Deleted:  account.DeletedAt != nil,
 	}, nil
 }
 
@@ -95,7 +93,7 @@ func (ss securedServer) ArchiveAccount(ctx context.Context, req *authnpb.Archive
 	return &authnpb.ArchiveAccountResponse{}, nil
 }
 
-func (ss securedServer) ImportAccount(ctx context.Context, req *authnpb.ImportAccountRequest) (*authnpb.ImportAccountResponseEnvelope, error) {
+func (ss securedServer) ImportAccount(ctx context.Context, req *authnpb.ImportAccountRequest) (*authnpb.ImportAccountResponse, error) {
 	account, err := services.AccountImporter(
 		ss.app.AccountStore,
 		ss.app.Config,
@@ -110,10 +108,8 @@ func (ss securedServer) ImportAccount(ctx context.Context, req *authnpb.ImportAc
 		panic(err)
 	}
 
-	return &authnpb.ImportAccountResponseEnvelope{
-		Result: &authnpb.ImportAccountResponse{
-			Id: int64(account.ID),
-		},
+	return &authnpb.ImportAccountResponse{
+		Id: int64(account.ID),
 	}, nil
 }
 

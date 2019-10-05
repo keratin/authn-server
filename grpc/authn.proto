@@ -26,16 +26,15 @@ message SignupResponse {
   string id_token = 1 [ (gogoproto.jsontag) = "id_token" ];
 }
 
-message SignupResponseEnvelope { SignupResponse result = 1; }
 
 message IsUsernameAvailableRequest { string username = 1; }
-message IsUsernameAvailableResponseEnvelope {
+message IsUsernameAvailableResponse {
   bool result = 1 [ (gogoproto.jsontag) = "result" ];
 }
 
 // SignupService is made independant to only be registered if Signup is enabled
 service SignupService {
-  rpc Signup(SignupRequest) returns (SignupResponseEnvelope) {
+  rpc Signup(SignupRequest) returns (SignupResponse) {
     option (google.api.http) = {
       post : "/accounts",
       body : "*"
@@ -43,7 +42,7 @@ service SignupService {
   }
 
   rpc IsUsernameAvailable(IsUsernameAvailableRequest)
-      returns (IsUsernameAvailableResponseEnvelope) {
+      returns (IsUsernameAvailableResponse) {
     option (google.api.http) = {
       get : "/accounts/available"
     };
@@ -71,9 +70,9 @@ message SubmitPasswordlessLoginResponse {
   string id_token = 1 [ (gogoproto.jsontag) = "id_token" ];
 }
 
-message SubmitPasswordlessLoginResponseEnvelope {
-  SubmitPasswordlessLoginResponse result = 1;
-}
+// message SubmitPasswordlessLoginResponseEnvelope {
+//   SubmitPasswordlessLoginResponse result = 1;
+// }
 
 service PasswordlessService {
   rpc RequestPasswordlessLogin(RequestPasswordlessLoginRequest)
@@ -84,7 +83,7 @@ service PasswordlessService {
   }
 
   rpc SubmitPasswordlessLogin(SubmitPasswordlessLoginRequest)
-      returns (SubmitPasswordlessLoginResponseEnvelope) {
+      returns (SubmitPasswordlessLoginResponse) {
     option (google.api.http) = {
       post : "/session/token"
       body : "*"
@@ -101,8 +100,6 @@ message LoginResponse {
   string id_token = 1 [ (gogoproto.jsontag) = "id_token" ];
 }
 
-message LoginResponseEnvelope { LoginResponse result = 1; }
-
 message LogoutRequest {}
 message LogoutResponse {}
 
@@ -110,7 +107,6 @@ message RefreshSessionRequest {}
 message RefreshSessionResponse {
   string id_token = 1 [ (gogoproto.jsontag) = "id_token" ];
 }
-message RefreshSessionResponseEnvelope { RefreshSessionResponse result = 1; }
 
 message ChangePasswordRequest {
   string password = 1;
@@ -121,7 +117,6 @@ message ChangePasswordRequest {
 message ChangePasswordResponse {
   string id_token = 1 [ (gogoproto.jsontag) = "id_token" ];
 }
-message ChangePasswordResponseEnvelope { ChangePasswordResponse result = 1; }
 
 message HealthCheckRequest {}
 message HealthCheckResponse {
@@ -132,7 +127,7 @@ message HealthCheckResponse {
 
 service PublicAuthN {
 
-  rpc Login(LoginRequest) returns (LoginResponseEnvelope) {
+  rpc Login(LoginRequest) returns (LoginResponse) {
     option (google.api.http) = {
       post : "/session"
       body : "*"
@@ -146,14 +141,14 @@ service PublicAuthN {
   }
 
   rpc RefreshSession(RefreshSessionRequest)
-      returns (RefreshSessionResponseEnvelope) {
+      returns (RefreshSessionResponse) {
     option (google.api.http) = {
       get : "/session/refresh"
     };
   }
 
   rpc ChangePassword(ChangePasswordRequest)
-      returns (ChangePasswordResponseEnvelope) {
+      returns (ChangePasswordResponse) {
     option (google.api.http) = {
       post : "/password"
       body : "*"

@@ -27,8 +27,6 @@ message GetAccountResponse {
   bool deleted = 4 [(gogoproto.jsontag) = "deleted" ];
 }
 
-message GetAccountResponseEnvelope { GetAccountResponse result = 1; }
-
 message UpdateAccountRequest {
   int64 id = 1;
   string username = 2;
@@ -51,8 +49,6 @@ message ImportAccountRequest {
   bool locked = 3;
 }
 message ImportAccountResponse { int64 id = 1 [ (gogoproto.jsontag) = "id" ]; }
-
-message ImportAccountResponseEnvelope { ImportAccountResponse result = 1; }
 
 message ExpirePasswordRequest { int64 id = 1; }
 message ExpirePasswordResponse {}
@@ -105,14 +101,14 @@ service UnsecuredAdminAuthN {
 
 service SecuredAdminAuthN {
   rpc ImportAccount(ImportAccountRequest)
-      returns (ImportAccountResponseEnvelope) {
+      returns (ImportAccountResponse) {
     option (google.api.http) = {
       post : "/accounts/import"
       body : "*"
     };
   }
 
-  rpc GetAccount(GetAccountRequest) returns (GetAccountResponseEnvelope) {
+  rpc GetAccount(GetAccountRequest) returns (GetAccountResponse) {
     option (google.api.http) = {
       get : "/accounts/{id}"
     };

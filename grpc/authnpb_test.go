@@ -85,37 +85,6 @@ func TestSignupResponseProto(t *testing.T) {
 	}
 }
 
-func TestSignupResponseEnvelopeProto(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedSignupResponseEnvelope(popr, false)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &SignupResponseEnvelope{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	littlefuzz := make([]byte, len(dAtA))
-	copy(littlefuzz, dAtA)
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-	if len(littlefuzz) > 0 {
-		fuzzamount := 100
-		for i := 0; i < fuzzamount; i++ {
-			littlefuzz[popr.Intn(len(littlefuzz))] = byte(popr.Intn(256))
-			littlefuzz = append(littlefuzz, byte(popr.Intn(256)))
-		}
-		// shouldn't panic
-		_ = github_com_gogo_protobuf_proto.Unmarshal(littlefuzz, msg)
-	}
-}
-
 func TestIsUsernameAvailableRequestProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -147,15 +116,15 @@ func TestIsUsernameAvailableRequestProto(t *testing.T) {
 	}
 }
 
-func TestIsUsernameAvailableResponseEnvelopeProto(t *testing.T) {
+func TestIsUsernameAvailableResponseProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedIsUsernameAvailableResponseEnvelope(popr, false)
+	p := NewPopulatedIsUsernameAvailableResponse(popr, false)
 	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &IsUsernameAvailableResponseEnvelope{}
+	msg := &IsUsernameAvailableResponse{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -364,37 +333,6 @@ func TestSubmitPasswordlessLoginResponseProto(t *testing.T) {
 	}
 }
 
-func TestSubmitPasswordlessLoginResponseEnvelopeProto(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedSubmitPasswordlessLoginResponseEnvelope(popr, false)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &SubmitPasswordlessLoginResponseEnvelope{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	littlefuzz := make([]byte, len(dAtA))
-	copy(littlefuzz, dAtA)
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-	if len(littlefuzz) > 0 {
-		fuzzamount := 100
-		for i := 0; i < fuzzamount; i++ {
-			littlefuzz[popr.Intn(len(littlefuzz))] = byte(popr.Intn(256))
-			littlefuzz = append(littlefuzz, byte(popr.Intn(256)))
-		}
-		// shouldn't panic
-		_ = github_com_gogo_protobuf_proto.Unmarshal(littlefuzz, msg)
-	}
-}
-
 func TestLoginRequestProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -435,37 +373,6 @@ func TestLoginResponseProto(t *testing.T) {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
 	msg := &LoginResponse{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	littlefuzz := make([]byte, len(dAtA))
-	copy(littlefuzz, dAtA)
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-	if len(littlefuzz) > 0 {
-		fuzzamount := 100
-		for i := 0; i < fuzzamount; i++ {
-			littlefuzz[popr.Intn(len(littlefuzz))] = byte(popr.Intn(256))
-			littlefuzz = append(littlefuzz, byte(popr.Intn(256)))
-		}
-		// shouldn't panic
-		_ = github_com_gogo_protobuf_proto.Unmarshal(littlefuzz, msg)
-	}
-}
-
-func TestLoginResponseEnvelopeProto(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedLoginResponseEnvelope(popr, false)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &LoginResponseEnvelope{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -612,37 +519,6 @@ func TestRefreshSessionResponseProto(t *testing.T) {
 	}
 }
 
-func TestRefreshSessionResponseEnvelopeProto(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedRefreshSessionResponseEnvelope(popr, false)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &RefreshSessionResponseEnvelope{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	littlefuzz := make([]byte, len(dAtA))
-	copy(littlefuzz, dAtA)
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-	if len(littlefuzz) > 0 {
-		fuzzamount := 100
-		for i := 0; i < fuzzamount; i++ {
-			littlefuzz[popr.Intn(len(littlefuzz))] = byte(popr.Intn(256))
-			littlefuzz = append(littlefuzz, byte(popr.Intn(256)))
-		}
-		// shouldn't panic
-		_ = github_com_gogo_protobuf_proto.Unmarshal(littlefuzz, msg)
-	}
-}
-
 func TestChangePasswordRequestProto(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -683,37 +559,6 @@ func TestChangePasswordResponseProto(t *testing.T) {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
 	msg := &ChangePasswordResponse{}
-	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	littlefuzz := make([]byte, len(dAtA))
-	copy(littlefuzz, dAtA)
-	for i := range dAtA {
-		dAtA[i] = byte(popr.Intn(256))
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-	if len(littlefuzz) > 0 {
-		fuzzamount := 100
-		for i := 0; i < fuzzamount; i++ {
-			littlefuzz[popr.Intn(len(littlefuzz))] = byte(popr.Intn(256))
-			littlefuzz = append(littlefuzz, byte(popr.Intn(256)))
-		}
-		// shouldn't panic
-		_ = github_com_gogo_protobuf_proto.Unmarshal(littlefuzz, msg)
-	}
-}
-
-func TestChangePasswordResponseEnvelopeProto(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedChangePasswordResponseEnvelope(popr, false)
-	dAtA, err := github_com_gogo_protobuf_proto.Marshal(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &ChangePasswordResponseEnvelope{}
 	if err := github_com_gogo_protobuf_proto.Unmarshal(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -834,24 +679,6 @@ func TestSignupResponseJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestSignupResponseEnvelopeJSON(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedSignupResponseEnvelope(popr, true)
-	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
-	jsondata, err := marshaler.MarshalToString(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &SignupResponseEnvelope{}
-	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
-	}
-}
 func TestIsUsernameAvailableRequestJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -870,16 +697,16 @@ func TestIsUsernameAvailableRequestJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestIsUsernameAvailableResponseEnvelopeJSON(t *testing.T) {
+func TestIsUsernameAvailableResponseJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedIsUsernameAvailableResponseEnvelope(popr, true)
+	p := NewPopulatedIsUsernameAvailableResponse(popr, true)
 	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
 	jsondata, err := marshaler.MarshalToString(p)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
-	msg := &IsUsernameAvailableResponseEnvelope{}
+	msg := &IsUsernameAvailableResponse{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -996,24 +823,6 @@ func TestSubmitPasswordlessLoginResponseJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestSubmitPasswordlessLoginResponseEnvelopeJSON(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedSubmitPasswordlessLoginResponseEnvelope(popr, true)
-	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
-	jsondata, err := marshaler.MarshalToString(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &SubmitPasswordlessLoginResponseEnvelope{}
-	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
-	}
-}
 func TestLoginRequestJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -1042,24 +851,6 @@ func TestLoginResponseJSON(t *testing.T) {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
 	msg := &LoginResponse{}
-	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
-	}
-}
-func TestLoginResponseEnvelopeJSON(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedLoginResponseEnvelope(popr, true)
-	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
-	jsondata, err := marshaler.MarshalToString(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &LoginResponseEnvelope{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -1140,24 +931,6 @@ func TestRefreshSessionResponseJSON(t *testing.T) {
 		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
 	}
 }
-func TestRefreshSessionResponseEnvelopeJSON(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedRefreshSessionResponseEnvelope(popr, true)
-	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
-	jsondata, err := marshaler.MarshalToString(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &RefreshSessionResponseEnvelope{}
-	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
-	}
-}
 func TestChangePasswordRequestJSON(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -1186,24 +959,6 @@ func TestChangePasswordResponseJSON(t *testing.T) {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
 	msg := &ChangePasswordResponse{}
-	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Json Equal %#v", seed, msg, p)
-	}
-}
-func TestChangePasswordResponseEnvelopeJSON(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedChangePasswordResponseEnvelope(popr, true)
-	marshaler := github_com_gogo_protobuf_jsonpb.Marshaler{}
-	jsondata, err := marshaler.MarshalToString(p)
-	if err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	msg := &ChangePasswordResponseEnvelope{}
 	err = github_com_gogo_protobuf_jsonpb.UnmarshalString(jsondata, msg)
 	if err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
@@ -1304,34 +1059,6 @@ func TestSignupResponseProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestSignupResponseEnvelopeProtoText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedSignupResponseEnvelope(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &SignupResponseEnvelope{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestSignupResponseEnvelopeProtoCompactText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedSignupResponseEnvelope(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &SignupResponseEnvelope{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
 func TestIsUsernameAvailableRequestProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -1360,12 +1087,12 @@ func TestIsUsernameAvailableRequestProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestIsUsernameAvailableResponseEnvelopeProtoText(t *testing.T) {
+func TestIsUsernameAvailableResponseProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedIsUsernameAvailableResponseEnvelope(popr, true)
+	p := NewPopulatedIsUsernameAvailableResponse(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &IsUsernameAvailableResponseEnvelope{}
+	msg := &IsUsernameAvailableResponse{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1374,12 +1101,12 @@ func TestIsUsernameAvailableResponseEnvelopeProtoText(t *testing.T) {
 	}
 }
 
-func TestIsUsernameAvailableResponseEnvelopeProtoCompactText(t *testing.T) {
+func TestIsUsernameAvailableResponseProtoCompactText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedIsUsernameAvailableResponseEnvelope(popr, true)
+	p := NewPopulatedIsUsernameAvailableResponse(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &IsUsernameAvailableResponseEnvelope{}
+	msg := &IsUsernameAvailableResponse{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1556,34 +1283,6 @@ func TestSubmitPasswordlessLoginResponseProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestSubmitPasswordlessLoginResponseEnvelopeProtoText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedSubmitPasswordlessLoginResponseEnvelope(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &SubmitPasswordlessLoginResponseEnvelope{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestSubmitPasswordlessLoginResponseEnvelopeProtoCompactText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedSubmitPasswordlessLoginResponseEnvelope(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &SubmitPasswordlessLoginResponseEnvelope{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
 func TestLoginRequestProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -1632,34 +1331,6 @@ func TestLoginResponseProtoCompactText(t *testing.T) {
 	p := NewPopulatedLoginResponse(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
 	msg := &LoginResponse{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestLoginResponseEnvelopeProtoText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedLoginResponseEnvelope(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &LoginResponseEnvelope{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestLoginResponseEnvelopeProtoCompactText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedLoginResponseEnvelope(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &LoginResponseEnvelope{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1780,34 +1451,6 @@ func TestRefreshSessionResponseProtoCompactText(t *testing.T) {
 	}
 }
 
-func TestRefreshSessionResponseEnvelopeProtoText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedRefreshSessionResponseEnvelope(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &RefreshSessionResponseEnvelope{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestRefreshSessionResponseEnvelopeProtoCompactText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedRefreshSessionResponseEnvelope(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &RefreshSessionResponseEnvelope{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
 func TestChangePasswordRequestProtoText(t *testing.T) {
 	seed := time.Now().UnixNano()
 	popr := math_rand.New(math_rand.NewSource(seed))
@@ -1856,34 +1499,6 @@ func TestChangePasswordResponseProtoCompactText(t *testing.T) {
 	p := NewPopulatedChangePasswordResponse(popr, true)
 	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
 	msg := &ChangePasswordResponse{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestChangePasswordResponseEnvelopeProtoText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedChangePasswordResponseEnvelope(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.MarshalTextString(p)
-	msg := &ChangePasswordResponseEnvelope{}
-	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
-		t.Fatalf("seed = %d, err = %v", seed, err)
-	}
-	if !p.Equal(msg) {
-		t.Fatalf("seed = %d, %#v !Proto %#v", seed, msg, p)
-	}
-}
-
-func TestChangePasswordResponseEnvelopeProtoCompactText(t *testing.T) {
-	seed := time.Now().UnixNano()
-	popr := math_rand.New(math_rand.NewSource(seed))
-	p := NewPopulatedChangePasswordResponseEnvelope(popr, true)
-	dAtA := github_com_gogo_protobuf_proto.CompactTextString(p)
-	msg := &ChangePasswordResponseEnvelope{}
 	if err := github_com_gogo_protobuf_proto.UnmarshalText(dAtA, msg); err != nil {
 		t.Fatalf("seed = %d, err = %v", seed, err)
 	}
@@ -1966,15 +1581,6 @@ func TestSignupResponseStringer(t *testing.T) {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestSignupResponseEnvelopeStringer(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedSignupResponseEnvelope(popr, false)
-	s1 := p.String()
-	s2 := fmt.Sprintf("%v", p)
-	if s1 != s2 {
-		t.Fatalf("String want %v got %v", s1, s2)
-	}
-}
 func TestIsUsernameAvailableRequestStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
 	p := NewPopulatedIsUsernameAvailableRequest(popr, false)
@@ -1984,9 +1590,9 @@ func TestIsUsernameAvailableRequestStringer(t *testing.T) {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestIsUsernameAvailableResponseEnvelopeStringer(t *testing.T) {
+func TestIsUsernameAvailableResponseStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedIsUsernameAvailableResponseEnvelope(popr, false)
+	p := NewPopulatedIsUsernameAvailableResponse(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
@@ -2047,15 +1653,6 @@ func TestSubmitPasswordlessLoginResponseStringer(t *testing.T) {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestSubmitPasswordlessLoginResponseEnvelopeStringer(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedSubmitPasswordlessLoginResponseEnvelope(popr, false)
-	s1 := p.String()
-	s2 := fmt.Sprintf("%v", p)
-	if s1 != s2 {
-		t.Fatalf("String want %v got %v", s1, s2)
-	}
-}
 func TestLoginRequestStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
 	p := NewPopulatedLoginRequest(popr, false)
@@ -2068,15 +1665,6 @@ func TestLoginRequestStringer(t *testing.T) {
 func TestLoginResponseStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
 	p := NewPopulatedLoginResponse(popr, false)
-	s1 := p.String()
-	s2 := fmt.Sprintf("%v", p)
-	if s1 != s2 {
-		t.Fatalf("String want %v got %v", s1, s2)
-	}
-}
-func TestLoginResponseEnvelopeStringer(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedLoginResponseEnvelope(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {
@@ -2119,15 +1707,6 @@ func TestRefreshSessionResponseStringer(t *testing.T) {
 		t.Fatalf("String want %v got %v", s1, s2)
 	}
 }
-func TestRefreshSessionResponseEnvelopeStringer(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedRefreshSessionResponseEnvelope(popr, false)
-	s1 := p.String()
-	s2 := fmt.Sprintf("%v", p)
-	if s1 != s2 {
-		t.Fatalf("String want %v got %v", s1, s2)
-	}
-}
 func TestChangePasswordRequestStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
 	p := NewPopulatedChangePasswordRequest(popr, false)
@@ -2140,15 +1719,6 @@ func TestChangePasswordRequestStringer(t *testing.T) {
 func TestChangePasswordResponseStringer(t *testing.T) {
 	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
 	p := NewPopulatedChangePasswordResponse(popr, false)
-	s1 := p.String()
-	s2 := fmt.Sprintf("%v", p)
-	if s1 != s2 {
-		t.Fatalf("String want %v got %v", s1, s2)
-	}
-}
-func TestChangePasswordResponseEnvelopeStringer(t *testing.T) {
-	popr := math_rand.New(math_rand.NewSource(time.Now().UnixNano()))
-	p := NewPopulatedChangePasswordResponseEnvelope(popr, false)
 	s1 := p.String()
 	s2 := fmt.Sprintf("%v", p)
 	if s1 != s2 {

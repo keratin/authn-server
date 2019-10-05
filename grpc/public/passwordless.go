@@ -35,7 +35,7 @@ func (s passwordlessServer) RequestPasswordlessLogin(ctx context.Context, req *a
 	return &authnpb.RequestPasswordlessLoginResponse{}, nil
 }
 
-func (s passwordlessServer) SubmitPasswordlessLogin(ctx context.Context, req *authnpb.SubmitPasswordlessLoginRequest) (*authnpb.SubmitPasswordlessLoginResponseEnvelope, error) {
+func (s passwordlessServer) SubmitPasswordlessLogin(ctx context.Context, req *authnpb.SubmitPasswordlessLoginRequest) (*authnpb.SubmitPasswordlessLoginResponse, error) {
 
 	var err error
 	var accountID int
@@ -66,9 +66,7 @@ func (s passwordlessServer) SubmitPasswordlessLogin(ctx context.Context, req *au
 	meta.SetSession(ctx, s.app.Config.SessionCookieName, sessionToken)
 
 	// Return the signed identity token in the body
-	return &authnpb.SubmitPasswordlessLoginResponseEnvelope{
-		Result: &authnpb.SubmitPasswordlessLoginResponse{
-			IdToken: identityToken,
-		},
+	return &authnpb.SubmitPasswordlessLoginResponse{
+		IdToken: identityToken,
 	}, nil
 }

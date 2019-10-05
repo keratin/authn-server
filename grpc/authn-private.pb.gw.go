@@ -37,11 +37,29 @@ func request_UnsecuredAdminAuthN_JWKS_0(ctx context.Context, marshaler runtime.M
 
 }
 
+func local_request_UnsecuredAdminAuthN_JWKS_0(ctx context.Context, marshaler runtime.Marshaler, server UnsecuredAdminAuthNServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq JWKSRequest
+	var metadata runtime.ServerMetadata
+
+	msg, err := server.JWKS(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 func request_UnsecuredAdminAuthN_ServiceConfiguration_0(ctx context.Context, marshaler runtime.Marshaler, client UnsecuredAdminAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq ServiceConfigurationRequest
 	var metadata runtime.ServerMetadata
 
 	msg, err := client.ServiceConfiguration(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_UnsecuredAdminAuthN_ServiceConfiguration_0(ctx context.Context, marshaler runtime.Marshaler, server UnsecuredAdminAuthNServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ServiceConfigurationRequest
+	var metadata runtime.ServerMetadata
+
+	msg, err := server.ServiceConfiguration(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -59,6 +77,23 @@ func request_SecuredAdminAuthN_ImportAccount_0(ctx context.Context, marshaler ru
 	}
 
 	msg, err := client.ImportAccount(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_SecuredAdminAuthN_ImportAccount_0(ctx context.Context, marshaler runtime.Marshaler, server SecuredAdminAuthNServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ImportAccountRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.ImportAccount(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -86,6 +121,33 @@ func request_SecuredAdminAuthN_GetAccount_0(ctx context.Context, marshaler runti
 	}
 
 	msg, err := client.GetAccount(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_SecuredAdminAuthN_GetAccount_0(ctx context.Context, marshaler runtime.Marshaler, server SecuredAdminAuthNServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetAccountRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+
+	protoReq.Id, err = runtime.Int64(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+
+	msg, err := server.GetAccount(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -125,6 +187,41 @@ func request_SecuredAdminAuthN_UpdateAccount_0(ctx context.Context, marshaler ru
 
 }
 
+func local_request_SecuredAdminAuthN_UpdateAccount_0(ctx context.Context, marshaler runtime.Marshaler, server SecuredAdminAuthNServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UpdateAccountRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+
+	protoReq.Id, err = runtime.Int64(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+
+	msg, err := server.UpdateAccount(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 func request_SecuredAdminAuthN_UpdateAccount_1(ctx context.Context, marshaler runtime.Marshaler, client SecuredAdminAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq UpdateAccountRequest
 	var metadata runtime.ServerMetadata
@@ -160,6 +257,41 @@ func request_SecuredAdminAuthN_UpdateAccount_1(ctx context.Context, marshaler ru
 
 }
 
+func local_request_SecuredAdminAuthN_UpdateAccount_1(ctx context.Context, marshaler runtime.Marshaler, server SecuredAdminAuthNServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UpdateAccountRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+
+	protoReq.Id, err = runtime.Int64(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+
+	msg, err := server.UpdateAccount(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 func request_SecuredAdminAuthN_LockAccount_0(ctx context.Context, marshaler runtime.Marshaler, client SecuredAdminAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq LockAccountRequest
 	var metadata runtime.ServerMetadata
@@ -183,6 +315,33 @@ func request_SecuredAdminAuthN_LockAccount_0(ctx context.Context, marshaler runt
 	}
 
 	msg, err := client.LockAccount(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_SecuredAdminAuthN_LockAccount_0(ctx context.Context, marshaler runtime.Marshaler, server SecuredAdminAuthNServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq LockAccountRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+
+	protoReq.Id, err = runtime.Int64(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+
+	msg, err := server.LockAccount(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -214,6 +373,33 @@ func request_SecuredAdminAuthN_LockAccount_1(ctx context.Context, marshaler runt
 
 }
 
+func local_request_SecuredAdminAuthN_LockAccount_1(ctx context.Context, marshaler runtime.Marshaler, server SecuredAdminAuthNServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq LockAccountRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+
+	protoReq.Id, err = runtime.Int64(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+
+	msg, err := server.LockAccount(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 func request_SecuredAdminAuthN_UnlockAccount_0(ctx context.Context, marshaler runtime.Marshaler, client SecuredAdminAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq UnlockAccountRequest
 	var metadata runtime.ServerMetadata
@@ -237,6 +423,33 @@ func request_SecuredAdminAuthN_UnlockAccount_0(ctx context.Context, marshaler ru
 	}
 
 	msg, err := client.UnlockAccount(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_SecuredAdminAuthN_UnlockAccount_0(ctx context.Context, marshaler runtime.Marshaler, server SecuredAdminAuthNServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UnlockAccountRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+
+	protoReq.Id, err = runtime.Int64(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+
+	msg, err := server.UnlockAccount(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -268,6 +481,33 @@ func request_SecuredAdminAuthN_UnlockAccount_1(ctx context.Context, marshaler ru
 
 }
 
+func local_request_SecuredAdminAuthN_UnlockAccount_1(ctx context.Context, marshaler runtime.Marshaler, server SecuredAdminAuthNServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UnlockAccountRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+
+	protoReq.Id, err = runtime.Int64(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+
+	msg, err := server.UnlockAccount(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 func request_SecuredAdminAuthN_ArchiveAccount_0(ctx context.Context, marshaler runtime.Marshaler, client SecuredAdminAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq ArchiveAccountRequest
 	var metadata runtime.ServerMetadata
@@ -291,6 +531,33 @@ func request_SecuredAdminAuthN_ArchiveAccount_0(ctx context.Context, marshaler r
 	}
 
 	msg, err := client.ArchiveAccount(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_SecuredAdminAuthN_ArchiveAccount_0(ctx context.Context, marshaler runtime.Marshaler, server SecuredAdminAuthNServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ArchiveAccountRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+
+	protoReq.Id, err = runtime.Int64(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+
+	msg, err := server.ArchiveAccount(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -322,6 +589,33 @@ func request_SecuredAdminAuthN_ExpirePassword_0(ctx context.Context, marshaler r
 
 }
 
+func local_request_SecuredAdminAuthN_ExpirePassword_0(ctx context.Context, marshaler runtime.Marshaler, server SecuredAdminAuthNServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ExpirePasswordRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+
+	protoReq.Id, err = runtime.Int64(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+
+	msg, err := server.ExpirePassword(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 func request_SecuredAdminAuthN_ExpirePassword_1(ctx context.Context, marshaler runtime.Marshaler, client SecuredAdminAuthNClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq ExpirePasswordRequest
 	var metadata runtime.ServerMetadata
@@ -349,6 +643,33 @@ func request_SecuredAdminAuthN_ExpirePassword_1(ctx context.Context, marshaler r
 
 }
 
+func local_request_SecuredAdminAuthN_ExpirePassword_1(ctx context.Context, marshaler runtime.Marshaler, server SecuredAdminAuthNServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ExpirePasswordRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["id"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "id")
+	}
+
+	protoReq.Id, err = runtime.Int64(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "id", err)
+	}
+
+	msg, err := server.ExpirePassword(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 func request_AuthNActives_ServiceStats_0(ctx context.Context, marshaler runtime.Marshaler, client AuthNActivesClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq ServiceStatsRequest
 	var metadata runtime.ServerMetadata
@@ -356,6 +677,319 @@ func request_AuthNActives_ServiceStats_0(ctx context.Context, marshaler runtime.
 	msg, err := client.ServiceStats(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
+}
+
+func local_request_AuthNActives_ServiceStats_0(ctx context.Context, marshaler runtime.Marshaler, server AuthNActivesServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ServiceStatsRequest
+	var metadata runtime.ServerMetadata
+
+	msg, err := server.ServiceStats(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+// RegisterUnsecuredAdminAuthNHandlerServer registers the http handlers for service UnsecuredAdminAuthN to "mux".
+// UnaryRPC     :call UnsecuredAdminAuthNServer directly.
+// StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
+func RegisterUnsecuredAdminAuthNHandlerServer(ctx context.Context, mux *runtime.ServeMux, server UnsecuredAdminAuthNServer) error {
+
+	mux.Handle("GET", pattern_UnsecuredAdminAuthN_JWKS_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_UnsecuredAdminAuthN_JWKS_0(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_UnsecuredAdminAuthN_JWKS_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_UnsecuredAdminAuthN_ServiceConfiguration_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_UnsecuredAdminAuthN_ServiceConfiguration_0(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_UnsecuredAdminAuthN_ServiceConfiguration_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	return nil
+}
+
+// RegisterSecuredAdminAuthNHandlerServer registers the http handlers for service SecuredAdminAuthN to "mux".
+// UnaryRPC     :call SecuredAdminAuthNServer directly.
+// StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
+func RegisterSecuredAdminAuthNHandlerServer(ctx context.Context, mux *runtime.ServeMux, server SecuredAdminAuthNServer) error {
+
+	mux.Handle("POST", pattern_SecuredAdminAuthN_ImportAccount_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_SecuredAdminAuthN_ImportAccount_0(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_SecuredAdminAuthN_ImportAccount_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_SecuredAdminAuthN_GetAccount_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_SecuredAdminAuthN_GetAccount_0(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_SecuredAdminAuthN_GetAccount_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("PUT", pattern_SecuredAdminAuthN_UpdateAccount_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_SecuredAdminAuthN_UpdateAccount_0(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_SecuredAdminAuthN_UpdateAccount_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("PATCH", pattern_SecuredAdminAuthN_UpdateAccount_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_SecuredAdminAuthN_UpdateAccount_1(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_SecuredAdminAuthN_UpdateAccount_1(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("PUT", pattern_SecuredAdminAuthN_LockAccount_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_SecuredAdminAuthN_LockAccount_0(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_SecuredAdminAuthN_LockAccount_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("PATCH", pattern_SecuredAdminAuthN_LockAccount_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_SecuredAdminAuthN_LockAccount_1(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_SecuredAdminAuthN_LockAccount_1(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("PUT", pattern_SecuredAdminAuthN_UnlockAccount_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_SecuredAdminAuthN_UnlockAccount_0(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_SecuredAdminAuthN_UnlockAccount_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("PATCH", pattern_SecuredAdminAuthN_UnlockAccount_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_SecuredAdminAuthN_UnlockAccount_1(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_SecuredAdminAuthN_UnlockAccount_1(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("DELETE", pattern_SecuredAdminAuthN_ArchiveAccount_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_SecuredAdminAuthN_ArchiveAccount_0(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_SecuredAdminAuthN_ArchiveAccount_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("PUT", pattern_SecuredAdminAuthN_ExpirePassword_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_SecuredAdminAuthN_ExpirePassword_0(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_SecuredAdminAuthN_ExpirePassword_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("PATCH", pattern_SecuredAdminAuthN_ExpirePassword_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_SecuredAdminAuthN_ExpirePassword_1(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_SecuredAdminAuthN_ExpirePassword_1(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	return nil
+}
+
+// RegisterAuthNActivesHandlerServer registers the http handlers for service AuthNActives to "mux".
+// UnaryRPC     :call AuthNActivesServer directly.
+// StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
+func RegisterAuthNActivesHandlerServer(ctx context.Context, mux *runtime.ServeMux, server AuthNActivesServer) error {
+
+	mux.Handle("GET", pattern_AuthNActives_ServiceStats_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_AuthNActives_ServiceStats_0(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_AuthNActives_ServiceStats_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	return nil
 }
 
 // RegisterUnsecuredAdminAuthNHandlerFromEndpoint is same as RegisterUnsecuredAdminAuthNHandler but
@@ -440,9 +1074,9 @@ func RegisterUnsecuredAdminAuthNHandlerClient(ctx context.Context, mux *runtime.
 }
 
 var (
-	pattern_UnsecuredAdminAuthN_JWKS_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"jwks"}, ""))
+	pattern_UnsecuredAdminAuthN_JWKS_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"jwks"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_UnsecuredAdminAuthN_ServiceConfiguration_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"configuration"}, ""))
+	pattern_UnsecuredAdminAuthN_ServiceConfiguration_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"configuration"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
@@ -713,27 +1347,27 @@ func RegisterSecuredAdminAuthNHandlerClient(ctx context.Context, mux *runtime.Se
 }
 
 var (
-	pattern_SecuredAdminAuthN_ImportAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"accounts", "import"}, ""))
+	pattern_SecuredAdminAuthN_ImportAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"accounts", "import"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_SecuredAdminAuthN_GetAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"accounts", "id"}, ""))
+	pattern_SecuredAdminAuthN_GetAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"accounts", "id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_SecuredAdminAuthN_UpdateAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"accounts", "id"}, ""))
+	pattern_SecuredAdminAuthN_UpdateAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"accounts", "id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_SecuredAdminAuthN_UpdateAccount_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"accounts", "id"}, ""))
+	pattern_SecuredAdminAuthN_UpdateAccount_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"accounts", "id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_SecuredAdminAuthN_LockAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "lock"}, ""))
+	pattern_SecuredAdminAuthN_LockAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "lock"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_SecuredAdminAuthN_LockAccount_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "lock"}, ""))
+	pattern_SecuredAdminAuthN_LockAccount_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "lock"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_SecuredAdminAuthN_UnlockAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "unlock"}, ""))
+	pattern_SecuredAdminAuthN_UnlockAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "unlock"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_SecuredAdminAuthN_UnlockAccount_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "unlock"}, ""))
+	pattern_SecuredAdminAuthN_UnlockAccount_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "unlock"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_SecuredAdminAuthN_ArchiveAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"accounts", "id"}, ""))
+	pattern_SecuredAdminAuthN_ArchiveAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1}, []string{"accounts", "id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_SecuredAdminAuthN_ExpirePassword_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "expire_password"}, ""))
+	pattern_SecuredAdminAuthN_ExpirePassword_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "expire_password"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_SecuredAdminAuthN_ExpirePassword_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "expire_password"}, ""))
+	pattern_SecuredAdminAuthN_ExpirePassword_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 2, 2}, []string{"accounts", "id", "expire_password"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
@@ -822,7 +1456,7 @@ func RegisterAuthNActivesHandlerClient(ctx context.Context, mux *runtime.ServeMu
 }
 
 var (
-	pattern_AuthNActives_ServiceStats_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"stats"}, ""))
+	pattern_AuthNActives_ServiceStats_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"stats"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

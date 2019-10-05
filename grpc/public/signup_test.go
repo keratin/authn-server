@@ -144,7 +144,7 @@ func TestSignup(t *testing.T) {
 				return
 			}
 			grpctest.AssertSession(t, app.Config, header)
-			grpctest.AssertIDTokenResponse(t, got.Result.GetIdToken(), app.KeyStore, app.Config)
+			grpctest.AssertIDTokenResponse(t, got.GetIdToken(), app.KeyStore, app.Config)
 		})
 	}
 
@@ -167,7 +167,7 @@ func TestIsUsernameAvailable(t *testing.T) {
 		name    string
 		s       signupServiceServer
 		args    args
-		want    *authnpb.IsUsernameAvailableResponseEnvelope
+		want    *authnpb.IsUsernameAvailableResponse
 		wantErr bool
 		err     services.FieldErrors
 	}{
@@ -202,7 +202,7 @@ func TestIsUsernameAvailable(t *testing.T) {
 					Username: "unknown@test.com",
 				},
 			},
-			want: &authnpb.IsUsernameAvailableResponseEnvelope{
+			want: &authnpb.IsUsernameAvailableResponse{
 				Result: true,
 			},
 			wantErr: false,

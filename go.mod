@@ -1,6 +1,7 @@
 module github.com/keratin/authn-server
 
 require (
+	cloud.google.com/go v0.44.3 // indirect
 	github.com/airbrake/gobrake v3.5.0+incompatible
 	github.com/beorn7/perks v0.0.0-20160804104726-4c0e84591b9a // indirect
 	github.com/certifi/gocertifi v0.0.0-20170727155124-3fd9e1adb12b // indirect
@@ -12,15 +13,15 @@ require (
 	github.com/go-redis/redis v6.10.2+incompatible
 	github.com/go-sql-driver/mysql v1.3.0
 	github.com/gogo/googleapis v1.1.0
-	github.com/gogo/protobuf v1.2.0
-	github.com/golang/protobuf v1.2.0
-	github.com/google/go-cmp v0.3.0 // indirect
+	github.com/gogo/protobuf v1.3.0
+	github.com/golang/protobuf v1.3.2
+	github.com/google/go-cmp v0.3.1 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/handlers v1.3.0
 	github.com/gorilla/mux v1.6.1
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
-	github.com/grpc-ecosystem/grpc-gateway v1.9.0
+	github.com/grpc-ecosystem/grpc-gateway v1.11.3
 	github.com/hpcloud/tail v1.0.0 // indirect
 	github.com/jmoiron/sqlx v0.0.0-20170430194603-d9bd385d68c0
 	github.com/joho/godotenv v1.2.0
@@ -38,14 +39,15 @@ require (
 	github.com/sirupsen/logrus v1.0.5
 	github.com/soheilhy/cmux v0.1.4
 	github.com/stretchr/testify v1.2.1
-	github.com/test-go/testify v1.1.4 // indirect
+	github.com/test-go/testify v1.1.4
 	github.com/trustelem/zxcvbn v1.0.1
-	golang.org/x/crypto v0.0.0-20170619204222-adbae1b6b6fb
-	golang.org/x/net v0.0.0-20181220203305-927f97764cc3
-	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
-	golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4
-	google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8
-	google.golang.org/grpc v1.19.0
+	golang.org/x/crypto v0.0.0-20190820162420-60c769a6c586
+	golang.org/x/net v0.0.0-20190813141303-74dc4d7220e7
+	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
+	golang.org/x/sync v0.0.0-20190423024810-112230192c58
+	golang.org/x/sys v0.0.0-20190813064441-fde4db37ae7a // indirect
+	google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55
+	google.golang.org/grpc v1.23.0
 	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2 // indirect
@@ -53,3 +55,5 @@ require (
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.2.1 // indirect
 )
+
+go 1.13
