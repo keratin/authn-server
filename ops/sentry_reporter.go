@@ -3,26 +3,25 @@ package ops
 import (
 	"net/http"
 
-	raven "github.com/getsentry/raven-go"
+	"github.com/getsentry/sentry-go"
 )
 
 // SentryReporter is an ErrorReporter for the Sentry service (sentry.io)
 type SentryReporter struct {
-	*raven.Client
 }
 
 // NewSentryReporter builds a SentryReporter from a credentials string
 func NewSentryReporter(dsn string) (*SentryReporter, error) {
-	client, err := raven.New(dsn)
+	err := sentry.Init(sentry.ClientOptions{Dsn: dsn})
 	if err != nil {
 		return nil, err
 	}
-	return &SentryReporter{Client: client}, nil
+	return &SentryReporter{}, nil
 }
 
 // ReportError will deliver the given error to Sentry in a background routine.
 func (r *SentryReporter) ReportError(err error) {
-	r.CaptureError(err, map[string]string{})
+	sentry.CaptureException(err)
 }
 
 // ReportRequestError will deliver the given error to Sentry in a background routine along with
@@ -30,5 +29,8 @@ func (r *SentryReporter) ReportError(err error) {
 //
 // NOTE: POST data is never reported to Sentry, so passwords remain private.
 func (r *SentryReporter) ReportRequestError(err error, req *http.Request) {
-	r.CaptureError(err, map[string]string{}, raven.NewHttp(req))
+	sentry.WithScope(func(scope *sentry.Scope) {
+		scope.SetRequest(sentry.Request{}.FromHTTPRequest(req))
+		sentry.CaptureException(err)
+	})
 }
