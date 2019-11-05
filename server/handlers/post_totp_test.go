@@ -58,6 +58,6 @@ func TestPostTOTPFailure(t *testing.T) {
 	require.NoError(t, err)
 	body := test.ReadBody(res)
 
-	assert.Equal(t, http.StatusUnauthorized, res.StatusCode)
+	assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
 	assert.Equal(t, "{\"errors\":[{\"field\":\"totp\",\"message\":\"INVALID_OR_EXPIRED\"}]}", string(body))
 }
