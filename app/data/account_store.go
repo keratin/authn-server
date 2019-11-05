@@ -25,6 +25,8 @@ type AccountStore interface {
 	SetPassword(id int, p []byte) (bool, error)
 	UpdateUsername(id int, u string) (bool, error)
 	SetLastLogin(id int) (bool, error)
+	SetTOTPSecret(id int, secret []byte) (bool, error)
+	DeleteTOTPSecret(id int) (bool, error)
 }
 
 func NewAccountStore(db sqlx.Ext) (AccountStore, error) {

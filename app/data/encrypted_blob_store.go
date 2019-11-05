@@ -30,3 +30,11 @@ func (bs *EncryptedBlobStore) WriteNX(name string, blob []byte) (bool, error) {
 	}
 	return bs.store.WriteNX(name, encryptedBlob)
 }
+
+func (bs *EncryptedBlobStore) Write(name string, blob []byte) (bool, error) {
+	encryptedBlob, err := compat.Encrypt(blob, bs.encryptionKey)
+	if err != nil {
+		return false, err
+	}
+	return bs.store.Write(name, encryptedBlob)
+}

@@ -3,10 +3,10 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/keratin/authn-server/server/sessions"
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/app/services"
+	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/server/sessions"
 )
 
 func PostSessionToken(app *app.App) http.HandlerFunc {
@@ -19,6 +19,7 @@ func PostSessionToken(app *app.App) http.HandlerFunc {
 			app.Reporter,
 			app.Config,
 			r.FormValue("token"),
+			r.FormValue("totp"),
 		)
 
 		if err != nil {

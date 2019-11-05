@@ -1,7 +1,9 @@
 package mock
 
-import "time"
-import "sync"
+import (
+	"sync"
+	"time"
+)
 
 type BlobStore struct {
 	blobs    map[string][]byte
@@ -36,6 +38,14 @@ func (bs *BlobStore) WriteNX(name string, blob []byte) (bool, error) {
 	if bs.blobs[name] != nil {
 		return false, nil
 	}
+	bs.blobs[name] = blob
+	return true, nil
+}
+
+func (bs *BlobStore) Write(name string, blob []byte) (bool, error) {
+	bs.mutex.Lock()
+	defer bs.mutex.Unlock()
+
 	bs.blobs[name] = blob
 	return true, nil
 }

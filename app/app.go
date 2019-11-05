@@ -22,6 +22,7 @@ type App struct {
 	AccountStore      data.AccountStore
 	RefreshTokenStore data.RefreshTokenStore
 	KeyStore          data.KeyStore
+	TOTPCache         data.TOTPCache
 	Actives           data.Actives
 	Reporter          ops.ErrorReporter
 	OauthProviders    map[string]oauth.Provider
@@ -59,10 +60,12 @@ func NewApp(cfg *Config, logger logrus.FieldLogger) (*App, error) {
 		return nil, errors.Wrap(err, "NewBlobStore")
 	}
 
+	encryptedBlobStore := data.NewEncryptedBlobStore(blobStore, cfg.DBEncryptionKey)
+
 	keyStore := data.NewRotatingKeyStore()
 	if cfg.IdentitySigningKey == nil {
 		m := data.NewKeyStoreRotater(
-			data.NewEncryptedBlobStore(blobStore, cfg.DBEncryptionKey),
+			encryptedBlobStore,
 			cfg.AccessTokenTTL,
 			logger,
 		)
@@ -73,6 +76,8 @@ func NewApp(cfg *Config, logger logrus.FieldLogger) (*App, error) {
 	} else {
 		keyStore.Rotate(cfg.IdentitySigningKey)
 	}
+
+	totpCache := data.NewTOTPCache(encryptedBlobStore)
 
 	var actives data.Actives
 	if redis != nil {
@@ -108,6 +113,7 @@ func NewApp(cfg *Config, logger logrus.FieldLogger) (*App, error) {
 		AccountStore:      accountStore,
 		RefreshTokenStore: tokenStore,
 		KeyStore:          keyStore,
+		TOTPCache:         totpCache,
 		Actives:           actives,
 		Reporter:          errorReporter,
 		OauthProviders:    oauthProviders,

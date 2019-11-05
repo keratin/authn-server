@@ -30,3 +30,11 @@ func (s *BlobStore) Read(name string) ([]byte, error) {
 func (s *BlobStore) WriteNX(name string, blob []byte) (bool, error) {
 	return s.Client.SetNX(name, blob, s.TTL).Result()
 }
+
+func (s *BlobStore) Write(name string, blob []byte) (bool, error) {
+	res, err := s.Client.Set(name, blob, s.TTL).Result()
+	if res != "OK" {
+		return false, err
+	}
+	return true, nil
+}
