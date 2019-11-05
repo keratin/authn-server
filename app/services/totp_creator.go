@@ -10,11 +10,6 @@ import (
 	"github.com/pquerna/otp/totp"
 )
 
-// func TOTPCreator(
-// 	accountStore data.AccountStore, refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore, actives data.Actives, cfg *app.Config, reporter ops.ErrorReporter,
-// 	accountID int, audience *route.Domain, existingToken *models.RefreshToken,
-// ) (string, string, error) {
-
 //TOTPCreator handles the creation and storage of new TOTP tokens
 func TOTPCreator(accountStore data.AccountStore, totpCache data.TOTPCache, accountID int, audience *route.Domain) (*bytes.Buffer, error) {
 

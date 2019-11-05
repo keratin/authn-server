@@ -8,7 +8,7 @@ import (
 	"github.com/keratin/authn-server/server/sessions"
 )
 
-//PostTOTP handles the post totp request
+//PostTOTP finishes the TOTP onboarding process
 func PostTOTP(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// check for valid session with live token
