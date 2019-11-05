@@ -6,18 +6,10 @@ import (
 	"os"
 
 	"github.com/go-redis/redis"
-	"github.com/pkg/errors"
 )
 
 func New(url *url.URL) (*redis.Client, error) {
-	opts, err := redis.ParseURL(url.String())
-	if url.Port() == "" {
-		opts.Addr = opts.Addr + ":6379"
-	}
-	if err != nil {
-		return nil, errors.Wrap(err, "ParseURL")
-	}
-	return redis.NewClient(opts), nil
+	return newFromString(url.String())
 }
 
 // TODO: move to _test
@@ -26,7 +18,11 @@ func TestDB() (*redis.Client, error) {
 	if !ok {
 		return nil, fmt.Errorf("set TEST_REDIS_URL for redis tests")
 	}
-	cfg, err := redis.ParseURL(str)
+	return newFromString(str)
+}
+
+func newFromString(url string) (*redis.Client, error) {
+	cfg, err := redis.ParseURL(url)
 	if err != nil {
 		return nil, err
 	}
