@@ -44,10 +44,10 @@ func PasswordResetter(store data.AccountStore, r ops.ErrorReporter, cfg *app.Con
 	if account.TOTPEnabled() {
 		secret, err := compat.Decrypt([]byte(account.TOTPSecret.String), cfg.DBEncryptionKey)
 		if err != nil {
-			return -1, errors.Wrap(err, "TOTPDecrypt")
+			return 0, errors.Wrap(err, "TOTPDecrypt")
 		}
 		if !totp.Validate(totpCode, secret) {
-			return -1, FieldErrors{{"totp", ErrInvalidOrExpired}}
+			return 0, FieldErrors{{"totp", ErrInvalidOrExpired}}
 		}
 	}
 
