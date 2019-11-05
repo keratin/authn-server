@@ -197,6 +197,8 @@ func testSetAndDeleteTOTP(t *testing.T, store data.AccountStore) {
 	after, err := store.Find(account.ID)
 	require.NoError(t, err)
 	assert.Equal(t, "secret", after.TOTPSecret.String)
+	assert.True(t, after.TOTPEnabled())
+	assert.True(t, after.TOTPSecret.Valid)
 
 	//Check delete
 	ok, err = store.DeleteTOTPSecret(account.ID)
