@@ -74,7 +74,7 @@ func TestPayloadHandler(t *testing.T) {
 		assert.Equal(t, parsed, payload{})
 	})
 
-	t.Run("Should not break with weird nil headers", func(t *testing.T) {
+	t.Run("Should not break with nil headers", func(t *testing.T) {
 		request := http.Request{Header: map[string][]string{
 			"Content-Type": nil,
 		}}
