@@ -30,6 +30,7 @@ func TestPayloadHandler(t *testing.T) {
 			return
 		}
 		assert.Equal(t, parsed.Password, jsonPassword)
+		assert.Equal(t, request.Body.(*body).closeVisited, true)
 	})
 
 	t.Run("Should decode from form values", func(t *testing.T) {
