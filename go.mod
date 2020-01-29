@@ -14,6 +14,7 @@ require (
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/handlers v1.3.0
 	github.com/gorilla/mux v1.6.1
+	github.com/gorilla/schema v1.1.0
 	github.com/jmoiron/sqlx v0.0.0-20170430194603-d9bd385d68c0
 	github.com/joho/godotenv v1.2.0
 	github.com/lib/pq v0.0.0-20180327071824-d34b9ff171c2
@@ -26,7 +27,7 @@ require (
 	github.com/prometheus/procfs v0.0.0-20171017214025-a6e9df898b13 // indirect
 	github.com/sirupsen/logrus v1.0.5
 	github.com/stretchr/testify v1.4.0
-	github.com/test-go/testify v1.1.4 // indirect
+	github.com/test-go/testify v1.1.4
 	github.com/trustelem/zxcvbn v1.0.1
 	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 	golang.org/x/oauth2 v0.0.0-20180416194528-6881fee410a5
