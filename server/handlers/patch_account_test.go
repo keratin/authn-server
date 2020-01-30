@@ -40,8 +40,21 @@ func TestPatchAccount(t *testing.T) {
 		assert.Equal(t, "newname", account.Username)
 	})
 
+	t.Run("existing account using JSON", func(t *testing.T) {
+		account, err := app.AccountStore.Create("second@test.com", []byte("bar"))
+		require.NoError(t, err)
+
+		res, err := client.PatchJSON(fmt.Sprintf("/accounts/%v", account.ID), "{\"username\": \"secondUsername\"}")
+		require.NoError(t, err)
+		assert.Equal(t, http.StatusOK, res.StatusCode)
+
+		account, err = app.AccountStore.Find(account.ID)
+		require.NoError(t, err)
+		assert.Equal(t, "secondUsername", account.Username)
+	})
+
 	t.Run("bad username", func(t *testing.T) {
-		account, err := app.AccountStore.Create("two@test.com", []byte("bar"))
+		account, err := app.AccountStore.Create("third@test.com", []byte("bar"))
 		require.NoError(t, err)
 
 		res, err := client.Patch(fmt.Sprintf("/accounts/%v", account.ID), url.Values{"username": []string{""}})

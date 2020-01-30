@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/keratin/authn-server/lib/parse"
 	"net/http"
 	"regexp"
 
@@ -10,7 +11,16 @@ import (
 
 func PostAccountsImport(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		locked, err := regexp.MatchString("^(?i:t|true|yes)$", r.FormValue("locked"))
+		var user struct {
+			Username string
+			Password string
+			Locked string
+		}
+		if err := parse.Payload(r, &user); err != nil {
+			WriteErrors(w, err)
+			return
+		}
+		locked, err := regexp.MatchString("^(?i:t|true|yes)$", user.Locked)
 		if err != nil {
 			panic(err)
 		}
@@ -18,8 +28,8 @@ func PostAccountsImport(app *app.App) http.HandlerFunc {
 		account, err := services.AccountImporter(
 			app.AccountStore,
 			app.Config,
-			r.FormValue("username"),
-			r.FormValue("password"),
+			user.Username,
+			user.Password,
 			locked,
 		)
 		if err != nil {

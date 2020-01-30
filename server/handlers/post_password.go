@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/keratin/authn-server/lib/parse"
 	"net/http"
 
 	"github.com/keratin/authn-server/server/sessions"
@@ -11,15 +12,25 @@ import (
 
 func PostPassword(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var credentials struct {
+			Token string
+			Password string
+			CurrentPassword string
+		}
+		if err := parse.Payload(r, &credentials); err != nil {
+			WriteErrors(w, err)
+			return
+		}
+
 		var err error
 		var accountID int
-		if r.FormValue("token") != "" {
+		if credentials.Token != "" {
 			accountID, err = services.PasswordResetter(
 				app.AccountStore,
 				app.Reporter,
 				app.Config,
-				r.FormValue("token"),
-				r.FormValue("password"),
+				credentials.Token,
+				credentials.Password,
 			)
 		} else {
 			accountID = sessions.GetAccountID(r)
@@ -32,8 +43,8 @@ func PostPassword(app *app.App) http.HandlerFunc {
 				app.Reporter,
 				app.Config,
 				accountID,
-				r.FormValue("currentPassword"),
-				r.FormValue("password"),
+				credentials.CurrentPassword,
+				credentials.Password,
 			)
 		}
 

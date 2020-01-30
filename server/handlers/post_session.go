@@ -12,11 +12,11 @@ import (
 
 func PostSession(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var payload struct {
+		var credentials struct {
 			Username string
 			Password string
 		}
-		if err := parse.Payload(r, &payload); err != nil {
+		if err := parse.Payload(r, &credentials); err != nil {
 			WriteErrors(w, err)
 			return
 		}
@@ -25,8 +25,8 @@ func PostSession(app *app.App) http.HandlerFunc {
 		account, err := services.CredentialsVerifier(
 			app.AccountStore,
 			app.Config,
-			payload.Username,
-			payload.Password,
+			credentials.Username,
+			credentials.Password,
 		)
 		if err != nil {
 			if fe, ok := err.(services.FieldErrors); ok {
