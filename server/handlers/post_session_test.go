@@ -25,7 +25,7 @@ func TestPostSessionSuccess(t *testing.T) {
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
 	res, err := client.PostForm("/session", url.Values{
 		"username": []string{"foo"},
-		"passaword": []string{"bar"},
+		"password": []string{"bar"},
 	})
 	require.NoError(t, err)
 

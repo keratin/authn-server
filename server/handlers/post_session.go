@@ -13,8 +13,8 @@ import (
 func PostSession(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var payload struct {
-			Username string `schema:"username"`
-			Password string `schema:"password"`
+			Username string
+			Password string
 		}
 		if err := parse.Payload(r, &payload); err != nil {
 			WriteErrors(w, err)
