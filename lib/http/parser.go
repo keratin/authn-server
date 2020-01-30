@@ -1,9 +1,9 @@
 package http
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/schema"
-	"gopkg.in/square/go-jose.v2/json"
 	"io"
 	"net/http"
 	"strings"
@@ -57,11 +57,10 @@ func parseJson(r io.ReadCloser, parsed interface{}) error {
 }
 
 func getContentType(headers http.Header) string {
-	for key, value := range headers	{
+	for key, value := range headers {
 		if strings.Contains(strings.ToLower(key), "content-type") && len(value) > 0 {
 			return value[0]
 		}
 	}
 	return ""
 }
-
