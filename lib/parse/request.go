@@ -1,4 +1,4 @@
-package http
+package parse
 
 import (
 	"encoding/json"
@@ -13,27 +13,28 @@ const (
 	applicationJson           = "application/json"
 	applicationFormUrlEncoded = "application/x-www-form-urlencoded"
 
-	UnsupportedContentType = ParseErrorCode(1)
+	UnsupportedMediaType = ErrorCode(1)
+	MalformedInput       = ErrorCode(2)
 )
 
-type ParseErrorCode int
+type ErrorCode int
 
-type ParseError struct {
+type Error struct {
 	Message string
-	Code    ParseErrorCode
+	Code    ErrorCode
 }
 
-func (e ParseError) String() string {
+func (e Error) String() string {
 	return fmt.Sprintf("Payload parse error: %s", e.Message)
 }
 
-func (e ParseError) Error() string {
+func (e Error) Error() string {
 	return e.String()
 }
 
-// ParsePayload parses a request body, depending on the type set in Content-Type found in the headers.
-// If no Content-Type is set in the headers, ParsePayload will try to parse content from sent Form values.
-func ParsePayload(r *http.Request, value interface{}) error {
+// Payload parses a request body, depending on the type set in Content-Type found in the headers.
+// If no Content-Type is set in the headers, Payload will try to parse content from sent Form values.
+func Payload(r *http.Request, value interface{}) error {
 	contentType := strings.ToLower(getContentType(r.Header))
 	if contentType == "" {
 		contentType = applicationFormUrlEncoded
@@ -43,10 +44,22 @@ func ParsePayload(r *http.Request, value interface{}) error {
 	case strings.Contains(contentType, applicationJson):
 		return parseJson(r.Body, value)
 	case strings.Contains(contentType, applicationFormUrlEncoded):
-		return schema.NewDecoder().Decode(value, r.Form)
+		return parseForm(value, r)
 	}
 
-	return ParseError{Code: UnsupportedContentType, Message: fmt.Sprintf("Unsupported Content-Type '%s'", contentType)}
+	return Error{Code: UnsupportedMediaType, Message: fmt.Sprintf("Unsupported Content-Type '%s'", contentType)}
+}
+
+func parseForm(value interface{}, r *http.Request) error {
+	if err := r.ParseForm(); err != nil {
+		return Error{
+			Message: err.Error(),
+			Code:    MalformedInput,
+		}
+	}
+	decoder := schema.NewDecoder()
+	decoder.IgnoreUnknownKeys(true)
+	return decoder.Decode(value, r.Form)
 }
 
 func parseJson(r io.ReadCloser, parsed interface{}) error {
