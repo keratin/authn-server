@@ -66,7 +66,20 @@ Example:
 }
 ```
 
+Errors might also arise when sending unsupported `Content-Type` headers, or improperly formatted JSON/Form content. In this
+case the error message will result in a slightly different payload, accompanied by `400` or `415` Http errors: 
+
+```json
+{
+  "error": "invalid character '}' looking for beginning of value"
+}
+```
+
 ## Endpoints
+
+All PUT / PATCH / POST endpoints support either JSON (`application/json`) or Form (`application/x-www-form-urlencoded`) 
+encoded requests, depending on which `Content-Type` is found in the request headers. For backwards compatibility, 
+Authn-Server will try parsing a Form request body when no `Content-Type` is set. 
 
 ### Signup
 
