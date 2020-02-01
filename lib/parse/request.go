@@ -52,10 +52,7 @@ func Payload(r *http.Request, value interface{}) error {
 
 func parseForm(value interface{}, r *http.Request) error {
 	if err := r.ParseForm(); err != nil {
-		return Error{
-			Message: err.Error(),
-			Code:    MalformedInput,
-		}
+		return Error{Message: err.Error(), Code: MalformedInput}
 	}
 	decoder := schema.NewDecoder()
 	decoder.IgnoreUnknownKeys(true)
@@ -66,7 +63,10 @@ func parseJson(r io.ReadCloser, parsed interface{}) error {
 	err := json.NewDecoder(r).Decode(parsed)
 	defer r.Close()
 
-	return err
+	if err != nil {
+		return Error{Message: err.Error(), Code: MalformedInput}
+	}
+	return nil
 }
 
 func getContentType(headers http.Header) string {

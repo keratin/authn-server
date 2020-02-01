@@ -35,7 +35,7 @@ func TestParsingOnServer(t *testing.T) {
 		postForm(ts, url.Values{"username": []string{"aUsername"}})
 
 		assert.Equal(t, requestBody.Username, "aUsername")
-		assert.Equal(t, err, nil)
+		assert.Nil(t, err)
 	})
 
 	t.Run("Should not break with unknown Form fields sent", func(t *testing.T) {
@@ -51,7 +51,7 @@ func TestParsingOnServer(t *testing.T) {
 		postForm(ts, url.Values{"username": []string{"aUsername"}, "unknownToServer": []string{"unknown value"}})
 
 		assert.Equal(t, requestBody.Username, "aUsername")
-		assert.Equal(t, err, nil)
+		assert.Nil(t, err)
 	})
 
 	t.Run("Should decode from JSON", func(t *testing.T) {
@@ -64,7 +64,7 @@ func TestParsingOnServer(t *testing.T) {
 		postJson(ts, "{\"username\":\"aUsername\"}")
 
 		assert.Equal(t, requestBody.Username, "aUsername")
-		assert.Equal(t, err, nil)
+		assert.Nil(t, err)
 	})
 
 	t.Run("Should not break with unknown fields in JSON", func(t *testing.T) {
@@ -80,7 +80,19 @@ func TestParsingOnServer(t *testing.T) {
 		postJson(ts, "{\"username\":\"aUsername\", \"unknown\":\"Unknown to the server\"}")
 
 		assert.Equal(t, requestBody.Username, "aUsername")
-		assert.Equal(t, err, nil)
+		assert.Nil(t, err)
+	})
+
+	t.Run("Should return an error for malformed JSON request", func(t *testing.T) {
+		var requestBody struct {}
+		var err error
+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			err = Payload(r, &requestBody)
+		}))
+		defer ts.Close()
+		postJson(ts, "{\"missingVariableContent\":}")
+
+		assert.Equal(t, err.(Error).Code, MalformedInput)
 	})
 
 	t.Run("Should not break with nil headers", func(t *testing.T) {
