@@ -1,22 +1,32 @@
 package handlers
 
 import (
+	"github.com/keratin/authn-server/lib/parse"
 	"net/http"
 
-	"github.com/keratin/authn-server/server/sessions"
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/app/services"
+	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/server/sessions"
 )
 
 func PostSession(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var credentials struct {
+			Username string
+			Password string
+		}
+		if err := parse.Payload(r, &credentials); err != nil {
+			WriteErrors(w, err)
+			return
+		}
+
 		// Check the password
 		account, err := services.CredentialsVerifier(
 			app.AccountStore,
 			app.Config,
-			r.FormValue("username"),
-			r.FormValue("password"),
+			credentials.Username,
+			credentials.Password,
 		)
 		if err != nil {
 			if fe, ok := err.(services.FieldErrors); ok {

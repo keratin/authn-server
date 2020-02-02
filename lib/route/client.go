@@ -25,6 +25,9 @@ const (
 	post    = "POST"
 	put     = "PUT"
 	options = "OPTIONS"
+
+	contentTypeJSON = "application/json"
+	contentTypeFormURLEncoded = "application/x-www-form-urlencoded"
 )
 
 // NewClient returns a new Client.
@@ -88,25 +91,37 @@ func (c *Client) Authenticated(username string, password string) *Client {
 // Get issues a GET to the specified path like net/http's Get, but with any modifications
 // configured for the current client.
 func (c *Client) Get(path string) (*http.Response, error) {
-	return c.do(get, path, nil)
+	return c.do(get, contentTypeFormURLEncoded, path, nil)
 }
 
 // Delete issues a DELETE to the specified path, with any modifications configured for the current
 // client.
 func (c *Client) Delete(path string) (*http.Response, error) {
-	return c.do(delete, path, nil)
+	return c.do(delete, contentTypeFormURLEncoded, path, nil)
 }
 
 // PostForm issues a POST to the specified path like net/http's PostForm, but with any modifications
 // configured for the current client.
 func (c *Client) PostForm(path string, form url.Values) (*http.Response, error) {
-	return c.do(post, path, strings.NewReader(form.Encode()))
+	return c.do(post, contentTypeFormURLEncoded, path, strings.NewReader(form.Encode()))
+}
+
+// PostJSON issues a POST to the specified path like net/http's Post, but with any modifications
+// configured for the current client and accepting a JSON content string.
+func (c *Client) PostJSON(path string, content string) (*http.Response, error) {
+	return c.do(post, contentTypeJSON, path, strings.NewReader(content))
 }
 
 // Patch issues a PATCH to the specified path like net/http's PostForm, but with any
 // modifications configured for the current client.
 func (c *Client) Patch(path string, form url.Values) (*http.Response, error) {
-	return c.do(patch, path, strings.NewReader(form.Encode()))
+	return c.do(patch, contentTypeFormURLEncoded, path, strings.NewReader(form.Encode()))
+}
+
+// PatchJSON issues a PATCH to the specified path like net/http's Post using a JSON content in string format, but with any
+// modifications configured for the current client.
+func (c *Client) PatchJSON(path string, content string) (*http.Response, error) {
+	return c.do(patch, contentTypeJSON, path, strings.NewReader(content))
 }
 
 // Preflight issues a CORS OPTIONS request
@@ -115,17 +130,17 @@ func (c *Client) Preflight(domain *Domain, verb string, path string) (*http.Resp
 		req.Header.Add("Access-Control-Request-Method", verb)
 		return req
 	})
-	return cPreflight.do(options, path, nil)
+	return cPreflight.do(options, contentTypeFormURLEncoded, path, nil)
 }
 
-func (c *Client) do(verb string, path string, body io.Reader) (*http.Response, error) {
+func (c *Client) do(verb string, contentType string, path string, body io.Reader) (*http.Response, error) {
 	req, err := http.NewRequest(verb, fmt.Sprintf("%s%s", c.BaseURL, path), body)
 	if err != nil {
 		return nil, err
 	}
 
 	if verb == post || verb == patch || verb == put {
-		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+		req.Header.Add("Content-Type", contentType)
 	}
 
 	for _, mod := range c.Modifiers {

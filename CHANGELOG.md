@@ -4,6 +4,10 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+### Added
+
+* Support `Content-Type: application/json` [#143]
+
 ## 1.7.0
 
 ### Added

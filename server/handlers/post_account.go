@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/keratin/authn-server/lib/parse"
 	"net/http"
 
 	"github.com/keratin/authn-server/server/sessions"
@@ -11,12 +12,20 @@ import (
 
 func PostAccount(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var credentials struct {
+			Username string
+			Password string
+		}
+		if err := parse.Payload(r, &credentials); err != nil {
+			WriteErrors(w, err)
+			return
+		}
 		// Create the account
 		account, err := services.AccountCreator(
 			app.AccountStore,
 			app.Config,
-			r.FormValue("username"),
-			r.FormValue("password"),
+			credentials.Username,
+			credentials.Password,
 		)
 		if err != nil {
 			if fe, ok := err.(services.FieldErrors); ok {
