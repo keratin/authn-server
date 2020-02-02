@@ -1,6 +1,7 @@
 package test
 
 import (
+	"net/http"
 	"net/url"
 
 	"github.com/keratin/authn-server/app"
@@ -34,6 +35,7 @@ func App() *app.App {
 		AppPasswordResetURL:     &url.URL{Scheme: "https", Host: "app.example.com"},
 		AppPasswordlessTokenURL: &url.URL{Scheme: "https", Host: "app.example.com"},
 		EnableSignup:            true,
+		SameSite:                http.SameSiteDefaultMode,
 	}
 
 	logger := logrus.New()

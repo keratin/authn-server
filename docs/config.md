@@ -3,7 +3,7 @@
 * Core Settings: [`AUTHN_URL`](#authn_url) • [`APP_DOMAINS`](#app_domains) • [`HTTP_AUTH_USERNAME`](#http_auth_username) • [`HTTP_AUTH_PASSWORD`](#http_auth_password) • [`SECRET_KEY_BASE`](#secret_key_base) • [`ENABLE_SIGNUP`](#enable_signup)
 * Databases: [`DATABASE_URL`](#database_url) • [`REDIS_URL`](#redis_url)
 * Sessions:
-[`ACCESS_TOKEN_TTL`](#access_token_ttl) • [`REFRESH_TOKEN_TTL`](#refresh_token_ttl) • [`SESSION_KEY_SALT`](#session_key_salt) • [`DB_ENCRYPTION_KEY_SALT`](#db_encryption_key_salt) • [`RSA_PRIVATE_KEY`](#rsa_private_key)
+[`ACCESS_TOKEN_TTL`](#access_token_ttl) • [`REFRESH_TOKEN_TTL`](#refresh_token_ttl) • [`SESSION_KEY_SALT`](#session_key_salt) • [`DB_ENCRYPTION_KEY_SALT`](#db_encryption_key_salt) • [`RSA_PRIVATE_KEY`](#rsa_private_key) • [`SAME_SITE](#same_site)
 * OAuth Clients: [`FACEBOOK_OAUTH_CREDENTIALS`](#facebook_oauth_credentials) • [`GITHUB_OAUTH_CREDENTIALS`](#github_oauth_credentials) • [`GOOGLE_OAUTH_CREDENTIALS`](#google_oauth_credentials) • [`DISCORD_OAUTH_CREDENTIALS`](#discord_oauth_credentials)
 * Username Policy: [`USERNAME_IS_EMAIL`](#username_is_email) • [`EMAIL_USERNAME_DOMAINS`](#email_username_domains)
 * Password Policy: [`PASSWORD_POLICY_SCORE`](#password_policy_score) • [`BCRYPT_COST`](#bcrypt_cost)
@@ -165,6 +165,32 @@ The private key must be in PEM format, with no passphrase. If you've run `ssh-ke
 Some systems (e.g. Heroku) make it easy to add multi-line environment variables. If your system does not, you may collapse the public key into a single line by replacing all line breaks with `\n` characters.
 
 Note that specifying a `RSA_PRIVATE_KEY` will prevent AuthN from automatically rotating keys. If you wish to implement your own key rotation, remember to restart the process to pick up changes.
+
+### `SAME_SITE`
+
+|           |    |
+| --------- | --- |
+| Required? | No |
+| Value | STRICT, LAX, or NONE |
+| Default | STRICT or LAX |
+
+AuthN maintains a session cookie with the refresh token. The cookie is important to proper functioning for some API requests from the client as well as redirects back from OAuth providers. The cookie's SameSite property can be set directly with this configuration, and will default to LAX or STRICT based on OAuth configuration.
+
+The most complete decision tree for determining the best SameSite property looks like:
+
+```
+if AUTHN_URL's site is different from any of the APP_DOMAINS' sites
+  // We need the session cookie on cross-site requests for SSO
+  sameSite := NONE
+else if any OAuth providers are configured
+  // We need the session cookie when returning from OAuth site
+  sameSite := LAX
+else
+  // We only need the session cookie for client API requests after load
+  sameSite := STRICT
+```
+
+However, AuthN does not query the [Public Suffix List](https://publicsuffix.org) and can't make the first determination. If you have a cross-site deployment that depends on SSO, you must set `SAME_SITE=NONE`.
 
 ## OAuth Clients
 

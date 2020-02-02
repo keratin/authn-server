@@ -7,6 +7,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"math/big"
+	"net/http"
 	"net/url"
 	"os"
 	"strconv"
@@ -50,6 +51,7 @@ type Config struct {
 	IdentitySigningKey          *private.Key
 	AuthNURL                    *url.URL
 	ForceSSL                    bool
+	SameSite                    http.SameSite
 	MountedPath                 string
 	AccessTokenTTL              time.Duration
 	AuthUsername                string
@@ -67,6 +69,25 @@ type Config struct {
 	GitHubOauthCredentials      *oauth.Credentials
 	FacebookOauthCredentials    *oauth.Credentials
 	DiscordOauthCredentials     *oauth.Credentials
+}
+
+// OAuthEnabled returns true if any provider is configured.
+func (c *Config) OAuthEnabled() bool {
+	return c.GoogleOauthCredentials != nil ||
+		c.GitHubOauthCredentials != nil ||
+		c.FacebookOauthCredentials != nil ||
+		c.DiscordOauthCredentials != nil
+}
+
+// SameSiteComputed returns either the specified http.SameSite, or a computed one from OAuth config
+func (c *Config) SameSiteComputed() http.SameSite {
+	if c.SameSite != http.SameSiteDefaultMode {
+		return c.SameSite
+	}
+	if c.OAuthEnabled() {
+		return http.SameSiteLaxMode
+	}
+	return http.SameSiteLaxMode
 }
 
 var configurers = []configurer{
@@ -460,6 +481,24 @@ var configurers = []configurer{
 			c.Proxied = val
 		}
 		return err
+	},
+
+	// SAME_SITE sets the SameSite property of the AuthN session cookie. When not specified, AuthN
+	// will choose between Lax and Strict based on the presence of OAuth providers.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("SAME_SITE"); ok {
+			switch strings.ToUpper(val) {
+			case "NONE":
+				c.SameSite = http.SameSiteNoneMode
+			case "LAX":
+				c.SameSite = http.SameSiteLaxMode
+			case "STRICT":
+				c.SameSite = http.SameSiteStrictMode
+			default:
+				return fmt.Errorf("SAME_SITE must be one of NONE, LAX, or STRICT")
+			}
+		}
+		return nil
 	},
 
 	// GOOGLE_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
