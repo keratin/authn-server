@@ -1,5 +1,7 @@
 package app
 
+import "net/http"
+
 type configurer func(c *Config) error
 
 func configure(fns []configurer) (*Config, error) {
@@ -8,6 +10,7 @@ func configure(fns []configurer) (*Config, error) {
 		UsernameMinLength: 3,
 		SessionCookieName: "authn",
 		OAuthCookieName:   "authn-oauth-nonce",
+		SameSite:          http.SameSiteDefaultMode,
 	}
 	for _, fn := range fns {
 		err = fn(&c)

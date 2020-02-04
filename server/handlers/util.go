@@ -26,6 +26,7 @@ func nonceCookie(cfg *app.Config, val string) *http.Cookie {
 		Secure:   cfg.ForceSSL,
 		HttpOnly: true,
 		MaxAge:   maxAge,
+		SameSite: cfg.SameSiteComputed(),
 	}
 }
 

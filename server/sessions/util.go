@@ -31,6 +31,7 @@ func Set(cfg *app.Config, w http.ResponseWriter, val string) {
 		Path:     cfg.MountedPath,
 		Secure:   cfg.ForceSSL,
 		HttpOnly: true,
+		SameSite: cfg.SameSiteComputed(),
 	}
 	if val == "" {
 		cookie.MaxAge = -1
