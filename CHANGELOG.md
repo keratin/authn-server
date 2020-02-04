@@ -7,6 +7,7 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 * Support `Content-Type: application/json` [#143]
+* Support for SameSite property on AuthN session cookie [#147]
 
 ## 1.7.0
 
