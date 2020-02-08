@@ -109,7 +109,7 @@ func (c *Client) PostForm(path string, form url.Values) (*http.Response, error) 
 }
 
 // PostJSON issues a POST to the specified path like net/http's Post, but with any modifications
-// configured for the current client and accepting a JSON content string.
+// configured for the current client and accepting a JSON content.
 func (c *Client) PostJSON(path string, content map[string]interface{}) (*http.Response, error) {
 	marshalled, err := json.Marshal(content)
 	if err != nil {

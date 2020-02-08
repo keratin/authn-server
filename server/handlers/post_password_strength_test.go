@@ -24,7 +24,7 @@ func TestPostPasswordScore(t *testing.T) {
 		test.AssertData(t, res, map[string]interface{}{"score": 3, "requiredScore": 2})
 	})
 
-	t.Run("Should successfully score password using JSON request", func(t *testing.T) {
+	t.Run("Should successfully score password using form request", func(t *testing.T) {
 		res, err := client.PostForm("/password/score", url.Values{"password": []string{"anotherBetterPassword!"}})
 
 		require.NoError(t, err)
