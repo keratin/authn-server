@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func TestScoreTime(t *testing.T) {
+func TestScoreCalculation(t *testing.T) {
 	score := CalcPasswordScore("smallPasswordSize")
 
 	assert.Equal(t, 3, score)
