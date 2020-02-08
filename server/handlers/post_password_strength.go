@@ -26,7 +26,7 @@ func PostPasswordScore(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		score := services.CalcPasswordScore(credentials.Password)
+		score := services.CalculatePasswordScore(credentials.Password)
 
 		WriteData(w, http.StatusOK, map[string]interface{}{
 			"score":         score,

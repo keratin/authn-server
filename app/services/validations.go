@@ -45,7 +45,7 @@ func PasswordValidator(cfg *app.Config, password string) *FieldError {
 		return &FieldError{"password", ErrMissing}
 	}
 
-	score := CalcPasswordScore(password)
+	score := CalculatePasswordScore(password)
 
 	if score < cfg.PasswordMinComplexity {
 		return &FieldError{"password", ErrInsecure}

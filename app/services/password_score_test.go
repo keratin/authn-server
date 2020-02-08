@@ -7,14 +7,14 @@ import (
 )
 
 func TestScoreCalculation(t *testing.T) {
-	score := CalcPasswordScore("smallPasswordSize")
+	score := CalculatePasswordScore("smallPasswordSize")
 
 	assert.Equal(t, 3, score)
 }
 
 func TestScoreTimeKeepsLowForLongPass(t *testing.T) {
 	start := time.Now()
-	score := CalcPasswordScore(
+	score := CalculatePasswordScore(
 		"superlongpasswordsuperlongpasswordsuperlongpasswordsuperlongpasswordsuperlongpasswordsuperlongpassword"+
 			"superlongpasswordsuperlongpasswordsuperlongpasswordsuperlongpasswordsuperlongpasswordsuperlongpassword"+
 			"superlongpasswordsuperlongpasswordsuperlongpasswordsuperlongpasswordsuperlongpasswordsuperlongpassword"+
