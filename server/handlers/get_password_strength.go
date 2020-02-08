@@ -1,16 +1,24 @@
 package handlers
 
 import (
+	"github.com/keratin/authn-server/lib/parse"
 	"net/http"
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/services"
 )
 
-func GetPasswordScore(app *app.App) http.HandlerFunc {
+func PostPasswordScore(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		password := r.URL.Query().Get("password")
-		if password == "" {
+		var credentials struct {
+			Password string
+		}
+		if err := parse.Payload(r, &credentials); err != nil {
+			WriteErrors(w, err)
+			return
+		}
+
+		if credentials.Password == "" {
 			WriteErrors(w, services.FieldErrors{services.FieldError{
 				Field:   "password",
 				Message: services.ErrMissing,
@@ -18,7 +26,7 @@ func GetPasswordScore(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		score := services.CalcPasswordScore(password)
+		score := services.CalcPasswordScore(credentials.Password)
 
 		WriteData(w, http.StatusOK, map[string]interface{}{
 			"score":         score,

@@ -35,7 +35,7 @@ func TestPostJSONAccountSuccess(t *testing.T) {
 	defer server.Close()
 
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
-	res, err := client.PostJSON("/accounts", "{\"username\": \"bar\", \"password\": \"0a0b0c0\"}")
+	res, err := client.PostJSON("/accounts", map[string]interface{}{"username": "bar", "password":"0a0b0c0"})
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusCreated, res.StatusCode)

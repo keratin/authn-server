@@ -1,6 +1,8 @@
 package route
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -108,8 +110,12 @@ func (c *Client) PostForm(path string, form url.Values) (*http.Response, error) 
 
 // PostJSON issues a POST to the specified path like net/http's Post, but with any modifications
 // configured for the current client and accepting a JSON content string.
-func (c *Client) PostJSON(path string, content string) (*http.Response, error) {
-	return c.do(post, contentTypeJSON, path, strings.NewReader(content))
+func (c *Client) PostJSON(path string, content map[string]interface{}) (*http.Response, error) {
+	marshalled, err := json.Marshal(content)
+	if err != nil {
+		return nil, err
+	}
+	return c.do(post, contentTypeJSON, path, bytes.NewReader(marshalled))
 }
 
 // Patch issues a PATCH to the specified path like net/http's PostForm, but with any
