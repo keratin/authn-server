@@ -19,6 +19,10 @@ func PublicRoutes(app *app.App) []*route.HandledRoute {
 			SecuredWith(originSecurity).
 			Handle(handlers.PostPassword(app)),
 
+		route.Get("/password/score").
+			SecuredWith(originSecurity).
+			Handle(handlers.GetPasswordScore(app)),
+
 		route.Post("/session").
 			SecuredWith(originSecurity).
 			Handle(handlers.PostSession(app)),

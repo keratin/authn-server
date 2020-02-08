@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/keratin/authn-server/server/test"
 	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/server/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
