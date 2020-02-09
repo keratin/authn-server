@@ -22,6 +22,7 @@
     * [Request Password Reset](#request-password-reset)
     * [Change Password](#change-password)
     * [Expire Password](#expire-password)
+    * [Password Score](#password-score)
   * OAuth
     * [Begin OAuth](#begin-oauth)
     * [OAuth Return URL](#oauth-return)
@@ -550,6 +551,39 @@ Revokes all of the user's current sessions and flags the account for a required 
     {
       "errors": [
         {"field": "account", "message": "NOT_FOUND"}
+      ]
+    }
+
+### Password Score
+
+Visibility: Public
+
+`POST /password/score`
+
+| Params | Type | Notes |
+| ------ | ---- | ----- |
+| `password` | string | password to be checked for zxcvbn score |
+
+Returns the zxcvbn score and required score set for [`PASSWORD_POLICY_SCORE`](config.md#password_policy_score) for a given password 
+
+#### Success:
+
+    200 Ok
+    
+    {
+      "result": {
+        "score": 3,
+        "requiredScore": 2 
+      }
+    }
+
+#### Failure:
+
+    422 Unprocessable Entity
+
+    {
+      "errors": [
+        {"field": "password", "message": "MISSING"}
       ]
     }
 
