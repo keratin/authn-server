@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/keratin/authn-server/app"
-	"github.com/trustelem/zxcvbn"
 )
 
 var ErrMissing = "MISSING"
@@ -46,15 +45,9 @@ func PasswordValidator(cfg *app.Config, password string) *FieldError {
 		return &FieldError{"password", ErrMissing}
 	}
 
-	// SECURITY: only score the first 100 characters of a password. cheap benchmarks on my current
-	//           laptop show that latency for 1e3 characters approaches 180ms, and 1e4 characters
-	//           consume 54s.
-	if len(password) > 100 {
-		password = password[:100]
-	}
+	score := CalculatePasswordScore(password)
 
-	strength := zxcvbn.PasswordStrength(password, []string{})
-	if strength.Score < cfg.PasswordMinComplexity {
+	if score < cfg.PasswordMinComplexity {
 		return &FieldError{"password", ErrInsecure}
 	}
 
