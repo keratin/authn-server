@@ -5,6 +5,7 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## HEAD
 
 * Added endpoint for checking zxcvbn password score
+* Added `SESSION_DOMAIN` configuration to allow setting session on another domain.
 
 ## 1.8.0
 

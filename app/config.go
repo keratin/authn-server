@@ -69,6 +69,7 @@ type Config struct {
 	GitHubOauthCredentials      *oauth.Credentials
 	FacebookOauthCredentials    *oauth.Credentials
 	DiscordOauthCredentials     *oauth.Credentials
+	SessionDomain               string
 }
 
 // OAuthEnabled returns true if any provider is configured.
@@ -549,6 +550,18 @@ var configurers = []configurer{
 				c.DiscordOauthCredentials = credentials
 			}
 			return err
+		}
+		return nil
+	},
+
+	// SESSION_DOMAIN defines for which domain (or subdomain) the session cookie will be set.
+	// If not configured, the session would only be found under the domain keratin runs on, for instance authn.example.com.
+	// Setting this value is useful for when you have a SPA with server side rendering that needs to retrieve a session
+	// from a top domain like example.com.
+	func(c *Config) error {
+		val, ok := os.LookupEnv("SESSION_DOMAIN")
+		if ok == true {
+			c.SessionDomain = val
 		}
 		return nil
 	},
