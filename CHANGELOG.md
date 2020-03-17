@@ -4,7 +4,10 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
-* Added endpoint for checking zxcvbn password score
+### Added
+
+* endpoint for checking zxcvbn password score [#149]
+* option to expire an account's sessions after a password change [#154]
 
 ## 1.8.0
 
