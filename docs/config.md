@@ -6,7 +6,7 @@
 [`ACCESS_TOKEN_TTL`](#access_token_ttl) • [`REFRESH_TOKEN_TTL`](#refresh_token_ttl) • [`SESSION_KEY_SALT`](#session_key_salt) • [`DB_ENCRYPTION_KEY_SALT`](#db_encryption_key_salt) • [`RSA_PRIVATE_KEY`](#rsa_private_key) • [`SAME_SITE](#same_site)
 * OAuth Clients: [`FACEBOOK_OAUTH_CREDENTIALS`](#facebook_oauth_credentials) • [`GITHUB_OAUTH_CREDENTIALS`](#github_oauth_credentials) • [`GOOGLE_OAUTH_CREDENTIALS`](#google_oauth_credentials) • [`DISCORD_OAUTH_CREDENTIALS`](#discord_oauth_credentials)
 * Username Policy: [`USERNAME_IS_EMAIL`](#username_is_email) • [`EMAIL_USERNAME_DOMAINS`](#email_username_domains)
-* Password Policy: [`PASSWORD_POLICY_SCORE`](#password_policy_score) • [`BCRYPT_COST`](#bcrypt_cost)
+* Password Policy: [`PASSWORD_POLICY_SCORE`](#password_policy_score) • [`PASSWORD_CHANGE_LOGOUT`](#password_change_logout) • [`BCRYPT_COST`](#bcrypt_cost)
 * Password Resets: [`APP_PASSWORD_RESET_URL`](#app_password_reset_url) • [`PASSWORD_RESET_TOKEN_TTL`](#password_reset_token_ttl) • [`APP_PASSWORD_CHANGED_URL`](#app_password_changed_url)
 * Passwordless: [`APP_PASSWORDLESS_TOKEN_URL`](#app_passwordless_token_url) • [`PASSWORDLESS_TOKEN_TTL`](#passwordless_token_ttl)
 * Stats: [`TIME_ZONE`](#time_zone) • [`DAILY_ACTIVES_RETENTION`](#daily_actives_retention) • [`WEEKLY_ACTIVES_RETENTION`](#weekly_actives_retention)
@@ -281,6 +281,16 @@ If you need to restrict account creation to specific email domains, declare the 
 * 4 - very unguessable
 
 Password complexity is calculated by estimating how many guesses it would take a smart attacker armed with a dictionary, simple transformations like L337, and spatial walks across the QWERTY keyboard. The specific algorithm used is [zxcvbn](https://blogs.dropbox.com/tech/2012/04/zxcvbn-realistic-password-strength-estimation/), which has a JavaScript implementation if you'd like to provide real-time user feedback on password fields.
+
+### `PASSWORD_CHANGE_LOGOUT`
+
+|           |    |
+| --------- | --- |
+| Required? | No |
+| Value | boolean (`/^t|true|yes$/i`) |
+| Default | false |
+
+Enable if you would like user password changes to expire all other sessions for the account.
 
 ### `BCRYPT_COST`
 

@@ -1,20 +1,21 @@
 package handlers
 
 import (
-	"github.com/keratin/authn-server/lib/parse"
 	"net/http"
 
-	"github.com/keratin/authn-server/server/sessions"
+	"github.com/keratin/authn-server/lib/parse"
+
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/app/services"
+	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/server/sessions"
 )
 
 func PostPassword(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var credentials struct {
-			Token string
-			Password string
+			Token           string
+			Password        string
 			CurrentPassword string
 		}
 		if err := parse.Payload(r, &credentials); err != nil {
@@ -55,6 +56,13 @@ func PostPassword(app *app.App) http.HandlerFunc {
 			}
 
 			panic(err)
+		}
+
+		if app.Config.PasswordChangeLogout {
+			err = services.SessionBatchEnder(app.RefreshTokenStore, accountID)
+			if err != nil {
+				panic(err)
+			}
 		}
 
 		sessionToken, identityToken, err := services.SessionCreator(

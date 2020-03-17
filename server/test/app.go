@@ -36,6 +36,7 @@ func App() *app.App {
 		AppPasswordlessTokenURL: &url.URL{Scheme: "https", Host: "app.example.com"},
 		EnableSignup:            true,
 		SameSite:                http.SameSiteDefaultMode,
+		PasswordChangeLogout:    false,
 	}
 
 	logger := logrus.New()

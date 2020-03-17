@@ -7,12 +7,12 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/keratin/authn-server/server/test"
-	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/app/models"
 	"github.com/keratin/authn-server/app/services"
 	"github.com/keratin/authn-server/app/tokens/resets"
 	"github.com/keratin/authn-server/app/tokens/sessions"
+	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/server/test"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -183,5 +183,64 @@ func TestPostPassword(t *testing.T) {
 
 		// works
 		assertSuccess(t, res, tokenAccount)
+	})
+
+	t.Run("multiple sessions with PasswordChangeLogout", func(t *testing.T) {
+		app.Config.PasswordChangeLogout = true
+		defer func() { app.Config.PasswordChangeLogout = false }()
+
+		// given an account
+		account, err := factory("PasswordChangeLogout@authn.tech", "oldpwd")
+		require.NoError(t, err)
+
+		// given a session
+		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
+		otherSession := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
+
+		// invoking the endpoint
+		res, err := client.WithCookie(session).PostForm("/password", url.Values{
+			"currentPassword": []string{"oldpwd"},
+			"password":        []string{"0a0b0c0d0"},
+		})
+		require.NoError(t, err)
+
+		// works
+		assertSuccess(t, res, account)
+
+		// invalidates other session
+		claims, err := sessions.Parse(otherSession.Value, app.Config)
+		require.NoError(t, err)
+		id, err := app.RefreshTokenStore.Find(models.RefreshToken(claims.Subject))
+		require.NoError(t, err)
+		assert.Empty(t, id)
+	})
+
+	t.Run("multiple sessions without PasswordChangeLogout", func(t *testing.T) {
+		app.Config.PasswordChangeLogout = false
+
+		// given an account
+		account, err := factory("NoPasswordChangeLogout@authn.tech", "oldpwd")
+		require.NoError(t, err)
+
+		// given a session
+		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
+		otherSession := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
+
+		// invoking the endpoint
+		res, err := client.WithCookie(session).PostForm("/password", url.Values{
+			"currentPassword": []string{"oldpwd"},
+			"password":        []string{"0a0b0c0d0"},
+		})
+		require.NoError(t, err)
+
+		// works
+		assertSuccess(t, res, account)
+
+		// preserves other session
+		claims, err := sessions.Parse(otherSession.Value, app.Config)
+		require.NoError(t, err)
+		id, err := app.RefreshTokenStore.Find(models.RefreshToken(claims.Subject))
+		require.NoError(t, err)
+		assert.Equal(t, account.ID, id)
 	})
 }
