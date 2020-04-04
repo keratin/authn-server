@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   redis:
     image: redis
@@ -16,7 +16,7 @@ services:
   postgres:
     image: postgres:9.6
     ports:
-      - "5432:5432"
+      - "8703:5432"
     environment:
       - POSTGRES_PASSWORD
       - POSTGRES_USER
