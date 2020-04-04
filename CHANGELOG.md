@@ -9,6 +9,10 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * endpoint for checking zxcvbn password score [#149]
 * option to expire an account's sessions after a password change [#154]
 
+### Fixed
+
+* improvements to constant time comparison in basic auth (thanks @lsmith130)
+
 ## 1.8.0
 
 ### Added
