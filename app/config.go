@@ -38,6 +38,7 @@ type Config struct {
 	UsernameMinLength           int
 	UsernameDomains             []string
 	PasswordMinComplexity       int
+	PasswordChangeLogout        bool
 	RefreshTokenTTL             time.Duration
 	RedisURL                    *url.URL
 	DatabaseURL                 *url.URL
@@ -185,6 +186,16 @@ var configurers = []configurer{
 		minScore, err := lookupInt("PASSWORD_POLICY_SCORE", 2)
 		if err == nil {
 			c.PasswordMinComplexity = minScore
+		}
+		return err
+	},
+
+	// PASSWORD_CHANGE_LOGOUT will enable a behavior where password resets and updates cause other
+	// devices to be logged out.
+	func(c *Config) error {
+		passwordChangeLogout, err := lookupBool("PASSWORD_CHANGE_LOGOUT", false)
+		if err == nil {
+			c.PasswordChangeLogout = passwordChangeLogout
 		}
 		return err
 	},

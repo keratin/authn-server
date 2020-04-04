@@ -68,7 +68,7 @@ Example:
 ```
 
 Errors might also arise when sending unsupported `Content-Type` headers, or improperly formatted JSON/Form content. In this
-case the error message will result in a slightly different payload, accompanied by `400` or `415` Http errors: 
+case the error message will result in a slightly different payload, accompanied by `400` or `415` Http errors:
 
 ```json
 {
@@ -78,9 +78,9 @@ case the error message will result in a slightly different payload, accompanied 
 
 ## Endpoints
 
-All PUT / PATCH / POST endpoints support either JSON (`application/json`) or Form (`application/x-www-form-urlencoded`) 
-encoded requests, depending on which `Content-Type` is found in the request headers. For backwards compatibility, 
-Authn-Server will try parsing a Form request body when no `Content-Type` is set. 
+All PUT / PATCH / POST endpoints support either JSON (`application/json`) or Form (`application/x-www-form-urlencoded`)
+encoded requests, depending on which `Content-Type` is found in the request headers. For backwards compatibility,
+Authn-Server will try parsing a Form request body when no `Content-Type` is set.
 
 ### Signup
 
@@ -493,6 +493,10 @@ Visibility: Public
 
 `POST /password`
 
+Handles password resets (with token) and password changes (with session).
+
+When [`PASSWORD_CHANGE_LOGOUT`](config.md#password_change_logout) is enabled, all existing sessions for the account will be expired before creating a new session on the current device.
+
 | Params | Type | Notes |
 | ------ | ---- | ----- |
 | `password` | string | Must meet minimum complexity scoring per [zxcvbn](https://blogs.dropbox.com/tech/2012/04/zxcvbn-realistic-password-strength-estimation/). |
@@ -564,16 +568,16 @@ Visibility: Public
 | ------ | ---- | ----- |
 | `password` | string | password to be checked for zxcvbn score |
 
-Returns the zxcvbn score and required score set for [`PASSWORD_POLICY_SCORE`](config.md#password_policy_score) for a given password 
+Returns the zxcvbn score and required score set for [`PASSWORD_POLICY_SCORE`](config.md#password_policy_score) for a given password
 
 #### Success:
 
     200 Ok
-    
+
     {
       "result": {
         "score": 3,
-        "requiredScore": 2 
+        "requiredScore": 2
       }
     }
 
