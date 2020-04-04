@@ -4,6 +4,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+## 1.9.0
+
 ### Added
 
 * endpoint for checking zxcvbn password score [#149]
