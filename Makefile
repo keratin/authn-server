@@ -9,7 +9,7 @@ clean:
 	rm -rf dist
 
 init:
-	which -s ego || go get github.com/benbjohnson/ego/cmd/ego
+	which ego > /dev/null || go get github.com/benbjohnson/ego/cmd/ego
 	ego server/views
 
 # The Linux builder is a Docker container because that's the easiest way to get the toolchain for
