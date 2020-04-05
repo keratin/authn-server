@@ -31,12 +31,16 @@ dist/authn-linux64: init
 		"
 	bzip2 -c "$@" > dist/authn-linux64.bz2
 
-# The Darwin target is built using the host machine, which this Makefile assumes is running MacOS.
+# The Darwin target is built using the host machine. Only runs on a MacOS host.
 dist/authn-macos64: init
+ifeq ($(shell uname -s),Darwin)
 	GOOS=darwin GOARCH=amd64 CGO_ENABLED=1 go build -ldflags "-X main.VERSION=$(VERSION)" -o "$@"
 	bzip2 -c "$@" > dist/authn-macos64.bz2
+endif
 
-# The Windows target is built using a MacOS host machine with `brew install mingw-w64`
+# The Windows target is built using Mingw-w64.
+# MacOS: brew install mingw-w64
+# Linux: apt install mingw-w64
 dist/authn-windows64.exe: init
 	GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -ldflags '-X main.VERSION=$(VERSION)' -o '$@'
 
