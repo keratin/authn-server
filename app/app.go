@@ -98,6 +98,9 @@ func NewApp(cfg *Config, logger logrus.FieldLogger) (*App, error) {
 	if cfg.DiscordOauthCredentials != nil {
 		oauthProviders["discord"] = *oauth.NewDiscordProvider(cfg.DiscordOauthCredentials)
 	}
+	if cfg.MicrosoftOauthCredientials != nil {
+		oauthProviders["microsoft"] = *oauth.NewMicrosoftProvider(cfg.MicrosoftOauthCredientials)
+	}
 
 	return &App{
 		// Provide access to root DB - useful when extending AccountStore functionality

@@ -70,6 +70,7 @@ type Config struct {
 	GitHubOauthCredentials      *oauth.Credentials
 	FacebookOauthCredentials    *oauth.Credentials
 	DiscordOauthCredentials     *oauth.Credentials
+	MicrosoftOauthCredientials  *oauth.Credentials
 }
 
 // OAuthEnabled returns true if any provider is configured.
@@ -77,7 +78,8 @@ func (c *Config) OAuthEnabled() bool {
 	return c.GoogleOauthCredentials != nil ||
 		c.GitHubOauthCredentials != nil ||
 		c.FacebookOauthCredentials != nil ||
-		c.DiscordOauthCredentials != nil
+		c.DiscordOauthCredentials != nil ||
+		c.MicrosoftOauthCredientials != nil
 }
 
 // SameSiteComputed returns either the specified http.SameSite, or a computed one from OAuth config
@@ -558,6 +560,19 @@ var configurers = []configurer{
 			credentials, err := oauth.NewCredentials(val)
 			if err == nil {
 				c.DiscordOauthCredentials = credentials
+			}
+			return err
+		}
+		return nil
+	},
+
+	// Microsoft_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
+	// AuthN will enable routes for Discord OAuth signin.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("MICROSOFT_OAUTH_CREDENTIALS"); ok {
+			credentials, err := oauth.NewCredentials(val)
+			if err == nil {
+				c.MicrosoftOauthCredientials = credentials
 			}
 			return err
 		}
