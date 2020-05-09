@@ -4,6 +4,10 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+### Added
+
+* OAuth through Microsoft [#155]
+
 ## 1.9.0
 
 ### Added
