@@ -1,7 +1,7 @@
 ORG := keratin
 PROJECT := authn-server
 NAME := $(ORG)/$(PROJECT)
-VERSION := 1.10.0
+VERSION := 1.10.1
 MAIN := main.go
 
 .PHONY: clean
@@ -97,11 +97,12 @@ migrate:
 
 # Cut a release of the current version.
 .PHONY: release
-release: test dist
+release: dist
 	docker push $(NAME):latest
 	docker tag $(NAME):latest $(NAME):$(VERSION)
 	docker push $(NAME):$(VERSION)
+	git push
 	git tag v$(VERSION)
 	git push --tags
-	open https://github.com/$(NAME)/releases/tag/v$(VERSION)
-	open dist
+	xdg-open https://github.com/$(NAME)/releases/tag/v$(VERSION)
+	xdg-open dist
