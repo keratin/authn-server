@@ -38,8 +38,12 @@ func WebhookSender(destination *url.URL, values *url.Values, schedule []time.Dur
 		return fmt.Errorf("URL unconfigured")
 	}
 
+	c := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
 	err := retry(schedule, func() error {
-		res, err := http.PostForm(destination.String(), *values)
+		res, err := c.PostForm(destination.String(), *values)
 		if err == nil && res.StatusCode > 299 {
 			return fmt.Errorf("Status Code: %v", res.StatusCode)
 		}
