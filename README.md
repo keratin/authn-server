@@ -58,6 +58,6 @@ To build a Docker image for integration testing:
 
 ## COPYRIGHT & LICENSE
 
-Copyright (c) 2016-2018 Lance Ivy
+Copyright (c) 2016-2020 Lance Ivy
 
 Keratin AuthN is distributed under the terms of the LGPLv3. See [LICENSE-LGPLv3](LICENSE-LGPLv3) for details.
