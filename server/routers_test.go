@@ -2,6 +2,7 @@ package server_test
 
 import (
 	"fmt"
+	"net/http"
 	"net/http/httptest"
 	"testing"
 
@@ -19,6 +20,10 @@ func TestCORS(t *testing.T) {
 	defer server.Close()
 
 	client := route.NewClient(server.URL)
+	client = client.With(func(req *http.Request) *http.Request {
+		req.Header.Add("Access-Control-Request-Headers", "content-type")
+		return req
+	})
 	res, err := client.Preflight(&domain, "PATCH", "/path")
 	require.NoError(t, err)
 

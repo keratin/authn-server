@@ -1,9 +1,10 @@
 package cors
 
 import (
+	"net/http"
+
 	"github.com/gorilla/handlers"
 	"github.com/keratin/authn-server/app"
-	"net/http"
 )
 
 func Middleware(app *app.App) func(http.Handler) http.Handler {
@@ -13,6 +14,7 @@ func Middleware(app *app.App) func(http.Handler) http.Handler {
 			handlers.AllowCredentials(),
 			handlers.AllowedOrigins([]string{}), // see: https://github.com/gorilla/handlers/issues/117
 			handlers.AllowedOriginValidator(OriginValidator(app.Config.ApplicationDomains)),
+			handlers.AllowedHeaders([]string{"content-type"}),
 		)(h)
 	}
 }

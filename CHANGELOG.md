@@ -4,6 +4,10 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+### Fixed
+
+* CORS configuration allows content-type header
+
 ## 1.10.1
 
 ### Fixed
