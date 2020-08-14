@@ -11,7 +11,7 @@ This repository builds a backend Go service that provides secured endpoints rela
 
 Client libraries are currently available for:
 
-* Backends: [Ruby](https://github.com/keratin/authn-rb) • [Go](https://github.com/keratin/authn-go)
+* Backends: [Ruby](https://github.com/keratin/authn-rb) • [Go](https://github.com/keratin/authn-go) • [NodeJS](https://github.com/keratin/authn-node)
 * Frontends: [JavaScript](https://github.com/keratin/authn-js)
 
 If you are missing a client library, please [submit a request](https://github.com/keratin/authn-server/issues).
