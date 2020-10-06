@@ -17,6 +17,18 @@ jobs:
           --health-retries 5
         ports:
           - 6379:6379
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v2
@@ -35,3 +47,4 @@ jobs:
             ./...
         env:
           TEST_REDIS_URL: redis://localhost:6379/1
+          TEST_POSTGRES_URL: postgres://test:password@localhost:5432/test?sslmode=disable
