@@ -15,28 +15,23 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_PASSWORD: keratin
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      mysql:
-        image: mysql
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+        ports:
+          - 6379:6379
 
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
           go-version: ^1.15
-      - run: go versionn
+      - run: go version
+      - run: go mod download
+
+      - name: Run tests
+        run: |
+          go test \
+            -race \
+            -covermode=atomic \
+            -coverprofile=coverage.out \
+            ./...
+        env:
+          TEST_REDIS_URL: redis://localhost:6379/1
