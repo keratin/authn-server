@@ -61,3 +61,8 @@ jobs:
           TEST_REDIS_URL: redis://localhost:6379/1
           TEST_POSTGRES_URL: postgres://test:password@localhost:5432/test?sslmode=disable
           TEST_MYSQL_URL: mysql://localhost:3306/test
+
+      - name: Report coverage
+        uses: shogo82148/actions-goveralls@v1
+        with:
+          path-to-profile: coverage.out
