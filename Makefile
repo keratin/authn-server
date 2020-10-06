@@ -70,14 +70,6 @@ test: init
 	  TEST_POSTGRES_URL=postgres://postgres@127.0.0.1:8703/postgres?sslmode=disable \
 	  go test -race ./...
 
-# Run CI tests
-.PHONY: test-ci
-test-ci: init
-	TEST_REDIS_URL=redis://127.0.0.1/1 \
-	  TEST_MYSQL_URL=mysql://root@127.0.0.1/test \
-	  TEST_POSTGRES_URL=postgres://postgres@127.0.0.1/postgres?sslmode=disable \
-	  go test -covermode=count -coverprofile=coverage.out ./...
-
 # Run benchmarks
 .PHONY: benchmarks
 benchmarks:
