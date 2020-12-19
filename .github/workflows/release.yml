@@ -8,7 +8,7 @@ on: push
 
 jobs:
   linux64:
-    name: Compile for Linux64
+    name: Compile for Linux
     runs-on: ubuntu-latest
 
     steps:
@@ -18,15 +18,13 @@ jobs:
           go-version: ^1.15
       - run: go mod download
 
-      - name: release version
-        run: echo ${GITHUB_REF}
-
       - name: compile
         run: |
           go build \
-            -ldflags '-extldflags -static -X main.VERSION=${GITHUB_REF}' \
+            -ldflags '-extldflags -static -X main.VERSION=${VERSION}' \
             -o dist/authn-linux64
         env:
+          VERSION: ${{ github.ref }}
           GOOS: linux
           GOARCH: amd64
           CGO_ENABLED: 1
@@ -38,7 +36,7 @@ jobs:
           path: dist/authn-linux64
 
   windows64:
-    name: Compile for Windows64
+    name: Compile for Windows
     runs-on: ubuntu-latest
 
     steps:
@@ -52,9 +50,10 @@ jobs:
       - name: compile
         run: |
           go build \
-            -ldflags '-X main.VERSION=$(VERSION)' \
+            -ldflags '-X main.VERSION=${VERSION}' \
             -o dist/authn-windows64
         env:
+          VERSION: ${{ github.ref }}
           GOOS: windows
           GOARCH: amd64
           CGO_ENABLED: 1
@@ -65,3 +64,31 @@ jobs:
         with:
           name: authn-windows64
           path: dist/authn-windows64
+
+  macos64:
+    name: Compile for MacOS
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ^1.15
+      - run: go mod download
+
+      - name: compile
+        run: |
+          go build \
+            -ldflags "-X main.VERSION=${VERSION}" \
+            -o dist/authn-macos64
+        env:
+          VERSION: ${{ github.ref }}
+          GOOS: darwin
+          GOARCH: amd64
+          CGO_ENABLED: 1
+
+      # TODO: add to release
+      - uses: actions/upload-artifact@v2
+        with:
+          name: authn-macos64
+          path: dist/authn-macos64
