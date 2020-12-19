@@ -1,0 +1,180 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  linux64:
+    name: Compile for Linux
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ^1.15
+      - run: go mod download
+
+      - name: compile
+        run: |
+          go build \
+            -ldflags '-extldflags -static -X main.VERSION=${VERSION##*/v}' \
+            -o dist/authn-linux64
+        env:
+          VERSION: ${{ github.ref }}
+          GOOS: linux
+          GOARCH: amd64
+          CGO_ENABLED: 1
+
+      - name: compress
+        run: |
+          bzip2 -c dist/authn-linux64 > dist/authn-linux64.bz2
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: authn-linux64.bz2
+          path: dist/authn-linux64.bz2
+
+  windows64:
+    name: Compile for Windows
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ^1.15
+      - run: go mod download
+      - run: sudo apt install mingw-w64
+
+      - name: compile
+        run: |
+          go build \
+            -ldflags '-X main.VERSION=${VERSION##*/v}' \
+            -o dist/authn-windows64.exe
+        env:
+          VERSION: ${{ github.ref }}
+          GOOS: windows
+          GOARCH: amd64
+          CGO_ENABLED: 1
+          CC: x86_64-w64-mingw32-gcc
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: authn-windows64.exe
+          path: dist/authn-windows64.exe
+
+  macos64:
+    name: Compile for MacOS
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ^1.15
+      - run: go mod download
+
+      - name: compile
+        run: |
+          go build \
+            -ldflags "-X main.VERSION=${VERSION##*/v}" \
+            -o dist/authn-macos64
+        env:
+          VERSION: ${{ github.ref }}
+          GOOS: darwin
+          GOARCH: amd64
+          CGO_ENABLED: 1
+
+      - name: compress
+        run: |
+          bzip2 -c dist/authn-macos64 > dist/authn-macos64.bz2
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: authn-macos64.bz2
+          path: dist/authn-macos64.bz2
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [linux64, windows64, macos64]
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: true
+
+      - name: Upload Linux64
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./authn-linux64.bz2/authn-linux64.bz2
+          asset_name: authn-linux64.bz2
+          asset_content_type: application/x-bzip2
+
+      - name: Upload Windows64
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./authn-windows64.exe/authn-windows64.exe
+          asset_name: authn-windows64.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
+
+      - name: Upload Macos64
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./authn-macos64.bz2/authn-macos64.bz2
+          asset_name: authn-macos64.bz2
+          asset_content_type: application/x-bzip2
+
+  register:
+    name: Register on Docker Hub
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - name: Get Dockerfile
+        uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: authn-linux64.bz2
+
+      - name: Uncompress
+        run: |
+          bzip2 -d authn-linux64.bz2
+          mkdir dist
+          mv authn-linux64 dist
+
+      - name: VERSION
+        id: version
+        run: |
+          echo "::set-output name=number::${VERSION##*/v}"
+        env:
+          VERSION: ${{ github.ref }}
+
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v1
+        with:
+          repository: keratin/authn-server
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          tags: latest,${{ steps.version.outputs.number }}
