@@ -164,12 +164,6 @@ jobs:
           mkdir dist
           mv authn-linux64 dist
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
       - name: VERSION
         id: version
         run: |
@@ -178,9 +172,9 @@ jobs:
           VERSION: ${{ github.ref }}
 
       - name: Push to Docker Hub
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v1
         with:
-          push: true
-          tags: |
-            keratin/authn-server:latest
-            keratin/authn-server:${{ steps.version.outputs.number }}
+          repository: keratin/authn-server
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          tags: latest,${{ steps.version.outputs.number }}
