@@ -1,10 +1,9 @@
 name: Release
 
-# TODO
-# on:
-#   release:
-#     types: [created]
-on: push
+on:
+  push:
+    tags:
+      - "v*"
 
 jobs:
   linux64:
@@ -21,7 +20,7 @@ jobs:
       - name: compile
         run: |
           go build \
-            -ldflags '-extldflags -static -X main.VERSION=${VERSION}' \
+            -ldflags '-extldflags -static -X main.VERSION=${VERSION:1}' \
             -o dist/authn-linux64
         env:
           VERSION: ${{ github.ref }}
@@ -50,7 +49,7 @@ jobs:
       - name: compile
         run: |
           go build \
-            -ldflags '-X main.VERSION=${VERSION}' \
+            -ldflags '-X main.VERSION=${VERSION:1}' \
             -o dist/authn-windows64
         env:
           VERSION: ${{ github.ref }}
@@ -79,7 +78,7 @@ jobs:
       - name: compile
         run: |
           go build \
-            -ldflags "-X main.VERSION=${VERSION}" \
+            -ldflags "-X main.VERSION=${VERSION:1}" \
             -o dist/authn-macos64
         env:
           VERSION: ${{ github.ref }}
