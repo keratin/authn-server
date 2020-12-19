@@ -30,3 +30,38 @@ jobs:
           GOOS: linux
           GOARCH: amd64
           CGO_ENABLED: 1
+
+      # TODO: add to release
+      - uses: actions/upload-artifact@v2
+        with:
+          name: authn-linux64
+          path: dist/authn-linux64
+
+  windows64:
+    name: Compile for Windows64
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ^1.15
+      - run: go mod download
+      - run: sudo apt install mingw-w64
+
+      - name: compile
+        run: |
+          go build \
+            -ldflags '-X main.VERSION=$(VERSION)' \
+            -o dist/authn-windows64
+        env:
+          GOOS: windows
+          GOARCH: amd64
+          CGO_ENABLED: 1
+          CC: x86_64-w64-mingw32-gcc
+
+      # TODO: add to release
+      - uses: actions/upload-artifact@v2
+        with:
+          name: authn-windows64
+          path: dist/authn-windows64
