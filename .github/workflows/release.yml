@@ -115,7 +115,6 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
           draft: true
-          prerelease: true # TODO: toggle before merge
 
       - name: Upload Linux64
         uses: actions/upload-release-asset@v1
@@ -146,3 +145,42 @@ jobs:
           asset_path: ./authn-macos64.bz2/authn-macos64.bz2
           asset_name: authn-macos64.bz2
           asset_content_type: application/x-bzip2
+
+  register:
+    name: Register on Docker Hub
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - name: Get Dockerfile
+        uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: authn-linux64.bz2
+
+      - name: Uncompress
+        run: |
+          bzip2 -d authn-linux64.bz2
+          mkdir dist
+          mv authn-linux64 dist
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: VERSION
+        id: version
+        run: |
+          echo "::set-output name=number::${VERSION:1}"
+        env:
+          VERSION: ${{ github.ref }}
+
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: |
+            keratin/authn-server:latest
+            keratin/authn-server:${{ steps.version.outputs.number }}
