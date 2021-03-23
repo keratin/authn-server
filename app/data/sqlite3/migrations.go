@@ -13,6 +13,7 @@ func MigrateDB(db *sqlx.DB) error {
 		createBlobs,
 		createOauthAccounts,
 		createAccountLastLoginAtField,
+		caseInsensitiveUsername,
 	}
 	for _, m := range migrations {
 		if err := m(db); err != nil {
@@ -87,6 +88,39 @@ func createOauthAccounts(db *sqlx.DB) error {
 func createAccountLastLoginAtField(db *sqlx.DB) error {
 	_, err := db.Exec(`
         ALTER TABLE accounts ADD last_login_at DATETIME
+    `)
+	return err
+}
+
+// caseInsensitiveUsername will migrate the accounts table to use COLLATE NOCASE on username.
+// this will fail if the current accounts table has existing usernames that are equal after
+// the operation.
+func caseInsensitiveUsername(db *sqlx.DB) error {
+	_, err := db.Exec(`
+        BEGIN TRANSACTION;
+
+        ALTER TABLE accounts RENAME TO accounts_old;
+
+        CREATE TABLE accounts (
+            id INTEGER PRIMARY KEY,
+            username TEXT NOT NULL COLLATE NOCASE CONSTRAINT uniq UNIQUE,
+            password TEXT NOT NULL,
+            locked BOOLEAN NOT NULL,
+            require_new_password BOOLEAN NOT NULL,
+            password_changed_at DATETIME NOT NULL,
+            created_at DATETIME NOT NULL,
+            updated_at DATETIME NOT NULL,
+            deleted_at DATETIME,
+            last_login_at DATETIME
+        );
+
+        INSERT INTO accounts(id, username, password, locked, require_new_password, password_changed_at, created_at, updated_at, deleted_at, last_login_at)
+        SELECT id, username, password, locked, require_new_password, password_changed_at, created_at, updated_at, deleted_at, last_login_at
+        FROM accounts_old;
+
+        DROP TABLE accounts_old;
+
+        COMMIT;
     `)
 	return err
 }
