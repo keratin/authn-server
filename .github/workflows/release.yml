@@ -20,7 +20,7 @@ jobs:
       - name: compile
         run: |
           go build \
-            -ldflags '-extldflags -static -X main.VERSION=${VERSION##*/v}' \
+            -ldflags "-extldflags -static -X main.VERSION=${VERSION##*/v}" \
             -o dist/authn-linux64
         env:
           VERSION: ${{ github.ref }}
@@ -52,7 +52,7 @@ jobs:
       - name: compile
         run: |
           go build \
-            -ldflags '-X main.VERSION=${VERSION##*/v}' \
+            -ldflags "-X main.VERSION=${VERSION##*/v}" \
             -o dist/authn-windows64.exe
         env:
           VERSION: ${{ github.ref }}
