@@ -1,3 +1,4 @@
+include .env
 ORG := keratin
 PROJECT := authn-server
 NAME := $(ORG)/$(PROJECT)
@@ -26,7 +27,7 @@ test: init
 	docker-compose up -d redis mysql postgres
 	TEST_REDIS_URL=redis://127.0.0.1:8701/12 \
 	  TEST_MYSQL_URL=mysql://root@127.0.0.1:8702/authnservertest \
-	  TEST_POSTGRES_URL=postgres://postgres@127.0.0.1:8703/postgres?sslmode=disable \
+	  TEST_POSTGRES_URL=postgres://$(DB_USERNAME):$(DB_PASSWORD)@127.0.0.1:8703/postgres?sslmode=disable \
 	  go test -race ./...
 
 # Run benchmarks

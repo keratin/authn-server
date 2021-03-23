@@ -3,12 +3,12 @@ services:
   redis:
     image: redis
     ports:
-      - "8701:6379"
+      - "${REDIS_PORT:-8701}:6379"
 
   mysql:
     image: mysql:5.7
     ports:
-      - "8702:3306"
+      - "${MYSQL_PORT:-8702}:3306"
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_ROOT_PASSWORD
@@ -16,10 +16,10 @@ services:
   postgres:
     image: postgres:9.6
     ports:
-      - "8703:5432"
+      - "${POSTGRES_PORT:-8703}:5432"
     environment:
-      - POSTGRES_PASSWORD
-      - POSTGRES_USER
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_DB
 
   server:
