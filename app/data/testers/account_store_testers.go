@@ -53,6 +53,14 @@ func testCreate(t *testing.T, store data.AccountStore) {
 		t.Errorf("expected uniqueness error, got %T %v", err, err)
 	}
 
+	account, err = store.Create("AUTHN@KERATIN.TECH", []byte("password"))
+	if account != nil {
+		assert.NotEqual(t, nil, account)
+	}
+	if !data.IsUniquenessError(err) {
+		t.Errorf("expected uniqueness error, got %T %v", err, err)
+	}
+
 	// Assert that db connections are released to pool
 	assert.Equal(t, 1, getOpenConnectionCount(store))
 }
@@ -66,6 +74,10 @@ func testFindByUsername(t *testing.T, store data.AccountStore) {
 	require.NoError(t, err)
 
 	account, err = store.FindByUsername("authn@keratin.tech")
+	assert.NoError(t, err)
+	assert.NotNil(t, account)
+
+	account, err = store.FindByUsername("AUTHN@KERATIN.TECH")
 	assert.NoError(t, err)
 	assert.NotNil(t, account)
 
