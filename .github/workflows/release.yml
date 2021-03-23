@@ -22,6 +22,7 @@ jobs:
           go build \
             -ldflags "-extldflags -static -X main.VERSION=${VERSION##*/v}" \
             -o dist/authn-linux64
+          chmod a+x dist/authn-linux64
         env:
           VERSION: ${{ github.ref }}
           GOOS: linux
@@ -82,6 +83,7 @@ jobs:
           go build \
             -ldflags "-X main.VERSION=${VERSION##*/v}" \
             -o dist/authn-macos64
+          chmod a+x dist/authn-macos64
         env:
           VERSION: ${{ github.ref }}
           GOOS: darwin
