@@ -150,6 +150,9 @@ jobs:
         with:
           name: authn-linux64
 
+      - run: |
+          chmod a+x authn-linux64
+
       - name: VERSION
         id: version
         run: |
