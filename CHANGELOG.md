@@ -4,6 +4,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+## 1.10.3
+
+### Fixed
+
+* Usernames are now case insensitive on Postgres and SQLite. This requires a migration that can fail if the existing database has unintended duplicates! [#170]
+
 ## 1.10.2
 
 ### Fixed
