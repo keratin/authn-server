@@ -20,7 +20,7 @@ jobs:
       - name: compile
         run: |
           go build \
-            -ldflags '-extldflags -static -X main.VERSION=${VERSION##*/v}' \
+            -ldflags "-extldflags -static -X main.VERSION=${VERSION##*/v}" \
             -o dist/authn-linux64
         env:
           VERSION: ${{ github.ref }}
@@ -28,14 +28,10 @@ jobs:
           GOARCH: amd64
           CGO_ENABLED: 1
 
-      - name: compress
-        run: |
-          bzip2 -c dist/authn-linux64 > dist/authn-linux64.bz2
-
       - uses: actions/upload-artifact@v2
         with:
-          name: authn-linux64.bz2
-          path: dist/authn-linux64.bz2
+          name: authn-linux64
+          path: dist/authn-linux64
 
   windows64:
     name: Compile for Windows
@@ -52,7 +48,7 @@ jobs:
       - name: compile
         run: |
           go build \
-            -ldflags '-X main.VERSION=${VERSION##*/v}' \
+            -ldflags "-X main.VERSION=${VERSION##*/v}" \
             -o dist/authn-windows64.exe
         env:
           VERSION: ${{ github.ref }}
@@ -88,14 +84,10 @@ jobs:
           GOARCH: amd64
           CGO_ENABLED: 1
 
-      - name: compress
-        run: |
-          bzip2 -c dist/authn-macos64 > dist/authn-macos64.bz2
-
       - uses: actions/upload-artifact@v2
         with:
-          name: authn-macos64.bz2
-          path: dist/authn-macos64.bz2
+          name: authn-macos64
+          path: dist/authn-macos64
 
   release:
     name: Create Release
@@ -122,9 +114,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./authn-linux64.bz2/authn-linux64.bz2
-          asset_name: authn-linux64.bz2
-          asset_content_type: application/x-bzip2
+          asset_path: ./authn-linux64/authn-linux64
+          asset_name: authn-linux64
+          asset_content_type: application/octet-stream
 
       - name: Upload Windows64
         uses: actions/upload-release-asset@v1
@@ -142,9 +134,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./authn-macos64.bz2/authn-macos64.bz2
-          asset_name: authn-macos64.bz2
-          asset_content_type: application/x-bzip2
+          asset_path: ./authn-macos64/authn-macos64
+          asset_name: authn-macos64
+          asset_content_type: application/octet-stream
 
   register:
     name: Register on Docker Hub
@@ -156,13 +148,10 @@ jobs:
 
       - uses: actions/download-artifact@v2
         with:
-          name: authn-linux64.bz2
+          name: authn-linux64
 
-      - name: Uncompress
-        run: |
-          bzip2 -d authn-linux64.bz2
-          mkdir dist
-          mv authn-linux64 dist
+      - run: |
+          chmod a+x authn-linux64
 
       - name: VERSION
         id: version
