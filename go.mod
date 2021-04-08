@@ -17,7 +17,7 @@ require (
 	github.com/gorilla/schema v1.1.0
 	github.com/jmoiron/sqlx v0.0.0-20170430194603-d9bd385d68c0
 	github.com/joho/godotenv v1.2.0
-	github.com/lib/pq v0.0.0-20180327071824-d34b9ff171c2
+	github.com/lib/pq v1.10.0
 	github.com/mattn/go-sqlite3 v1.6.0
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/pkg/errors v0.8.1
