@@ -4,6 +4,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+## 1.10.4
+
+### Fixed
+
+* Broken pipe error on Postgres [#174]
+
 ## 1.10.3
 
 ### Fixed
