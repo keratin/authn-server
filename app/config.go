@@ -116,7 +116,7 @@ var configurers = []configurer{
 	//
 	// example: https://app.domain.com/authn
 	func(c *Config) error {
-		val, err := lookupURL("AUTHN_URL")
+		val, err := LookupURL("AUTHN_URL")
 		if err == nil {
 			if val == nil {
 				return ErrMissingEnvVar("AUTHN_URL")
@@ -207,7 +207,7 @@ var configurers = []configurer{
 	//
 	// Example: sqlite3://localhost/authn-go
 	func(c *Config) error {
-		val, err := lookupURL("DATABASE_URL")
+		val, err := LookupURL("DATABASE_URL")
 		if err == nil {
 			if val == nil {
 				return ErrMissingEnvVar("DATABASE_URL")
@@ -222,7 +222,7 @@ var configurers = []configurer{
 	//
 	// Example: redis://127.0.0.1:6379/11
 	func(c *Config) error {
-		val, err := lookupURL("REDIS_URL")
+		val, err := LookupURL("REDIS_URL")
 		if err == nil {
 			c.RedisURL = val
 		}
@@ -351,7 +351,7 @@ var configurers = []configurer{
 	// For security, this URL should specify https and include a basic auth username
 	// and password.
 	func(c *Config) error {
-		val, err := lookupURL("APP_PASSWORD_CHANGED_URL")
+		val, err := LookupURL("APP_PASSWORD_CHANGED_URL")
 		if err == nil && val != nil {
 			c.AppPasswordChangedURL = val
 		}
@@ -365,7 +365,7 @@ var configurers = []configurer{
 	// For security, this URL should specify https and include a basic auth username
 	// and password.
 	func(c *Config) error {
-		val, err := lookupURL("APP_PASSWORD_RESET_URL")
+		val, err := LookupURL("APP_PASSWORD_RESET_URL")
 		if err == nil && val != nil {
 			c.AppPasswordResetURL = val
 		}
@@ -379,7 +379,7 @@ var configurers = []configurer{
 	// For security, this URL should specify https and include a basic auth username
 	// and password.
 	func(c *Config) error {
-		val, err := lookupURL("APP_PASSWORDLESS_TOKEN_URL")
+		val, err := LookupURL("APP_PASSWORDLESS_TOKEN_URL")
 		if err == nil && val != nil {
 			c.AppPasswordlessTokenURL = val
 		}

@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"net/url"
 	"os"
 	"regexp"
@@ -37,9 +38,16 @@ func lookupBool(name string, def bool) (bool, error) {
 	return def, nil
 }
 
-func lookupURL(name string) (*url.URL, error) {
+func LookupURL(name string) (*url.URL, error) {
 	if val, ok := os.LookupEnv(name); ok {
-		return url.Parse(val)
+		url, err := url.ParseRequestURI(val)
+		if err == nil {
+			if url.Scheme != "http" && url.Scheme != "https" {
+				return nil, fmt.Errorf("unsupported URL: %v", val)
+			}
+			return url, nil
+		}
+		return nil, err
 	}
 	return nil, nil
 }

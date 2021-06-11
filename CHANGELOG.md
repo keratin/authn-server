@@ -4,6 +4,10 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+### Fixed
+
+* Improved validation for AUTHN_URL and other ENV url values [#178]
+
 ## 1.10.4
 
 ### Fixed
