@@ -19,7 +19,7 @@
 |           |    |
 | --------- | --- |
 | Required? | Yes |
-| Value | URL |
+| Value | URL. Must include scheme (http:// or https://) |
 
 This specifies the base URL of the AuthN service. It will be embedded in all issued JWTs as the `iss`. Clients will depend on this information to find and fetch the service's public key when verifying JWTs.
 
