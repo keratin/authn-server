@@ -1,3 +1,5 @@
+// +build !nocgo
+
 package sqlite3
 
 import (
