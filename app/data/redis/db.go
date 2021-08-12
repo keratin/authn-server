@@ -4,12 +4,22 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"strings"
 
 	"github.com/go-redis/redis"
 )
 
 func New(url *url.URL) (*redis.Client, error) {
 	return newFromString(url.String())
+}
+
+func NewSentinel(redisSentinelMaster string, redisSentinelNodes string, redisSentinelPassword string) (*redis.Client, error) {
+	sentinelAddressSlice := strings.Split(redisSentinelNodes, ";")
+	return redis.NewFailoverClient(&redis.FailoverOptions{
+		MasterName:    redisSentinelMaster,
+		SentinelAddrs: sentinelAddressSlice,
+		Password:      redisSentinelPassword,
+	}), nil
 }
 
 // TODO: move to _test

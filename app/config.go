@@ -41,6 +41,10 @@ type Config struct {
 	PasswordChangeLogout        bool
 	RefreshTokenTTL             time.Duration
 	RedisURL                    *url.URL
+	RedisIsSentinelMode         bool
+	RedisSentinelMaster         string
+	RedisSentinelNodes          string
+	RedisSentinelPassword       string
 	DatabaseURL                 *url.URL
 	SessionCookieName           string
 	OAuthCookieName             string
@@ -227,6 +231,49 @@ var configurers = []configurer{
 			c.RedisURL = val
 		}
 		return err
+	},
+
+	// REDIS_IS_SENTINEL_MODE is a flag which indicates whether sentinel mode is used
+	// It could be setted to an empty string, so ignore err
+	// Example: "on" or "off"
+	func(c *Config) error {
+		val, err := requireEnv("REDIS_IS_SENTINEL_MODE")
+		if err == nil {
+			c.RedisIsSentinelMode = val
+		}
+		return nil
+	},
+
+	// REDIS_SENTINEL_MASTER is the master name of redis server in sentinel mode
+	// It could be setted to an empty string, so ignore err
+	func(c *Config) error {
+		val, err := requireEnv("REDIS_SENTINEL_MASTER")
+		if err == nil {
+			c.RedisSentinelMaster = val
+		}
+		return nil
+	},
+
+	// REDIS_SENTINEL_NODES is the address list of redis sentinel node in sentinel mode
+	// REDIS_SENTINEL_NODES contains some address splited by ","
+	// It could be setted to an empty string, so ignore err
+	// Example: "127.0.0.1:26379,127.0.0.1:26380,127.0.0.1:26381"
+	func(c *Config) error {
+		val, err := requireEnv("REDIS_SENTINEL_NODES")
+		if err == nil {
+			c.RedisSentinelNodes = val
+		}
+		return nil
+	},
+
+	// REDIS_SENTINEL_PASSWORD is the password of master node in sentinel mode in redis
+	// It could be setted to an empty string, so ignore err
+	func(c *Config) error {
+		val, err := requireEnv("REDIS_SENTINEL_PASSWORD")
+		if err == nil {
+			c.RedisSentinelPassword = val
+		}
+		return nil
 	},
 
 	// USERNAME_IS_EMAIL is a truthy string ("t", "true", "yes") that enables the
