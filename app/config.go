@@ -235,11 +235,11 @@ var configurers = []configurer{
 
 	// REDIS_IS_SENTINEL_MODE is a flag which indicates whether sentinel mode is used
 	// It could be setted to an empty string, so ignore err
-	// Example: "on" or "off"
+	// Example: "true" or "false"
 	func(c *Config) error {
 		val, err := requireEnv("REDIS_IS_SENTINEL_MODE")
-		if err == nil {
-			c.RedisIsSentinelMode = val
+		if err == nil && val == "true" {
+			c.RedisIsSentinelMode = true
 		}
 		return nil
 	},
