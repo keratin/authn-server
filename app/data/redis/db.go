@@ -14,7 +14,7 @@ func New(url *url.URL) (*redis.Client, error) {
 }
 
 func NewSentinel(redisSentinelMaster string, redisSentinelNodes string, redisSentinelPassword string) (*redis.Client, error) {
-	sentinelAddressSlice := strings.Split(redisSentinelNodes, ";")
+	sentinelAddressSlice := strings.Split(redisSentinelNodes, ",")
 	return redis.NewFailoverClient(&redis.FailoverOptions{
 		MasterName:    redisSentinelMaster,
 		SentinelAddrs: sentinelAddressSlice,
