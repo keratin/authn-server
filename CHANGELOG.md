@@ -4,9 +4,11 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+## 1.11.0
+
 ### Added
 
-* Support for Redis Sentinel
+* Support for Redis Sentinel [#181]
 
 ### Fixed
 
