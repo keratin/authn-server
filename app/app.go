@@ -37,7 +37,12 @@ func NewApp(cfg *Config, logger logrus.FieldLogger) (*App, error) {
 	}
 
 	var redis *redis.Client
-	if cfg.RedisURL != nil {
+	if cfg.RedisIsSentinelMode {
+		redis, err = dataRedis.NewSentinel(cfg.RedisSentinelMaster, cfg.RedisSentinelNodes, cfg.RedisSentinelPassword)
+		if err != nil {
+			return nil, errors.Wrap(err, "redis.NewSentinel")
+		}
+	} else if cfg.RedisURL != nil {
 		redis, err = dataRedis.New(cfg.RedisURL)
 		if err != nil {
 			return nil, errors.Wrap(err, "redis.New")

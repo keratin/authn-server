@@ -42,7 +42,7 @@ func LookupURL(name string) (*url.URL, error) {
 	if val, ok := os.LookupEnv(name); ok {
 		url, err := url.ParseRequestURI(val)
 		if err == nil {
-			if url.Scheme != "http" && url.Scheme != "https" {
+			if url.Scheme != "http" && url.Scheme != "https" && url.Scheme != "mysql" && url.Scheme != "sqlite3" && url.Scheme != "postgres" && url.Scheme != "redis" {
 				return nil, fmt.Errorf("unsupported URL: %v", val)
 			}
 			return url, nil
