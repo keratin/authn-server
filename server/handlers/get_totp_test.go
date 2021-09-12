@@ -1,6 +1,9 @@
 package handlers_test
 
 import (
+	"bytes"
+	"encoding/base64"
+	"image/png"
 	"net/http"
 	"testing"
 
@@ -21,11 +24,22 @@ func TestGetTOTPSuccess(t *testing.T) {
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0]).WithCookie(existingSession)
 	res, err := client.Get("/totp/new")
 	require.NoError(t, err)
-	body := test.ReadBody(res)
 
 	assert.Equal(t, http.StatusOK, res.StatusCode)
-	assert.Equal(t, []string{"image/png"}, res.Header["Content-Type"])
-	assert.Equal(t, "image/png", http.DetectContentType(body)) //Make sure body is png
+	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
+	responseData := struct {
+		Url string `json:"url"`
+		Png string `json:"png"`
+	}{}
+	err = test.ExtractResult(res, &responseData)
+	require.NoError(t, err)
+
+	assert.Contains(t, responseData.Url, "otpauth://totp/test.com:account@keratin.tech")
+
+	img, err := base64.StdEncoding.DecodeString(responseData.Png)
+	require.NoError(t, err)
+	_, err = png.Decode(bytes.NewReader(img))
+	require.NoError(t, err)
 }
 
 func TestGetTOTPUnauthenticated(t *testing.T) {

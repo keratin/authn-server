@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"log"
+	"bytes"
+	"encoding/base64"
+	"image/png"
 	"net/http"
-	"strconv"
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/services"
@@ -21,15 +22,25 @@ func GetTOTP(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		img, err := services.TOTPCreator(app.AccountStore, app.TOTPCache, accountID, route.MatchedDomain(r))
+		totpKey, err := services.TOTPCreator(app.AccountStore, app.TOTPCache, accountID, route.MatchedDomain(r))
 		if err != nil {
 			panic(err)
 		}
 
-		w.Header().Set("Content-Type", "image/png")
-		w.Header().Set("Content-Length", strconv.Itoa(len(img.Bytes())))
-		if _, err := w.Write(img.Bytes()); err != nil {
-			log.Fatal(err)
+		//Convert to png
+		var pngImg bytes.Buffer
+		img, err := totpKey.Image(200, 200)
+		if err != nil {
+			panic(err)
 		}
+		err = png.Encode(&pngImg, img)
+		if err != nil {
+			panic(err)
+		}
+
+		WriteData(w, http.StatusOK, map[string]string{
+			"url": totpKey.URL(),
+			"png": base64.StdEncoding.EncodeToString(pngImg.Bytes()),
+		})
 	}
 }
