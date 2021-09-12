@@ -10,7 +10,7 @@ clean:
 	rm -rf dist
 
 init:
-	which ego > /dev/null || go get github.com/benbjohnson/ego/cmd/ego
+	go install
 	ego server/views
 
 # Run the server

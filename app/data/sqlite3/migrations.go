@@ -1,6 +1,11 @@
 package sqlite3
 
-import "github.com/jmoiron/sqlx"
+import (
+	"strings"
+
+	"github.com/jmoiron/sqlx"
+	"github.com/mattn/go-sqlite3"
+)
 
 // MigrateDB is committed to doing the work necessary to converge the database
 // in a safe, production-grade fashion. This will mean conditional logic as it
@@ -22,6 +27,11 @@ func MigrateDB(db *sqlx.DB) error {
 		}
 	}
 	return nil
+}
+
+func isDuplicateError(e error) bool {
+	sqliteError, ok := e.(sqlite3.Error)
+	return ok && sqliteError.Code == 1 && strings.Contains(sqliteError.Error(), "duplicate column name")
 }
 
 func createAccounts(db *sqlx.DB) error {
@@ -90,6 +100,9 @@ func createAccountLastLoginAtField(db *sqlx.DB) error {
 	_, err := db.Exec(`
         ALTER TABLE accounts ADD last_login_at DATETIME
     `)
+	if isDuplicateError(err) {
+		return nil
+	}
 	return err
 }
 
