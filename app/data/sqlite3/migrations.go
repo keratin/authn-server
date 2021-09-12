@@ -140,10 +140,11 @@ func caseInsensitiveUsername(db *sqlx.DB) error {
 }
 
 func createAccountTOTPFields(db *sqlx.DB) error {
-	if _, err := db.Exec(`
+	_, err := db.Exec(`
         ALTER TABLE accounts ADD totp_secret VARCHAR(255) DEFAULT NULL
-    `); err != nil {
-		return err
+    `)
+	if isDuplicateError(err) {
+		return nil
 	}
-	return nil
+	return err
 }

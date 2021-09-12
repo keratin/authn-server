@@ -82,8 +82,5 @@ func createAccountTOTPFields(db *sqlx.DB) error {
 			err = nil
 		}
 	}
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
