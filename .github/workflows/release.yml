@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
-          go-version: ^1.15
+          go-version: ^1.17
       - run: go mod download
 
       - name: compile
@@ -41,7 +41,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
-          go-version: ^1.15
+          go-version: ^1.17
       - run: go mod download
       - run: sudo apt install mingw-w64
 
@@ -70,7 +70,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
-          go-version: ^1.15
+          go-version: ^1.17
       - run: go mod download
 
       - name: compile
