@@ -37,8 +37,7 @@ func MigrateDB(url *url.URL) error {
 		}
 		defer db.Close()
 
-		sqlite3.MigrateDB(db)
-		return nil
+		return sqlite3.MigrateDB(db)
 	case "mysql":
 		db, err := mysql.NewDB(url)
 		if err != nil {
@@ -46,16 +45,15 @@ func MigrateDB(url *url.URL) error {
 		}
 		defer db.Close()
 
-		mysql.MigrateDB(db)
-		return nil
+		return mysql.MigrateDB(db)
 	case "postgresql", "postgres":
 		db, err := postgres.NewDB(url)
 		if err != nil {
 			return err
 		}
 		defer db.Close()
-		postgres.MigrateDB(db)
-		return nil
+
+		return postgres.MigrateDB(db)
 	default:
 		return fmt.Errorf("Unsupported database")
 	}
