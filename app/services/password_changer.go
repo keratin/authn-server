@@ -8,7 +8,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func PasswordChanger(store data.AccountStore, r ops.ErrorReporter, cfg *app.Config, id int, currentPassword string, password string, totpCode string) error {
+func PasswordChanger(store data.AccountStore, r ops.ErrorReporter, cfg *app.Config, id int, currentPassword string, password string) error {
 	account, err := store.Find(id)
 	if err != nil {
 		return errors.Wrap(err, "Find")

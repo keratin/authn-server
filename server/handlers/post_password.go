@@ -47,7 +47,6 @@ func PostPassword(app *app.App) http.HandlerFunc {
 				accountID,
 				credentials.CurrentPassword,
 				credentials.Password,
-				credentials.TOTP,
 			)
 		}
 
