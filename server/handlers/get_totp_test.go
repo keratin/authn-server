@@ -19,8 +19,7 @@ func TestGetTOTPSuccess(t *testing.T) {
 	existingSession := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0]).WithCookie(existingSession)
-	res, err := client.Get("/totp")
-
+	res, err := client.Get("/totp/new")
 	require.NoError(t, err)
 	body := test.ReadBody(res)
 
@@ -35,7 +34,7 @@ func TestGetTOTPUnauthenticated(t *testing.T) {
 	defer server.Close()
 
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
-	res, err := client.Get("/totp")
+	res, err := client.Get("/totp/new")
 
 	require.NoError(t, err)
 	body := test.ReadBody(res)
