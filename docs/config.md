@@ -318,7 +318,7 @@ If you need to restrict account creation to specific email domains, declare the 
 |           |    |
 | --------- | --- |
 | Required? | No |
-| Value | 0 - 5 |
+| Value | 0 - 4 |
 | Default | 2 |
 
 * 0 - too guessable
