@@ -41,6 +41,11 @@ func TestDomain(t *testing.T) {
 			{"example.com:443", "https://example.com", true},
 			{"example.com:443", "http://example.com", false},
 			{"example.com:443", "https://example.com:3000", false},
+			{"pr-*.example.com", "https://pr-foo.example.com", true},
+			{"pr-*.example.com:443", "https://pr-foo.example.com", true},
+			{"pr-*.example.com:3000", "https://pr-foo.example.com:3000", true},
+			{"pr-*.example.com:3000", "https://example.com:3000", false},
+			{"*.example.com:3000", "https://example.com:3000", false},
 		}
 
 		for _, tc := range testCases {

@@ -40,8 +40,8 @@ func FindDomain(str string, domains []Domain) *Domain {
 // and if Port is specified (non-blank) then it must also match. The common ports 80 and 443 will be
 // satisfied by http and https schemes, respectively.
 func (d *Domain) Matches(origin *url.URL) bool {
-	// hostname must always match.
-	if d.Hostname != origin.Hostname() {
+	// Hostname must match.
+	if !Match(d.Hostname, origin.Hostname()) {
 		return false
 	}
 
@@ -79,4 +79,35 @@ func (d *Domain) URL() url.URL {
 		return url.URL{Scheme: "https", Host: d.Hostname}
 	}
 	return url.URL{Scheme: "http", Host: d.String()}
+}
+
+// Match returns true if the text satisfies the pattern
+// string, supporting only '*' wildcard in the pattern.
+func Match(pattern, name string) bool {
+	if pattern == "" {
+		return name == pattern
+	}
+	if pattern == "*" {
+		return true
+	}
+	return deepMatchRune([]rune(name), []rune(pattern))
+}
+
+func deepMatchRune(str, pattern []rune) bool {
+	for len(pattern) > 0 {
+		switch pattern[0] {
+		default:
+			if len(str) == 0 || str[0] != pattern[0] {
+				return false
+			}
+		case '*':
+			return deepMatchRune(str, pattern[1:]) ||
+				(len(str) > 0 && deepMatchRune(str[1:], pattern))
+		}
+
+		str = str[1:]
+		pattern = pattern[1:]
+	}
+
+	return len(str) == 0 && len(pattern) == 0
 }
