@@ -4,9 +4,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+## 1.12.0
+
 ### Added
 
 * Update to go 1.17
+* Flexible app domains with wildcard matching [#189]
 
 ## 1.11.0
 
