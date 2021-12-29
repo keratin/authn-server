@@ -41,7 +41,7 @@ func FindDomain(str string, domains []Domain) *Domain {
 // satisfied by http and https schemes, respectively.
 func (d *Domain) Matches(origin *url.URL) bool {
 	// Hostname must match.
-	if !Match(d.Hostname, origin.Hostname()) {
+	if !match(d.Hostname, origin.Hostname()) {
 		return false
 	}
 
@@ -81,11 +81,12 @@ func (d *Domain) URL() url.URL {
 	return url.URL{Scheme: "http", Host: d.String()}
 }
 
-// Match returns true if the text satisfies the pattern
-// string, supporting only '*' wildcard in the pattern.
-func Match(pattern, name string) bool {
+// match returns true if the text satisfies the pattern string,
+// supporting only '*' wildcard in the pattern. An empty pattern will
+// always return false.
+func match(pattern, name string) bool {
 	if pattern == "" {
-		return name == pattern
+		return false
 	}
 	if pattern == "*" {
 		return true
