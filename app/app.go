@@ -1,7 +1,9 @@
 package app
 
 import (
-	"github.com/go-redis/redis"
+	"context"
+
+	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
 	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/lib/oauth"
@@ -111,7 +113,7 @@ func NewApp(cfg *Config, logger logrus.FieldLogger) (*App, error) {
 		// Provide access to root DB - useful when extending AccountStore functionality
 		DB:                db,
 		DbCheck:           func() bool { return db.Ping() == nil },
-		RedisCheck:        func() bool { return redis != nil && redis.Ping().Err() == nil },
+		RedisCheck:        func() bool { return redis != nil && redis.Ping(context.TODO()).Err() == nil },
 		Config:            cfg,
 		AccountStore:      accountStore,
 		RefreshTokenStore: tokenStore,

@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 )
 
 func New(url *url.URL) (*redis.Client, error) {

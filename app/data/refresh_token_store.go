@@ -6,7 +6,7 @@ import (
 
 	"github.com/keratin/authn-server/ops"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
 	dataRedis "github.com/keratin/authn-server/app/data/redis"
 	"github.com/keratin/authn-server/app/data/sqlite3"
@@ -47,7 +47,7 @@ func NewRefreshTokenStore(db *sqlx.DB, redis *redis.Client, reporter ops.ErrorRe
 	switch db.DriverName() {
 	case "sqlite3":
 		store := &sqlite3.RefreshTokenStore{
-			Ext:  db,
+			Ext: db,
 			TTL: ttl,
 		}
 		store.Clean(reporter)

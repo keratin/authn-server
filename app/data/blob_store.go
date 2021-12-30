@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
 	dataRedis "github.com/keratin/authn-server/app/data/redis"
 	"github.com/keratin/authn-server/app/data/sqlite3"

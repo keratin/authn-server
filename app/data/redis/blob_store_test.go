@@ -1,6 +1,7 @@
 package redis_test
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -19,6 +20,6 @@ func TestBlobStore(t *testing.T) {
 	}
 	for _, tester := range testers.BlobStoreTesters {
 		tester(t, store)
-		client.FlushDB()
+		client.FlushDB(context.TODO())
 	}
 }

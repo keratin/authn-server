@@ -1,6 +1,7 @@
 package redis_test
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -15,6 +16,6 @@ func TestRefreshTokenStore(t *testing.T) {
 	store := &redis.RefreshTokenStore{Client: client, TTL: time.Second}
 	for _, tester := range testers.RefreshTokenStoreTesters {
 		tester(t, store)
-		store.FlushDB()
+		store.FlushDB(context.TODO())
 	}
 }

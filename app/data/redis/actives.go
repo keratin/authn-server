@@ -1,10 +1,11 @@
 package redis
 
 import (
+	"context"
 	"strconv"
 	"time"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 )
 
 var redisPrefix = "actives:"
@@ -37,19 +38,19 @@ func (a *actives) Track(accountID int) error {
 
 	// increment daily
 	dayKey := redisPrefix + dayKey(t)
-	pipe.PFAdd(dayKey, accountID)
-	pipe.Expire(dayKey, a.dayTTL)
+	pipe.PFAdd(context.TODO(), dayKey, accountID)
+	pipe.Expire(context.TODO(), dayKey, a.dayTTL)
 
 	// increment weekly
 	weekKey := redisPrefix + weekKey(t)
-	pipe.PFAdd(weekKey, accountID)
-	pipe.Expire(weekKey, a.weekTTL)
+	pipe.PFAdd(context.TODO(), weekKey, accountID)
+	pipe.Expire(context.TODO(), weekKey, a.weekTTL)
 
 	// increment monthly
 	monthKey := redisPrefix + monthKey(t)
-	pipe.PFAdd(monthKey, accountID)
+	pipe.PFAdd(context.TODO(), monthKey, accountID)
 
-	_, err := pipe.Exec()
+	_, err := pipe.Exec(context.TODO())
 	return err
 }
 
@@ -96,7 +97,7 @@ func (a *actives) report(keys []string) (map[string]int, error) {
 	}
 
 	// to redis
-	_, err := pipe.Exec()
+	_, err := pipe.Exec(context.TODO())
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +119,7 @@ type metric struct {
 }
 
 func newMetric(pipe redis.Pipeliner, key string) metric {
-	return metric{key, pipe.PFCount(redisPrefix + key)}
+	return metric{key, pipe.PFCount(context.TODO(), redisPrefix+key)}
 }
 
 func (m metric) val() int {
