@@ -10,6 +10,16 @@ import (
 
 type ErrMissingEnvVar string
 
+var supportedSchemes = map[string]struct{}{
+	"http":     {},
+	"https":    {},
+	"mysql":    {},
+	"sqlite3":  {},
+	"postgres": {},
+	"redis":    {},
+	"rediss":   {},
+}
+
 func (name ErrMissingEnvVar) Error() string {
 	return "missing environment variable: " + string(name)
 }
@@ -42,7 +52,7 @@ func LookupURL(name string) (*url.URL, error) {
 	if val, ok := os.LookupEnv(name); ok {
 		url, err := url.ParseRequestURI(val)
 		if err == nil {
-			if url.Scheme != "http" && url.Scheme != "https" && url.Scheme != "mysql" && url.Scheme != "sqlite3" && url.Scheme != "postgres" && url.Scheme != "redis" {
+			if _, ok := supportedSchemes[url.Scheme]; !ok {
 				return nil, fmt.Errorf("unsupported URL: %v", val)
 			}
 			return url, nil
