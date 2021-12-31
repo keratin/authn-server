@@ -7,6 +7,7 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 * Support for non-default Redis user [#191]
+* Support for TLS connections to Redis with `rediss` [#190]
 
 ## 1.12.0
 
