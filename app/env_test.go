@@ -20,6 +20,7 @@ func TestLookupURL(t *testing.T) {
 			{"host.domain.com/path"},
 			{"host.domain.com:1234"},
 			{"host.domain.com:1234/path"},
+			{"vnc://default:mypassword@host.domain.com:6349"},
 		} {
 			err := os.Setenv(envName, tc.env)
 			require.NoError(t, err)
@@ -31,13 +32,19 @@ func TestLookupURL(t *testing.T) {
 
 	t.Run("passing cases", func(t *testing.T) {
 		for _, tc := range []struct {
-			env    string
-			scheme string
-			port   string
-			path   string
+			env      string
+			scheme   string
+			hostname string
+			port     string
+			path     string
 		}{
-			{"https://host.domain.com", "https", "", ""},
-			{"http://host.domain.com:1234/path", "http", "1234", "/path"},
+			{"http://host.domain.com:1234/path", "http", "host.domain.com", "1234", "/path"},
+			{"https://host.domain.com", "https", "host.domain.com", "", ""},
+			{"mysql://default:mypassword@host.domain.com:3306", "mysql", "host.domain.com", "3306", ""},
+			{"postgres://default:mypassword@host.domain.com:5432", "postgres", "host.domain.com", "5432", ""},
+			{"sqlite3:/path/to/file.db", "sqlite3", "", "", "/path/to/file.db"},
+			{"redis://default:mypassword@host.domain.com:6349", "redis", "host.domain.com", "6349", ""},
+			{"rediss://default:mypassword@host.domain.com:6349", "rediss", "host.domain.com", "6349", ""},
 		} {
 			err := os.Setenv(envName, tc.env)
 			require.NoError(t, err)
@@ -45,11 +52,10 @@ func TestLookupURL(t *testing.T) {
 			url, err := app.LookupURL(envName)
 			require.NoError(t, err)
 
-			require.Equal(t, "host.domain.com", url.Hostname(), tc.env)
+			require.Equal(t, tc.hostname, url.Hostname(), tc.env)
 			assert.Equal(t, tc.scheme, url.Scheme)
 			assert.Equal(t, tc.port, url.Port())
 			assert.Equal(t, tc.path, url.Path)
 		}
 	})
-
 }
