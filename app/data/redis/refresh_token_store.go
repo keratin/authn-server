@@ -44,14 +44,16 @@ func (s *RefreshTokenStore) Find(hexToken models.RefreshToken) (int, error) {
 }
 
 func (s *RefreshTokenStore) Touch(hexToken models.RefreshToken, accountID int) error {
+	ctx := context.TODO()
+
 	binToken, err := hex.DecodeString(string(hexToken))
 	if err != nil {
 		return err
 	}
 
-	_, err = s.Client.Pipelined(context.TODO(), func(pipe redis.Pipeliner) error {
-		pipe.Expire(context.TODO(), keyForToken(binToken), s.TTL)
-		pipe.Expire(context.TODO(), keyForAccount(accountID), s.TTL)
+	_, err = s.Client.Pipelined(ctx, func(pipe redis.Pipeliner) error {
+		pipe.Expire(ctx, keyForToken(binToken), s.TTL)
+		pipe.Expire(ctx, keyForAccount(accountID), s.TTL)
 		return nil
 	})
 	return err
@@ -72,18 +74,20 @@ func (s *RefreshTokenStore) FindAll(accountID int) ([]models.RefreshToken, error
 }
 
 func (s *RefreshTokenStore) Create(accountID int) (models.RefreshToken, error) {
+	ctx := context.TODO()
+
 	binToken, err := lib.GenerateToken()
 	if err != nil {
 		return "", err
 	}
 
-	_, err = s.Client.Pipelined(context.TODO(), func(pipe redis.Pipeliner) error {
+	_, err = s.Client.Pipelined(ctx, func(pipe redis.Pipeliner) error {
 		// persist the token
-		pipe.Set(context.TODO(), keyForToken(binToken), accountID, s.TTL)
+		pipe.Set(ctx, keyForToken(binToken), accountID, s.TTL)
 
 		// maintain a list of tokens per accountID
-		pipe.SAdd(context.TODO(), keyForAccount(accountID), binToken)
-		pipe.Expire(context.TODO(), keyForAccount(accountID), s.TTL)
+		pipe.SAdd(ctx, keyForAccount(accountID), binToken)
+		pipe.Expire(ctx, keyForAccount(accountID), s.TTL)
 
 		return nil
 	})
@@ -95,6 +99,8 @@ func (s *RefreshTokenStore) Create(accountID int) (models.RefreshToken, error) {
 }
 
 func (s *RefreshTokenStore) Revoke(hexToken models.RefreshToken) error {
+	ctx := context.TODO()
+
 	accountID, err := s.Find(hexToken)
 	if err != nil {
 		return err
@@ -103,14 +109,14 @@ func (s *RefreshTokenStore) Revoke(hexToken models.RefreshToken) error {
 		return nil
 	}
 
-	_, err = s.Client.Pipelined(context.TODO(), func(pipe redis.Pipeliner) error {
+	_, err = s.Client.Pipelined(ctx, func(pipe redis.Pipeliner) error {
 		binToken, err := hex.DecodeString(string(hexToken))
 		if err != nil {
 			return err
 		}
 
-		pipe.Del(context.TODO(), keyForToken(binToken))
-		pipe.SRem(context.TODO(), keyForAccount(accountID), binToken)
+		pipe.Del(ctx, keyForToken(binToken))
+		pipe.SRem(ctx, keyForAccount(accountID), binToken)
 
 		return nil
 	})

@@ -33,24 +33,25 @@ func NewActives(client *redis.Client, tz *time.Location, days int, weeks int, mo
 }
 
 func (a *actives) Track(accountID int) error {
+	ctx := context.TODO()
 	t := time.Now().In(a.tz)
 	pipe := a.client.Pipeline()
 
 	// increment daily
 	dayKey := redisPrefix + dayKey(t)
-	pipe.PFAdd(context.TODO(), dayKey, accountID)
-	pipe.Expire(context.TODO(), dayKey, a.dayTTL)
+	pipe.PFAdd(ctx, dayKey, accountID)
+	pipe.Expire(ctx, dayKey, a.dayTTL)
 
 	// increment weekly
 	weekKey := redisPrefix + weekKey(t)
-	pipe.PFAdd(context.TODO(), weekKey, accountID)
-	pipe.Expire(context.TODO(), weekKey, a.weekTTL)
+	pipe.PFAdd(ctx, weekKey, accountID)
+	pipe.Expire(ctx, weekKey, a.weekTTL)
 
 	// increment monthly
 	monthKey := redisPrefix + monthKey(t)
-	pipe.PFAdd(context.TODO(), monthKey, accountID)
+	pipe.PFAdd(ctx, monthKey, accountID)
 
-	_, err := pipe.Exec(context.TODO())
+	_, err := pipe.Exec(ctx)
 	return err
 }
 
