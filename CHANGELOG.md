@@ -4,6 +4,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+## 1.13.0
+
 ### Added
 
 * Support for non-default Redis user [#191]
