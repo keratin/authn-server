@@ -1,14 +1,15 @@
 package redis
 
 import (
+	"context"
 	"encoding/hex"
 	"fmt"
 	"strconv"
 	"time"
 
-	"github.com/go-redis/redis"
-	"github.com/keratin/authn-server/lib"
+	"github.com/go-redis/redis/v8"
 	"github.com/keratin/authn-server/app/models"
+	"github.com/keratin/authn-server/lib"
 )
 
 type RefreshTokenStore struct {
@@ -33,7 +34,7 @@ func (s *RefreshTokenStore) Find(hexToken models.RefreshToken) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	str, err := s.Client.Get(keyForToken(binToken)).Result()
+	str, err := s.Client.Get(context.TODO(), keyForToken(binToken)).Result()
 	if err == redis.Nil {
 		return 0, nil
 	} else if err != nil {
@@ -48,16 +49,16 @@ func (s *RefreshTokenStore) Touch(hexToken models.RefreshToken, accountID int) e
 		return err
 	}
 
-	_, err = s.Client.Pipelined(func(pipe redis.Pipeliner) error {
-		pipe.Expire(keyForToken(binToken), s.TTL)
-		pipe.Expire(keyForAccount(accountID), s.TTL)
+	_, err = s.Client.Pipelined(context.TODO(), func(pipe redis.Pipeliner) error {
+		pipe.Expire(context.TODO(), keyForToken(binToken), s.TTL)
+		pipe.Expire(context.TODO(), keyForAccount(accountID), s.TTL)
 		return nil
 	})
 	return err
 }
 
 func (s *RefreshTokenStore) FindAll(accountID int) ([]models.RefreshToken, error) {
-	bins, err := s.Client.SMembers(keyForAccount(accountID)).Result()
+	bins, err := s.Client.SMembers(context.TODO(), keyForAccount(accountID)).Result()
 	if err != nil {
 		return nil, err
 	}
@@ -76,13 +77,13 @@ func (s *RefreshTokenStore) Create(accountID int) (models.RefreshToken, error) {
 		return "", err
 	}
 
-	_, err = s.Client.Pipelined(func(pipe redis.Pipeliner) error {
+	_, err = s.Client.Pipelined(context.TODO(), func(pipe redis.Pipeliner) error {
 		// persist the token
-		pipe.Set(keyForToken(binToken), accountID, s.TTL)
+		pipe.Set(context.TODO(), keyForToken(binToken), accountID, s.TTL)
 
 		// maintain a list of tokens per accountID
-		pipe.SAdd(keyForAccount(accountID), binToken)
-		pipe.Expire(keyForAccount(accountID), s.TTL)
+		pipe.SAdd(context.TODO(), keyForAccount(accountID), binToken)
+		pipe.Expire(context.TODO(), keyForAccount(accountID), s.TTL)
 
 		return nil
 	})
@@ -102,14 +103,14 @@ func (s *RefreshTokenStore) Revoke(hexToken models.RefreshToken) error {
 		return nil
 	}
 
-	_, err = s.Client.Pipelined(func(pipe redis.Pipeliner) error {
+	_, err = s.Client.Pipelined(context.TODO(), func(pipe redis.Pipeliner) error {
 		binToken, err := hex.DecodeString(string(hexToken))
 		if err != nil {
 			return err
 		}
 
-		pipe.Del(keyForToken(binToken))
-		pipe.SRem(keyForAccount(accountID), binToken)
+		pipe.Del(context.TODO(), keyForToken(binToken))
+		pipe.SRem(context.TODO(), keyForAccount(accountID), binToken)
 
 		return nil
 	})

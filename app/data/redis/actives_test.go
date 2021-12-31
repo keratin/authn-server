@@ -1,6 +1,7 @@
 package redis_test
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -14,7 +15,7 @@ func TestActives(t *testing.T) {
 	require.NoError(t, err)
 	rStore := redis.NewActives(client, time.UTC, 365, 52, 12)
 	for _, tester := range testers.ActivesTesters {
-		client.FlushDB()
+		client.FlushDB(context.TODO())
 		tester(t, rStore)
 	}
 }
