@@ -1,8 +1,8 @@
 # Logout
 
 Most of your users will probably disappear when they close the application, but sometimes they will
-want to cleanly log out. The AuthN client library will take care of cleaning up its sessions (the
-the access token and refresh token). Your application may want to do more.
+want to cleanly log out. The AuthN client library will take care of cleaning up its sessions
+(access token and refresh token). Your application may want to do more.
 
 ## Implementation
 
