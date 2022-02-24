@@ -138,6 +138,8 @@ Visibility: Private
       "result": {
         "id": <id>,
         "username": "...",
+        "last_login_at": "2006-01-02T15:04:05Z07:00",
+        "password_changed_at": "2006-01-02T15:04:05Z07:00",
         "locked": false,
         "deleted": false
       }
