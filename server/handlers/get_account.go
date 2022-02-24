@@ -27,18 +27,26 @@ func GetAccount(app *app.App) http.HandlerFunc {
 			panic(err)
 		}
 
+		var formattedLastLogin string
+		if account.LastLoginAt == nil {
+			formattedLastLogin = ""
+		} else {
+			formattedLastLogin = account.LastLoginAt.String()
+		}
+
+		var formattedPasswordChangedAt string
+		if account.PasswordChangedAt.IsZero() {
+			formattedPasswordChangedAt = ""
+		} else {
+			formattedPasswordChangedAt = account.PasswordChangedAt.String()
+		}
+
 		WriteData(w, http.StatusOK, map[string]interface{}{
-			"id":       account.ID,
-			"username": account.Username,
-			"locked":   account.Locked,
-			"last_login_at": func() string {
-				if account.LastLoginAt != nil {
-					return account.LastLoginAt.String()
-				} else {
-					return ""
-				}
-			},
-			"password_changed_at": account.PasswordChangedAt.String(),
+			"id":                  account.ID,
+			"username":            account.Username,
+			"locked":              account.Locked,
+			"last_login_at":       formattedLastLogin,
+			"password_changed_at": formattedPasswordChangedAt,
 			"deleted":             account.DeletedAt != nil,
 		})
 	}
