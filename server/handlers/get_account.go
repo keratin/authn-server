@@ -31,8 +31,8 @@ func GetAccount(app *app.App) http.HandlerFunc {
 			"id":                  account.ID,
 			"username":            account.Username,
 			"locked":              account.Locked,
-			"password_changed_at": account.PasswordChangedAt.String(),
-			"last_login_at":       account.LastLoginAt.String(),
+			"password_changed_at": account.PasswordChangedAt,
+			"last_login_at":       account.LastLoginAt,
 			"deleted":             account.DeletedAt != nil,
 		})
 	}
