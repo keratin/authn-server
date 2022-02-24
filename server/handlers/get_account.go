@@ -28,10 +28,12 @@ func GetAccount(app *app.App) http.HandlerFunc {
 		}
 
 		WriteData(w, http.StatusOK, map[string]interface{}{
-			"id":       account.ID,
-			"username": account.Username,
-			"locked":   account.Locked,
-			"deleted":  account.DeletedAt != nil,
+			"id":                  account.ID,
+			"username":            account.Username,
+			"locked":              account.Locked,
+			"password_changed_at": account.PasswordChangedAt.String(),
+			"last_login_at":       account.LastLoginAt.String(),
+			"deleted":             account.DeletedAt != nil,
 		})
 	}
 }

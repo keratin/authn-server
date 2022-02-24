@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/keratin/authn-server/server/test"
-	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/app/models"
+	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/server/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -46,16 +46,20 @@ func assertGetAccountResponse(t *testing.T, res *http.Response, acc *models.Acco
 	// check that the response contains the expected json
 	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
 	responseData := struct {
-		ID       int    `json:"id"`
-		Username string `json:"username"`
-		Locked   bool   `json:"locked"`
-		Deleted  bool   `json:"deleted_at"`
+		ID                int    `json:"id"`
+		Username          string `json:"username"`
+		Locked            bool   `json:"locked"`
+		PasswordChangedAt string `json:"password_changed_at"`
+		LastLoginAt       string `json:"last_login_at"`
+		Deleted           bool   `json:"deleted_at"`
 	}{}
 	err := test.ExtractResult(res, &responseData)
 	assert.NoError(t, err)
 
 	assert.Equal(t, acc.Username, responseData.Username)
 	assert.Equal(t, acc.ID, responseData.ID)
+	assert.Equal(t, acc.PasswordChangedAt.String(), responseData.PasswordChangedAt)
+	assert.Equal(t, acc.LastLoginAt.String(), responseData.LastLoginAt)
 	assert.Equal(t, false, responseData.Locked)
 	assert.Equal(t, false, responseData.Deleted)
 }
