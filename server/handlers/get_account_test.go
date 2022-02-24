@@ -48,9 +48,9 @@ func assertGetAccountResponse(t *testing.T, res *http.Response, acc *models.Acco
 	responseData := struct {
 		ID                int    `json:"id"`
 		Username          string `json:"username"`
-		Locked            bool   `json:"locked"`
-		PasswordChangedAt string `json:"password_changed_at"`
 		LastLoginAt       string `json:"last_login_at"`
+		PasswordChangedAt string `json:"password_changed_at"`
+		Locked            bool   `json:"locked"`
 		Deleted           bool   `json:"deleted_at"`
 	}{}
 	err := test.ExtractResult(res, &responseData)
@@ -58,8 +58,9 @@ func assertGetAccountResponse(t *testing.T, res *http.Response, acc *models.Acco
 
 	assert.Equal(t, acc.Username, responseData.Username)
 	assert.Equal(t, acc.ID, responseData.ID)
-	assert.Equal(t, acc.PasswordChangedAt.String(), responseData.PasswordChangedAt)
-	assert.Equal(t, acc.LastLoginAt.String(), responseData.LastLoginAt)
+	// NOTE: acc.LastLoginAt is empty so the API returns an empty response
+	assert.Equal(t, "", responseData.LastLoginAt)
+	assert.Equal(t, acc.PasswordChangedAt.Format("2006-01-02T15:04:05Z07:00"), responseData.PasswordChangedAt)
 	assert.Equal(t, false, responseData.Locked)
 	assert.Equal(t, false, responseData.Deleted)
 }

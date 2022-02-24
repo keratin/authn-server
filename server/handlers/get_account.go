@@ -31,22 +31,22 @@ func GetAccount(app *app.App) http.HandlerFunc {
 		if account.LastLoginAt == nil {
 			formattedLastLogin = ""
 		} else {
-			formattedLastLogin = account.LastLoginAt.String()
+			formattedLastLogin = account.LastLoginAt.Format("2006-01-02T15:04:05Z07:00")
 		}
 
 		var formattedPasswordChangedAt string
 		if account.PasswordChangedAt.IsZero() {
 			formattedPasswordChangedAt = ""
 		} else {
-			formattedPasswordChangedAt = account.PasswordChangedAt.String()
+			formattedPasswordChangedAt = account.PasswordChangedAt.Format("2006-01-02T15:04:05Z07:00")
 		}
 
 		WriteData(w, http.StatusOK, map[string]interface{}{
 			"id":                  account.ID,
 			"username":            account.Username,
-			"locked":              account.Locked,
 			"last_login_at":       formattedLastLogin,
 			"password_changed_at": formattedPasswordChangedAt,
+			"locked":              account.Locked,
 			"deleted":             account.DeletedAt != nil,
 		})
 	}
