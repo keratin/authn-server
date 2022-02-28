@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/keratin/authn-server/app"
@@ -27,18 +28,14 @@ func GetAccount(app *app.App) http.HandlerFunc {
 			panic(err)
 		}
 
-		var formattedLastLogin string
-		if account.LastLoginAt == nil {
-			formattedLastLogin = ""
-		} else {
-			formattedLastLogin = account.LastLoginAt.Format("2006-01-02T15:04:05Z07:00")
+		formattedLastLogin := ""
+		if account.LastLoginAt != nil {
+			formattedLastLogin = account.LastLoginAt.Format(time.RFC3339)
 		}
 
-		var formattedPasswordChangedAt string
-		if account.PasswordChangedAt.IsZero() {
-			formattedPasswordChangedAt = ""
-		} else {
-			formattedPasswordChangedAt = account.PasswordChangedAt.Format("2006-01-02T15:04:05Z07:00")
+		formattedPasswordChangedAt := ""
+		if !account.PasswordChangedAt.IsZero() {
+			formattedPasswordChangedAt = account.PasswordChangedAt.Format(time.RFC3339)
 		}
 
 		WriteData(w, http.StatusOK, map[string]interface{}{
