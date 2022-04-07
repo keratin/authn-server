@@ -15,6 +15,14 @@ func PublicRoutes(app *app.App) []*route.HandledRoute {
 			SecuredWith(route.Unsecured()).
 			Handle(handlers.GetHealth(app)),
 
+		route.Get("/jwks").
+			SecuredWith(route.Unsecured()).
+			Handle(handlers.GetJWKs(app)),
+
+		route.Get("/configuration").
+			SecuredWith(route.Unsecured()).
+			Handle(handlers.GetConfiguration(app)),
+
 		route.Post("/password").
 			SecuredWith(originSecurity).
 			Handle(handlers.PostPassword(app)),
