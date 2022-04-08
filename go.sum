@@ -8,6 +8,8 @@ github.com/airbrake/gobrake v3.5.0+incompatible h1:nm6Oxkzo1sKW3mpB9A+seVJJ289s4
 github.com/airbrake/gobrake v3.5.0+incompatible/go.mod h1:wM4gu3Cn0W0K7GUuVWnlXZU11AGBXMILnrdOU8Kn00o=
 github.com/ajg/form v1.5.1/go.mod h1:uL1WgH+h2mgNtvBq0339dVnzXdBETtL2LeUXaIv25UY=
 github.com/aymerick/raymond v2.0.2+incompatible/go.mod h1:osfaiScAUVup+UC9Nfq76eWqDhXlp+4UYaA8uhTBO6g=
+github.com/benbjohnson/ego v0.4.3 h1:9uO96riax3fhvRBpbUK5cZvZ14u9U4ZcGgrANwppFqs=
+github.com/benbjohnson/ego v0.4.3/go.mod h1:Sa5eTS6AJJy62BL2Y4ba70gt0ZayBXw2R5yZUD1ves8=
 github.com/beorn7/perks v0.0.0-20160804104726-4c0e84591b9a h1:BtpsbiV638WQZwhA98cEZw2BsbnQJrbd0BI7tsy0W1c=
 github.com/beorn7/perks v0.0.0-20160804104726-4c0e84591b9a/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/cespare/xxhash/v2 v2.1.2 h1:YRXhKfTDauu4ajMg1TPgFO5jnlC2HCbmLXMcTG5cbYE=
