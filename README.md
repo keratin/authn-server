@@ -34,30 +34,20 @@ All configuration is through ENV variables.
 
 Welcome! Please familiarize yourself with the [CONTRIBUTING](CONTRIBUTING.md) doc and the [CODE OF CONDUCT](CODE_OF_CONDUCT.md).
 
-Here's how the dev environment works:
+### Getting Started
 
 1. `go get github.com/keratin/authn-server`
 2. Install Docker and docker-compose.
 3. Run `make test` to ensure a clean build
 
-To run a dev server:
+### Run a Dev Server
 
-1. Create a own `.env` file with desired configuration.
+1. Create a `.env` file with desired configuration
 2. Run `make migrate`
 3. Run `make server`
 
-To build a compiled server for integration testing:
-
-1. Run `make build`
-2. Execute `dist/authn` with appropriate ENV variables
-
-To build a Docker image for integration testing:
-
-1. Run `make docker`
-2. Start the `keratin/authn-server:latest` image with appropriate ENV variables
-
 ## COPYRIGHT & LICENSE
 
-Copyright (c) 2016-2020 Lance Ivy
+Copyright (c) 2016-2022 Lance Ivy
 
 Keratin AuthN is distributed under the terms of the LGPLv3. See [LICENSE-LGPLv3](LICENSE-LGPLv3) for details.
