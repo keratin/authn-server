@@ -6,6 +6,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## 1.14.0
 
+### Added
+
 * Added `last_login_at` and `password_changed_at` to Get Account API
 
 ## 1.13.0
