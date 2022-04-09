@@ -4,6 +4,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+## 1.15.0
+
+### Added
+
+* Added `/jwks` to both public and private routes
+
 ## 1.14.0
 
 ### Added

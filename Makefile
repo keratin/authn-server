@@ -2,7 +2,7 @@ include .env
 ORG := keratin
 PROJECT := authn-server
 NAME := $(ORG)/$(PROJECT)
-VERSION := 1.14.0
+VERSION := 1.15.0
 MAIN := main.go
 
 .PHONY: clean
@@ -48,6 +48,9 @@ migrate:
 		go run -ldflags "-X main.VERSION=$(VERSION)" $(MAIN) migrate
 
 # Cut a release of the current version.
+# 1. update CHANGELOG.md and Makefile with the next semantic version
+# 2. `make release`
+# 3. wait for build and attach artifacts to GitHub release
 .PHONY: release
 release:
 	git push
