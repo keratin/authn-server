@@ -1,5 +1,6 @@
 *.db
 .env
-vendor/
-dist/
 .idea
+bin
+dist/
+vendor/

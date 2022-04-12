@@ -5,13 +5,17 @@ NAME := $(ORG)/$(PROJECT)
 VERSION := 1.15.0
 MAIN := main.go
 
+BIN := $(shell pwd)/bin
+export GOBIN := $(BIN)
+export PATH := $(BIN):$(PATH)
+
 .PHONY: clean
 clean:
 	rm -rf dist
 
-init:
+init: $(BIN)/ego
 	go install
-	ego server/views
+	$(BIN)/ego server/views
 
 # Run the server
 .PHONY: server
@@ -57,3 +61,6 @@ release:
 	git tag v$(VERSION)
 	git push --tags
 	open https://github.com/$(NAME)/releases/tag/v$(VERSION)
+
+$(BIN)/ego:
+	go install github.com/benbjohnson/ego/...
