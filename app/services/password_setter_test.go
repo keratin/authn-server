@@ -23,7 +23,7 @@ func TestPasswordSetter(t *testing.T) {
 		return services.PasswordSetter(accountStore, &ops.LogReporter{logrus.New()}, cfg, id, password)
 	}
 
-	account, err := accountStore.Create("existing@keratin.tech", []byte("old"))
+	account, err := accountStore.Create("existing@keratin.example.com", []byte("old"))
 	require.NoError(t, err)
 
 	t.Run("sets password", func(t *testing.T) {
@@ -46,6 +46,11 @@ func TestPasswordSetter(t *testing.T) {
 
 	t.Run("insecure password", func(t *testing.T) {
 		err := invoke(account.ID, "abc")
+		assert.Equal(t, services.FieldErrors{{"password", "INSECURE"}}, err)
+	})
+
+	t.Run("insecure password", func(t *testing.T) {
+		err := invoke(account.ID, account.Username)
 		assert.Equal(t, services.FieldErrors{{"password", "INSECURE"}}, err)
 	})
 }

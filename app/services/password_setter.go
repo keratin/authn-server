@@ -22,6 +22,14 @@ func PasswordSetter(store data.AccountStore, r ops.ErrorReporter, cfg *app.Confi
 		return errors.Wrap(err, "GenerateFromPassword")
 	}
 
+	account, err := store.Find(accountID)
+	if err != nil {
+		return FieldErrors{{"account", ErrNotFound}}
+	}
+	if account.Username == password {
+		return FieldErrors{{"password", ErrInsecure}}
+	}
+
 	affected, err := store.SetPassword(accountID, hash)
 	if err != nil {
 		return errors.Wrap(err, "SetPassword")

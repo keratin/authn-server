@@ -13,7 +13,7 @@ import (
 func TestAccountCreatorSuccess(t *testing.T) {
 	store := mock.NewAccountStore()
 
-	var testCases = []struct {
+	testCases := []struct {
 		config   app.Config
 		username string
 		password string
@@ -37,7 +37,7 @@ func TestAccountCreatorFailure(t *testing.T) {
 	store := mock.NewAccountStore()
 	store.Create("existing@test.com", pw)
 
-	var testCases = []struct {
+	testCases := []struct {
 		config   app.Config
 		username string
 		password string
@@ -56,6 +56,7 @@ func TestAccountCreatorFailure(t *testing.T) {
 		// password validations
 		{app.Config{}, "username", "", services.FieldErrors{{"password", "MISSING"}}},
 		{app.Config{PasswordMinComplexity: 2}, "username", "qwerty", services.FieldErrors{{"password", "INSECURE"}}},
+		{app.Config{UsernameIsEmail: true}, "username@test.example.com", "username@test.example.com", services.FieldErrors{{"password", "INSECURE"}}},
 	}
 
 	for _, tc := range testCases {
