@@ -7,17 +7,18 @@ import (
 
 	jwt "gopkg.in/square/go-jose.v2/jwt"
 
-	"github.com/keratin/authn-server/server/handlers"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/app/services"
 	"github.com/keratin/authn-server/app/tokens/identities"
 	"github.com/keratin/authn-server/app/tokens/sessions"
+	"github.com/keratin/authn-server/server/handlers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func AssertData(t *testing.T, res *http.Response, expected interface{}) {
+	t.Helper()
 	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
 
 	j, err := json.Marshal(handlers.ServiceData{expected})
@@ -26,6 +27,7 @@ func AssertData(t *testing.T, res *http.Response, expected interface{}) {
 }
 
 func AssertErrors(t *testing.T, res *http.Response, expected services.FieldErrors) {
+	t.Helper()
 	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
 
 	j, err := json.Marshal(handlers.ServiceErrors{Errors: expected})
@@ -34,6 +36,7 @@ func AssertErrors(t *testing.T, res *http.Response, expected services.FieldError
 }
 
 func AssertSession(t *testing.T, cfg *app.Config, cookies []*http.Cookie) {
+	t.Helper()
 	session := ReadCookie(cookies, cfg.SessionCookieName)
 	require.NotEmpty(t, session)
 
@@ -42,6 +45,8 @@ func AssertSession(t *testing.T, cfg *app.Config, cookies []*http.Cookie) {
 }
 
 func AssertIDTokenResponse(t *testing.T, res *http.Response, keyStore data.KeyStore, cfg *app.Config) {
+	t.Helper()
+
 	// check that the response contains the expected json
 	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
 	responseData := struct {
@@ -62,6 +67,8 @@ func AssertIDTokenResponse(t *testing.T, res *http.Response, keyStore data.KeySt
 }
 
 func AssertRedirect(t *testing.T, res *http.Response, location string) bool {
+	t.Helper()
+
 	assert.Equal(t, http.StatusSeeOther, res.StatusCode)
 	loc, err := res.Location()
 	require.NoError(t, err)
