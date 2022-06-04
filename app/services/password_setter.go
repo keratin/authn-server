@@ -12,7 +12,12 @@ import (
 )
 
 func PasswordSetter(store data.AccountStore, r ops.ErrorReporter, cfg *app.Config, accountID int, password string) error {
-	fieldError := PasswordValidator(cfg, password)
+	account, err := store.Find(accountID)
+	if err != nil {
+		return FieldErrors{{"account", ErrNotFound}}
+	}
+
+	fieldError := PasswordValidator(cfg, account.Username, password)
 	if fieldError != nil {
 		return FieldErrors{*fieldError}
 	}
@@ -20,14 +25,6 @@ func PasswordSetter(store data.AccountStore, r ops.ErrorReporter, cfg *app.Confi
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), cfg.BcryptCost)
 	if err != nil {
 		return errors.Wrap(err, "GenerateFromPassword")
-	}
-
-	account, err := store.Find(accountID)
-	if err != nil {
-		return FieldErrors{{"account", ErrNotFound}}
-	}
-	if account.Username == password {
-		return FieldErrors{{"password", ErrInsecure}}
 	}
 
 	affected, err := store.SetPassword(accountID, hash)
