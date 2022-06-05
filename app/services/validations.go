@@ -43,12 +43,12 @@ func (es FieldErrors) Error() string {
 }
 
 func PasswordValidator(cfg *app.Config, username, password string) *FieldError {
-	if username == password {
-		return &FieldError{"password", ErrInsecure}
-	}
-
 	if password == "" {
 		return &FieldError{"password", ErrMissing}
+	}
+
+	if username == password {
+		return &FieldError{"password", ErrInsecure}
 	}
 
 	score := CalculatePasswordScore(password)
