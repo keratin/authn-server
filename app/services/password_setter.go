@@ -12,7 +12,12 @@ import (
 )
 
 func PasswordSetter(store data.AccountStore, r ops.ErrorReporter, cfg *app.Config, accountID int, password string) error {
-	fieldError := PasswordValidator(cfg, password)
+	account, err := store.Find(accountID)
+	if err != nil {
+		return FieldErrors{{"account", ErrNotFound}}
+	}
+
+	fieldError := PasswordValidator(cfg, account.Username, password)
 	if fieldError != nil {
 		return FieldErrors{*fieldError}
 	}

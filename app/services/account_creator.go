@@ -20,7 +20,7 @@ func AccountCreator(store data.AccountStore, cfg *app.Config, username string, p
 		errs = append(errs, *fieldError)
 	}
 
-	fieldError = PasswordValidator(cfg, password)
+	fieldError = PasswordValidator(cfg, username, password)
 	if fieldError != nil {
 		errs = append(errs, *fieldError)
 	}
@@ -35,7 +35,6 @@ func AccountCreator(store data.AccountStore, cfg *app.Config, username string, p
 	}
 
 	acc, err := store.Create(username, hash)
-
 	if err != nil {
 		if data.IsUniquenessError(err) {
 			return nil, FieldErrors{{"username", ErrTaken}}

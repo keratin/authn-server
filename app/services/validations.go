@@ -7,15 +7,17 @@ import (
 	"github.com/keratin/authn-server/app"
 )
 
-var ErrMissing = "MISSING"
-var ErrTaken = "TAKEN"
-var ErrFormatInvalid = "FORMAT_INVALID"
-var ErrInsecure = "INSECURE"
-var ErrFailed = "FAILED"
-var ErrLocked = "LOCKED"
-var ErrExpired = "EXPIRED"
-var ErrNotFound = "NOT_FOUND"
-var ErrInvalidOrExpired = "INVALID_OR_EXPIRED"
+var (
+	ErrMissing          = "MISSING"
+	ErrTaken            = "TAKEN"
+	ErrFormatInvalid    = "FORMAT_INVALID"
+	ErrInsecure         = "INSECURE"
+	ErrFailed           = "FAILED"
+	ErrLocked           = "LOCKED"
+	ErrExpired          = "EXPIRED"
+	ErrNotFound         = "NOT_FOUND"
+	ErrInvalidOrExpired = "INVALID_OR_EXPIRED"
+)
 
 type FieldError struct {
 	Field   string `json:"field"`
@@ -33,16 +35,20 @@ func (e FieldError) Error() string {
 type FieldErrors []FieldError
 
 func (es FieldErrors) Error() string {
-	var buf = make([]string, len(es))
+	buf := make([]string, len(es))
 	for i, e := range es {
 		buf[i] = e.Error()
 	}
 	return strings.Join(buf, ", ")
 }
 
-func PasswordValidator(cfg *app.Config, password string) *FieldError {
+func PasswordValidator(cfg *app.Config, username, password string) *FieldError {
 	if password == "" {
 		return &FieldError{"password", ErrMissing}
+	}
+
+	if username == password {
+		return &FieldError{"password", ErrInsecure}
 	}
 
 	score := CalculatePasswordScore(password)
