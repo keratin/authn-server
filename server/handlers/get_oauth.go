@@ -19,7 +19,10 @@ func GetOauth(app *app.App, providerName string) http.HandlerFunc {
 		// require and validate a redirect URI
 		redirectURI := r.FormValue("redirect_uri")
 		if route.FindDomain(redirectURI, app.Config.ApplicationDomains) == nil {
-			app.Reporter.ReportRequestError(errors.New("unknown redirect domain"), r)
+			app.Reporter.ReportRequestError(errors.New(redirectURI), r)
+			// * Docs: https://pkg.go.dev/github.com/bsm/instruments@v1.3.11/logreporter#section-documentation
+			// * They seem incomplete.
+			// app.Reporter.foobar()
 			failsafe := app.Config.ApplicationDomains[0].URL()
 			http.Redirect(w, r, failsafe.String(), http.StatusSeeOther)
 			return

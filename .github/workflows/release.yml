@@ -33,35 +33,6 @@ jobs:
           name: authn-linux64
           path: dist/authn-linux64
 
-  windows64:
-    name: Compile for Windows
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
-        with:
-          go-version: ^1.17
-      - run: go mod download
-      - run: sudo apt install mingw-w64
-
-      - name: compile
-        run: |
-          go build \
-            -ldflags "-X main.VERSION=${VERSION##*/v}" \
-            -o dist/authn-windows64.exe
-        env:
-          VERSION: ${{ github.ref }}
-          GOOS: windows
-          GOARCH: amd64
-          CGO_ENABLED: 1
-          CC: x86_64-w64-mingw32-gcc
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: authn-windows64.exe
-          path: dist/authn-windows64.exe
-
   macos64:
     name: Compile for MacOS
     runs-on: macos-latest
@@ -92,7 +63,7 @@ jobs:
   release:
     name: Create Release
     runs-on: ubuntu-latest
-    needs: [linux64, windows64, macos64]
+    needs: [linux64, macos64]
 
     steps:
       - name: Download artifacts
@@ -118,16 +89,6 @@ jobs:
           asset_name: authn-linux64
           asset_content_type: application/octet-stream
 
-      - name: Upload Windows64
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./authn-windows64.exe/authn-windows64.exe
-          asset_name: authn-windows64.exe
-          asset_content_type: application/vnd.microsoft.portable-executable
-
       - name: Upload Macos64
         uses: actions/upload-release-asset@v1
         env:
@@ -139,7 +100,7 @@ jobs:
           asset_content_type: application/octet-stream
 
   register:
-    name: Register on Docker Hub
+    name: Register on AWS ECR
     runs-on: ubuntu-latest
     needs: release
     steps:
@@ -160,10 +121,12 @@ jobs:
         env:
           VERSION: ${{ github.ref }}
 
-      - name: Push to Docker Hub
-        uses: docker/build-push-action@v1
+      - name: Push to AWS ECR
+        uses: kciter/aws-ecr-action@v4
         with:
-          repository: keratin/authn-server
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+          repo: keratin_authn
+          region: us-east-1
           tags: latest,${{ steps.version.outputs.number }}

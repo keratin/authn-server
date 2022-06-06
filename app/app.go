@@ -108,6 +108,9 @@ func NewApp(cfg *Config, logger logrus.FieldLogger) (*App, error) {
 	if cfg.MicrosoftOauthCredientials != nil {
 		oauthProviders["microsoft"] = *oauth.NewMicrosoftProvider(cfg.MicrosoftOauthCredientials)
 	}
+	if cfg.EpicFhirOauthCredientials != nil {
+		oauthProviders["epic_fhir"] = *oauth.NewEpicFhirProvider(cfg.EpicFhirOauthCredientials)
+	}
 
 	return &App{
 		// Provide access to root DB - useful when extending AccountStore functionality
