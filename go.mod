@@ -30,7 +30,7 @@ require (
 	github.com/stretchr/testify v1.5.1
 	github.com/test-go/testify v1.1.4
 	github.com/trustelem/zxcvbn v1.0.1
-	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+	golang.org/x/crypto v0.1.0
 	golang.org/x/oauth2 v0.0.0-20180416194528-6881fee410a5
 	google.golang.org/appengine v0.0.0-20180405220334-0a24098c0ec6 // indirect
 	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
