@@ -28,6 +28,7 @@ func TestNewAndParseAndSign(t *testing.T) {
 	assert.NotEmpty(t, token.Subject)
 	assert.Equal(t, "example.com", token.Azp)
 	assert.NotEmpty(t, token.IssuedAt)
+	assert.NotEmpty(t, token.SessionID)
 
 	sessionString, err := token.Sign(cfg.SessionSigningKey)
 	require.NoError(t, err)
@@ -39,6 +40,7 @@ func TestNewAndParseAndSign(t *testing.T) {
 	assert.NotEmpty(t, token.Subject)
 	assert.Equal(t, "example.com", claims.Azp)
 	assert.NotEmpty(t, claims.IssuedAt)
+	assert.NotEmpty(t, token.SessionID)
 }
 
 func TestParseInvalidSessionJWT(t *testing.T) {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data"
 	"github.com/pkg/errors"
@@ -14,8 +15,9 @@ import (
 const scope = "refresh"
 
 type Claims struct {
-	Scope string `json:"scope"`
-	Azp   string `json:"azp"`
+	Scope     string `json:"scope"`
+	Azp       string `json:"azp"`
+	SessionID string `json:"sid"`
 	jwt.Claims
 }
 
@@ -63,8 +65,9 @@ func New(store data.RefreshTokenStore, cfg *app.Config, accountID int, authorize
 	}
 
 	return &Claims{
-		Scope: scope,
-		Azp:   authorizedAudience,
+		Scope:     scope,
+		Azp:       authorizedAudience,
+		SessionID: uuid.NewString(),
 		Claims: jwt.Claims{
 			Issuer:   cfg.AuthNURL.String(),
 			Subject:  string(refreshToken),

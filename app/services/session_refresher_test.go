@@ -8,12 +8,14 @@ import (
 	"github.com/keratin/authn-server/app/data/mock"
 	"github.com/keratin/authn-server/app/data/private"
 	"github.com/keratin/authn-server/app/services"
+	"github.com/keratin/authn-server/app/tokens/identities"
 	"github.com/keratin/authn-server/app/tokens/sessions"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gopkg.in/square/go-jose.v2/jwt"
 )
 
 func TestSessionRefresher(t *testing.T) {
@@ -30,6 +32,7 @@ func TestSessionRefresher(t *testing.T) {
 	audience := &route.Domain{"authn.example.com", "8080"}
 	session, err := sessions.New(refreshStore, cfg, accountID, audience.String())
 	require.NoError(t, err)
+	assert.NotEmpty(t, session.SessionID)
 
 	t.Run("tracks actives while generating token", func(t *testing.T) {
 		activesStore := mock.NewActives()
@@ -40,6 +43,14 @@ func TestSessionRefresher(t *testing.T) {
 		)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, identityToken)
+
+		parsed, err := jwt.ParseSigned(identityToken)
+		assert.NoError(t, err)
+
+		claims := identities.Claims{}
+		err = parsed.Claims(keyStore.Key().Public(), &claims)
+		assert.NoError(t, err)
+		assert.Equal(t, session.SessionID, claims.SessionID)
 
 		report, err := activesStore.ActivesByDay()
 		require.NoError(t, err)
