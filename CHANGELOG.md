@@ -4,9 +4,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+## 1.16.0
+
 ### Added
 
 * Usernames may not be passwords [#200]
+* ID token contains Session ID claim (`sid`) [#205]
 
 ## 1.15.0
 
