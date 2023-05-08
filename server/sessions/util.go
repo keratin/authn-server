@@ -2,6 +2,7 @@ package sessions
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/models"
@@ -36,6 +37,11 @@ func Set(cfg *app.Config, w http.ResponseWriter, val string) {
 	if val == "" {
 		cookie.MaxAge = -1
 	}
+
+	if cfg.RefreshTokenExplicitExpiry {
+		cookie.Expires = time.Now().UTC().Add(cfg.RefreshTokenTTL)
+	}
+
 	http.SetCookie(w, cookie)
 }
 

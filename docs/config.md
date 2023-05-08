@@ -3,7 +3,7 @@
 * Core Settings: [`AUTHN_URL`](#authn_url) • [`APP_DOMAINS`](#app_domains) • [`HTTP_AUTH_USERNAME`](#http_auth_username) • [`HTTP_AUTH_PASSWORD`](#http_auth_password) • [`SECRET_KEY_BASE`](#secret_key_base) • [`ENABLE_SIGNUP`](#enable_signup)
 * Databases: [`DATABASE_URL`](#database_url) • [`REDIS_URL`](#redis_url) • [`REDIS_IS_SENTINEL_MODE`](#redis_is_sentinel_mode) • [`REDIS_SENTINEL_MASTER`](#redis_sentinel_master) • [`REDIS_SENTINEL_NODES`](#redis_sentinel_nodes) • [`REDIS_SENTINEL_PASSWORD`](#redis_sentinel_password)
 * Sessions:
-[`ACCESS_TOKEN_TTL`](#access_token_ttl) • [`REFRESH_TOKEN_TTL`](#refresh_token_ttl) • [`SESSION_KEY_SALT`](#session_key_salt) • [`DB_ENCRYPTION_KEY_SALT`](#db_encryption_key_salt) • [`RSA_PRIVATE_KEY`](#rsa_private_key) • [`SAME_SITE`](#same_site)
+[`ACCESS_TOKEN_TTL`](#access_token_ttl) • [`REFRESH_TOKEN_TTL`](#refresh_token_ttl)• [`REFRESH_TOKEN_EXPLICIT_EXPIRY`](#refresh_token_explicit_expiry) • [`SESSION_KEY_SALT`](#session_key_salt) • [`DB_ENCRYPTION_KEY_SALT`](#db_encryption_key_salt) • [`RSA_PRIVATE_KEY`](#rsa_private_key) • [`SAME_SITE`](#same_site)
 * OAuth Clients: [`FACEBOOK_OAUTH_CREDENTIALS`](#facebook_oauth_credentials) • [`GITHUB_OAUTH_CREDENTIALS`](#github_oauth_credentials) • [`GOOGLE_OAUTH_CREDENTIALS`](#google_oauth_credentials) • [`DISCORD_OAUTH_CREDENTIALS`](#discord_oauth_credentials) • [`MICROSOFT_OAUTH_CREDENTIALS`](#microsoft_oauth_credentials)
 * Username Policy: [`USERNAME_IS_EMAIL`](#username_is_email) • [`EMAIL_USERNAME_DOMAINS`](#email_username_domains)
 * Password Policy: [`PASSWORD_POLICY_SCORE`](#password_policy_score) • [`PASSWORD_CHANGE_LOGOUT`](#password_change_logout) • [`BCRYPT_COST`](#bcrypt_cost)
@@ -179,6 +179,17 @@ Worried about short sessions? Applications can and should implement a periodic r
 | Default | `2592000` (30 days) |
 
 This setting controls how frequently a refresh token must be used to keep a session alive. Changing this setting will not apply retroactively to previous tokens.
+
+### `REFRESH_TOKEN_EXPLICIT_EXPIRY`
+
+|           |               |
+| --------- |---------------|
+| Required? | No            |
+| Value | boolean (`/^t |true|yes$/i`) |
+| Default | false         |
+
+This setting controls cookie expiration behavior for refresh tokens.  The cookie will be written without any expiration / max age and treated by browsers as a session cookie by default.  If set to true, the cookie will be written as a persistent cookie with explicit expiration based on [`REFRESH_TOKEN_TTL`](#refresh_token_ttl).
+
 
 ### `SESSION_KEY_SALT`
 

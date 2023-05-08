@@ -75,6 +75,7 @@ type Config struct {
 	FacebookOauthCredentials    *oauth.Credentials
 	DiscordOauthCredentials     *oauth.Credentials
 	MicrosoftOauthCredientials  *oauth.Credentials
+	RefreshTokenExplicitExpiry  bool
 }
 
 // OAuthEnabled returns true if any provider is configured.
@@ -316,6 +317,17 @@ var configurers = []configurer{
 		ttl, err := lookupInt("REFRESH_TOKEN_TTL", 86400*30)
 		if err == nil {
 			c.RefreshTokenTTL = time.Duration(ttl) * time.Second
+		}
+		return err
+	},
+
+	// REFRESH_TOKEN_EXPLICIT_EXPIRY determines whether refresh token cookies are written with
+	// the configured expiry, or if they are written with no expiry and the browser
+	// is expected to evict them when the session ends.
+	func(c *Config) error {
+		use, err := lookupBool("REFRESH_TOKEN_EXPLICIT_EXPIRY", false)
+		if err == nil {
+			c.RefreshTokenExplicitExpiry = use
 		}
 		return err
 	},
