@@ -4,6 +4,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+## 1.17.0
+
+### Added
+
+* support for persistent cookies via `REFRESH_TOKEN_EXPLICIT_EXPIRY` env var [#208]
+
 ## 1.16.0
 
 ### Added
