@@ -1,0 +1,19 @@
+FROM golang:alpine as builder
+RUN apk add --no-cache gcc g++
+
+RUN mkdir /build
+RUN mkdir /dist
+WORKDIR build
+COPY go.mod go.mod
+RUN go mod download
+COPY . .
+RUN go build -ldflags "-extldflags -static -X main.VERSION=${VERSION##*/v}" -o /dist/authn
+
+FROM alpine
+RUN apk add --no-cache ca-certificates
+WORKDIR /app
+COPY --from=builder /dist/authn /app/authn
+
+EXPOSE 3000
+ENV PORT 3000
+CMD ["./authn", "server"]

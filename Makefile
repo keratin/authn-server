@@ -64,3 +64,8 @@ release:
 
 $(BIN)/ego:
 	go install github.com/benbjohnson/ego/...
+
+# Build a docker image locally for your current platform.
+# TODO: look into buildx support for multi-arch builds
+docker-local:
+	docker build . -t $(NAME):local -f Dockerfile.local
