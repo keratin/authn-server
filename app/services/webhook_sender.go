@@ -47,6 +47,7 @@ func WebhookSender(destination *url.URL, values *url.Values, schedule []time.Dur
 	}
 
 	req, err := http.NewRequest(http.MethodPost, destination.String(), strings.NewReader(values.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	if signingKey != nil {
 		hm := hmac.New(sha256.New, signingKey)
