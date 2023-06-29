@@ -74,7 +74,9 @@ func TestWebhookSenderSignature(t *testing.T) {
 	verifier := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if h := r.Header.Get("X-Authn-Webhook-Signature"); h != "" {
 			hm := hmac.New(sha256.New, key)
-			_, err := hm.Write([]byte(r.Form.Encode()))
+			require.NoError(t, r.ParseForm(), "must parse form to have values available for signature calculation")
+			s := r.Form.Encode()
+			_, err := hm.Write([]byte(s))
 			require.NoError(t, err)
 			exp := hex.EncodeToString(hm.Sum(nil))
 			if exp == h {
@@ -88,14 +90,14 @@ func TestWebhookSenderSignature(t *testing.T) {
 	require.NoError(t, err)
 	requireSigURL := &url.URL{Scheme: "http", Host: verifierURL.Host, Path: "/mustsign"}
 	t.Run("without signing key", func(t *testing.T) {
-		err := services.WebhookSender(requireSigURL, &url.Values{}, noRetry, nil)
+		err := services.WebhookSender(requireSigURL, &url.Values{"test": []string{uuid.NewString()}}, noRetry, nil)
 		if assert.Error(t, err) {
 			assert.Equal(t, "PostForm: Status Code: 401", err.Error())
 		}
 	})
 
 	t.Run("with signing key", func(t *testing.T) {
-		err := services.WebhookSender(requireSigURL, &url.Values{}, noRetry, key)
+		err := services.WebhookSender(requireSigURL, &url.Values{"test": []string{uuid.NewString()}}, noRetry, key)
 		assert.NoError(t, err)
 	})
 }
