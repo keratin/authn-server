@@ -37,7 +37,7 @@ func retry(schedule []time.Duration, fn func() error) error {
 	return err
 }
 
-func WebhookSender(destination *url.URL, values *url.Values, schedule []time.Duration, key []byte) error {
+func WebhookSender(destination *url.URL, values *url.Values, schedule []time.Duration, signingKey []byte) error {
 	if destination == nil {
 		return fmt.Errorf("URL unconfigured")
 	}
@@ -48,8 +48,8 @@ func WebhookSender(destination *url.URL, values *url.Values, schedule []time.Dur
 
 	req, err := http.NewRequest(http.MethodPost, destination.String(), strings.NewReader(values.Encode()))
 
-	if key != nil {
-		hm := hmac.New(sha256.New, key)
+	if signingKey != nil {
+		hm := hmac.New(sha256.New, signingKey)
 		hm.Write([]byte(values.Encode()))
 		req.Header.Set("X-Authn-Webhook-Signature", hex.EncodeToString(hm.Sum(nil)))
 	}

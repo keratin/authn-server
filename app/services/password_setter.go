@@ -39,7 +39,7 @@ func PasswordSetter(store data.AccountStore, r ops.ErrorReporter, cfg *app.Confi
 		go func() {
 			err := WebhookSender(cfg.AppPasswordChangedURL, &url.Values{
 				"account_id": []string{strconv.Itoa(accountID)},
-			}, timeSensitiveDelivery, cfg.WebhookSigningKey)
+			}, timeSensitiveDelivery, cfg.AppSigningKey)
 			if err != nil {
 				r.ReportError(err)
 			}

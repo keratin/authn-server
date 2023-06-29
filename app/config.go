@@ -53,7 +53,7 @@ type Config struct {
 	ResetSigningKey             []byte
 	DBEncryptionKey             []byte
 	OAuthSigningKey             []byte
-	WebhookSigningKey           []byte
+	AppSigningKey               []byte
 	ResetTokenTTL               time.Duration
 	IdentitySigningKey          *private.Key
 	AuthNURL                    *url.URL
@@ -640,14 +640,14 @@ var configurers = []configurer{
 		return nil
 	},
 
-	// WEBHOOK_SIGNING_KEY is a hex encoded key used to sign webhook notifications using sha256-HMAC
+	// APP_SIGNING_KEY is a hex encoded key used to sign webhook notifications using sha256-HMAC
 	func(c *Config) error {
-		if val, ok := os.LookupEnv("WEBHOOK_SIGNING_KEY"); ok {
+		if val, ok := os.LookupEnv("APP_SIGNING_KEY"); ok {
 			s, err := hex.DecodeString(val)
 			if err != nil {
 				return err
 			}
-			c.WebhookSigningKey = s
+			c.AppSigningKey = s
 		}
 		return nil
 	},

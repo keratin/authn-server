@@ -28,7 +28,7 @@ func PasswordlessTokenSender(cfg *app.Config, account *models.Account, logger lo
 	err = WebhookSender(cfg.AppPasswordlessTokenURL, &url.Values{
 		"account_id": []string{strconv.Itoa(account.ID)},
 		"token":      []string{passwordlessStr},
-	}, timeSensitiveDelivery, cfg.WebhookSigningKey)
+	}, timeSensitiveDelivery, cfg.AppSigningKey)
 	if err != nil {
 		return errors.Wrap(err, "Webhook")
 	}

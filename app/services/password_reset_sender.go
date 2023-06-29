@@ -28,7 +28,7 @@ func PasswordResetSender(cfg *app.Config, account *models.Account, logger logrus
 	err = WebhookSender(cfg.AppPasswordResetURL, &url.Values{
 		"account_id": []string{strconv.Itoa(account.ID)},
 		"token":      []string{resetStr},
-	}, timeSensitiveDelivery, cfg.WebhookSigningKey)
+	}, timeSensitiveDelivery, cfg.AppSigningKey)
 	if err != nil {
 		return errors.Wrap(err, "Webhook")
 	}
