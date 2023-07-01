@@ -4,14 +4,16 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"github.com/keratin/authn-server/app/data/private"
 	"math/rand"
 	"testing"
+
+	"github.com/keratin/authn-server/app/data/private"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
+// nolint: gosec
 func TestNewKey(t *testing.T) {
 	rnd := rand.New(rand.NewSource(1234))
 	rsaKey, err := rsa.GenerateKey(rnd, 256)

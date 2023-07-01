@@ -69,3 +69,8 @@ $(BIN)/ego:
 # TODO: look into buildx support for multi-arch builds
 docker-local:
 	docker build . -t $(NAME):local -f Dockerfile.local
+
+# Run configured linters
+lint:
+	@which golangci-lint > /dev/null || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH)/bin
+	golangci-lint run --config .golangci.yml

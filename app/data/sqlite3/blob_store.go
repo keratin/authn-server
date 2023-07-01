@@ -2,7 +2,6 @@ package sqlite3
 
 import (
 	"database/sql"
-	"math/rand"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -21,7 +20,7 @@ type BlobStore struct {
 
 func (s *BlobStore) Clean(reporter ops.ErrorReporter) {
 	go func() {
-		for range time.Tick(time.Minute + time.Duration(rand.Intn(5))*time.Second) {
+		for range time.Tick(time.Minute + jitter()) {
 			_, err := s.DB.Exec("DELETE FROM blobs WHERE expires_at < ?", time.Now())
 			if err != nil {
 				reporter.ReportError(errors.Wrap(err, "BlobStore Clean"))

@@ -2,18 +2,30 @@ package server
 
 import (
 	"fmt"
-	"github.com/keratin/authn-server/app"
 	"log"
 	"net/http"
+	"time"
+
+	"github.com/keratin/authn-server/app"
 )
 
 func Server(app *app.App) {
 	if app.Config.PublicPort != 0 {
 		go func() {
 			fmt.Println(fmt.Sprintf("PUBLIC_PORT: %d", app.Config.PublicPort))
-			log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", app.Config.PublicPort), PublicRouter(app)))
+			publicServer := &http.Server{
+				Addr:              fmt.Sprintf(":%d", app.Config.PublicPort),
+				Handler:           PublicRouter(app),
+				ReadHeaderTimeout: 10 * time.Second,
+			}
+			log.Fatal(publicServer.ListenAndServe())
 		}()
 	}
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", app.Config.ServerPort), Router(app)))
+	privateServer := &http.Server{
+		Addr:              fmt.Sprintf(":%d", app.Config.ServerPort),
+		Handler:           Router(app),
+		ReadHeaderTimeout: 10 * time.Second,
+	}
+	log.Fatal(privateServer.ListenAndServe())
 }

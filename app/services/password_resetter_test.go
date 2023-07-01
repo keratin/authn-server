@@ -56,6 +56,7 @@ func TestPasswordResetter(t *testing.T) {
 	})
 
 	t.Run("when token is invalid", func(t *testing.T) {
+		// nolint: gosec
 		token := "not.valid.jwt"
 
 		err := invoke(token, "0a0b0c0d0e0f")
