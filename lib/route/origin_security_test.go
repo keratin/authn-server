@@ -28,7 +28,7 @@ func TestOriginSecurity(t *testing.T) {
 	}
 
 	nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(successBody))
+		_, _ = w.Write([]byte(successBody))
 	})
 
 	for _, tc := range testCases {

@@ -1,4 +1,5 @@
 linters:
   disable-all: true
   enable:
-    - gosec  
+    - gosec
+    - errcheck

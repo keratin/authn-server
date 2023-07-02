@@ -48,6 +48,7 @@ func BenchmarkGetJWKs(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		http.Get(fmt.Sprintf("%s/jwks", server.URL))
+		_, err := http.Get(fmt.Sprintf("%s/jwks", server.URL))
+		require.NoError(b, err)
 	}
 }

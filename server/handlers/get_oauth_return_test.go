@@ -9,10 +9,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/keratin/authn-server/server/test"
+	oauthtoken "github.com/keratin/authn-server/app/tokens/oauth"
 	oauthlib "github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/lib/route"
-	oauthtoken "github.com/keratin/authn-server/app/tokens/oauth"
+	"github.com/keratin/authn-server/server/test"
 )
 
 func TestGetOauthReturn(t *testing.T) {
@@ -74,7 +74,8 @@ func TestGetOauthReturn(t *testing.T) {
 	t.Run("not connect new identity with current session that is already linked", func(t *testing.T) {
 		account, err := app.AccountStore.Create("linked@keratin.tech", []byte("password"))
 		require.NoError(t, err)
-		app.AccountStore.AddOauthAccount(account.ID, "test", "PREVIOUSID", "TOKEN")
+		err = app.AccountStore.AddOauthAccount(account.ID, "test", "PREVIOUSID", "TOKEN")
+		require.NoError(t, err)
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 
 		res, err := client.WithCookie(session).Get("/oauth/test/return?code=linked+alias@keratin.tech&state=" + state)

@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/keratin/authn-server/server/test"
 	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/server/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -41,7 +41,8 @@ func TestPatchAccountUnlock(t *testing.T) {
 	t.Run("locked account", func(t *testing.T) {
 		account, err := app.AccountStore.Create("locked@test.com", []byte("bar"))
 		require.NoError(t, err)
-		app.AccountStore.Lock(account.ID)
+		_, err = app.AccountStore.Lock(account.ID)
+		require.NoError(t, err)
 
 		res, err := client.Patch(fmt.Sprintf("/accounts/%v/unlock", account.ID), url.Values{})
 		require.NoError(t, err)

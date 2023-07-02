@@ -69,6 +69,8 @@ func UnmarshalInt(data []byte) (int, error) {
 	}
 
 	var num int32
+	// ignored to match ruby behavior
+	// nolint: errcheck
 	binary.Read(bytes.NewReader(b), binary.LittleEndian, &num)
 	return int(num), nil
 }

@@ -35,7 +35,8 @@ var pw = []byte("$2a$04$ZOBA8E3nT68/ArE6NDnzfezGWEgM6YrE17PrOtSjT5.U/ZGoxyh7e")
 
 func TestAccountCreatorFailure(t *testing.T) {
 	store := mock.NewAccountStore()
-	store.Create("existing@test.com", pw)
+	_, setupErr := store.Create("existing@test.com", pw)
+	require.NoError(t, setupErr)
 
 	testCases := []struct {
 		config   app.Config

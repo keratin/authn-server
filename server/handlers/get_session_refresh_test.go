@@ -47,7 +47,7 @@ func BenchmarkGetSessionRefresh(b *testing.B) {
 	if err != nil {
 		panic(err)
 	}
-	sqlite3.MigrateDB(sqliteDB)
+	require.NoError(b, sqlite3.MigrateDB(sqliteDB))
 
 	b.Run("sqlite3 store", func(b *testing.B) {
 		testApp := test.App()

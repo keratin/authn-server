@@ -27,7 +27,7 @@ func BasicAuthSecurity(username string, password string, realm string) SecurityH
 			if !ok || !match(user, pass) {
 				w.Header().Set("WWW-Authenticate", `Basic realm="`+realm+`"`)
 				w.WriteHeader(401)
-				w.Write([]byte("Unauthorized.\n"))
+				_, _ = w.Write([]byte("Unauthorized.\n"))
 				return
 			}
 

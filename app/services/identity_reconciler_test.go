@@ -7,8 +7,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/app/services"
+	"github.com/keratin/authn-server/lib/oauth"
 	"golang.org/x/oauth2"
 
 	"github.com/keratin/authn-server/app"

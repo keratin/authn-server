@@ -13,7 +13,7 @@ import (
 
 func TestBasicAuthSecurity(t *testing.T) {
 	nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("success"))
+		_, _ = w.Write([]byte("success"))
 	})
 
 	adapter := route.BasicAuthSecurity("user", "pass", "authn-server tests")
