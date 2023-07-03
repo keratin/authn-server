@@ -52,7 +52,7 @@ func WebhookSender(destination *url.URL, values *url.Values, schedule []time.Dur
 	if signingKey != nil {
 		hm := hmac.New(sha256.New, signingKey)
 		hm.Write([]byte(values.Encode()))
-		req.Header.Set("X-Authn-Webhook-Signature", hex.EncodeToString(hm.Sum(nil)))
+		req.Header.Set("X-Authn-Notification-Signature", hex.EncodeToString(hm.Sum(nil)))
 	}
 
 	err = retry(schedule, func() error {

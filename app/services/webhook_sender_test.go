@@ -72,7 +72,7 @@ func TestWebhookSenderSignature(t *testing.T) {
 	key := []byte(uuid.NewString())
 
 	verifier := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if h := r.Header.Get("X-Authn-Webhook-Signature"); h != "" {
+		if h := r.Header.Get("X-Authn-Notification-Signature"); h != "" {
 			hm := hmac.New(sha256.New, key)
 			require.NoError(t, r.ParseForm(), "must parse form to have values available for signature calculation")
 			s := r.Form.Encode()
