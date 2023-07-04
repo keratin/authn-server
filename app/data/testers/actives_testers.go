@@ -18,9 +18,9 @@ var ActivesTesters = []func(*testing.T, data.Actives){
 }
 
 func testActivesTrack(t *testing.T, actives data.Actives) {
-	actives.Track(1)
-	actives.Track(5)
-	actives.Track(6)
+	require.NoError(t, actives.Track(1))
+	require.NoError(t, actives.Track(5))
+	require.NoError(t, actives.Track(6))
 
 	report, err := actives.ActivesByDay()
 	require.NoError(t, err)
@@ -30,7 +30,7 @@ func testActivesTrack(t *testing.T, actives data.Actives) {
 }
 
 func testActivesActivesByDay(t *testing.T, actives data.Actives) {
-	actives.Track(1)
+	require.NoError(t, actives.Track(1))
 
 	report, err := actives.ActivesByDay()
 	require.NoError(t, err)
@@ -40,7 +40,7 @@ func testActivesActivesByDay(t *testing.T, actives data.Actives) {
 }
 
 func testActivesActivesByWeek(t *testing.T, actives data.Actives) {
-	actives.Track(1)
+	require.NoError(t, actives.Track(1))
 
 	report, err := actives.ActivesByWeek()
 	require.NoError(t, err)
@@ -52,7 +52,7 @@ func testActivesActivesByWeek(t *testing.T, actives data.Actives) {
 }
 
 func testActivesActivesByMonth(t *testing.T, actives data.Actives) {
-	actives.Track(1)
+	require.NoError(t, actives.Track(1))
 
 	report, err := actives.ActivesByMonth()
 	require.NoError(t, err)

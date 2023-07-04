@@ -7,9 +7,9 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/keratin/authn-server/server/test"
-	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/app/services"
+	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/server/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -20,7 +20,8 @@ func TestPostSessionSuccess(t *testing.T) {
 	defer server.Close()
 
 	b, _ := bcrypt.GenerateFromPassword([]byte("bar"), 4)
-	app.AccountStore.Create("foo", b)
+	_, err := app.AccountStore.Create("foo", b)
+	require.NoError(t, err)
 
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
 	res, err := client.PostForm("/session", url.Values{
@@ -40,7 +41,7 @@ func TestPostSessionSuccessWithSession(t *testing.T) {
 	defer server.Close()
 
 	b, _ := bcrypt.GenerateFromPassword([]byte("bar"), 4)
-	app.AccountStore.Create("foo", b)
+	_, _ = app.AccountStore.Create("foo", b)
 
 	accountID := 8642
 	session := test.CreateSession(app.RefreshTokenStore, app.Config, accountID)

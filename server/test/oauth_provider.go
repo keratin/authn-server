@@ -17,7 +17,7 @@ func ProviderApp() http.HandlerFunc {
 			})
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			w.Write(j)
+			_, _ = w.Write(j)
 		} else {
 			w.WriteHeader(http.StatusNotFound)
 		}

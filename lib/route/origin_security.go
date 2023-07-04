@@ -40,7 +40,7 @@ func OriginSecurity(domains []Domain, logger logrus.FieldLogger) SecurityHandler
 				logger.WithField("origin", origin).Debug("Request origin is invalid")
 			}
 			w.WriteHeader(http.StatusForbidden)
-			w.Write([]byte("Origin is not a trusted host."))
+			_, _ = w.Write([]byte("Origin is not a trusted host."))
 		})
 	}
 }

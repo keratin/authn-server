@@ -34,6 +34,6 @@ func TestGetConfiguration(t *testing.T) {
 	data := struct {
 		JWKSURI string `json:"jwks_uri"`
 	}{}
-	json.Unmarshal(body, &data)
+	require.NoError(t, json.Unmarshal(body, &data))
 	assert.Equal(t, "https://authn.example.com/foo/jwks", data.JWKSURI)
 }

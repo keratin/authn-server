@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"net/http"
 
-	"github.com/keratin/authn-server/server/views"
 	"github.com/keratin/authn-server/app"
+	"github.com/keratin/authn-server/server/views"
 )
 
 func GetRoot(app *app.App) http.HandlerFunc {
@@ -15,6 +15,6 @@ func GetRoot(app *app.App) http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "text/html")
 		w.WriteHeader(http.StatusOK)
-		w.Write(buf.Bytes())
+		_, _ = w.Write(buf.Bytes())
 	}
 }

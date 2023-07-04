@@ -2,11 +2,12 @@ package services
 
 import (
 	"encoding/hex"
+
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data"
+	"github.com/keratin/authn-server/app/models"
 	"github.com/keratin/authn-server/lib"
 	"github.com/keratin/authn-server/lib/oauth"
-	"github.com/keratin/authn-server/app/models"
 	"github.com/pkg/errors"
 	"golang.org/x/oauth2"
 )
@@ -62,6 +63,11 @@ func IdentityReconciler(accountStore data.AccountStore, cfg *app.Config, provide
 	if err != nil {
 		return nil, errors.Wrap(err, "AccountCreator")
 	}
-	accountStore.AddOauthAccount(newAccount.ID, providerName, providerUser.ID, providerToken.AccessToken)
+	err = accountStore.AddOauthAccount(newAccount.ID, providerName, providerUser.ID, providerToken.AccessToken)
+	if err != nil {
+		// this should not happen since oauth details used to lookup account above
+		// not sure how best to test but feels appropriate to return error if encountered
+		return nil, errors.Wrap(err, "AddOauthAccount")
+	}
 	return newAccount, nil
 }
