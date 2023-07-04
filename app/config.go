@@ -640,7 +640,7 @@ var configurers = []configurer{
 		return nil
 	},
 
-	// APP_SIGNING_KEY is a hex encoded key used to sign webhook notifications using sha256-HMAC
+	// APP_SIGNING_KEY is a hex encoded key used to sign notifications sent to client app using sha256-HMAC
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("APP_SIGNING_KEY"); ok {
 			s, err := hex.DecodeString(val)
