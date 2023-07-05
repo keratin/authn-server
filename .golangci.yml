@@ -4,3 +4,5 @@ linters:
     - gosec
     - errcheck
     - staticcheck
+    - unused
+    - ineffassign
