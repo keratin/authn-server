@@ -1,9 +1,8 @@
 package testers
 
 import (
-	"testing"
-
 	"database/sql"
+	"testing"
 
 	"github.com/keratin/authn-server/app/data"
 	"github.com/stretchr/testify/assert"
@@ -218,6 +217,7 @@ func testUpdateUsername(t *testing.T, store data.AccountStore) {
 	// "changing" to existing username
 	ok, err = store.UpdateUsername(account.ID, "new")
 	require.NoError(t, err)
+	require.True(t, ok)
 
 	// Assert that db connections are released to pool
 	assert.Equal(t, 1, getOpenConnectionCount(store))

@@ -3,3 +3,4 @@ linters:
   enable:
     - gosec
     - errcheck
+    - staticcheck

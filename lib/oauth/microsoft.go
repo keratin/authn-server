@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 
 	"golang.org/x/oauth2"
 )
@@ -25,8 +25,8 @@ func NewMicrosoftProvider(credentials *Credentials) *Provider {
 		config: config,
 		UserInfo: func(t *oauth2.Token) (*UserInfo, error) {
 			var me struct {
-				id                string
-				userPrincipalName string
+				Id                string `json:"id"`
+				UserPrincipalName string `json:"userPrincipalName"`
 			}
 
 			client := config.Client(context.TODO(), t)
@@ -36,16 +36,15 @@ func NewMicrosoftProvider(credentials *Credentials) *Provider {
 			}
 			defer resp.Body.Close()
 
-			body, err := ioutil.ReadAll(resp.Body)
+			body, err := io.ReadAll(resp.Body)
 			if err != nil {
 				return nil, err
 			}
-			fmt.Println(string(body))
 
 			var user UserInfo
 			err = json.Unmarshal(body, &me)
-			user.ID = me.id
-			user.Email = me.userPrincipalName
+			user.ID = me.Id
+			user.Email = me.UserPrincipalName
 			fmt.Println(user)
 			return &user, err
 		},

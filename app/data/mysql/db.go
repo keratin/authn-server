@@ -24,7 +24,9 @@ func TestDB() (*sqlx.DB, error) {
 		return nil, fmt.Errorf("set TEST_MYSQL_URL for MySQL tests")
 	}
 	url, err := url.Parse(str)
-
+	if err != nil {
+		return nil, err
+	}
 	err = ensureDB(cfgFromURL(url))
 	if err != nil {
 		return nil, errors.Wrap(err, "ensureDB")

@@ -47,7 +47,10 @@ func GetOauth(app *app.App, providerName string) http.HandlerFunc {
 			return
 		}
 		state, err := stateToken.Sign(app.Config.OAuthSigningKey)
-
+		if err != nil {
+			fail(err)
+			return
+		}
 		returnURL := app.Config.AuthNURL.String() + "/oauth/" + providerName + "/return"
 		http.Redirect(w, r, provider.Config(returnURL).AuthCodeURL(state), http.StatusSeeOther)
 	}
