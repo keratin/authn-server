@@ -25,8 +25,9 @@ func TestDB() (*sqlx.DB, error) {
 	}
 	url, err := url.Parse(str)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "url.Parse")
 	}
+
 	err = ensureDB(cfgFromURL(url))
 	if err != nil {
 		return nil, errors.Wrap(err, "ensureDB")
