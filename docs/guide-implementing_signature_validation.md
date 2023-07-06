@@ -24,23 +24,15 @@ validated like so before sending:
 ```ruby
 class AuthnController < ApplicationController
   def password_reset
-    # Verify the signature
-    sig = request.headers['X-Authn-Notification-Signature']
-    
-    # Sort the form parameters by key
-    sorted_params = form_params.sort.to_h
-    # Convert the sorted form parameters to a query string
-    query_string = sorted_params.map { |key, value| "#{key}=#{value}" }.join('&')
-    
-    # Calculate the expected signature
-    digest = OpenSSL::Digest.new('sha256')
-    
-    hex_secret_key = ENV['SECRET_KEY_HEX']
-    secret_key = [hex_secret_key].pack('H*')
-    
-    # Calculate digest of the formatted payload - be sure to hex-encode the output
-    hmac = OpenSSL::HMAC.hexdigest(digest, secret_key, query_string)
-    
+    sig = request.headers["X-Authn-Notification-Signature"]
+    hex_secret_key = ENV["APP_SIGNING_KEY"]
+    secret_key = [hex_secret_key].pack("H*")
+    payload = params.sort.to_h.map { |key, value| "#{key}=#{value}" }.join("&")
+      
+    # calculate an HMAC of the payload with hex-encoded output
+    digest = OpenSSL::Digest.new("sha256")
+    hmac = OpenSSL::HMAC.hexdigest(digest, secret_key, payload)
+      
     # Compare the signatures
     unless hmac == sig
       head :unauthorized
