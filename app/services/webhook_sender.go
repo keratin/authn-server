@@ -1,9 +1,13 @@
 package services
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -33,7 +37,7 @@ func retry(schedule []time.Duration, fn func() error) error {
 	return err
 }
 
-func WebhookSender(destination *url.URL, values *url.Values, schedule []time.Duration) error {
+func WebhookSender(destination *url.URL, values *url.Values, schedule []time.Duration, signingKey []byte) error {
 	if destination == nil {
 		return fmt.Errorf("URL unconfigured")
 	}
@@ -42,8 +46,17 @@ func WebhookSender(destination *url.URL, values *url.Values, schedule []time.Dur
 		Timeout: 10 * time.Second,
 	}
 
-	err := retry(schedule, func() error {
-		res, err := c.PostForm(destination.String(), *values)
+	req, err := http.NewRequest(http.MethodPost, destination.String(), strings.NewReader(values.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	if signingKey != nil {
+		hm := hmac.New(sha256.New, signingKey)
+		hm.Write([]byte(values.Encode()))
+		req.Header.Set("X-Authn-Notification-Signature", hex.EncodeToString(hm.Sum(nil)))
+	}
+
+	err = retry(schedule, func() error {
+		res, err := c.Do(req)
 		if err == nil && res.StatusCode > 299 {
 			return fmt.Errorf("Status Code: %v", res.StatusCode)
 		}

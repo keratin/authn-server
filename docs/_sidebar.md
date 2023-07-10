@@ -7,6 +7,7 @@
   * [Change Password](guide-implementing_change_password.md)
   * [Passwordless Signup](guide-implementing_passwordless_signup.md)
   * [Passwordless Login](guide-implementing_passwordless_logins.md)
+  * [Notification Signature Validation](guide-implementing_signature_validation.md)
 
 * **Common Patterns**
   * [Synchronize Emails](guide-synchronize_emails.md)

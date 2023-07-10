@@ -1,12 +1,16 @@
 package services_test
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/keratin/authn-server/app/services"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -38,29 +42,63 @@ func TestWebhookSender(t *testing.T) {
 	failureURL := &url.URL{Scheme: "http", Host: serverURL.Host, Path: "/failure", User: url.UserPassword("user", "pass")}
 
 	t.Run("posting to remote app", func(t *testing.T) {
-		err := services.WebhookSender(successURL, &url.Values{}, noRetry)
+		err := services.WebhookSender(successURL, &url.Values{}, noRetry, nil)
 		assert.NoError(t, err)
 	})
 
 	t.Run("without auth", func(t *testing.T) {
-		err := services.WebhookSender(unauthedURL, &url.Values{}, noRetry)
+		err := services.WebhookSender(unauthedURL, &url.Values{}, noRetry, nil)
 		if assert.Error(t, err) {
 			assert.Equal(t, "PostForm: Status Code: 401", err.Error())
 		}
 	})
 
 	t.Run("without configured url", func(t *testing.T) {
-		err := services.WebhookSender(nil, &url.Values{}, noRetry)
+		err := services.WebhookSender(nil, &url.Values{}, noRetry, nil)
 		if assert.Error(t, err) {
 			assert.Equal(t, "URL unconfigured", err.Error())
 		}
 	})
 
 	t.Run("with remote app failure", func(t *testing.T) {
-		err := services.WebhookSender(failureURL, &url.Values{}, noRetry)
+		err := services.WebhookSender(failureURL, &url.Values{}, noRetry, nil)
 		if assert.Error(t, err) {
 			assert.Equal(t, "PostForm: Status Code: 500", err.Error())
 		}
+	})
+}
+
+func TestWebhookSenderSignature(t *testing.T) {
+	key := []byte(uuid.NewString())
+
+	verifier := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if h := r.Header.Get("X-Authn-Notification-Signature"); h != "" {
+			hm := hmac.New(sha256.New, key)
+			require.NoError(t, r.ParseForm(), "must parse form to have values available for signature calculation")
+			s := r.Form.Encode()
+			_, err := hm.Write([]byte(s))
+			require.NoError(t, err)
+			exp := hex.EncodeToString(hm.Sum(nil))
+			if exp == h {
+				// request is verified
+				return
+			}
+		}
+		w.WriteHeader(http.StatusUnauthorized)
+	}))
+	verifierURL, err := url.Parse(verifier.URL)
+	require.NoError(t, err)
+	requireSigURL := &url.URL{Scheme: "http", Host: verifierURL.Host, Path: "/mustsign"}
+	t.Run("without signing key", func(t *testing.T) {
+		err := services.WebhookSender(requireSigURL, &url.Values{"test": []string{uuid.NewString()}}, noRetry, nil)
+		if assert.Error(t, err) {
+			assert.Equal(t, "PostForm: Status Code: 401", err.Error())
+		}
+	})
+
+	t.Run("with signing key", func(t *testing.T) {
+		err := services.WebhookSender(requireSigURL, &url.Values{"test": []string{uuid.NewString()}}, noRetry, key)
+		assert.NoError(t, err)
 	})
 }
 
@@ -77,6 +115,6 @@ func TestWebhookSenderRetries(t *testing.T) {
 	serverURL, err := url.Parse(remoteApp.URL)
 	require.NoError(t, err)
 
-	err = services.WebhookSender(serverURL, &url.Values{}, fastRetry)
+	err = services.WebhookSender(serverURL, &url.Values{}, fastRetry, nil)
 	assert.NoError(t, err)
 }

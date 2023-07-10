@@ -10,7 +10,7 @@
 * Password Resets: [`APP_PASSWORD_RESET_URL`](#app_password_reset_url) • [`PASSWORD_RESET_TOKEN_TTL`](#password_reset_token_ttl) • [`APP_PASSWORD_CHANGED_URL`](#app_password_changed_url)
 * Passwordless: [`APP_PASSWORDLESS_TOKEN_URL`](#app_passwordless_token_url) • [`PASSWORDLESS_TOKEN_TTL`](#passwordless_token_ttl)
 * Stats: [`TIME_ZONE`](#time_zone) • [`DAILY_ACTIVES_RETENTION`](#daily_actives_retention) • [`WEEKLY_ACTIVES_RETENTION`](#weekly_actives_retention)
-* Operations: [`PORT`](#port) • [`PUBLIC_PORT`](#public_port) • [`PROXIED`](#proxied) • [`SENTRY_DSN`](#sentry_dsn) • [`AIRBRAKE_CREDENTIALS`](#airbrake_credentials)
+* Operations: [`PORT`](#port) • [`PUBLIC_PORT`](#public_port) • [`PROXIED`](#proxied) • [`SENTRY_DSN`](#sentry_dsn) • [`AIRBRAKE_CREDENTIALS`](#airbrake_credentials) • [`APP_SIGNING_KEY`](#app_signing_key)
 
 ## Core Settings
 
@@ -518,3 +518,13 @@ Configures AuthN to report panics and unhandled errors to a Sentry backend.
 | Default | nil |
 
 Configures AuthN to report panics and unhandled errors to an Airbrake backend. The format is `projectID:projectKey`.
+
+### `APP_SIGNING_KEY`
+
+|           |     |
+| --------- | --- |
+| Required? | No |
+| Value | string |
+| Default | nil |
+
+Configures AuthN to sign notifications sent to client apps using a SHA256 HMAC of the payload generated using the provided hex-encoded key.

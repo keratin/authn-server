@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"crypto/x509"
+	"encoding/hex"
 	"encoding/pem"
 	"fmt"
 	"math/big"
@@ -52,6 +53,7 @@ type Config struct {
 	ResetSigningKey             []byte
 	DBEncryptionKey             []byte
 	OAuthSigningKey             []byte
+	AppSigningKey               []byte
 	ResetTokenTTL               time.Duration
 	IdentitySigningKey          *private.Key
 	AuthNURL                    *url.URL
@@ -634,6 +636,18 @@ var configurers = []configurer{
 				c.MicrosoftOauthCredientials = credentials
 			}
 			return err
+		}
+		return nil
+	},
+
+	// APP_SIGNING_KEY is a hex encoded key used to sign notifications sent to client app using sha256-HMAC
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("APP_SIGNING_KEY"); ok {
+			s, err := hex.DecodeString(val)
+			if err != nil {
+				return err
+			}
+			c.AppSigningKey = s
 		}
 		return nil
 	},
