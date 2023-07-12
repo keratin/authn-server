@@ -32,6 +32,32 @@ jobs:
         with:
           name: authn-linux64
           path: dist/authn-linux64
+  linux64Arm:
+    name: Compile for Linux ARM
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ^1.17
+      - run: go mod download
+
+      - name: compile
+        run: |
+          go build \
+            -ldflags "-extldflags -static -X main.VERSION=${VERSION##*/v}" \
+            -o dist/authn-linux64arm
+        env:
+          VERSION: ${{ github.ref }}
+          GOOS: linux
+          GOARCH: arm64
+          CGO_ENABLED: 1
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: authn-linux64arm
+          path: dist/authn-linux64arm
 
   windows64:
     name: Compile for Windows
@@ -117,6 +143,16 @@ jobs:
           asset_path: ./authn-linux64/authn-linux64
           asset_name: authn-linux64
           asset_content_type: application/octet-stream
+          
+      - name: Upload Linux64Arm
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./authn-linux64arm/authn-linux64arm
+          asset_name: authn-linux64arm
+          asset_content_type: application/octet-stream
 
       - name: Upload Windows64
         uses: actions/upload-release-asset@v1
@@ -167,3 +203,4 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           tags: latest,${{ steps.version.outputs.number }}
+          platform: linux/amd64,linux/arm64
