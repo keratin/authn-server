@@ -32,7 +32,7 @@ func TestPasswordlessTokenVerifier(t *testing.T) {
 	}
 
 	invoke := func(token string) error {
-		_, err := services.PasswordlessTokenVerifier(accountStore, &ops.LogReporter{logrus.New()}, cfg, token)
+		_, err := services.PasswordlessTokenVerifier(accountStore, &ops.LogReporter{FieldLogger: logrus.New()}, cfg, token)
 		return err
 	}
 

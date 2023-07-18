@@ -75,7 +75,7 @@ func TestPostPassword(t *testing.T) {
 
 		// does not work
 		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
-		test.AssertErrors(t, res, services.FieldErrors{{"token", "INVALID_OR_EXPIRED"}})
+		test.AssertErrors(t, res, services.FieldErrors{{Field: "token", Message: "INVALID_OR_EXPIRED"}})
 	})
 
 	t.Run("valid session", func(t *testing.T) {
@@ -120,7 +120,7 @@ func TestPostPassword(t *testing.T) {
 		require.NoError(t, err)
 
 		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
-		test.AssertErrors(t, res, services.FieldErrors{{"password", "INSECURE"}})
+		test.AssertErrors(t, res, services.FieldErrors{{Field: "password", Message: "INSECURE"}})
 	})
 
 	t.Run("valid session and bad currentPassword", func(t *testing.T) {
@@ -139,7 +139,7 @@ func TestPostPassword(t *testing.T) {
 		require.NoError(t, err)
 
 		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
-		test.AssertErrors(t, res, services.FieldErrors{{"credentials", "FAILED"}})
+		test.AssertErrors(t, res, services.FieldErrors{{Field: "credentials", Message: "FAILED"}})
 	})
 
 	t.Run("invalid session", func(t *testing.T) {

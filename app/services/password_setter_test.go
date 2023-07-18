@@ -20,7 +20,7 @@ func TestPasswordSetter(t *testing.T) {
 	}
 
 	invoke := func(id int, password string) error {
-		return services.PasswordSetter(accountStore, &ops.LogReporter{logrus.New()}, cfg, id, password)
+		return services.PasswordSetter(accountStore, &ops.LogReporter{FieldLogger: logrus.New()}, cfg, id, password)
 	}
 
 	account, err := accountStore.Create("existing@keratin.example.com", []byte("old"))

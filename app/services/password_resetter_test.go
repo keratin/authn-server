@@ -33,7 +33,7 @@ func TestPasswordResetter(t *testing.T) {
 	}
 
 	invoke := func(token string, password string) error {
-		_, err := services.PasswordResetter(accountStore, &ops.LogReporter{logrus.New()}, cfg, token, password)
+		_, err := services.PasswordResetter(accountStore, &ops.LogReporter{FieldLogger: logrus.New()}, cfg, token, password)
 		return err
 	}
 

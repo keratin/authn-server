@@ -79,7 +79,7 @@ func TestPostAccountFailure(t *testing.T) {
 		password string
 		errors   services.FieldErrors
 	}{
-		{"", "", services.FieldErrors{{"username", "MISSING"}, {"password", "MISSING"}}},
+		{"", "", services.FieldErrors{{Field: "username", Message: "MISSING"}, {Field: "password", Message: "MISSING"}}},
 	}
 
 	for _, tc := range testCases {

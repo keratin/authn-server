@@ -21,7 +21,7 @@ func AssertData(t *testing.T, res *http.Response, expected interface{}) {
 	t.Helper()
 	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
 
-	j, err := json.Marshal(handlers.ServiceData{expected})
+	j, err := json.Marshal(handlers.ServiceData{Result: expected})
 	require.NoError(t, err)
 	assert.Equal(t, string(j), string(ReadBody(res)))
 }

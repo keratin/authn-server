@@ -45,7 +45,7 @@ func writeParseErrors(w http.ResponseWriter, err parse.Error) {
 }
 
 func WriteNotFound(w http.ResponseWriter, resource string) {
-	WriteJSON(w, http.StatusNotFound, ServiceErrors{Errors: services.FieldErrors{{resource, services.ErrNotFound}}})
+	WriteJSON(w, http.StatusNotFound, ServiceErrors{Errors: services.FieldErrors{{Field: resource, Message: services.ErrNotFound}}})
 }
 
 func WriteJSON(w http.ResponseWriter, httpCode int, d interface{}) {

@@ -26,7 +26,7 @@ func TestSession(t *testing.T) {
 			ApplicationDomains: []route.Domain{{Hostname: "example.com"}},
 		},
 		RefreshTokenStore: mock.NewRefreshTokenStore(),
-		Reporter:          &ops.LogReporter{logrus.New()},
+		Reporter:          &ops.LogReporter{FieldLogger: logrus.New()},
 	}
 
 	t.Run("valid session", func(t *testing.T) {

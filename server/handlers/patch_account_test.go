@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/app/services"
+	"github.com/keratin/authn-server/lib/route"
 
 	"github.com/keratin/authn-server/server/test"
 	"github.com/stretchr/testify/assert"
@@ -61,6 +61,6 @@ func TestPatchAccount(t *testing.T) {
 		require.NoError(t, err)
 
 		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
-		test.AssertErrors(t, res, services.FieldErrors{{"username", services.ErrMissing}})
+		test.AssertErrors(t, res, services.FieldErrors{{Field: "username", Message: services.ErrMissing}})
 	})
 }
