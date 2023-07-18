@@ -32,6 +32,9 @@ type App struct {
 
 func NewApp(cfg *Config, logger logrus.FieldLogger) (*App, error) {
 	errorReporter, err := ops.NewErrorReporter(cfg.ErrorReporterCredentials, cfg.ErrorReporterType, logger)
+	if err != nil {
+		logger.WithError(err).Warn("Failed to initialize error reporter")
+	}
 
 	db, err := data.NewDB(cfg.DatabaseURL)
 	if err != nil {

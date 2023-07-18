@@ -3,3 +3,6 @@ linters:
   enable:
     - gosec
     - errcheck
+    - staticcheck
+    - unused
+    - ineffassign

@@ -50,6 +50,7 @@ func TestSessionCreator(t *testing.T) {
 			accountStore, refreshStore, keyStore, activesStore, cfg, reporter,
 			account.ID, audience, nil,
 		)
+		require.NoError(t, err)
 
 		report, err := activesStore.ActivesByDay()
 		require.NoError(t, err)

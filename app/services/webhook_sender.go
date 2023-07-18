@@ -47,6 +47,9 @@ func WebhookSender(destination *url.URL, values *url.Values, schedule []time.Dur
 	}
 
 	req, err := http.NewRequest(http.MethodPost, destination.String(), strings.NewReader(values.Encode()))
+	if err != nil {
+		return errors.Wrap(err, "NewRequest")
+	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	if signingKey != nil {

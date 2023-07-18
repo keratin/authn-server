@@ -528,7 +528,18 @@ var configurers = []configurer{
 	// PORT is the local port the AuthN server listens to. The default is taken from AUTHN_URL, but
 	// may be different for port mapping scenarios as with containers and load balancers.
 	func(c *Config) error {
-		defaultPort, err := strconv.Atoi(c.AuthNURL.Port())
+		var defaultPort int
+
+		if p := c.AuthNURL.Port(); p != "" {
+			defaultPort, _ = strconv.Atoi(p)
+		} else {
+			switch c.AuthNURL.Scheme {
+			case "http":
+				defaultPort = 80
+			case "https":
+				defaultPort = 443
+			}
+		}
 		val, err := lookupInt("PORT", defaultPort)
 		if err == nil {
 			c.ServerPort = val
