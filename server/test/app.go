@@ -46,7 +46,7 @@ func App() *app.App {
 		AccountStore:      mock.NewAccountStore(),
 		RefreshTokenStore: mock.NewRefreshTokenStore(),
 		Actives:           mock.NewActives(),
-		Reporter:          &ops.LogReporter{logger},
+		Reporter:          &ops.LogReporter{FieldLogger: logger},
 		OauthProviders:    map[string]oauth.Provider{},
 		Logger:            logger,
 	}

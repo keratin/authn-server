@@ -64,7 +64,7 @@ func TestPostAccountsImport(t *testing.T) {
 		res, err := client.PostJSON("/accounts/import", map[string]interface{}{
 			"username": "jsonunlocked@app.com",
 			"password": "secret",
-			"locked": "false",
+			"locked":   "false",
 		})
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusCreated, res.StatusCode)
@@ -81,7 +81,7 @@ func TestPostAccountsImport(t *testing.T) {
 		})
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
-		test.AssertErrors(t, res, services.FieldErrors{{"password", "MISSING"}})
+		test.AssertErrors(t, res, services.FieldErrors{{Field: "password", Message: "MISSING"}})
 	})
 
 }

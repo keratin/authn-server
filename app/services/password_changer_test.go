@@ -24,7 +24,7 @@ func TestPasswordChanger(t *testing.T) {
 	}
 
 	invoke := func(id int, currentPassword string, password string) error {
-		return services.PasswordChanger(accountStore, &ops.LogReporter{logrus.New()}, cfg, id, currentPassword, password)
+		return services.PasswordChanger(accountStore, &ops.LogReporter{FieldLogger: logrus.New()}, cfg, id, currentPassword, password)
 	}
 
 	factory := func(username string, password string) (*models.Account, error) {

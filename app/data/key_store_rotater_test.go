@@ -14,7 +14,7 @@ import (
 )
 
 func TestKeyStoreRotater(t *testing.T) {
-	reporter := &ops.LogReporter{logrus.New()}
+	reporter := &ops.LogReporter{FieldLogger: logrus.New()}
 	secret := []byte("32bigbytesofsuperultimatesecrecy")
 	interval := time.Hour
 	logger := logrus.New()

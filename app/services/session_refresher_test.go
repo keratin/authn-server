@@ -26,10 +26,10 @@ func TestSessionRefresher(t *testing.T) {
 		AuthNURL: &url.URL{Scheme: "http", Host: "authn.example.com"},
 	}
 	refreshStore := mock.NewRefreshTokenStore()
-	reporter := &ops.LogReporter{logrus.New()}
+	reporter := &ops.LogReporter{FieldLogger: logrus.New()}
 
 	accountID := 0
-	audience := &route.Domain{"authn.example.com", "8080"}
+	audience := &route.Domain{Hostname: "authn.example.com", Port: "8080"}
 	session, err := sessions.New(refreshStore, cfg, accountID, audience.String())
 	require.NoError(t, err)
 	assert.NotEmpty(t, session.SessionID)

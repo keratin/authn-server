@@ -74,7 +74,7 @@ func TestPostSessionFailure(t *testing.T) {
 		password string
 		errors   services.FieldErrors
 	}{
-		{"", "", services.FieldErrors{{"credentials", "FAILED"}}},
+		{"", "", services.FieldErrors{{Field: "credentials", Message: "FAILED"}}},
 	}
 
 	for _, tc := range testCases {

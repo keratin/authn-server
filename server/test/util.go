@@ -21,7 +21,7 @@ func ReadBody(res *http.Response) []byte {
 // `inner`, an empty struct that describes the expected (desired) shape of what is inside the
 // envelope.
 func ExtractResult(res *http.Response, inner interface{}) error {
-	return json.Unmarshal(ReadBody(res), &handlers.ServiceData{inner})
+	return json.Unmarshal(ReadBody(res), &handlers.ServiceData{Result: inner})
 }
 
 // ReadCookie gets a cookie by name.

@@ -53,7 +53,7 @@ func BenchmarkGetSessionRefresh(b *testing.B) {
 		testApp := test.App()
 		server := test.Server(testApp)
 		defer server.Close()
-		testApp.RefreshTokenStore = &sqlite3.RefreshTokenStore{sqliteDB, time.Hour}
+		testApp.RefreshTokenStore = &sqlite3.RefreshTokenStore{Ext: sqliteDB, TTL: time.Hour}
 		client := route.NewClient(server.URL).
 			Referred(&testApp.Config.ApplicationDomains[0]).
 			WithCookie(test.CreateSession(testApp.RefreshTokenStore, testApp.Config, 12345))
@@ -73,7 +73,7 @@ func BenchmarkGetSessionRefresh(b *testing.B) {
 		testApp := test.App()
 		server := test.Server(testApp)
 		defer server.Close()
-		testApp.RefreshTokenStore = &redis.RefreshTokenStore{redisDB, time.Hour}
+		testApp.RefreshTokenStore = &redis.RefreshTokenStore{Client: redisDB, TTL: time.Hour}
 		client := route.NewClient(server.URL).
 			Referred(&testApp.Config.ApplicationDomains[0]).
 			WithCookie(test.CreateSession(testApp.RefreshTokenStore, testApp.Config, 12345))
@@ -111,7 +111,7 @@ func TestGetSessionRefreshFailure(t *testing.T) {
 			ApplicationDomains: []route.Domain{{Hostname: "test.com"}},
 		},
 		RefreshTokenStore: mock.NewRefreshTokenStore(),
-		Reporter:          &ops.LogReporter{logrus.New()},
+		Reporter:          &ops.LogReporter{FieldLogger: logrus.New()},
 		Logger:            logrus.New(),
 	}
 	server := test.Server(testApp)

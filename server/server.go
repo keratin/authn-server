@@ -12,7 +12,7 @@ import (
 func Server(app *app.App) {
 	if app.Config.PublicPort != 0 {
 		go func() {
-			fmt.Println(fmt.Sprintf("PUBLIC_PORT: %d", app.Config.PublicPort))
+			fmt.Printf("PUBLIC_PORT: %d\n", app.Config.PublicPort)
 			publicServer := &http.Server{
 				Addr:              fmt.Sprintf(":%d", app.Config.PublicPort),
 				Handler:           PublicRouter(app),

@@ -25,11 +25,11 @@ func WriteData(w http.ResponseWriter, httpCode int, d interface{}) {
 }
 
 func WriteErrors(w http.ResponseWriter, err error) {
-	switch err.(type) {
+	switch te := err.(type) {
 	case services.FieldErrors:
-		WriteJSON(w, http.StatusUnprocessableEntity, ServiceErrors{Errors: err.(services.FieldErrors)})
+		WriteJSON(w, http.StatusUnprocessableEntity, ServiceErrors{Errors: te})
 	case parse.Error:
-		writeParseErrors(w, err.(parse.Error))
+		writeParseErrors(w, te)
 	default:
 		WriteJSON(w, http.StatusInternalServerError, RequestError{Error: err.Error()})
 	}
@@ -45,7 +45,7 @@ func writeParseErrors(w http.ResponseWriter, err parse.Error) {
 }
 
 func WriteNotFound(w http.ResponseWriter, resource string) {
-	WriteJSON(w, http.StatusNotFound, ServiceErrors{Errors: services.FieldErrors{{resource, services.ErrNotFound}}})
+	WriteJSON(w, http.StatusNotFound, ServiceErrors{Errors: services.FieldErrors{{Field: resource, Message: services.ErrNotFound}}})
 }
 
 func WriteJSON(w http.ResponseWriter, httpCode int, d interface{}) {

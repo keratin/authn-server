@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path"
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/server"
 	"github.com/sirupsen/logrus"
-
-	"os"
-	"path"
 )
 
 // VERSION is a value injected at build time with ldflags
@@ -35,14 +34,14 @@ func main() {
 	} else if cmd == "migrate" {
 		migrate(cfg)
 	} else {
-		os.Stderr.WriteString(fmt.Sprintf("unexpected invocation\n"))
+		os.Stderr.WriteString("unexpected invocation\n")
 		usage()
 		os.Exit(2)
 	}
 }
 
 func serve(cfg *app.Config) {
-	fmt.Println(fmt.Sprintf("~*~ Keratin AuthN v%s ~*~", VERSION))
+	fmt.Printf("~*~ Keratin AuthN v%s ~*~\n", VERSION)
 
 	// Default logger
 	logger := logrus.New()
@@ -56,10 +55,10 @@ func serve(cfg *app.Config) {
 		return
 	}
 
-	fmt.Println(fmt.Sprintf("AUTHN_URL: %s", cfg.AuthNURL))
-	fmt.Println(fmt.Sprintf("PORT: %d", cfg.ServerPort))
+	fmt.Printf("AUTHN_URL: %s\n", cfg.AuthNURL)
+	fmt.Printf("PORT: %d\n", cfg.ServerPort)
 	if app.Config.PublicPort != 0 {
-		fmt.Println(fmt.Sprintf("PUBLIC_PORT: %d", app.Config.PublicPort))
+		fmt.Printf("PUBLIC_PORT: %d\n", app.Config.PublicPort)
 	}
 
 	server.Server(app)
@@ -77,9 +76,10 @@ func migrate(cfg *app.Config) {
 
 func usage() {
 	exe := path.Base(os.Args[0])
-	fmt.Println(fmt.Sprintf(`
+	fmt.Printf(`
 Usage:
 %s server  - run the server (default)
 %s migrate - run migrations
-`, exe, exe))
+
+`, exe, exe)
 }
