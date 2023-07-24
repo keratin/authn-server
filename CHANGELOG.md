@@ -6,6 +6,10 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+## 1.17.1
+
+### Added
+
 * HMAC notification signatures (#207)
 * support inferring default port from configured URL (via #214) 
 * fix unmarshaling bug in Microsoft OAuth Provider (via #214)
