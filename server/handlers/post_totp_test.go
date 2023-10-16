@@ -19,6 +19,7 @@ func TestPostTOTPSuccess(t *testing.T) {
 	server := test.Server(app)
 	defer server.Close()
 
+	// nolint: gosec
 	totpSecret := "JKK5AG4NDAWSZSR4ZFKZBWZ7OJGLB2JM"
 	account, _ := app.AccountStore.Create("account@keratin.tech", []byte("password"))
 	existingSession := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
@@ -45,6 +46,7 @@ func TestPostTOTPFailure(t *testing.T) {
 	server := test.Server(app)
 	defer server.Close()
 
+	// nolint: gosec
 	totpSecret := "JKK5AG4NDAWSZSR4ZFKZBWZ7OJGLB2JM"
 	account, _ := app.AccountStore.Create("account@keratin.tech", []byte("password"))
 	existingSession := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)

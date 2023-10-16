@@ -116,6 +116,7 @@ func TestPasswordResetter(t *testing.T) {
 }
 
 func TestPasswordResetterWithTOTP(t *testing.T) {
+	// nolint: gosec
 	totpSecret := "JKK5AG4NDAWSZSR4ZFKZBWZ7OJGLB2JM"
 	totpSecretEnc := []byte("cli6azfL5i7PAnh8U/w3Zbglsm3XcdaGODy+Ga5QqT02c9hotDAR1Y28--3UihzsJhw/+EU3R6--qUw9L8DwN5XPVfOStshKzA==")
 
@@ -137,14 +138,15 @@ func TestPasswordResetterWithTOTP(t *testing.T) {
 	}
 
 	invoke := func(token string, password string, totpCode string) error {
-		_, err := services.PasswordResetter(accountStore, &ops.LogReporter{logrus.New()}, cfg, token, password, totpCode)
+		_, err := services.PasswordResetter(accountStore, &ops.LogReporter{FieldLogger: logrus.New()}, cfg, token, password, totpCode)
 		return err
 	}
 
 	t.Run("sets new password", func(t *testing.T) {
 		expired, err := accountStore.Create("first@keratin.tech", []byte("old"))
 		require.NoError(t, err)
-		accountStore.SetTOTPSecret(expired.ID, totpSecretEnc)
+		_, err = accountStore.SetTOTPSecret(expired.ID, totpSecretEnc)
+		require.NoError(t, err)
 		_, err = accountStore.RequireNewPassword(expired.ID)
 		require.NoError(t, err)
 
@@ -163,7 +165,8 @@ func TestPasswordResetterWithTOTP(t *testing.T) {
 	t.Run("without totp code", func(t *testing.T) {
 		expired, err := accountStore.Create("second@keratin.tech", []byte("old"))
 		require.NoError(t, err)
-		accountStore.SetTOTPSecret(expired.ID, totpSecretEnc)
+		_, err = accountStore.SetTOTPSecret(expired.ID, totpSecretEnc)
+		require.NoError(t, err)
 		_, err = accountStore.RequireNewPassword(expired.ID)
 		require.NoError(t, err)
 
