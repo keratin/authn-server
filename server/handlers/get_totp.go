@@ -12,7 +12,7 @@ import (
 	"github.com/keratin/authn-server/server/sessions"
 )
 
-//GetTOTP begins the TOTP onboarding process
+// GetTOTP begins the TOTP onboarding process
 func GetTOTP(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// check for valid session with live token
@@ -39,8 +39,9 @@ func GetTOTP(app *app.App) http.HandlerFunc {
 		}
 
 		WriteData(w, http.StatusOK, map[string]string{
-			"url": totpKey.URL(),
-			"png": base64.StdEncoding.EncodeToString(pngImg.Bytes()),
+			"secret": totpKey.Secret(),
+			"url":    totpKey.URL(),
+			"png":    base64.StdEncoding.EncodeToString(pngImg.Bytes()),
 		})
 	}
 }

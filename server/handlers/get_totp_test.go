@@ -28,13 +28,16 @@ func TestGetTOTPSuccess(t *testing.T) {
 	assert.Equal(t, http.StatusOK, res.StatusCode)
 	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
 	responseData := struct {
-		Url string `json:"url"`
-		Png string `json:"png"`
+		Secret string `json:"secret"`
+		Url    string `json:"url"`
+		Png    string `json:"png"`
 	}{}
 	err = test.ExtractResult(res, &responseData)
 	require.NoError(t, err)
 
+	assert.NotEqual(t, responseData.Secret, "")
 	assert.Contains(t, responseData.Url, "otpauth://totp/test.com:account@keratin.tech")
+	assert.Contains(t, responseData.Url, responseData.Secret)
 
 	img, err := base64.StdEncoding.DecodeString(responseData.Png)
 	require.NoError(t, err)
