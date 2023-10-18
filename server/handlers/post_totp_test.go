@@ -32,7 +32,7 @@ func TestPostTOTPSuccess(t *testing.T) {
 
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0]).WithCookie(existingSession)
 	res, err := client.PostForm("/totp", url.Values{
-		"code": []string{code},
+		"otp": []string{code},
 	})
 	require.NoError(t, err)
 	body := test.ReadBody(res)
@@ -55,7 +55,7 @@ func TestPostTOTPFailure(t *testing.T) {
 
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0]).WithCookie(existingSession)
 	res, err := client.PostForm("/totp", url.Values{
-		"code": []string{"12345"}, //Invalid code
+		"otp": []string{"12345"}, //Invalid code
 	})
 	require.NoError(t, err)
 	body := test.ReadBody(res)

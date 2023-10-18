@@ -114,7 +114,7 @@ func TestPostSessionSuccessWithTOTP(t *testing.T) {
 	res, err := client.PostForm("/session", url.Values{
 		"username": []string{"foo"},
 		"password": []string{"bar"},
-		"totp":     []string{code},
+		"otp":      []string{code},
 	})
 	require.NoError(t, err)
 
@@ -155,7 +155,7 @@ func TestPostSessionSuccessWithSessionAndTOTP(t *testing.T) {
 	_, err = client.PostForm("/session", url.Values{
 		"username": []string{"foo"},
 		"password": []string{"bar"},
-		"totp":     []string{code},
+		"otp":      []string{code},
 	})
 	require.NoError(t, err)
 
@@ -193,7 +193,7 @@ func TestPostSessionFailureWithTOTP(t *testing.T) {
 		res, err := client.PostForm("/session", url.Values{
 			"username": []string{tc.username},
 			"password": []string{tc.password},
-			"totp":     []string{tc.totpCode},
+			"otp":      []string{tc.totpCode},
 		})
 		require.NoError(t, err)
 

@@ -15,7 +15,7 @@ func PostSession(app *app.App) http.HandlerFunc {
 		var credentials struct {
 			Username string
 			Password string
-			TOTP     string
+			OTP      string
 		}
 		if err := parse.Payload(r, &credentials); err != nil {
 			WriteErrors(w, err)
@@ -28,7 +28,7 @@ func PostSession(app *app.App) http.HandlerFunc {
 			app.Config,
 			credentials.Username,
 			credentials.Password,
-			credentials.TOTP,
+			credentials.OTP,
 		)
 		if err != nil {
 			if fe, ok := err.(services.FieldErrors); ok {
