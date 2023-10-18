@@ -1,9 +1,6 @@
 package handlers
 
 import (
-	"bytes"
-	"encoding/base64"
-	"image/png"
 	"net/http"
 
 	"github.com/keratin/authn-server/app"
@@ -27,21 +24,9 @@ func GetTOTP(app *app.App) http.HandlerFunc {
 			panic(err)
 		}
 
-		//Convert to png
-		var pngImg bytes.Buffer
-		img, err := totpKey.Image(200, 200)
-		if err != nil {
-			panic(err)
-		}
-		err = png.Encode(&pngImg, img)
-		if err != nil {
-			panic(err)
-		}
-
 		WriteData(w, http.StatusOK, map[string]string{
 			"secret": totpKey.Secret(),
 			"url":    totpKey.URL(),
-			"png":    base64.StdEncoding.EncodeToString(pngImg.Bytes()),
 		})
 	}
 }

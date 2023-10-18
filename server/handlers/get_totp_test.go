@@ -1,9 +1,6 @@
 package handlers_test
 
 import (
-	"bytes"
-	"encoding/base64"
-	"image/png"
 	"net/http"
 	"testing"
 
@@ -30,7 +27,6 @@ func TestGetTOTPSuccess(t *testing.T) {
 	responseData := struct {
 		Secret string `json:"secret"`
 		Url    string `json:"url"`
-		Png    string `json:"png"`
 	}{}
 	err = test.ExtractResult(res, &responseData)
 	require.NoError(t, err)
@@ -38,11 +34,6 @@ func TestGetTOTPSuccess(t *testing.T) {
 	assert.NotEqual(t, responseData.Secret, "")
 	assert.Contains(t, responseData.Url, "otpauth://totp/test.com:account@keratin.tech")
 	assert.Contains(t, responseData.Url, responseData.Secret)
-
-	img, err := base64.StdEncoding.DecodeString(responseData.Png)
-	require.NoError(t, err)
-	_, err = png.Decode(bytes.NewReader(img))
-	require.NoError(t, err)
 }
 
 func TestGetTOTPUnauthenticated(t *testing.T) {
