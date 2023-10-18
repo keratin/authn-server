@@ -43,13 +43,13 @@ func PublicRoutes(app *app.App) []*route.HandledRoute {
 			SecuredWith(originSecurity).
 			Handle(handlers.GetSessionRefresh(app)),
 
-		route.Get("/totp/new").
+		route.Post("/totp/new").
 			SecuredWith(originSecurity).
-			Handle(handlers.GetTOTP(app)),
+			Handle(handlers.CreateTOTP(app)),
 
-		route.Post("/totp").
+		route.Post("/totp/confirm").
 			SecuredWith(originSecurity).
-			Handle(handlers.PostTOTP(app)),
+			Handle(handlers.ConfirmTOTP(app)),
 
 		route.Delete("/totp").
 			SecuredWith(originSecurity).

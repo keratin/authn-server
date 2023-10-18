@@ -9,8 +9,8 @@ import (
 	"github.com/keratin/authn-server/server/sessions"
 )
 
-// GetTOTP begins the TOTP onboarding process
-func GetTOTP(app *app.App) http.HandlerFunc {
+// CreateTOTP begins the TOTP onboarding process
+func CreateTOTP(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// check for valid session with live token
 		accountID := sessions.GetAccountID(r)

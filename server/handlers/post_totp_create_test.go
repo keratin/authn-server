@@ -2,6 +2,7 @@ package handlers_test
 
 import (
 	"net/http"
+	"net/url"
 	"testing"
 
 	"github.com/keratin/authn-server/lib/route"
@@ -10,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetTOTPSuccess(t *testing.T) {
+func TestPostTOTPCreateSuccess(t *testing.T) {
 	app := test.App()
 	server := test.Server(app)
 	defer server.Close()
@@ -19,7 +20,7 @@ func TestGetTOTPSuccess(t *testing.T) {
 	existingSession := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0]).WithCookie(existingSession)
-	res, err := client.Get("/totp/new")
+	res, err := client.PostForm("/totp/new", url.Values{})
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusOK, res.StatusCode)
@@ -36,13 +37,13 @@ func TestGetTOTPSuccess(t *testing.T) {
 	assert.Contains(t, responseData.Url, responseData.Secret)
 }
 
-func TestGetTOTPUnauthenticated(t *testing.T) {
+func TestPostTOTPCreateUnauthenticated(t *testing.T) {
 	app := test.App()
 	server := test.Server(app)
 	defer server.Close()
 
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0])
-	res, err := client.Get("/totp/new")
+	res, err := client.PostForm("/totp/new", url.Values{})
 
 	require.NoError(t, err)
 	body := test.ReadBody(res)

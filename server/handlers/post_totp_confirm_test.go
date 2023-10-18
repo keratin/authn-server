@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestPostTOTPSuccess(t *testing.T) {
+func TestPostTOTPConfirmSuccess(t *testing.T) {
 	app := test.App()
 	server := test.Server(app)
 	defer server.Close()
@@ -31,7 +31,7 @@ func TestPostTOTPSuccess(t *testing.T) {
 	require.NoError(t, err)
 
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0]).WithCookie(existingSession)
-	res, err := client.PostForm("/totp", url.Values{
+	res, err := client.PostForm("/totp/confirm", url.Values{
 		"otp": []string{code},
 	})
 	require.NoError(t, err)
@@ -41,7 +41,7 @@ func TestPostTOTPSuccess(t *testing.T) {
 	assert.Equal(t, "", string(body))
 }
 
-func TestPostTOTPFailure(t *testing.T) {
+func TestPostTOTPConfirmFailure(t *testing.T) {
 	app := test.App()
 	server := test.Server(app)
 	defer server.Close()
@@ -54,7 +54,7 @@ func TestPostTOTPFailure(t *testing.T) {
 	require.NoError(t, err)
 
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0]).WithCookie(existingSession)
-	res, err := client.PostForm("/totp", url.Values{
+	res, err := client.PostForm("/totp/confirm", url.Values{
 		"otp": []string{"12345"}, //Invalid code
 	})
 	require.NoError(t, err)
