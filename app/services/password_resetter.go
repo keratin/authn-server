@@ -40,7 +40,7 @@ func PasswordResetter(store data.AccountStore, r ops.ErrorReporter, cfg *app.Con
 		return 0, FieldErrors{{"token", ErrInvalidOrExpired}}
 	}
 
-	//Check TOTP MFA
+	//Check OTP MFA
 	if account.TOTPEnabled() {
 		secret, err := compat.Decrypt([]byte(account.TOTPSecret.String), cfg.DBEncryptionKey)
 		if err != nil {

@@ -297,7 +297,7 @@ func TestPostPasswordWithTOTP(t *testing.T) {
 		res, err := client.PostForm("/password", url.Values{
 			"token":    []string{tokenStr},
 			"password": []string{"0a0b0c0d0"},
-			"totp":     []string{code},
+			"otp":      []string{code},
 		})
 		require.NoError(t, err)
 

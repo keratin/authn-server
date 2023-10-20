@@ -18,7 +18,7 @@ func DeleteTOTP(app *app.App) http.HandlerFunc {
 		}
 
 		if err := services.TOTPDeleter(app.AccountStore, accountID); err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusUnprocessableEntity)
 			return
 		}
 

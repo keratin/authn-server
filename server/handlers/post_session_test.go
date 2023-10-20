@@ -138,7 +138,7 @@ func TestPostSessionSuccessWithSessionAndTOTP(t *testing.T) {
 	accountID := 8642
 	session := test.CreateSession(app.RefreshTokenStore, app.Config, accountID)
 
-	//Generate TOTP code
+	//Generate OTP code
 	ok, err := app.AccountStore.SetTOTPSecret(account.ID, totpSecretEnc)
 	assert.True(t, ok)
 	require.NoError(t, err)

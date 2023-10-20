@@ -47,7 +47,7 @@ func CredentialsVerifier(store data.AccountStore, cfg *app.Config, username stri
 		return nil, FieldErrors{{"credentials", ErrExpired}}
 	}
 
-	//Check TOTP MFA
+	//Check OTP MFA
 	if account.TOTPEnabled() {
 		secret, err := compat.Decrypt([]byte(account.TOTPSecret.String), cfg.DBEncryptionKey)
 		if err != nil {

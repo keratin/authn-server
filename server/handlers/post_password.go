@@ -16,7 +16,7 @@ func PostPassword(app *app.App) http.HandlerFunc {
 			Token           string
 			Password        string
 			CurrentPassword string
-			TOTP            string
+			OTP             string
 		}
 		if err := parse.Payload(r, &credentials); err != nil {
 			WriteErrors(w, err)
@@ -32,7 +32,7 @@ func PostPassword(app *app.App) http.HandlerFunc {
 				app.Config,
 				credentials.Token,
 				credentials.Password,
-				credentials.TOTP,
+				credentials.OTP,
 			)
 		} else {
 			accountID = sessions.GetAccountID(r)

@@ -39,6 +39,11 @@ func TestPostTOTPConfirmSuccess(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, res.StatusCode)
 	assert.Equal(t, "", string(body))
+
+	// ensure that after confirmation a new secret cannot be requested
+	res, err = client.PostForm("/totp/new", url.Values{})
+	require.NoError(t, err)
+	assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
 }
 
 func TestPostTOTPConfirmFailure(t *testing.T) {

@@ -23,7 +23,7 @@ func (a Account) Archived() bool {
 	return a.DeletedAt != nil
 }
 
-//TOTPEnabled returns true if TOTP is enabled on the account
+// TOTPEnabled returns true if OTP is enabled on the account
 func (a Account) TOTPEnabled() bool {
 	if a.TOTPSecret.Valid && a.TOTPSecret.String != "" {
 		return true

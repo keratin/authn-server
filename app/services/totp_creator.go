@@ -8,12 +8,18 @@ import (
 	"github.com/pquerna/otp/totp"
 )
 
-//TOTPCreator handles the creation and storage of new TOTP tokens
-func TOTPCreator(accountStore data.AccountStore, totpCache data.TOTPCache, accountID int, audience *route.Domain) (*otp.Key, error) {
+var ErrExistingTOTPSecret = errors.New("a OTP secret has already been established for this account")
 
+// TOTPCreator handles the creation and storage of new OTP tokens
+func TOTPCreator(accountStore data.AccountStore, totpCache data.TOTPCache, accountID int, audience *route.Domain) (*otp.Key, error) {
 	account, err := AccountGetter(accountStore, accountID)
 	if err != nil {
 		return nil, err
+	}
+
+	if account.TOTPEnabled() {
+		// TODO: verify behavior here and test
+		return nil, ErrExistingTOTPSecret
 	}
 
 	//Generate totp key

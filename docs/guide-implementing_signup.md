@@ -40,6 +40,7 @@ process that submits with two API calls.
 ## Related Guides
 
 * Check for available usernames in real-time
+* [TOTP MFA Onboarding](guide-implementing_totp_mfa_onboarding.md)
 * [Displaying a password strength indicator](guide-displaying_a_password_strength_meter.md)
 * [Restrict signups by email domain](guide-restrict_signups_by_domain.md)
 * [Restrict signups by invitation](guide-restrict_signups_by_invitation.md)

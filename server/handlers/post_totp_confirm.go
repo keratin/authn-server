@@ -8,7 +8,7 @@ import (
 	"github.com/keratin/authn-server/server/sessions"
 )
 
-// ConfirmTOTP finishes the TOTP onboarding process
+// ConfirmTOTP finishes the OTP onboarding process
 func ConfirmTOTP(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// check for valid session with live token
