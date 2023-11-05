@@ -12,7 +12,7 @@ import (
 	"github.com/keratin/authn-server/app/data/mysql"
 	"github.com/keratin/authn-server/app/data/postgres"
 	"github.com/keratin/authn-server/app/data/sqlite3"
-	sq3 "github.com/mattn/go-sqlite3"
+	sq3 "modernc.org/sqlite"
 )
 
 func NewDB(url *url.URL) (*sqlx.DB, error) {
@@ -61,8 +61,8 @@ func MigrateDB(url *url.URL) error {
 
 func IsUniquenessError(err error) bool {
 	switch i := err.(type) {
-	case sq3.Error:
-		return i.ExtendedCode == sq3.ErrConstraintUnique
+	case *sq3.Error:
+		return i.Code() == 2067 // SQLITE_CONSTRAINT_UNIQUE
 	case *my.MySQLError:
 		return i.Number == 1062
 	case *pq.Error:

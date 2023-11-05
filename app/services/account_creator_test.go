@@ -23,7 +23,8 @@ func TestAccountCreatorSuccess(t *testing.T) {
 		{app.Config{UsernameIsEmail: true, UsernameDomains: []string{"rightdomain.com"}}, "username@rightdomain.com", "PASSword"},
 	}
 
-	for _, tc := range testCases {
+	for i := range testCases {
+		tc := testCases[i] // avoid implicit capture
 		acc, err := services.AccountCreator(store, &tc.config, tc.username, tc.password)
 		require.NoError(t, err)
 		assert.NotEqual(t, 0, acc.ID)
@@ -60,7 +61,8 @@ func TestAccountCreatorFailure(t *testing.T) {
 		{app.Config{UsernameIsEmail: true}, "username@test.example.com", "username@test.example.com", services.FieldErrors{{"password", "INSECURE"}}},
 	}
 
-	for _, tc := range testCases {
+	for i := range testCases {
+		tc := testCases[i] // avoid implicit capture
 		t.Run(tc.username, func(t *testing.T) {
 			acc, err := services.AccountCreator(store, &tc.config, tc.username, tc.password)
 			if assert.Equal(t, tc.errors, err) {

@@ -18,7 +18,7 @@ require (
 	github.com/jmoiron/sqlx v0.0.0-20170430194603-d9bd385d68c0
 	github.com/joho/godotenv v1.2.0
 	github.com/lib/pq v1.10.0
-	github.com/mattn/go-sqlite3 v1.6.0
+	github.com/mattn/go-sqlite3 v1.14.18 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.11.1
 	github.com/sirupsen/logrus v1.6.0
@@ -28,4 +28,5 @@ require (
 	golang.org/x/crypto v0.1.0
 	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
 	gopkg.in/square/go-jose.v2 v2.3.1
+	modernc.org/sqlite v1.27.0
 )
