@@ -17,7 +17,7 @@ import (
 
 func NewDB(url *url.URL) (*sqlx.DB, error) {
 	switch url.Scheme {
-	case "sqlite":
+	case "sqlite3":
 		return sqlite3.NewDB(url.Path)
 	case "mysql":
 		return mysql.NewDB(url)
@@ -30,7 +30,7 @@ func NewDB(url *url.URL) (*sqlx.DB, error) {
 
 func MigrateDB(url *url.URL) error {
 	switch url.Scheme {
-	case "sqlite":
+	case "sqlite3":
 		db, err := sqlite3.NewDB(url.Path)
 		if err != nil {
 			return err

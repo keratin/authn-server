@@ -29,7 +29,7 @@ type AccountStore interface {
 
 func NewAccountStore(db sqlx.Ext) (AccountStore, error) {
 	switch db.DriverName() {
-	case "sqlite":
+	case "sqlite3":
 		return &sqlite3.AccountStore{Ext: db}, nil
 	case "mysql":
 		return &mysql.AccountStore{Ext: db}, nil
