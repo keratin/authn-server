@@ -37,7 +37,7 @@ func NewBlobStore(interval time.Duration, redis *redis.Client, db *sqlx.DB, repo
 	}
 
 	switch db.DriverName() {
-	case "sqlite3":
+	case "sqlite":
 		store := &sqlite3.BlobStore{
 			TTL:      ttl,
 			LockTime: lockTime,

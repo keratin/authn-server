@@ -1,10 +1,11 @@
 package sqlite3
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/mattn/go-sqlite3"
+	"modernc.org/sqlite"
 )
 
 // MigrateDB is committed to doing the work necessary to converge the database
@@ -29,8 +30,9 @@ func MigrateDB(db *sqlx.DB) error {
 }
 
 func isDuplicateError(e error) bool {
-	sqliteError, ok := e.(sqlite3.Error)
-	return ok && sqliteError.Code == 1 && strings.Contains(sqliteError.Error(), "duplicate column name")
+	var sqliteError *sqlite.Error
+	ok := errors.As(e, &sqliteError)
+	return ok && sqliteError.Code() == 1 && strings.Contains(sqliteError.Error(), "duplicate column name")
 }
 
 func createAccounts(db *sqlx.DB) error {

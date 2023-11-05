@@ -6,8 +6,8 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/keratin/authn-server/ops"
-	sq3 "github.com/mattn/go-sqlite3"
 	"github.com/pkg/errors"
+	sq3 "modernc.org/sqlite"
 )
 
 var placeholder = "generating"
@@ -43,7 +43,7 @@ func (s *BlobStore) Read(name string) ([]byte, error) {
 
 func (s *BlobStore) WriteNX(name string, blob []byte) (bool, error) {
 	_, err := s.DB.Exec("INSERT INTO blobs (name, blob, expires_at) VALUES (?, ?, ?)", name, blob, time.Now().Add(s.TTL))
-	if i, ok := err.(sq3.Error); ok && i.ExtendedCode == sq3.ErrConstraintUnique {
+	if i, ok := err.(*sq3.Error); ok && i.Code() == 2067 {
 		return false, nil
 	}
 	if err != nil {
