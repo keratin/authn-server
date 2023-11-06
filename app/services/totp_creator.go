@@ -18,7 +18,6 @@ func TOTPCreator(accountStore data.AccountStore, totpCache data.TOTPCache, accou
 	}
 
 	if account.TOTPEnabled() {
-		// TODO: verify behavior here and test
 		return nil, ErrExistingTOTPSecret
 	}
 

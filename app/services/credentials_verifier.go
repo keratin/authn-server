@@ -17,7 +17,7 @@ var emptyHashes = map[int]string{
 	12: "$2a$12$w58M3IGXURRAqXQ/OAsMmuqcV4YqP3WyJ.yHvHI5ANUK1bRWxeceK",
 }
 
-func CredentialsVerifier(store data.AccountStore, cfg *app.Config, username string, password, totpCode string) (*models.Account, error) {
+func CredentialsVerifier(store data.AccountStore, cfg *app.Config, username string, password, otpCode string) (*models.Account, error) {
 	if username == "" && password == "" {
 		return nil, FieldErrors{{"credentials", ErrFailed}}
 	}
@@ -53,7 +53,7 @@ func CredentialsVerifier(store data.AccountStore, cfg *app.Config, username stri
 		if err != nil {
 			return nil, errors.Wrap(err, "TOTPDecrypt")
 		}
-		if !totp.Validate(totpCode, secret) {
+		if !totp.Validate(otpCode, secret) {
 			return nil, FieldErrors{{"totp", ErrInvalidOrExpired}}
 		}
 	}

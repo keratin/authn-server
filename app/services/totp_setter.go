@@ -11,7 +11,7 @@ import (
 // TOTPSetter persists the OTP secret to the accountID if code is correct
 func TOTPSetter(accountStore data.AccountStore, totpCache data.TOTPCache, cfg *app.Config, accountID int, code string) error {
 	if code == "" { //Fail early if code is empty
-		return FieldErrors{{"totp", ErrInvalidOrExpired}}
+		return FieldErrors{{"otp", ErrInvalidOrExpired}}
 	}
 
 	account, err := AccountGetter(accountStore, accountID)
@@ -25,7 +25,7 @@ func TOTPSetter(accountStore data.AccountStore, totpCache data.TOTPCache, cfg *a
 	}
 
 	if !totp.Validate(code, string(secret)) { //Either cache expiry or validation error
-		return FieldErrors{{"totp", ErrInvalidOrExpired}}
+		return FieldErrors{{"otp", ErrInvalidOrExpired}}
 	}
 
 	secret, err = compat.Encrypt(secret, cfg.DBEncryptionKey)
@@ -33,7 +33,8 @@ func TOTPSetter(accountStore data.AccountStore, totpCache data.TOTPCache, cfg *a
 		return err
 	}
 
-	//Persist totp secret that was loaded from cache to db TODO: Delete key from cache
+	//Persist totp secret that was loaded from cache to db
+	//TODO: Delete key from cache
 	affected, err := accountStore.SetTOTPSecret(accountID, secret)
 	if err != nil {
 		return errors.Wrap(err, "TOTPSetter")

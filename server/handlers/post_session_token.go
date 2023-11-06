@@ -15,7 +15,7 @@ func PostSessionToken(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var credentials struct {
 			Token string
-			TOTP  string
+			OTP   string
 		}
 		if err := parse.Payload(r, &credentials); err != nil {
 			WriteErrors(w, err)
@@ -29,7 +29,7 @@ func PostSessionToken(app *app.App) http.HandlerFunc {
 			app.Reporter,
 			app.Config,
 			credentials.Token,
-			credentials.TOTP,
+			credentials.OTP,
 		)
 
 		if err != nil {

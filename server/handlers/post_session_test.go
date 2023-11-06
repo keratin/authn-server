@@ -91,7 +91,7 @@ func TestPostSessionFailure(t *testing.T) {
 	}
 }
 
-func TestPostSessionSuccessWithTOTP(t *testing.T) {
+func TestPostSessionSuccessWithOTP(t *testing.T) {
 	// nolint: gosec
 	totpSecret := "JKK5AG4NDAWSZSR4ZFKZBWZ7OJGLB2JM"
 	totpSecretEnc := []byte("cli6azfL5i7PAnh8U/w3Zbglsm3XcdaGODy+Ga5QqT02c9hotDAR1Y28--3UihzsJhw/+EU3R6--qUw9L8DwN5XPVfOStshKzA==")
@@ -165,7 +165,7 @@ func TestPostSessionSuccessWithSessionAndTOTP(t *testing.T) {
 	assert.Empty(t, id)
 }
 
-func TestPostSessionFailureWithTOTP(t *testing.T) {
+func TestPostSessionFailureWithOTP(t *testing.T) {
 	totpSecretEnc := []byte("cli6azfL5i7PAnh8U/w3Zbglsm3XcdaGODy+Ga5QqT02c9hotDAR1Y28--3UihzsJhw/+EU3R6--qUw9L8DwN5XPVfOStshKzA==")
 
 	app := test.App()

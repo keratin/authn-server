@@ -13,7 +13,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func PasswordlessTokenVerifier(store data.AccountStore, r ops.ErrorReporter, cfg *app.Config, token string, totpCode string) (int, error) {
+func PasswordlessTokenVerifier(store data.AccountStore, r ops.ErrorReporter, cfg *app.Config, token string, otpCode string) (int, error) {
 	claims, err := passwordless.Parse(token, cfg)
 	if err != nil {
 		return 0, FieldErrors{{"token", ErrInvalidOrExpired}}
@@ -44,7 +44,7 @@ func PasswordlessTokenVerifier(store data.AccountStore, r ops.ErrorReporter, cfg
 		if err != nil {
 			return 0, errors.Wrap(err, "TOTPDecrypt")
 		}
-		if !totp.Validate(totpCode, secret) {
+		if !totp.Validate(otpCode, secret) {
 			return 0, FieldErrors{{"totp", ErrInvalidOrExpired}}
 		}
 	}

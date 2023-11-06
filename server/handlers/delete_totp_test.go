@@ -16,6 +16,11 @@ func TestDeleteTOTPSuccess(t *testing.T) {
 	defer server.Close()
 
 	account, _ := app.AccountStore.Create("account@keratin.tech", []byte("password"))
+	set, err := app.AccountStore.SetTOTPSecret(account.ID, []byte("test"))
+
+	require.True(t, set)
+	require.NoError(t, err)
+
 	existingSession := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 
 	client := route.NewClient(server.URL).Referred(&app.Config.ApplicationDomains[0]).WithCookie(existingSession)

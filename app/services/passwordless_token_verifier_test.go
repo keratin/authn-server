@@ -100,7 +100,7 @@ func TestPasswordlessTokenVerifier(t *testing.T) {
 	})
 }
 
-func TestPasswordlessTokenVerifierWithTOTP(t *testing.T) {
+func TestPasswordlessTokenVerifierWithOTP(t *testing.T) {
 	// nolint: gosec
 	totpSecret := "JKK5AG4NDAWSZSR4ZFKZBWZ7OJGLB2JM"
 	totpSecretEnc := []byte("cli6azfL5i7PAnh8U/w3Zbglsm3XcdaGODy+Ga5QqT02c9hotDAR1Y28--3UihzsJhw/+EU3R6--qUw9L8DwN5XPVfOStshKzA==")

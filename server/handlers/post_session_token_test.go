@@ -111,7 +111,7 @@ func TestPostSessionToken(t *testing.T) {
 
 }
 
-func TestPostSessionTokenWithTOTP(t *testing.T) {
+func TestPostSessionTokenWithOTP(t *testing.T) {
 	// nolint: gosec
 	totpSecret := "JKK5AG4NDAWSZSR4ZFKZBWZ7OJGLB2JM"
 	totpSecretEnc := []byte("cli6azfL5i7PAnh8U/w3Zbglsm3XcdaGODy+Ga5QqT02c9hotDAR1Y28--3UihzsJhw/+EU3R6--qUw9L8DwN5XPVfOStshKzA==")
@@ -160,7 +160,7 @@ func TestPostSessionTokenWithTOTP(t *testing.T) {
 		// invoking the endpoint
 		res, err := client.PostForm("/session/token", url.Values{
 			"token": []string{tokenStr},
-			"totp":  []string{code},
+			"otp":   []string{code},
 		})
 		require.NoError(t, err)
 
@@ -184,7 +184,7 @@ func TestPostSessionTokenWithTOTP(t *testing.T) {
 		// invoking the endpoint
 		res, err := client.PostForm("/session/token", url.Values{
 			"token": []string{tokenStr},
-			"totp":  []string{"12345"},
+			"otp":   []string{"12345"},
 		})
 		require.NoError(t, err)
 

@@ -28,7 +28,7 @@ func TestCredentialsVerifierSuccess(t *testing.T) {
 	assert.Equal(t, username, acc.Username)
 }
 
-func TestCredentialsVerifierWithTOTPSuccess(t *testing.T) {
+func TestCredentialsVerifierWithOTPSuccess(t *testing.T) {
 	username := "myname"
 	password := "mysecret"
 	dbEncryptionKey := []byte("DLz2TNDRdWWA5w8YNeCJ7uzcS4WDzQmB")
@@ -84,7 +84,7 @@ func TestCredentialsVerifierFailure(t *testing.T) {
 	}
 }
 
-func TestCredentialsVerifierWithTOTPFailure(t *testing.T) {
+func TestCredentialsVerifierWithOTPFailure(t *testing.T) {
 	username := "myname"
 	password := "mysecret"
 	dbEncryptionKey := []byte("DLz2TNDRdWWA5w8YNeCJ7uzcS4WDzQmB")

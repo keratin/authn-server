@@ -66,5 +66,5 @@ func TestPostTOTPConfirmFailure(t *testing.T) {
 	body := test.ReadBody(res)
 
 	assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
-	assert.Equal(t, "{\"errors\":[{\"field\":\"totp\",\"message\":\"INVALID_OR_EXPIRED\"}]}", string(body))
+	assert.Equal(t, "{\"errors\":[{\"field\":\"otp\",\"message\":\"INVALID_OR_EXPIRED\"}]}", string(body))
 }
