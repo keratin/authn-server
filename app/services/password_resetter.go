@@ -47,7 +47,7 @@ func PasswordResetter(store data.AccountStore, r ops.ErrorReporter, cfg *app.Con
 			return 0, errors.Wrap(err, "TOTPDecrypt")
 		}
 		if !totp.Validate(totpCode, secret) {
-			return 0, FieldErrors{{"totp", ErrInvalidOrExpired}}
+			return 0, FieldErrors{{"otp", ErrInvalidOrExpired}}
 		}
 	}
 

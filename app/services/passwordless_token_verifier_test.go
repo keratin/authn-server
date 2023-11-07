@@ -149,6 +149,9 @@ func TestPasswordlessTokenVerifierWithOTP(t *testing.T) {
 		token := newToken(account.ID)
 
 		err = invoke(token, "12345")
-		assert.Equal(t, services.FieldErrors{{"totp", "INVALID_OR_EXPIRED"}}, err)
+		assert.Equal(t, services.FieldErrors{{"otp", "INVALID_OR_EXPIRED"}}, err)
+
+		err = invoke(token, "")
+		assert.Equal(t, services.FieldErrors{{"otp", "MISSING"}}, err)
 	})
 }

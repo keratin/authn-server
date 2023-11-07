@@ -171,6 +171,6 @@ func TestPasswordResetterWithOTP(t *testing.T) {
 		require.NoError(t, err)
 
 		err = invoke(newToken(expired.ID, expired.PasswordChangedAt), "0a0b0c0d0e0f", "12345")
-		assert.Equal(t, services.FieldErrors{{"totp", "INVALID_OR_EXPIRED"}}, err)
+		assert.Equal(t, services.FieldErrors{{"otp", "INVALID_OR_EXPIRED"}}, err)
 	})
 }

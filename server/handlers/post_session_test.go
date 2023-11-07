@@ -185,7 +185,7 @@ func TestPostSessionFailureWithOTP(t *testing.T) {
 		totpCode string
 		errors   services.FieldErrors
 	}{
-		{"foo", "bar", "12345", services.FieldErrors{{Field: "totp", Message: "INVALID_OR_EXPIRED"}}},
+		{"foo", "bar", "12345", services.FieldErrors{{Field: "otp", Message: "INVALID_OR_EXPIRED"}}},
 	}
 
 	for _, tc := range testCases {

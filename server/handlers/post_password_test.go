@@ -322,11 +322,11 @@ func TestPostPasswordWithOTP(t *testing.T) {
 		res, err := client.PostForm("/password", url.Values{
 			"token":    []string{tokenStr},
 			"password": []string{"0a0b0c0d0"},
-			"totp":     []string{"12345"},
+			"otp":      []string{"12345"},
 		})
 		require.NoError(t, err)
 
 		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
-		test.AssertErrors(t, res, services.FieldErrors{{Field: "totp", Message: "INVALID_OR_EXPIRED"}})
+		test.AssertErrors(t, res, services.FieldErrors{{Field: "otp", Message: "INVALID_OR_EXPIRED"}})
 	})
 }

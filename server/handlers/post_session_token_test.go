@@ -189,6 +189,6 @@ func TestPostSessionTokenWithOTP(t *testing.T) {
 		require.NoError(t, err)
 
 		assert.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
-		test.AssertErrors(t, res, services.FieldErrors{{Field: "totp", Message: "INVALID_OR_EXPIRED"}})
+		test.AssertErrors(t, res, services.FieldErrors{{Field: "otp", Message: "INVALID_OR_EXPIRED"}})
 	})
 }

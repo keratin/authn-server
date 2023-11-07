@@ -54,7 +54,10 @@ func CredentialsVerifier(store data.AccountStore, cfg *app.Config, username stri
 			return nil, errors.Wrap(err, "TOTPDecrypt")
 		}
 		if !totp.Validate(otpCode, secret) {
-			return nil, FieldErrors{{"totp", ErrInvalidOrExpired}}
+			if otpCode == "" {
+				return nil, FieldErrors{{"otp", ErrMissing}}
+			}
+			return nil, FieldErrors{{"otp", ErrInvalidOrExpired}}
 		}
 	}
 

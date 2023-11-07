@@ -101,7 +101,8 @@ func TestCredentialsVerifierWithOTPFailure(t *testing.T) {
 		code   string
 		errors services.FieldErrors
 	}{
-		{code: "12345", errors: services.FieldErrors{{"totp", "INVALID_OR_EXPIRED"}}}, //Invaild totp code
+		{code: "12345", errors: services.FieldErrors{{"otp", "INVALID_OR_EXPIRED"}}},
+		{code: "", errors: services.FieldErrors{{"otp", "MISSING"}}},
 	}
 
 	for _, tc := range testCases {

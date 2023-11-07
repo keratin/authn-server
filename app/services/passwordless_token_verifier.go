@@ -45,7 +45,10 @@ func PasswordlessTokenVerifier(store data.AccountStore, r ops.ErrorReporter, cfg
 			return 0, errors.Wrap(err, "TOTPDecrypt")
 		}
 		if !totp.Validate(otpCode, secret) {
-			return 0, FieldErrors{{"totp", ErrInvalidOrExpired}}
+			if otpCode == "" {
+				return 0, FieldErrors{{"otp", ErrMissing}}
+			}
+			return 0, FieldErrors{{"otp", ErrInvalidOrExpired}}
 		}
 	}
 
