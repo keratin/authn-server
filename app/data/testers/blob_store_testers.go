@@ -12,6 +12,7 @@ var BlobStoreTesters = []func(*testing.T, data.BlobStore){
 	testRead,
 	testWriteNX,
 	testWrite,
+	testDelete,
 }
 
 func testRead(t *testing.T, bs data.BlobStore) {
@@ -46,4 +47,21 @@ func testWrite(t *testing.T, bs data.BlobStore) {
 	set, err = bs.Write("key", []byte("second"))
 	assert.NoError(t, err)
 	assert.Equal(t, true, set)
+}
+
+func testDelete(t *testing.T, bs data.BlobStore) {
+	set, err := bs.Write("key", []byte("first"))
+	assert.NoError(t, err)
+	assert.Equal(t, true, set)
+
+	blob, err := bs.Read("key")
+	assert.NoError(t, err)
+	assert.Equal(t, "first", string(blob))
+
+	err = bs.Delete("key")
+	assert.NoError(t, err)
+
+	blob, err = bs.Read("key")
+	assert.NoError(t, err)
+	assert.Nil(t, blob)
 }

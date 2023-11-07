@@ -38,3 +38,7 @@ func (bs *EncryptedBlobStore) Write(name string, blob []byte) (bool, error) {
 	}
 	return bs.store.Write(name, encryptedBlob)
 }
+
+func (bs *EncryptedBlobStore) Delete(name string) error {
+	return bs.store.Delete(name)
+}

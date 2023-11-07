@@ -12,6 +12,11 @@ type BlobStore struct {
 	LockTime time.Duration
 }
 
+func (bs *BlobStore) Delete(name string) error {
+	delete(bs.blobs, name)
+	return nil
+}
+
 var placeholder = "mock-blob-store"
 
 func NewBlobStore(ttl time.Duration, lockTime time.Duration) *BlobStore {

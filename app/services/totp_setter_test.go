@@ -74,12 +74,24 @@ func TestTOTPSetter(t *testing.T) {
 		setErr := services.TOTPSetter(accountStore, totpCache, &app.Config{DBEncryptionKey: []byte("XXXXXXXXXXXXXXXX")}, account.ID, code)
 		assert.NoError(t, setErr)
 
+		cachedSecret, checkErr := totpCache.LoadTOTPSecret(account.ID)
+		assert.NoError(t, checkErr)
+		assert.Nil(t, cachedSecret)
+
 		t.Run("set unaffected", func(t *testing.T) {
+			// re-cache the secret - we want this to try to set secret again
+			require.NoError(t, totpCache.CacheTOTPSecret(account.ID, []byte(totpSecret)))
 			// the mock account store is coded internally to return "unaffected" from SetTOTPSecret
 			// if it receives the secret already set on the account found from lookup.
 			// So if we try to set the same secret again we should get an error.
 			setErr = services.TOTPSetter(accountStore, totpCache, &app.Config{DBEncryptionKey: []byte("XXXXXXXXXXXXXXXX")}, account.ID, code)
 			assert.Error(t, setErr)
+
+			cachedSecret, checkErr = totpCache.LoadTOTPSecret(account.ID)
+			assert.NoError(t, checkErr)
+			assert.NotNil(t, cachedSecret)
+
+			assert.NoError(t, totpCache.RemoveTOTPSecret(account.ID))
 		})
 	})
 }

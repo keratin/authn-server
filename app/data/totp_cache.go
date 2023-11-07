@@ -9,9 +9,14 @@ import (
 type TOTPCache interface {
 	CacheTOTPSecret(accountID int, secret []byte) error
 	LoadTOTPSecret(accountID int) ([]byte, error)
+	RemoveTOTPSecret(accountID int) error
 }
 type totpCache struct {
 	ebs *EncryptedBlobStore
+}
+
+func (t *totpCache) RemoveTOTPSecret(accountID int) error {
+	return t.ebs.Delete(fmt.Sprintf("totp:%d", accountID))
 }
 
 func NewTOTPCache(ebs *EncryptedBlobStore) TOTPCache {

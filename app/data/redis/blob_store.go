@@ -39,3 +39,7 @@ func (s *BlobStore) Write(name string, blob []byte) (bool, error) {
 	}
 	return true, nil
 }
+
+func (s *BlobStore) Delete(name string) error {
+	return s.Client.Del(context.TODO(), name).Err()
+}

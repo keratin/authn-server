@@ -34,7 +34,6 @@ func TOTPSetter(accountStore data.AccountStore, totpCache data.TOTPCache, cfg *a
 	}
 
 	//Persist totp secret that was loaded from cache to db
-	//TODO: Delete key from cache
 	affected, err := accountStore.SetTOTPSecret(accountID, secret)
 	if err != nil {
 		return errors.Wrap(err, "TOTPSetter")
@@ -42,6 +41,9 @@ func TOTPSetter(accountStore data.AccountStore, totpCache data.TOTPCache, cfg *a
 	if !affected {
 		return errors.New("unable to set totp secret")
 	}
+
+	// error here is not end of world it should timeout
+	_ = totpCache.RemoveTOTPSecret(account.ID)
 
 	return nil
 }

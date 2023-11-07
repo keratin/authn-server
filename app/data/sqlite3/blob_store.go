@@ -60,3 +60,8 @@ func (s *BlobStore) Write(name string, blob []byte) (bool, error) {
 	}
 	return true, nil
 }
+
+func (s *BlobStore) Delete(name string) error {
+	_, err := s.DB.Exec("DELETE FROM blobs WHERE name = ?", name)
+	return err
+}
