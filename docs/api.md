@@ -358,7 +358,9 @@ Visibility: Public
       "errors": [
         {"field": "credentials", "message": "FAILED"},
         {"field": "credentials", "message": "EXPIRED"},
-        {"field": "account", "message": "LOCKED"}
+        {"field": "account", "message": "LOCKED"},
+        {"field": "otp", "message": "MISSING"},
+        {"field": "otp", "message": "INVALID_OR_EXPIRED"},
       ]
     }
 
@@ -460,6 +462,8 @@ Visibility: Public
         {"field": "token", "message": "INVALID_OR_EXPIRED"},
         {"field": "account", "message": "NOT_FOUND"},
         {"field": "account", "message": "LOCKED"},
+        {"field": "otp", "message": "MISSING"},
+        {"field": "otp", "message": "INVALID_OR_EXPIRED"},
       ]
     }
 
