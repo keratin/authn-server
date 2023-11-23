@@ -457,6 +457,7 @@ Visibility: Public
 
     422 Unprocessable Entity
 
+
     {
       "errors": [
         {"field": "token", "message": "INVALID_OR_EXPIRED"},
@@ -686,6 +687,10 @@ Visibility: Public
 Visibility: Public
 
 `POST /totp/confirm`
+
+| Params | Type   | Notes     |
+|--------|--------|-----------|
+| `otp`  | string | Required. |                                       
 
 #### Success:
 
