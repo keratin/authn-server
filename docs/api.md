@@ -555,7 +555,7 @@ Visibility: Private
 | ------ | ---- | ----- |
 | `id` | integer | available from the JWT `sub` claim |
 
-Revokes all of the user's current sessions and flags the account for a required password change on their next login. This will manifest as an expired credentials error on what would normally have been a successful login.
+Revokes all of the user's current sessions, removes their TOTP secret and flags the account for a required password change on their next login. This will manifest as an expired credentials error on what would normally have been a successful login.
 
 #### Success:
 

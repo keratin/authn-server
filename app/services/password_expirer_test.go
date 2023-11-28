@@ -27,6 +27,7 @@ func TestPasswordExpirer(t *testing.T) {
 		account, err = accountStore.Find(account.ID)
 		require.NoError(t, err)
 		assert.NotEmpty(t, account.RequireNewPassword)
+		assert.False(t, account.TOTPSecret.Valid)
 
 		id, err := refreshStore.Find(token1)
 		require.NoError(t, err)

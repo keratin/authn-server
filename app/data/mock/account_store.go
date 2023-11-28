@@ -174,6 +174,8 @@ func (s *accountStore) RequireNewPassword(id int) (bool, error) {
 
 	account.RequireNewPassword = true
 	account.UpdatedAt = time.Now()
+	account.TOTPSecret = sql.NullString{}
+
 	return true, nil
 }
 
