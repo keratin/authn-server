@@ -24,7 +24,8 @@ func TestAccountCreatorSuccess(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		acc, err := services.AccountCreator(store, &tc.config, tc.username, tc.password)
+		cfg := tc.config
+		acc, err := services.AccountCreator(store, &cfg, tc.username, tc.password)
 		require.NoError(t, err)
 		assert.NotEqual(t, 0, acc.ID)
 		assert.Equal(t, tc.username, acc.Username)
@@ -62,7 +63,8 @@ func TestAccountCreatorFailure(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.username, func(t *testing.T) {
-			acc, err := services.AccountCreator(store, &tc.config, tc.username, tc.password)
+			cfg := tc.config
+			acc, err := services.AccountCreator(store, &cfg, tc.username, tc.password)
 			if assert.Equal(t, tc.errors, err) {
 				assert.Empty(t, acc)
 			}

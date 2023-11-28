@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"database/sql"
 	"fmt"
 	"strings"
 	"time"
@@ -23,15 +24,29 @@ type accountStore struct {
 	idByUsername      map[string]int
 	oauthAccountsByID map[int][]*models.OauthAccount
 	idByOauthID       map[string]int
+	errorOnID         int
 }
 
-func NewAccountStore() *accountStore {
-	return &accountStore{
+func WithSetTOTPFailureID(id int) func(s *accountStore) {
+	return func(s *accountStore) {
+		s.errorOnID = id
+	}
+}
+
+func NewAccountStore(opts ...func(*accountStore)) *accountStore {
+	s := &accountStore{
 		accountsByID:      make(map[int]*models.Account),
 		oauthAccountsByID: make(map[int][]*models.OauthAccount),
 		idByUsername:      make(map[string]int),
 		idByOauthID:       make(map[string]int),
+		errorOnID:         -1,
 	}
+
+	for _, o := range opts {
+		o(s)
+	}
+
+	return s
 }
 
 func (s *accountStore) Find(id int) (*models.Account, error) {
@@ -202,6 +217,39 @@ func (s *accountStore) SetLastLogin(id int) (bool, error) {
 	now := time.Now()
 	account.LastLoginAt = &now
 	return true, nil
+}
+
+func (s *accountStore) SetTOTPSecret(id int, secret []byte) (bool, error) {
+	account := s.accountsByID[id]
+	if account == nil {
+		return false, nil
+	}
+
+	// this is weird, but we can return "unaffected" if the secret already exists
+	// to approximate the failure mode for testing.
+	if account.TOTPSecret.Valid {
+		return false, nil
+	}
+
+	if account.ID == s.errorOnID {
+		return false, fmt.Errorf("rejecting for bad ID: %d", account.ID)
+	}
+
+	account.TOTPSecret = sql.NullString{String: string(secret), Valid: true}
+	return true, nil
+}
+
+func (s *accountStore) DeleteTOTPSecret(id int) (bool, error) {
+	account := s.accountsByID[id]
+	if account == nil {
+		return false, nil
+	}
+	deleted := false
+	if account.TOTPSecret.Valid {
+		account.TOTPSecret = sql.NullString{}
+		deleted = true
+	}
+	return deleted, nil
 }
 
 // i think this works? i want to avoid accidentally giving callers the ability

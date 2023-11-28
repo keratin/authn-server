@@ -4,7 +4,9 @@ import (
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/app/models"
+	"github.com/keratin/authn-server/lib/compat"
 	"github.com/pkg/errors"
+	"github.com/pquerna/otp/totp"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -15,7 +17,7 @@ var emptyHashes = map[int]string{
 	12: "$2a$12$w58M3IGXURRAqXQ/OAsMmuqcV4YqP3WyJ.yHvHI5ANUK1bRWxeceK",
 }
 
-func CredentialsVerifier(store data.AccountStore, cfg *app.Config, username string, password string) (*models.Account, error) {
+func CredentialsVerifier(store data.AccountStore, cfg *app.Config, username string, password, otpCode string) (*models.Account, error) {
 	if username == "" && password == "" {
 		return nil, FieldErrors{{"credentials", ErrFailed}}
 	}
@@ -43,6 +45,20 @@ func CredentialsVerifier(store data.AccountStore, cfg *app.Config, username stri
 	}
 	if account.RequireNewPassword {
 		return nil, FieldErrors{{"credentials", ErrExpired}}
+	}
+
+	//Check OTP MFA
+	if account.TOTPEnabled() {
+		secret, err := compat.Decrypt([]byte(account.TOTPSecret.String), cfg.DBEncryptionKey)
+		if err != nil {
+			return nil, errors.Wrap(err, "TOTPDecrypt")
+		}
+		if !totp.Validate(otpCode, secret) {
+			if otpCode == "" {
+				return nil, FieldErrors{{"otp", ErrMissing}}
+			}
+			return nil, FieldErrors{{"otp", ErrInvalidOrExpired}}
+		}
 	}
 
 	return account, nil

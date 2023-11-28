@@ -17,6 +17,12 @@ type BlobStore interface {
 
 	// WriteNX will write the blob into the store only if the name does not exist.
 	WriteNX(name string, blob []byte) (bool, error)
+
+	// Write will write the blob into the store
+	Write(name string, blob []byte) (bool, error)
+
+	// Delete will remove the blob from the store
+	Delete(name string) error
 }
 
 func NewBlobStore(interval time.Duration, redis *redis.Client, db *sqlx.DB, reporter ops.ErrorReporter) (BlobStore, error) {

@@ -16,6 +16,7 @@ will not declare which field was incorrect, but instead fails with a generic cre
 
 ### Frontend
 
-1. Create a form where the user may enter their username and password.
-2. Submit the username and password to AuthN.
+1. Create a form where the user may enter their username and password and on optional TOTP MFA
+   code (required if the user has completed MFA onboarding with their authenticator app).
+2. Submit the username, password and TOTP code to AuthN.
 3. If successful, the user will be logged in and can make authenticated requests to your app.

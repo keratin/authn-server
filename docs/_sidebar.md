@@ -1,6 +1,7 @@
 * **Implementation**
   * [OAuth](guide-implementing_oauth.md)
   * [Signup](guide-implementing_signup.md)
+  * [TOTP MFA](guide-implementing_totp_mfa_onboarding.md) **BETA**
   * [Login](guide-implementing_login.md)
   * [Logout](guide-implementing_logout.md)
   * [Reset Passwords](guide-implementing_forgotten_passwords.md)
