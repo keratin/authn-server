@@ -50,7 +50,7 @@ func TestGetOauthReturn(t *testing.T) {
 		if !test.AssertRedirect(t, res, "https://localhost:9999/return") {
 			return
 		}
-		test.AssertSession(t, app.Config, res.Cookies())
+		test.AssertSession(t, app.Config, res.Cookies(), "oauth:test")
 
 		// creates an account
 		account, err := app.AccountStore.FindByOauthAccount("test", "something")
@@ -67,7 +67,7 @@ func TestGetOauthReturn(t *testing.T) {
 		res, err := client.WithCookie(session).Get("/oauth/test/return?code=existing@keratin.tech&state=" + state)
 		require.NoError(t, err)
 		if test.AssertRedirect(t, res, "https://localhost:9999/return") {
-			test.AssertSession(t, app.Config, res.Cookies())
+			test.AssertSession(t, app.Config, res.Cookies(), "oauth:test")
 		}
 	})
 
@@ -94,7 +94,7 @@ func TestGetOauthReturn(t *testing.T) {
 		res, err := client.Get("/oauth/test/return?code=REGISTEREDID&state=" + state)
 		require.NoError(t, err)
 		if test.AssertRedirect(t, res, "https://localhost:9999/return") {
-			test.AssertSession(t, app.Config, res.Cookies())
+			test.AssertSession(t, app.Config, res.Cookies(), "oauth:test")
 		}
 	})
 

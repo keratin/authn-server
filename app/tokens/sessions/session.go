@@ -15,9 +15,10 @@ import (
 const scope = "refresh"
 
 type Claims struct {
-	Scope     string `json:"scope"`
-	Azp       string `json:"azp"`
-	SessionID string `json:"sid"`
+	Scope               string   `json:"scope"`
+	Azp                 string   `json:"azp"`
+	SessionID           string   `json:"sid"`
+	AuthMethodReference []string `json:"amr"`
 	jwt.Claims
 }
 
@@ -58,16 +59,17 @@ func Parse(tokenStr string, cfg *app.Config) (*Claims, error) {
 	return &claims, nil
 }
 
-func New(store data.RefreshTokenStore, cfg *app.Config, accountID int, authorizedAudience string) (*Claims, error) {
+func New(store data.RefreshTokenStore, cfg *app.Config, accountID int, authorizedAudience string, amr []string) (*Claims, error) {
 	refreshToken, err := store.Create(accountID)
 	if err != nil {
 		return nil, errors.Wrap(err, "Create")
 	}
 
 	return &Claims{
-		Scope:     scope,
-		Azp:       authorizedAudience,
-		SessionID: uuid.NewString(),
+		Scope:               scope,
+		Azp:                 authorizedAudience,
+		SessionID:           uuid.NewString(),
+		AuthMethodReference: amr,
 		Claims: jwt.Claims{
 			Issuer:   cfg.AuthNURL.String(),
 			Subject:  string(refreshToken),
