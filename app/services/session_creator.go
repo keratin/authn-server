@@ -11,13 +11,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-type AuthMethod string
-
-const (
-	AuthMethodPassword AuthMethod = "pwd"
-	AuthMethodOTP      AuthMethod = "mfa,otp"
-)
-
 func SessionCreator(
 	accountStore data.AccountStore, refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore, actives data.Actives, cfg *app.Config, reporter ops.ErrorReporter,
 	accountID int, audience *route.Domain, existingToken *models.RefreshToken, amr []string,
