@@ -165,9 +165,9 @@ func TestPasswordResetterWithOTP(t *testing.T) {
 	t.Run("without totp code", func(t *testing.T) {
 		expired, err := accountStore.Create("second@keratin.tech", []byte("old"))
 		require.NoError(t, err)
-		_, err = accountStore.SetTOTPSecret(expired.ID, totpSecretEnc)
-		require.NoError(t, err)
 		_, err = accountStore.RequireNewPassword(expired.ID)
+		require.NoError(t, err)
+		_, err = accountStore.SetTOTPSecret(expired.ID, totpSecretEnc)
 		require.NoError(t, err)
 
 		err = invoke(newToken(expired.ID, expired.PasswordChangedAt), "0a0b0c0d0e0f", "12345")

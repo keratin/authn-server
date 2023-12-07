@@ -137,7 +137,7 @@ func (db *AccountStore) Unlock(id int) (bool, error) {
 }
 
 func (db *AccountStore) RequireNewPassword(id int) (bool, error) {
-	result, err := db.Exec("UPDATE accounts SET require_new_password = $1, updated_at = $2 WHERE id = $3", true, time.Now(), id)
+	result, err := db.Exec("UPDATE accounts SET require_new_password = $1, updated_at = $2, totp_secret = null WHERE id = $3", true, time.Now(), id)
 	return ok(result, err)
 }
 
