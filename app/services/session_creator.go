@@ -3,17 +3,17 @@ package services
 import (
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data"
-	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/app/models"
-	"github.com/keratin/authn-server/ops"
 	"github.com/keratin/authn-server/app/tokens/identities"
 	"github.com/keratin/authn-server/app/tokens/sessions"
+	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
 )
 
 func SessionCreator(
 	accountStore data.AccountStore, refreshTokenStore data.RefreshTokenStore, keyStore data.KeyStore, actives data.Actives, cfg *app.Config, reporter ops.ErrorReporter,
-	accountID int, audience *route.Domain, existingToken *models.RefreshToken,
+	accountID int, audience *route.Domain, existingToken *models.RefreshToken, amr []string,
 ) (string, string, error) {
 	var err error
 	err = SessionEnder(refreshTokenStore, existingToken)
@@ -36,7 +36,7 @@ func SessionCreator(
 	}
 
 	// create new session token
-	session, err := sessions.New(refreshTokenStore, cfg, accountID, audience.String())
+	session, err := sessions.New(refreshTokenStore, cfg, accountID, audience.String(), amr)
 	if err != nil {
 		return "", "", errors.Wrap(err, "sessions.New")
 	}

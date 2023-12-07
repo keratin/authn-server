@@ -17,8 +17,9 @@ import (
 // Note that this type is embedded in the go client when changing:
 // https://github.com/keratin/authn-go/blob/master/authn/claims.go
 type Claims struct {
-	AuthTime  *jwt.NumericDate `json:"auth_time"`
-	SessionID string           `json:"sid"`
+	AuthTime            *jwt.NumericDate `json:"auth_time"`
+	SessionID           string           `json:"sid"`
+	AuthMethodReference []string         `json:"amr"`
 	jwt.Claims
 }
 
@@ -40,8 +41,9 @@ func (c *Claims) Sign(key *private.Key) (string, error) {
 
 func New(cfg *app.Config, session *sessions.Claims, accountID int, audience string) *Claims {
 	return &Claims{
-		AuthTime:  session.IssuedAt,
-		SessionID: session.SessionID,
+		AuthTime:            session.IssuedAt,
+		SessionID:           session.SessionID,
+		AuthMethodReference: session.AuthMethodReference,
 		Claims: jwt.Claims{
 			Issuer:   session.Issuer,
 			Subject:  strconv.Itoa(accountID),

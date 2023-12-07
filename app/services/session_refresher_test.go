@@ -30,7 +30,7 @@ func TestSessionRefresher(t *testing.T) {
 
 	accountID := 0
 	audience := &route.Domain{Hostname: "authn.example.com", Port: "8080"}
-	session, err := sessions.New(refreshStore, cfg, accountID, audience.String())
+	session, err := sessions.New(refreshStore, cfg, accountID, audience.String(), []string{"pwd"})
 	require.NoError(t, err)
 	assert.NotEmpty(t, session.SessionID)
 

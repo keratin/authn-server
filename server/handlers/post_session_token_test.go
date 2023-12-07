@@ -29,8 +29,8 @@ func TestPostSessionToken(t *testing.T) {
 
 	assertSuccess := func(t *testing.T, res *http.Response, account *models.Account) {
 		assert.Equal(t, http.StatusCreated, res.StatusCode)
-		test.AssertSession(t, app.Config, res.Cookies())
-		test.AssertIDTokenResponse(t, res, app.KeyStore, app.Config)
+		test.AssertSession(t, app.Config, res.Cookies(), "link")
+		test.AssertIDTokenResponse(t, res, app.KeyStore, app.Config, "link")
 		found, err := app.AccountStore.Find(account.ID)
 		require.NoError(t, err)
 		assert.Equal(t, found.Password, account.Password)
@@ -124,8 +124,8 @@ func TestPostSessionTokenWithOTP(t *testing.T) {
 
 	assertSuccess := func(t *testing.T, res *http.Response, account *models.Account) {
 		assert.Equal(t, http.StatusCreated, res.StatusCode)
-		test.AssertSession(t, app.Config, res.Cookies())
-		test.AssertIDTokenResponse(t, res, app.KeyStore, app.Config)
+		test.AssertSession(t, app.Config, res.Cookies(), "link", "otp")
+		test.AssertIDTokenResponse(t, res, app.KeyStore, app.Config, "link", "otp")
 		found, err := app.AccountStore.Find(account.ID)
 		require.NoError(t, err)
 		assert.Equal(t, found.Password, account.Password)

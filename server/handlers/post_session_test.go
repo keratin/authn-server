@@ -32,8 +32,8 @@ func TestPostSessionSuccess(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusCreated, res.StatusCode)
-	test.AssertSession(t, app.Config, res.Cookies())
-	test.AssertIDTokenResponse(t, res, app.KeyStore, app.Config)
+	test.AssertSession(t, app.Config, res.Cookies(), "pwd")
+	test.AssertIDTokenResponse(t, res, app.KeyStore, app.Config, "pwd")
 }
 
 func TestPostSessionSuccessWithSession(t *testing.T) {
@@ -119,8 +119,8 @@ func TestPostSessionSuccessWithOTP(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, http.StatusCreated, res.StatusCode)
-	test.AssertSession(t, app.Config, res.Cookies())
-	test.AssertIDTokenResponse(t, res, app.KeyStore, app.Config)
+	test.AssertSession(t, app.Config, res.Cookies(), "pwd", "otp")
+	test.AssertIDTokenResponse(t, res, app.KeyStore, app.Config, "pwd", "otp")
 }
 
 func TestPostSessionSuccessWithSessionAndTOTP(t *testing.T) {

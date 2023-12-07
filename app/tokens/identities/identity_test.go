@@ -24,7 +24,7 @@ func TestIdentityClaims(t *testing.T) {
 	}
 	key, err := private.GenerateKey(512)
 	require.NoError(t, err)
-	session, err := sessions.New(store, &cfg, 1, "example.com")
+	session, err := sessions.New(store, &cfg, 1, "example.com", []string{"pwd"})
 	require.NoError(t, err)
 
 	t.Run("includes KID", func(t *testing.T) {

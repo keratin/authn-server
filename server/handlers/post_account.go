@@ -1,13 +1,14 @@
 package handlers
 
 import (
-	"github.com/keratin/authn-server/lib/parse"
 	"net/http"
 
-	"github.com/keratin/authn-server/server/sessions"
+	"github.com/keratin/authn-server/lib/parse"
+
 	"github.com/keratin/authn-server/app"
-	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/app/services"
+	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/server/sessions"
 )
 
 func PostAccount(app *app.App) http.HandlerFunc {
@@ -36,9 +37,11 @@ func PostAccount(app *app.App) http.HandlerFunc {
 			panic(err)
 		}
 
+		amr := []string{"pwd"}
+
 		sessionToken, identityToken, err := services.SessionCreator(
 			app.AccountStore, app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, app.Reporter,
-			account.ID, route.MatchedDomain(r), sessions.GetRefreshToken(r),
+			account.ID, route.MatchedDomain(r), sessions.GetRefreshToken(r), amr,
 		)
 		if err != nil {
 			panic(err)

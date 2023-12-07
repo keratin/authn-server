@@ -2,7 +2,9 @@ package test
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"reflect"
 	"testing"
 
 	jwt "gopkg.in/square/go-jose.v2/jwt"
@@ -35,16 +37,20 @@ func AssertErrors(t *testing.T, res *http.Response, expected services.FieldError
 	assert.Equal(t, string(j), string(ReadBody(res)))
 }
 
-func AssertSession(t *testing.T, cfg *app.Config, cookies []*http.Cookie) {
+func AssertSession(t *testing.T, cfg *app.Config, cookies []*http.Cookie, expectedAMR ...string) {
 	t.Helper()
 	session := ReadCookie(cookies, cfg.SessionCookieName)
 	require.NotEmpty(t, session)
 
-	_, err := sessions.Parse(session.Value, cfg)
+	claims, err := sessions.Parse(session.Value, cfg)
 	assert.NoError(t, err)
+
+	if len(expectedAMR) > 0 {
+		assert.True(t, reflect.DeepEqual(claims.AuthMethodReference, expectedAMR), fmt.Sprintf("expected %v got %v", expectedAMR, claims.AuthMethodReference))
+	}
 }
 
-func AssertIDTokenResponse(t *testing.T, res *http.Response, keyStore data.KeyStore, cfg *app.Config) {
+func AssertIDTokenResponse(t *testing.T, res *http.Response, keyStore data.KeyStore, cfg *app.Config, expectedAMR ...string) {
 	t.Helper()
 
 	// check that the response contains the expected json
@@ -63,6 +69,9 @@ func AssertIDTokenResponse(t *testing.T, res *http.Response, keyStore data.KeySt
 	if assert.NoError(t, err) {
 		// check that the JWT contains nice things
 		assert.Equal(t, cfg.AuthNURL.String(), claims.Issuer)
+		if len(expectedAMR) > 0 {
+			assert.True(t, reflect.DeepEqual(claims.AuthMethodReference, expectedAMR), fmt.Sprintf("expected %v got %v", expectedAMR, claims.AuthMethodReference))
+		}
 	}
 }
 

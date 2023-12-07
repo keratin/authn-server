@@ -66,9 +66,14 @@ func PostPassword(app *app.App) http.HandlerFunc {
 			}
 		}
 
+		amr := []string{"pwd"}
+		if credentials.OTP != "" {
+			amr = append(amr, "otp")
+		}
+
 		sessionToken, identityToken, err := services.SessionCreator(
 			app.AccountStore, app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, app.Reporter,
-			accountID, route.MatchedDomain(r), sessions.GetRefreshToken(r),
+			accountID, route.MatchedDomain(r), sessions.GetRefreshToken(r), amr,
 		)
 		if err != nil {
 			panic(err)

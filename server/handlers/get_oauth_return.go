@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/pkg/errors"
@@ -52,10 +53,12 @@ func GetOauthReturn(app *app.App, providerName string) http.HandlerFunc {
 			return
 		}
 
+		amr := []string{fmt.Sprintf("oauth:%s", providerName)}
+
 		// identityToken is not returned in this flow. it must be imported by the frontend like a SSO session.
 		sessionToken, _, err := services.SessionCreator(
 			app.AccountStore, app.RefreshTokenStore, app.KeyStore, app.Actives, app.Config, app.Reporter,
-			account.ID, &app.Config.ApplicationDomains[0], sessions.GetRefreshToken(r),
+			account.ID, &app.Config.ApplicationDomains[0], sessions.GetRefreshToken(r), amr,
 		)
 		if err != nil {
 			fail(errors.Wrap(err, "NewSession"))

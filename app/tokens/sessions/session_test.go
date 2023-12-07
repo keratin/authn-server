@@ -20,7 +20,7 @@ func TestNewAndParseAndSign(t *testing.T) {
 		SessionSigningKey: []byte("key-a-reno"),
 	}
 
-	token, err := sessions.New(store, &cfg, 658908, "example.com")
+	token, err := sessions.New(store, &cfg, 658908, "example.com", []string{"pwd"})
 	require.NoError(t, err)
 	assert.Equal(t, "refresh", token.Scope)
 	assert.Equal(t, "http://authn.example.com", token.Issuer)
@@ -51,7 +51,7 @@ func TestParseInvalidSessionJWT(t *testing.T) {
 	cfg := app.Config{AuthNURL: &authn, SessionSigningKey: key}
 
 	t.Run("old key", func(t *testing.T) {
-		token, err := sessions.New(store, &app.Config{AuthNURL: &authn}, 1, mainApp.Host)
+		token, err := sessions.New(store, &app.Config{AuthNURL: &authn}, 1, mainApp.Host, []string{"pwd"})
 		require.NoError(t, err)
 		tokenStr, err := token.Sign([]byte("old key"))
 		require.NoError(t, err)
@@ -61,7 +61,7 @@ func TestParseInvalidSessionJWT(t *testing.T) {
 	})
 
 	t.Run("different audience", func(t *testing.T) {
-		token, err := sessions.New(store, &app.Config{AuthNURL: &authn}, 2, mainApp.Host)
+		token, err := sessions.New(store, &app.Config{AuthNURL: &authn}, 2, mainApp.Host, []string{"pwd"})
 		require.NoError(t, err)
 		token.Audience = jwt.Audience{mainApp.String()}
 		tokenStr, err := token.Sign(key)

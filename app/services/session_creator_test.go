@@ -33,7 +33,7 @@ func TestSessionCreator(t *testing.T) {
 	t.Run("tracks last login while generating tokens", func(t *testing.T) {
 		identityToken, refreshToken, err := services.SessionCreator(
 			accountStore, refreshStore, keyStore, nil, cfg, reporter,
-			account.ID, audience, nil,
+			account.ID, audience, nil, nil,
 		)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, identityToken)
@@ -48,7 +48,7 @@ func TestSessionCreator(t *testing.T) {
 		activesStore := mock.NewActives()
 		_, _, err := services.SessionCreator(
 			accountStore, refreshStore, keyStore, activesStore, cfg, reporter,
-			account.ID, audience, nil,
+			account.ID, audience, nil, nil,
 		)
 		require.NoError(t, err)
 
@@ -63,7 +63,7 @@ func TestSessionCreator(t *testing.T) {
 
 		_, _, err = services.SessionCreator(
 			accountStore, refreshStore, keyStore, nil, cfg, reporter,
-			account.ID, audience, &token,
+			account.ID, audience, &token, nil,
 		)
 		assert.NoError(t, err)
 
