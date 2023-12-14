@@ -6,6 +6,14 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+## 1.18.0
+
+### Added
+
+* Beta support for TOTP multi-factor authentication (#220, #230, #231)
+* Bump prometheus client to 1.11.1 (#229)
+* Bump golang.org/x/crypto to 0.17.0 (#233)
+
 ## 1.17.1
 
 ### Added

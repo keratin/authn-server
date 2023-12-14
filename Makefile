@@ -2,7 +2,7 @@ include .env
 ORG := keratin
 PROJECT := authn-server
 NAME := $(ORG)/$(PROJECT)
-VERSION := 1.17.1
+VERSION := 1.18.0
 MAIN := main.go
 
 BIN := $(shell pwd)/bin
