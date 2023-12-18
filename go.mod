@@ -26,7 +26,7 @@ require (
 	github.com/stretchr/testify v1.5.1
 	github.com/test-go/testify v1.1.4
 	github.com/trustelem/zxcvbn v1.0.1
-	golang.org/x/crypto v0.1.0
+	golang.org/x/crypto v0.17.0
 	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
 	gopkg.in/square/go-jose.v2 v2.3.1
 )
