@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/square/go-jose.v2"
 
 	"github.com/stretchr/testify/require"
 
@@ -20,11 +21,11 @@ func TestGetOauthReturn(t *testing.T) {
 	providerServer := httptest.NewServer(test.ProviderApp())
 	defer providerServer.Close()
 
-	// configure a client for the fake oauth provider
-	providerClient := oauthlib.NewTestProvider(providerServer)
-
 	// configure and start the authn test server
 	app := test.App()
+
+	// configure a client for the fake oauth provider
+	providerClient := oauthlib.NewTestProvider(providerServer, app.Config.OAuthSigningKey)
 	app.OauthProviders["test"] = *providerClient
 	server := test.Server(app)
 	defer server.Close()
@@ -41,7 +42,7 @@ func TestGetOauthReturn(t *testing.T) {
 
 	token, err := oauthtoken.New(app.Config, nonce, "https://localhost:9999/return")
 	require.NoError(t, err)
-	state, err := token.Sign(app.Config.OAuthSigningKey)
+	state, err := token.Sign(jose.SigningKey{Algorithm: jose.HS256, Key: app.Config.OAuthSigningKey})
 	require.NoError(t, err)
 
 	t.Run("sign up new identity with new email", func(t *testing.T) {

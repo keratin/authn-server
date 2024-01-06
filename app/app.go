@@ -6,12 +6,11 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jmoiron/sqlx"
 	"github.com/keratin/authn-server/app/data"
+	dataRedis "github.com/keratin/authn-server/app/data/redis"
 	"github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/ops"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-
-	dataRedis "github.com/keratin/authn-server/app/data/redis"
 )
 
 type pinger func() bool
@@ -101,20 +100,21 @@ func NewApp(cfg *Config, logger logrus.FieldLogger) (*App, error) {
 	}
 
 	oauthProviders := map[string]oauth.Provider{}
+
 	if cfg.GoogleOauthCredentials != nil {
-		oauthProviders["google"] = *oauth.NewGoogleProvider(cfg.GoogleOauthCredentials)
+		oauthProviders["google"] = *oauth.NewGoogleProvider(cfg.GoogleOauthCredentials, cfg.OAuthSigningKey)
 	}
 	if cfg.GitHubOauthCredentials != nil {
-		oauthProviders["github"] = *oauth.NewGitHubProvider(cfg.GitHubOauthCredentials)
+		oauthProviders["github"] = *oauth.NewGitHubProvider(cfg.GitHubOauthCredentials, cfg.OAuthSigningKey)
 	}
 	if cfg.FacebookOauthCredentials != nil {
-		oauthProviders["facebook"] = *oauth.NewFacebookProvider(cfg.FacebookOauthCredentials)
+		oauthProviders["facebook"] = *oauth.NewFacebookProvider(cfg.FacebookOauthCredentials, cfg.OAuthSigningKey)
 	}
 	if cfg.DiscordOauthCredentials != nil {
-		oauthProviders["discord"] = *oauth.NewDiscordProvider(cfg.DiscordOauthCredentials)
+		oauthProviders["discord"] = *oauth.NewDiscordProvider(cfg.DiscordOauthCredentials, cfg.OAuthSigningKey)
 	}
 	if cfg.MicrosoftOauthCredientials != nil {
-		oauthProviders["microsoft"] = *oauth.NewMicrosoftProvider(cfg.MicrosoftOauthCredientials)
+		oauthProviders["microsoft"] = *oauth.NewMicrosoftProvider(cfg.MicrosoftOauthCredientials, cfg.OAuthSigningKey)
 	}
 
 	return &App{

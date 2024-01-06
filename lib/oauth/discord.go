@@ -6,10 +6,11 @@ import (
 	"io/ioutil"
 
 	"golang.org/x/oauth2"
+	"gopkg.in/square/go-jose.v2"
 )
 
 // NewDiscordProvider returns a AuthN integration for Discord OAuth
-func NewDiscordProvider(credentials *Credentials) *Provider {
+func NewDiscordProvider(credentials *Credentials, signingKey []byte) *Provider {
 	config := &oauth2.Config{
 		ClientID:     credentials.ID,
 		ClientSecret: credentials.Secret,
@@ -20,24 +21,21 @@ func NewDiscordProvider(credentials *Credentials) *Provider {
 		},
 	}
 
-	return &Provider{
-		config: config,
-		UserInfo: func(t *oauth2.Token) (*UserInfo, error) {
-			client := config.Client(context.TODO(), t)
-			resp, err := client.Get("https://discordapp.com/api/users/@me")
-			if err != nil {
-				return nil, err
-			}
-			defer resp.Body.Close()
+	return NewProvider(config, func(t *oauth2.Token) (*UserInfo, error) {
+		client := config.Client(context.TODO(), t)
+		resp, err := client.Get("https://discordapp.com/api/users/@me")
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
 
-			body, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				return nil, err
-			}
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
 
-			var user UserInfo
-			err = json.Unmarshal(body, &user)
-			return &user, err
-		},
-	}
+		var user UserInfo
+		err = json.Unmarshal(body, &user)
+		return &user, err
+	}, jose.SigningKey{Key: signingKey, Algorithm: jose.HS256})
 }

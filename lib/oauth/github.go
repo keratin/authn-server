@@ -8,10 +8,11 @@ import (
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
+	"gopkg.in/square/go-jose.v2"
 )
 
 // NewGitHubProvider returns a AuthN integration for GitHub OAuth
-func NewGitHubProvider(credentials *Credentials) *Provider {
+func NewGitHubProvider(credentials *Credentials, signingKey []byte) *Provider {
 	config := &oauth2.Config{
 		ClientID:     credentials.ID,
 		ClientSecret: credentials.Secret,
@@ -71,23 +72,20 @@ func NewGitHubProvider(credentials *Credentials) *Provider {
 		return strconv.Itoa(user.ID), nil
 	}
 
-	return &Provider{
-		config: config,
-		UserInfo: func(t *oauth2.Token) (*UserInfo, error) {
-			id, err := getID(t)
-			if err != nil {
-				return nil, err
-			}
+	return NewProvider(config, func(t *oauth2.Token) (*UserInfo, error) {
+		id, err := getID(t)
+		if err != nil {
+			return nil, err
+		}
 
-			email, err := getPrimaryEmail(t)
-			if err != nil {
-				return nil, err
-			}
+		email, err := getPrimaryEmail(t)
+		if err != nil {
+			return nil, err
+		}
 
-			return &UserInfo{
-				ID:    id,
-				Email: email,
-			}, nil
-		},
-	}
+		return &UserInfo{
+			ID:    id,
+			Email: email,
+		}, nil
+	}, jose.SigningKey{Key: signingKey, Algorithm: jose.HS256})
 }
