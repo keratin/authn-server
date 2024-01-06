@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: ^1.17
       - run: go mod download
@@ -28,7 +28,7 @@ jobs:
           GOARCH: amd64
           CGO_ENABLED: 1
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: authn-linux64
           path: dist/authn-linux64
@@ -38,8 +38,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: ^1.17
       - run: go mod download
@@ -57,7 +57,7 @@ jobs:
           CGO_ENABLED: 1
           CC: x86_64-w64-mingw32-gcc
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: authn-windows64.exe
           path: dist/authn-windows64.exe
@@ -67,8 +67,8 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: ^1.17
       - run: go mod download
@@ -84,7 +84,7 @@ jobs:
           GOARCH: amd64
           CGO_ENABLED: 1
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: authn-macos64
           path: dist/authn-macos64
@@ -96,7 +96,7 @@ jobs:
 
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
 
       - name: Create Release
         id: create_release
@@ -144,9 +144,9 @@ jobs:
     needs: release
     steps:
       - name: Get Dockerfile
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: authn-linux64
 
