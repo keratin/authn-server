@@ -99,23 +99,7 @@ func NewApp(cfg *Config, logger logrus.FieldLogger) (*App, error) {
 		)
 	}
 
-	oauthProviders := map[string]oauth.Provider{}
-
-	if cfg.GoogleOauthCredentials != nil {
-		oauthProviders["google"] = *oauth.NewGoogleProvider(cfg.GoogleOauthCredentials, cfg.OAuthSigningKey)
-	}
-	if cfg.GitHubOauthCredentials != nil {
-		oauthProviders["github"] = *oauth.NewGitHubProvider(cfg.GitHubOauthCredentials, cfg.OAuthSigningKey)
-	}
-	if cfg.FacebookOauthCredentials != nil {
-		oauthProviders["facebook"] = *oauth.NewFacebookProvider(cfg.FacebookOauthCredentials, cfg.OAuthSigningKey)
-	}
-	if cfg.DiscordOauthCredentials != nil {
-		oauthProviders["discord"] = *oauth.NewDiscordProvider(cfg.DiscordOauthCredentials, cfg.OAuthSigningKey)
-	}
-	if cfg.MicrosoftOauthCredientials != nil {
-		oauthProviders["microsoft"] = *oauth.NewMicrosoftProvider(cfg.MicrosoftOauthCredientials, cfg.OAuthSigningKey)
-	}
+	oauthProviders := initializeOAuthProviders(cfg)
 
 	return &App{
 		// Provide access to root DB - useful when extending AccountStore functionality
@@ -132,4 +116,32 @@ func NewApp(cfg *Config, logger logrus.FieldLogger) (*App, error) {
 		OauthProviders:    oauthProviders,
 		Logger:            logger,
 	}, nil
+}
+
+func signingKeyOrDefault(provider string, cfg *Config) []byte {
+	key, keyErr := lookupOAuthSigningKey(provider)
+	if keyErr != nil {
+		key = cfg.OAuthSigningKey
+	}
+	return key
+}
+
+func initializeOAuthProviders(cfg *Config) map[string]oauth.Provider {
+	oauthProviders := make(map[string]oauth.Provider)
+	if cfg.GoogleOauthCredentials != nil {
+		oauthProviders["google"] = *oauth.NewGoogleProvider(cfg.GoogleOauthCredentials, signingKeyOrDefault("google", cfg))
+	}
+	if cfg.GitHubOauthCredentials != nil {
+		oauthProviders["github"] = *oauth.NewGitHubProvider(cfg.GitHubOauthCredentials, signingKeyOrDefault("github", cfg))
+	}
+	if cfg.FacebookOauthCredentials != nil {
+		oauthProviders["facebook"] = *oauth.NewFacebookProvider(cfg.FacebookOauthCredentials, signingKeyOrDefault("facebook", cfg))
+	}
+	if cfg.DiscordOauthCredentials != nil {
+		oauthProviders["discord"] = *oauth.NewDiscordProvider(cfg.DiscordOauthCredentials, signingKeyOrDefault("discord", cfg))
+	}
+	if cfg.MicrosoftOauthCredientials != nil {
+		oauthProviders["microsoft"] = *oauth.NewMicrosoftProvider(cfg.MicrosoftOauthCredientials, signingKeyOrDefault("microsoft", cfg))
+	}
+	return oauthProviders
 }

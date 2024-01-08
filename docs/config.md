@@ -261,6 +261,12 @@ or
 
 * `https://www.example.com/authn/oauth/google/return`
 
+By default OAuth providers will use a key derived from `SECRET_KEY_BASE`.  To override you can provide a hex-encoded string via the `{provider}_OAUTH_SIGNING_KEY` environment variable.
+
+Following the google example you could set:
+
+`GOOGLE_OAUTH_SIGNING_KEY=`
+
 ### `FACEBOOK_OAUTH_CREDENTIALS`
 
 |           |    |
