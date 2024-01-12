@@ -11,7 +11,7 @@ import (
 )
 
 // NewMicrosoftProvider returns a AuthN integration for Microsoft OAuth
-func NewMicrosoftProvider(credentials *Credentials, signingKey []byte) *Provider {
+func NewMicrosoftProvider(credentials *Credentials) *Provider {
 	config := &oauth2.Config{
 		ClientID:     credentials.ID,
 		ClientSecret: credentials.Secret,
@@ -46,5 +46,5 @@ func NewMicrosoftProvider(credentials *Credentials, signingKey []byte) *Provider
 		user.Email = me.UserPrincipalName
 		fmt.Println(user)
 		return &user, err
-	}, jose.SigningKey{Key: signingKey, Algorithm: jose.HS256})
+	}, jose.SigningKey{Key: credentials.SigningKey, Algorithm: jose.HS256})
 }

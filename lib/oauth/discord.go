@@ -10,7 +10,7 @@ import (
 )
 
 // NewDiscordProvider returns a AuthN integration for Discord OAuth
-func NewDiscordProvider(credentials *Credentials, signingKey []byte) *Provider {
+func NewDiscordProvider(credentials *Credentials) *Provider {
 	config := &oauth2.Config{
 		ClientID:     credentials.ID,
 		ClientSecret: credentials.Secret,
@@ -37,5 +37,5 @@ func NewDiscordProvider(credentials *Credentials, signingKey []byte) *Provider {
 		var user UserInfo
 		err = json.Unmarshal(body, &user)
 		return &user, err
-	}, jose.SigningKey{Key: signingKey, Algorithm: jose.HS256})
+	}, jose.SigningKey{Key: credentials.SigningKey, Algorithm: jose.HS256})
 }

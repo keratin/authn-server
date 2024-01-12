@@ -12,7 +12,7 @@ import (
 )
 
 // NewGitHubProvider returns a AuthN integration for GitHub OAuth
-func NewGitHubProvider(credentials *Credentials, signingKey []byte) *Provider {
+func NewGitHubProvider(credentials *Credentials) *Provider {
 	config := &oauth2.Config{
 		ClientID:     credentials.ID,
 		ClientSecret: credentials.Secret,
@@ -87,5 +87,5 @@ func NewGitHubProvider(credentials *Credentials, signingKey []byte) *Provider {
 			ID:    id,
 			Email: email,
 		}, nil
-	}, jose.SigningKey{Key: signingKey, Algorithm: jose.HS256})
+	}, jose.SigningKey{Key: credentials.SigningKey, Algorithm: jose.HS256})
 }

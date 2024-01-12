@@ -11,7 +11,7 @@ import (
 )
 
 // NewFacebookProvider returns a AuthN integration for Facebook OAuth
-func NewFacebookProvider(credentials *Credentials, signingKey []byte) *Provider {
+func NewFacebookProvider(credentials *Credentials) *Provider {
 	config := &oauth2.Config{
 		ClientID:     credentials.ID,
 		ClientSecret: credentials.Secret,
@@ -35,5 +35,5 @@ func NewFacebookProvider(credentials *Credentials, signingKey []byte) *Provider 
 		var user UserInfo
 		err = json.Unmarshal(body, &user)
 		return &user, err
-	}, jose.SigningKey{Key: signingKey, Algorithm: jose.HS256})
+	}, jose.SigningKey{Key: credentials.SigningKey, Algorithm: jose.HS256})
 }
