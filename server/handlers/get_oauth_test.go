@@ -5,11 +5,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
-	"github.com/keratin/authn-server/server/test"
 	oauthlib "github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/server/test"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -18,12 +17,13 @@ func TestGetOauth(t *testing.T) {
 	providerServer := httptest.NewServer(test.ProviderApp())
 	defer providerServer.Close()
 
-	// configure a client for the fake oauth provider
-	providerClient := oauthlib.NewTestProvider(providerServer)
-
 	// configure and start the authn test server
 	app := test.App()
+
+	// configure a client for the fake oauth provider
+	providerClient := oauthlib.NewTestProvider(providerServer, app.Config.OAuthSigningKey)
 	app.OauthProviders["test"] = *providerClient
+
 	server := test.Server(app)
 	defer server.Close()
 
