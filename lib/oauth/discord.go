@@ -3,7 +3,7 @@ package oauth
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 
 	"golang.org/x/oauth2"
 	"gopkg.in/square/go-jose.v2"
@@ -29,7 +29,7 @@ func NewDiscordProvider(credentials *Credentials) *Provider {
 		}
 		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}
