@@ -3,8 +3,8 @@ package oauth
 import (
 	"net/http/httptest"
 
+	"github.com/go-jose/go-jose/v3"
 	"golang.org/x/oauth2"
-	"gopkg.in/square/go-jose.v2"
 )
 
 // NewTestProvider returns a special Provider for tests

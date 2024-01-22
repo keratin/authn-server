@@ -4,11 +4,11 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/go-jose/go-jose/v3"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/tokens/oauth"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gopkg.in/square/go-jose.v2"
 )
 
 func TestOAuthToken(t *testing.T) {

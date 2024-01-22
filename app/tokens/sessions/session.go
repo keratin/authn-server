@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"time"
 
+	jose "github.com/go-jose/go-jose/v3"
+	jwt "github.com/go-jose/go-jose/v3/jwt"
 	"github.com/google/uuid"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data"
 	"github.com/pkg/errors"
-	jose "gopkg.in/square/go-jose.v2"
-	jwt "gopkg.in/square/go-jose.v2/jwt"
 )
 
 const scope = "refresh"

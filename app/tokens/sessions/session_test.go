@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"testing"
 
-	jwt "gopkg.in/square/go-jose.v2/jwt"
+	jwt "github.com/go-jose/go-jose/v3/jwt"
 
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data/mock"

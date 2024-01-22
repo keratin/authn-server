@@ -1,8 +1,8 @@
 package oauth
 
 import (
+	"github.com/go-jose/go-jose/v3"
 	"golang.org/x/oauth2"
-	"gopkg.in/square/go-jose.v2"
 )
 
 // Provider is a struct wrapping the necessary bits to integrate an OAuth2 provider with AuthN
