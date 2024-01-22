@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"golang.org/x/oauth2"
+	"gopkg.in/square/go-jose.v2"
 )
 
 // NewMicrosoftProvider returns a AuthN integration for Microsoft OAuth
@@ -21,32 +22,29 @@ func NewMicrosoftProvider(credentials *Credentials) *Provider {
 		},
 	}
 
-	return &Provider{
-		config: config,
-		UserInfo: func(t *oauth2.Token) (*UserInfo, error) {
-			var me struct {
-				Id                string `json:"id"`
-				UserPrincipalName string `json:"userPrincipalName"`
-			}
+	return NewProvider(config, func(t *oauth2.Token) (*UserInfo, error) {
+		var me struct {
+			Id                string `json:"id"`
+			UserPrincipalName string `json:"userPrincipalName"`
+		}
 
-			client := config.Client(context.TODO(), t)
-			resp, err := client.Get("https://graph.microsoft.com/v1.0/me")
-			if err != nil {
-				return nil, err
-			}
-			defer resp.Body.Close()
+		client := config.Client(context.TODO(), t)
+		resp, err := client.Get("https://graph.microsoft.com/v1.0/me")
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
 
-			body, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return nil, err
-			}
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
 
-			var user UserInfo
-			err = json.Unmarshal(body, &me)
-			user.ID = me.Id
-			user.Email = me.UserPrincipalName
-			fmt.Println(user)
-			return &user, err
-		},
-	}
+		var user UserInfo
+		err = json.Unmarshal(body, &me)
+		user.ID = me.Id
+		user.Email = me.UserPrincipalName
+		fmt.Println(user)
+		return &user, err
+	}, jose.SigningKey{Key: credentials.SigningKey, Algorithm: jose.HS256})
 }

@@ -40,6 +40,7 @@ func App() *app.App {
 		EnableSignup:            true,
 		SameSite:                http.SameSiteDefaultMode,
 		PasswordChangeLogout:    false,
+		OAuthSigningKey:         []byte("key-a-reno"),
 	}
 
 	//Create mock blob stores for the totp cache object (TODO: Create an interface?)

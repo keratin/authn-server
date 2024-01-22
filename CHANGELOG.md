@@ -5,6 +5,7 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## HEAD
 
 ### Added
+* Ability to configure signing key per oauth provider.
 
 ## 1.18.0
 
