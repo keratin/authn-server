@@ -2,14 +2,14 @@ package test
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/keratin/authn-server/server/handlers"
 )
 
 func ReadBody(res *http.Response) []byte {
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		panic(err)
 	}

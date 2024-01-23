@@ -3,7 +3,7 @@ package oauth
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"strconv"
 
 	"golang.org/x/oauth2"
@@ -28,7 +28,7 @@ func NewGitHubProvider(credentials *Credentials) *Provider {
 		}
 		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return "", err
 		}
@@ -57,7 +57,7 @@ func NewGitHubProvider(credentials *Credentials) *Provider {
 		}
 		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return "", err
 		}

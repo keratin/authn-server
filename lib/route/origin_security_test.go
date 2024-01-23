@@ -1,7 +1,7 @@
 package route_test
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -85,7 +85,7 @@ func originDo(t *testing.T, server *httptest.Server, origin, referer string) *ht
 }
 
 func readBody(t *testing.T, res *http.Response) string {
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	require.NoError(t, err)
 	err = res.Body.Close()
 	require.NoError(t, err)

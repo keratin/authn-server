@@ -1,7 +1,7 @@
 package route_test
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -21,7 +21,7 @@ func TestBasicAuthSecurity(t *testing.T) {
 	defer server.Close()
 
 	readBody := func(res *http.Response) []byte {
-		body, err := ioutil.ReadAll(res.Body)
+		body, err := io.ReadAll(res.Body)
 		require.NoError(t, err)
 		res.Body.Close()
 		return body

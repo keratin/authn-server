@@ -3,7 +3,7 @@ package oauth
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -27,7 +27,7 @@ func NewGoogleProvider(credentials *Credentials) *Provider {
 		}
 		defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}
