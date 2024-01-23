@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"io"
 
+	"github.com/go-jose/go-jose/v3"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
-	"gopkg.in/square/go-jose.v2"
 )
 
 // NewGoogleProvider returns a AuthN integration for Google OAuth

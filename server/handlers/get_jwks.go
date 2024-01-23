@@ -3,8 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/go-jose/go-jose/v3"
 	"github.com/keratin/authn-server/app"
-	"gopkg.in/square/go-jose.v2"
 )
 
 func GetJWKs(app *app.App) http.HandlerFunc {

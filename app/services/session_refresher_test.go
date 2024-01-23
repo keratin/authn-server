@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/go-jose/go-jose/v3/jwt"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data/mock"
 	"github.com/keratin/authn-server/app/data/private"
@@ -15,7 +16,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gopkg.in/square/go-jose.v2/jwt"
 )
 
 func TestSessionRefresher(t *testing.T) {

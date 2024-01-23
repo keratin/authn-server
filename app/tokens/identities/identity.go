@@ -6,11 +6,11 @@ import (
 
 	"github.com/keratin/authn-server/app/data/private"
 
+	"github.com/go-jose/go-jose/v3"
+	"github.com/go-jose/go-jose/v3/jwt"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/tokens/sessions"
 	"github.com/pkg/errors"
-	"gopkg.in/square/go-jose.v2"
-	"gopkg.in/square/go-jose.v2/jwt"
 )
 
 // CLaims represent the JWT claims known to authn.

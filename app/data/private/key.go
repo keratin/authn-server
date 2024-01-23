@@ -6,8 +6,8 @@ import (
 	"crypto/rsa"
 	"encoding/base64"
 
+	"github.com/go-jose/go-jose/v3"
 	"github.com/pkg/errors"
-	"gopkg.in/square/go-jose.v2"
 )
 
 type Key struct {

@@ -3,12 +3,12 @@ package test
 import (
 	"net/http"
 
+	jose "github.com/go-jose/go-jose/v3"
+	jwt "github.com/go-jose/go-jose/v3/jwt"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/app/models"
 	"github.com/keratin/authn-server/app/tokens/sessions"
-	jose "gopkg.in/square/go-jose.v2"
-	jwt "gopkg.in/square/go-jose.v2/jwt"
 )
 
 func CreateSession(tokenStore data.RefreshTokenStore, cfg *app.Config, accountID int) *http.Cookie {
