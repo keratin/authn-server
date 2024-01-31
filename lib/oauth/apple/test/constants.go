@@ -1,0 +1,8 @@
+package test
+
+// nolint: gosec
+const SampleKey = `-----BEGIN PRIVATE KEY-----
+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgmDoQmNzzNJY9TjNf
+5dShLw81SG7S2v+CyhWv/WaRVeqhRANCAAS0kA7mT0lM0LMhOlLQbjfOXF8Toc2f
+zfHV8jKxm7dxHx681TBFPkZsKhG7YW5ilrC/ITVBhzKGl3ZGvT5o6ciI
+-----END PRIVATE KEY-----`

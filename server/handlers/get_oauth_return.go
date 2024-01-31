@@ -34,7 +34,12 @@ func GetOauthReturn(app *app.App, providerName string) http.HandlerFunc {
 
 		// exchange code for tokens and user info
 		returnURL := app.Config.AuthNURL.String() + "/oauth/" + providerName + "/return"
-		tok, err := provider.Config(returnURL).Exchange(context.TODO(), r.FormValue("code"))
+		config, err := provider.Config(returnURL)
+		if err != nil {
+			fail(errors.Wrap(err, "Config"))
+			return
+		}
+		tok, err := config.Exchange(context.TODO(), r.FormValue("code"))
 		if err != nil {
 			fail(errors.Wrap(err, "Exchange"))
 			return

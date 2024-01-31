@@ -15,10 +15,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/keratin/authn-server/app/data/private"
-
 	// a .env file is extremely useful during development
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/keratin/authn-server/app/data/private"
 	"github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/ops"
@@ -77,6 +76,7 @@ type Config struct {
 	FacebookOauthCredentials    *oauth.Credentials
 	DiscordOauthCredentials     *oauth.Credentials
 	MicrosoftOauthCredentials   *oauth.Credentials
+	AppleOAuthCredentials       *oauth.Credentials
 	RefreshTokenExplicitExpiry  bool
 }
 
@@ -86,7 +86,8 @@ func (c *Config) OAuthEnabled() bool {
 		c.GitHubOauthCredentials != nil ||
 		c.FacebookOauthCredentials != nil ||
 		c.DiscordOauthCredentials != nil ||
-		c.MicrosoftOauthCredentials != nil
+		c.MicrosoftOauthCredentials != nil ||
+		c.AppleOAuthCredentials != nil
 }
 
 // SameSiteComputed returns either the specified http.SameSite, or a computed one from OAuth config
@@ -638,13 +639,34 @@ var configurers = []configurer{
 		return nil
 	},
 
-	// Microsoft_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
-	// AuthN will enable routes for Discord OAuth signin.
+	// MICROSOFT_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`.
+	// When specified, AuthN will enable routes for Microsoft OAuth signin.
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("MICROSOFT_OAUTH_CREDENTIALS"); ok {
 			credentials, err := oauth.NewCredentials(val)
 			if err == nil {
 				c.MicrosoftOauthCredentials = credentials
+			}
+			return err
+		}
+		return nil
+	},
+
+	// APPLE_OAUTH_CREDENTIALS is a credential in the format `id:secret:additional`.
+	// Note that the secret is not the client secret, but a private key used to sign
+	// a JWT sent to apple as a client secret.  It should be provided as a hex-encoded
+	// representation of a PEM block
+	// Additional should be provided as a colon-delimited series of {key}={value} pairs.
+	// Required additional data includes:
+	// - teamID
+	// - keyID
+	// - expirySeconds
+	// When specified, AuthN will enable routes for Apple OAuth signin.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("APPLE_OAUTH_CREDENTIALS"); ok {
+			credentials, err := oauth.NewCredentials(val)
+			if err == nil {
+				c.AppleOAuthCredentials = credentials
 			}
 			return err
 		}
