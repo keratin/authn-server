@@ -263,6 +263,16 @@ or
 
 By default OAuth providers will use a key derived from `SECRET_KEY_BASE`.  To override you can provide a hex-encoded string as the third segment in the colon-delimited environment variable.
 
+Additional credentialing data can be passed to the provider as key-value pairs in the form key=value after the third colon.  For example:
+
+`GOOGLE_OAUTH_CREDENTIALS=clientID:clientSecret:signingKey:extra=val1:data=val2`
+
+Or to use the default signing key:
+
+`GOOGLE_OAUTH_CREDENTIALS=clientID:clientSecret::extra=val1:data=val2`
+
+Note that no providers currently use the additional data.
+
 ### `FACEBOOK_OAUTH_CREDENTIALS`
 
 |           |                                      |
