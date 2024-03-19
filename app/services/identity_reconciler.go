@@ -30,9 +30,14 @@ func IdentityReconciler(accountStore data.AccountStore, cfg *app.Config, provide
 		return nil, errors.Wrap(err, "FindByOauthAccount")
 	}
 	if linkedAccount != nil {
+		if linkedAccount.ID != linkableAccountID && linkableAccountID != 0 {
+			return nil, errors.New("account already linked")
+		}
+
 		if linkedAccount.Locked {
 			return nil, errors.New("account locked")
 		}
+
 		return linkedAccount, nil
 	}
 

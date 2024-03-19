@@ -5,7 +5,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## HEAD
 
 ### Added
+
 * Ability to configure signing key per oauth provider.
+
+### Fixed
+
+* Disallow OAuth linking to an account other than current session's account (#246)
 
 ## 1.18.0
 
@@ -20,7 +25,7 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 * HMAC notification signatures (#207)
-* support inferring default port from configured URL (via #214) 
+* support inferring default port from configured URL (via #214)
 * fix unmarshaling bug in Microsoft OAuth Provider (via #214)
 
 ## 1.17.0
