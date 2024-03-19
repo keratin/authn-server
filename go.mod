@@ -8,7 +8,7 @@ require (
 	github.com/dlclark/regexp2 v1.1.6 // indirect
 	github.com/felixge/httpsnoop v1.0.0
 	github.com/getsentry/sentry-go v0.3.0
-	github.com/go-jose/go-jose/v3 v3.0.1
+	github.com/go-jose/go-jose/v3 v3.0.3
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-sql-driver/mysql v1.3.0
 	github.com/google/uuid v1.3.0
@@ -24,9 +24,9 @@ require (
 	github.com/pquerna/otp v1.2.0
 	github.com/prometheus/client_golang v1.11.1
 	github.com/sirupsen/logrus v1.6.0
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	github.com/test-go/testify v1.1.4
 	github.com/trustelem/zxcvbn v1.0.1
-	golang.org/x/crypto v0.17.0
+	golang.org/x/crypto v0.19.0
 	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
 )
