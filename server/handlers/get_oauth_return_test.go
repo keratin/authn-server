@@ -84,6 +84,23 @@ func TestGetOauthReturn(t *testing.T) {
 		test.AssertRedirect(t, res, "https://localhost:9999/return?status=failed")
 	})
 
+	t.Run("not connect provider account already linked", func(t *testing.T) {
+		linkedAccount, err := app.AccountStore.Create("linked.account@keratin.tech", []byte("password"))
+		require.NoError(t, err)
+
+		err = app.AccountStore.AddOauthAccount(linkedAccount.ID, "test", "LINKEDID", "TOKEN")
+		require.NoError(t, err)
+
+		account, err := app.AccountStore.Create("registered.account@keratin.tech", []byte("password"))
+		require.NoError(t, err)
+
+		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
+
+		res, err := client.WithCookie(session).Get("/oauth/test/return?code=LINKEDID&state=" + state)
+		require.NoError(t, err)
+		test.AssertRedirect(t, res, "https://localhost:9999/return?status=failed")
+	})
+
 	t.Run("log in to existing identity", func(t *testing.T) {
 		account, err := app.AccountStore.Create("registered@keratin.tech", []byte("password"))
 		require.NoError(t, err)
