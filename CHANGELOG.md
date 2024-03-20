@@ -4,6 +4,8 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+## 1.18.1
+
 ### Added
 
 * Ability to configure signing key per oauth provider.
@@ -11,6 +13,7 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 * Disallow OAuth linking to an account other than current session's account (#246)
+* Replace deprecated gopkg.in/square/go-jose.v2 with github.com/go-jose/go-jose/v3 (#240)
 
 ## 1.18.0
 
