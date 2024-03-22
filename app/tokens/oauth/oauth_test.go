@@ -29,10 +29,12 @@ func TestOAuthToken(t *testing.T) {
 		assert.True(t, token.Audience.Contains("https://authn.example.com"))
 		assert.NotEmpty(t, token.IssuedAt)
 
-		tokenStr, err := token.Sign(jose.SigningKey{Algorithm: jose.HS256, Key: cfg.OAuthSigningKey})
+		key := jose.SigningKey{Algorithm: jose.HS256, Key: cfg.OAuthSigningKey}
+
+		tokenStr, err := token.Sign(key)
 		require.NoError(t, err)
 
-		_, err = oauth.Parse(tokenStr, cfg, nonce)
+		_, err = oauth.Parse(tokenStr, key.Key, cfg.AuthNURL.String(), nonce)
 		require.NoError(t, err)
 	})
 
@@ -40,10 +42,12 @@ func TestOAuthToken(t *testing.T) {
 		token, err := oauth.New(cfg, nonce, "https://app.example.com/return")
 		require.NoError(t, err)
 
-		tokenStr, err := token.Sign(jose.SigningKey{Algorithm: jose.HS256, Key: cfg.OAuthSigningKey})
+		key := jose.SigningKey{Algorithm: jose.HS256, Key: cfg.OAuthSigningKey}
+
+		tokenStr, err := token.Sign(key)
 		require.NoError(t, err)
 
-		_, err = oauth.Parse(tokenStr, cfg, "wrong")
+		_, err = oauth.Parse(tokenStr, key.Key, cfg.AuthNURL.String(), "wrong")
 		assert.Error(t, err)
 	})
 
@@ -52,11 +56,16 @@ func TestOAuthToken(t *testing.T) {
 			AuthNURL:        cfg.AuthNURL,
 			OAuthSigningKey: []byte("old-a-reno"),
 		}
+		oldKey := jose.SigningKey{Algorithm: jose.HS256, Key: oldCfg.OAuthSigningKey}
+
 		token, err := oauth.New(cfg, nonce, "https://app.example.com/return")
 		require.NoError(t, err)
-		tokenStr, err := token.Sign(jose.SigningKey{Algorithm: jose.HS256, Key: oldCfg.OAuthSigningKey})
+
+		tokenStr, err := token.Sign(oldKey)
 		require.NoError(t, err)
-		_, err = oauth.Parse(tokenStr, cfg, nonce)
+
+		key := jose.SigningKey{Algorithm: jose.HS256, Key: cfg.OAuthSigningKey}
+		_, err = oauth.Parse(tokenStr, key.Key, cfg.AuthNURL.String(), nonce)
 		assert.Error(t, err)
 	})
 
@@ -67,9 +76,12 @@ func TestOAuthToken(t *testing.T) {
 		}
 		token, err := oauth.New(&oldCfg, nonce, "https://app.example.com/return")
 		require.NoError(t, err)
-		tokenStr, err := token.Sign(jose.SigningKey{Algorithm: jose.HS256, Key: cfg.OAuthSigningKey})
+
+		key := jose.SigningKey{Algorithm: jose.HS256, Key: cfg.OAuthSigningKey}
+
+		tokenStr, err := token.Sign(key)
 		require.NoError(t, err)
-		_, err = oauth.Parse(tokenStr, cfg, nonce)
+		_, err = oauth.Parse(tokenStr, key.Key, cfg.AuthNURL.String(), nonce)
 		assert.Error(t, err)
 	})
 }

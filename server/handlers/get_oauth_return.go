@@ -16,8 +16,8 @@ func GetOauthReturn(app *app.App, providerName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		provider := app.OauthProviders[providerName]
 
-		// verify the state and nonce
-		state, err := getState(app.Config, r)
+		// verify the state and nonce using the key associated with the provider's signing key.
+		state, err := getState(app.Config, r, provider.SigningKey().Key)
 		if err != nil {
 			app.Reporter.ReportRequestError(errors.Wrap(err, "getState"), r)
 			failsafe := app.Config.ApplicationDomains[0].URL()

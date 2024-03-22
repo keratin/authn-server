@@ -36,21 +36,21 @@ func (c *Claims) Sign(signingKey jose.SigningKey) (string, error) {
 
 // Parse will deserialize a string into Claims if and only if the claims pass all validations. In
 // this case the token must contain a nonce already known from a different channel (like a cookie).
-func Parse(tokenStr string, cfg *app.Config, nonce string) (*Claims, error) {
+func Parse(tokenStr string, signingKey interface{}, authNURL string, nonce string) (*Claims, error) {
 	token, err := jwt.ParseSigned(tokenStr)
 	if err != nil {
 		return nil, errors.Wrap(err, "ParseSigned")
 	}
 
 	claims := Claims{}
-	err = token.Claims(cfg.OAuthSigningKey, &claims)
+	err = token.Claims(signingKey, &claims)
 	if err != nil {
 		return nil, errors.Wrap(err, "Claims")
 	}
 
 	err = claims.Claims.Validate(jwt.Expected{
-		Audience: jwt.Audience{cfg.AuthNURL.String()},
-		Issuer:   cfg.AuthNURL.String(),
+		Audience: jwt.Audience{authNURL},
+		Issuer:   authNURL,
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "Validate")

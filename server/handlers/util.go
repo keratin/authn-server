@@ -31,12 +31,12 @@ func nonceCookie(cfg *app.Config, val string) *http.Cookie {
 }
 
 // getState returns a verified state token using the nonce cookie
-func getState(cfg *app.Config, r *http.Request) (*oauth.Claims, error) {
+func getState(cfg *app.Config, r *http.Request, verificationKey interface{}) (*oauth.Claims, error) {
 	nonce, err := r.Cookie(cfg.OAuthCookieName)
 	if err != nil {
 		return nil, errors.Wrap(err, "Cookie")
 	}
-	state, err := oauth.Parse(r.FormValue("state"), cfg, nonce.Value)
+	state, err := oauth.Parse(r.FormValue("state"), verificationKey, cfg.AuthNURL.String(), nonce.Value)
 	if err != nil {
 		return nil, errors.Wrap(err, "Parse")
 	}
