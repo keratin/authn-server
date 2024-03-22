@@ -4,6 +4,10 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+### Fixed
+
+* Use provider-specific signing key for verification.
+
 ## 1.18.1
 
 ### Added
