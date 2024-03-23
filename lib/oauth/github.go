@@ -6,7 +6,6 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/go-jose/go-jose/v3"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
 )
@@ -87,5 +86,5 @@ func NewGitHubProvider(credentials *Credentials) *Provider {
 			ID:    id,
 			Email: email,
 		}, nil
-	}, jose.SigningKey{Key: credentials.SigningKey, Algorithm: jose.HS256})
+	})
 }

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.com/go-jose/go-jose/v3"
 	"golang.org/x/oauth2"
 )
 
@@ -37,5 +36,5 @@ func NewDiscordProvider(credentials *Credentials) *Provider {
 		var user UserInfo
 		err = json.Unmarshal(body, &user)
 		return &user, err
-	}, jose.SigningKey{Key: credentials.SigningKey, Algorithm: jose.HS256})
+	})
 }

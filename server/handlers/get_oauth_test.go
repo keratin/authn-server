@@ -17,13 +17,12 @@ func TestGetOauth(t *testing.T) {
 	providerServer := httptest.NewServer(test.ProviderApp())
 	defer providerServer.Close()
 
+	// configure a client for the fake oauth provider
+	providerClient := oauthlib.NewTestProvider(providerServer)
+
 	// configure and start the authn test server
 	app := test.App()
-
-	// configure a client for the fake oauth provider
-	providerClient := oauthlib.NewTestProvider(providerServer, app.Config.OAuthSigningKey)
 	app.OauthProviders["test"] = *providerClient
-
 	server := test.Server(app)
 	defer server.Close()
 

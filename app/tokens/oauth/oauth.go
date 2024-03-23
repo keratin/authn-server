@@ -23,9 +23,9 @@ type Claims struct {
 }
 
 // Sign converts the claims into a serialized string, signed with HMAC.
-func (c *Claims) Sign(signingKey jose.SigningKey) (string, error) {
+func (c *Claims) Sign(hmacKey []byte) (string, error) {
 	signer, err := jose.NewSigner(
-		signingKey,
+		jose.SigningKey{Algorithm: jose.HS256, Key: hmacKey},
 		(&jose.SignerOptions{}).WithType("JWT"),
 	)
 	if err != nil {
@@ -68,7 +68,7 @@ func Parse(tokenStr string, cfg *app.Config, nonce string) (*Claims, error) {
 // New creates Claims for a JWT suitable as a state parameter during an OAuth flow.
 func New(cfg *app.Config, nonce string, destination string) (*Claims, error) {
 	return &Claims{
-		Scope:                    scope,
+		Scope: scope,
 		RequestForgeryProtection: nonce,
 		Destination:              destination,
 		Claims: jwt.Claims{

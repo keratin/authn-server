@@ -586,11 +586,11 @@ var configurers = []configurer{
 		return nil
 	},
 
-	// GOOGLE_OAUTH_CREDENTIALS is a credential pair in the format `id:secret:signing_key(optional)`.
-	// When specified, AuthN will enable routes for Google OAuth signin.
+	// GOOGLE_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
+	// AuthN will enable routes for Google OAuth signin.
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("GOOGLE_OAUTH_CREDENTIALS"); ok {
-			credentials, err := oauth.NewCredentials(val, c.OAuthSigningKey)
+			credentials, err := oauth.NewCredentials(val)
 			if err == nil {
 				c.GoogleOauthCredentials = credentials
 			}
@@ -599,11 +599,11 @@ var configurers = []configurer{
 		return nil
 	},
 
-	// GITHUB_OAUTH_CREDENTIALS is a credential pair in the format `id:secret:signing_key(optional)`.
-	// When specified, AuthN will enable routes for GitHub OAuth signin.
+	// GITHUB_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
+	// AuthN will enable routes for GitHub OAuth signin.
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("GITHUB_OAUTH_CREDENTIALS"); ok {
-			credentials, err := oauth.NewCredentials(val, c.OAuthSigningKey)
+			credentials, err := oauth.NewCredentials(val)
 			if err == nil {
 				c.GitHubOauthCredentials = credentials
 			}
@@ -612,11 +612,11 @@ var configurers = []configurer{
 		return nil
 	},
 
-	// FACEBOOK_OAUTH_CREDENTIALS is a credential pair in the format `id:secret:signing_key(optional)`.
-	// When specified, AuthN will enable routes for Facebook OAuth signin.
+	// FACEBOOK_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
+	// AuthN will enable routes for Facebook OAuth signin.
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("FACEBOOK_OAUTH_CREDENTIALS"); ok {
-			credentials, err := oauth.NewCredentials(val, c.OAuthSigningKey)
+			credentials, err := oauth.NewCredentials(val)
 			if err == nil {
 				c.FacebookOauthCredentials = credentials
 			}
@@ -625,11 +625,11 @@ var configurers = []configurer{
 		return nil
 	},
 
-	// DISCORD_OAUTH_CREDENTIALS is a credential pair in the format `id:secret:signing_key(optional)`.
-	// When specified, AuthN will enable routes for Discord OAuth signin.
+	// DISCORD_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
+	// AuthN will enable routes for Discord OAuth signin.
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("DISCORD_OAUTH_CREDENTIALS"); ok {
-			credentials, err := oauth.NewCredentials(val, c.OAuthSigningKey)
+			credentials, err := oauth.NewCredentials(val)
 			if err == nil {
 				c.DiscordOauthCredentials = credentials
 			}
@@ -638,11 +638,11 @@ var configurers = []configurer{
 		return nil
 	},
 
-	// Microsoft_OAUTH_CREDENTIALS is a credential pair in the format `id:secret:signing_key(optional)`.
-	// When specified, AuthN will enable routes for Microsoft OAuth signin.
+	// Microsoft_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
+	// AuthN will enable routes for Discord OAuth signin.
 	func(c *Config) error {
 		if val, ok := os.LookupEnv("MICROSOFT_OAUTH_CREDENTIALS"); ok {
-			credentials, err := oauth.NewCredentials(val, c.OAuthSigningKey)
+			credentials, err := oauth.NewCredentials(val)
 			if err == nil {
 				c.MicrosoftOauthCredentials = credentials
 			}

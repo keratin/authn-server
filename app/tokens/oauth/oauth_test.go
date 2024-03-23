@@ -4,7 +4,6 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/go-jose/go-jose/v3"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/tokens/oauth"
 	"github.com/stretchr/testify/assert"
@@ -29,7 +28,7 @@ func TestOAuthToken(t *testing.T) {
 		assert.True(t, token.Audience.Contains("https://authn.example.com"))
 		assert.NotEmpty(t, token.IssuedAt)
 
-		tokenStr, err := token.Sign(jose.SigningKey{Algorithm: jose.HS256, Key: cfg.OAuthSigningKey})
+		tokenStr, err := token.Sign(cfg.OAuthSigningKey)
 		require.NoError(t, err)
 
 		_, err = oauth.Parse(tokenStr, cfg, nonce)
@@ -40,7 +39,7 @@ func TestOAuthToken(t *testing.T) {
 		token, err := oauth.New(cfg, nonce, "https://app.example.com/return")
 		require.NoError(t, err)
 
-		tokenStr, err := token.Sign(jose.SigningKey{Algorithm: jose.HS256, Key: cfg.OAuthSigningKey})
+		tokenStr, err := token.Sign(cfg.OAuthSigningKey)
 		require.NoError(t, err)
 
 		_, err = oauth.Parse(tokenStr, cfg, "wrong")
@@ -54,7 +53,7 @@ func TestOAuthToken(t *testing.T) {
 		}
 		token, err := oauth.New(cfg, nonce, "https://app.example.com/return")
 		require.NoError(t, err)
-		tokenStr, err := token.Sign(jose.SigningKey{Algorithm: jose.HS256, Key: oldCfg.OAuthSigningKey})
+		tokenStr, err := token.Sign(oldCfg.OAuthSigningKey)
 		require.NoError(t, err)
 		_, err = oauth.Parse(tokenStr, cfg, nonce)
 		assert.Error(t, err)
@@ -67,7 +66,7 @@ func TestOAuthToken(t *testing.T) {
 		}
 		token, err := oauth.New(&oldCfg, nonce, "https://app.example.com/return")
 		require.NoError(t, err)
-		tokenStr, err := token.Sign(jose.SigningKey{Algorithm: jose.HS256, Key: cfg.OAuthSigningKey})
+		tokenStr, err := token.Sign(cfg.OAuthSigningKey)
 		require.NoError(t, err)
 		_, err = oauth.Parse(tokenStr, cfg, nonce)
 		assert.Error(t, err)

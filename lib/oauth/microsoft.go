@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/go-jose/go-jose/v3"
 	"golang.org/x/oauth2"
 )
 
@@ -46,5 +45,5 @@ func NewMicrosoftProvider(credentials *Credentials) *Provider {
 		user.Email = me.UserPrincipalName
 		fmt.Println(user)
 		return &user, err
-	}, jose.SigningKey{Key: credentials.SigningKey, Algorithm: jose.HS256})
+	})
 }
