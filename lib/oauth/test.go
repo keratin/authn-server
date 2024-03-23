@@ -3,13 +3,12 @@ package oauth
 import (
 	"net/http/httptest"
 
-	"github.com/go-jose/go-jose/v3"
 	"golang.org/x/oauth2"
 )
 
 // NewTestProvider returns a special Provider for tests
-func NewTestProvider(s *httptest.Server, signingKey []byte) *Provider {
-	return NewProvider(
+func NewTestProvider(s *httptest.Server) *Provider {
+	return &Provider{
 		&oauth2.Config{
 			ClientID:     "TEST",
 			ClientSecret: "SECRET",
@@ -24,5 +23,6 @@ func NewTestProvider(s *httptest.Server, signingKey []byte) *Provider {
 				ID:    t.AccessToken,
 				Email: t.AccessToken,
 			}, nil
-		}, jose.SigningKey{Key: signingKey, Algorithm: jose.HS256})
+		},
+	}
 }

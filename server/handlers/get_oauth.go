@@ -39,14 +39,14 @@ func GetOauth(app *app.App, providerName string) http.HandlerFunc {
 		}
 		nonce := base64.StdEncoding.EncodeToString(bytes)
 		http.SetCookie(w, nonceCookie(app.Config, string(nonce)))
-		
+
 		// save nonce and return URL into state param
 		stateToken, err := oauth.New(app.Config, string(nonce), redirectURI)
 		if err != nil {
 			fail(err)
 			return
 		}
-		state, err := stateToken.Sign(provider.SigningKey())
+		state, err := stateToken.Sign(app.Config.OAuthSigningKey)
 		if err != nil {
 			fail(err)
 			return

@@ -6,7 +6,6 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/go-jose/go-jose/v3"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/github"
 )
@@ -72,20 +71,23 @@ func NewGitHubProvider(credentials *Credentials) *Provider {
 		return strconv.Itoa(user.ID), nil
 	}
 
-	return NewProvider(config, func(t *oauth2.Token) (*UserInfo, error) {
-		id, err := getID(t)
-		if err != nil {
-			return nil, err
-		}
+	return &Provider{
+		config: config,
+		UserInfo: func(t *oauth2.Token) (*UserInfo, error) {
+			id, err := getID(t)
+			if err != nil {
+				return nil, err
+			}
 
-		email, err := getPrimaryEmail(t)
-		if err != nil {
-			return nil, err
-		}
+			email, err := getPrimaryEmail(t)
+			if err != nil {
+				return nil, err
+			}
 
-		return &UserInfo{
-			ID:    id,
-			Email: email,
-		}, nil
-	}, jose.SigningKey{Key: credentials.SigningKey, Algorithm: jose.HS256})
+			return &UserInfo{
+				ID:    id,
+				Email: email,
+			}, nil
+		},
+	}
 }

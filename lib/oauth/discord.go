@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"io"
 
-	"github.com/go-jose/go-jose/v3"
 	"golang.org/x/oauth2"
 )
 
@@ -21,21 +20,24 @@ func NewDiscordProvider(credentials *Credentials) *Provider {
 		},
 	}
 
-	return NewProvider(config, func(t *oauth2.Token) (*UserInfo, error) {
-		client := config.Client(context.TODO(), t)
-		resp, err := client.Get("https://discordapp.com/api/users/@me")
-		if err != nil {
-			return nil, err
-		}
-		defer resp.Body.Close()
+	return &Provider{
+		config: config,
+		UserInfo: func(t *oauth2.Token) (*UserInfo, error) {
+			client := config.Client(context.TODO(), t)
+			resp, err := client.Get("https://discordapp.com/api/users/@me")
+			if err != nil {
+				return nil, err
+			}
+			defer resp.Body.Close()
 
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return nil, err
-		}
+			body, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
 
-		var user UserInfo
-		err = json.Unmarshal(body, &user)
-		return &user, err
-	}, jose.SigningKey{Key: credentials.SigningKey, Algorithm: jose.HS256})
+			var user UserInfo
+			err = json.Unmarshal(body, &user)
+			return &user, err
+		},
+	}
 }
