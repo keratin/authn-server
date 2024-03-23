@@ -5,11 +5,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
-	"github.com/keratin/authn-server/server/test"
 	oauthlib "github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/lib/route"
+	"github.com/keratin/authn-server/server/test"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 

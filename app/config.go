@@ -76,7 +76,7 @@ type Config struct {
 	GitHubOauthCredentials      *oauth.Credentials
 	FacebookOauthCredentials    *oauth.Credentials
 	DiscordOauthCredentials     *oauth.Credentials
-	MicrosoftOauthCredientials  *oauth.Credentials
+	MicrosoftOauthCredentials   *oauth.Credentials
 	RefreshTokenExplicitExpiry  bool
 }
 
@@ -86,7 +86,7 @@ func (c *Config) OAuthEnabled() bool {
 		c.GitHubOauthCredentials != nil ||
 		c.FacebookOauthCredentials != nil ||
 		c.DiscordOauthCredentials != nil ||
-		c.MicrosoftOauthCredientials != nil
+		c.MicrosoftOauthCredentials != nil
 }
 
 // SameSiteComputed returns either the specified http.SameSite, or a computed one from OAuth config
@@ -644,7 +644,7 @@ var configurers = []configurer{
 		if val, ok := os.LookupEnv("MICROSOFT_OAUTH_CREDENTIALS"); ok {
 			credentials, err := oauth.NewCredentials(val)
 			if err == nil {
-				c.MicrosoftOauthCredientials = credentials
+				c.MicrosoftOauthCredentials = credentials
 			}
 			return err
 		}
