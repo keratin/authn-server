@@ -4,6 +4,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+## 1.18.2
+
+### Fixed
+
+* Remove incomplete "provider specific signing key" feature (#250)
+
 ## 1.18.1
 
 ### Fixed
