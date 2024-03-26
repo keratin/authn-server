@@ -12,17 +12,19 @@ func DeleteOauth(app *app.App, providerName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		accountID := sessions.GetAccountID(r)
 		if accountID == 0 {
-			WriteJSON(w, http.StatusUnauthorized, nil)
+			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
-		err := services.AccountOauthEnder(app.AccountStore, accountID, providerName)
+		result, err := services.AccountOauthEnder(app.AccountStore, accountID, providerName)
 		if err != nil {
 			app.Logger.WithError(err).Error("AccountOauthEnder")
 			WriteErrors(w, err)
 			return
 		}
 
-		w.WriteHeader(http.StatusNoContent)
+		WriteData(w, http.StatusOK, map[string]interface{}{
+			"require_password_reset": result.RequirePasswordReset,
+		})
 	}
 }

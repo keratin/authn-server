@@ -6,13 +6,12 @@ import (
 
 	"github.com/keratin/authn-server/app/data/mock"
 	"github.com/keratin/authn-server/app/services"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestAccountOauthEnder(t *testing.T) {
 
-	t.Run("require password reset before delete an account register with oauth flow", func(t *testing.T) {
+	t.Run("require password reset for an account registered with oauth flow", func(t *testing.T) {
 		accountStore := mock.NewAccountStore()
 		account, err := accountStore.Create("requirepasswordreset@keratin.tech", []byte("password"))
 		require.NoError(t, err)
@@ -20,8 +19,14 @@ func TestAccountOauthEnder(t *testing.T) {
 		err = accountStore.AddOauthAccount(account.ID, "test", "TESTID", "TOKEN")
 		require.NoError(t, err)
 
-		err = services.AccountOauthEnder(accountStore, account.ID, "test")
-		assert.Equal(t, err, services.FieldErrors{{Field: "password", Message: services.ErrPasswordResetRequired}})
+		result, err := services.AccountOauthEnder(accountStore, account.ID, "test")
+		require.NoError(t, err)
+
+		updatedAccount, err := accountStore.Find(account.ID)
+		require.NoError(t, err)
+
+		require.Equal(t, updatedAccount.RequireNewPassword, true)
+		require.Equal(t, result.RequirePasswordReset, true)
 	})
 
 	t.Run("delete account", func(t *testing.T) {
@@ -34,7 +39,9 @@ func TestAccountOauthEnder(t *testing.T) {
 		err = accountStore.AddOauthAccount(account.ID, "test", "TESTID", "TOKEN")
 		require.NoError(t, err)
 
-		err = services.AccountOauthEnder(accountStore, account.ID, "test")
+		result, err := services.AccountOauthEnder(accountStore, account.ID, "test")
 		require.NoError(t, err)
+
+		require.Equal(t, result.RequirePasswordReset, false)
 	})
 }
