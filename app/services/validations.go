@@ -8,15 +8,16 @@ import (
 )
 
 var (
-	ErrMissing          = "MISSING"
-	ErrTaken            = "TAKEN"
-	ErrFormatInvalid    = "FORMAT_INVALID"
-	ErrInsecure         = "INSECURE"
-	ErrFailed           = "FAILED"
-	ErrLocked           = "LOCKED"
-	ErrExpired          = "EXPIRED"
-	ErrNotFound         = "NOT_FOUND"
-	ErrInvalidOrExpired = "INVALID_OR_EXPIRED"
+	ErrMissing               = "MISSING"
+	ErrTaken                 = "TAKEN"
+	ErrFormatInvalid         = "FORMAT_INVALID"
+	ErrInsecure              = "INSECURE"
+	ErrFailed                = "FAILED"
+	ErrLocked                = "LOCKED"
+	ErrExpired               = "EXPIRED"
+	ErrNotFound              = "NOT_FOUND"
+	ErrInvalidOrExpired      = "INVALID_OR_EXPIRED"
+	ErrPasswordResetRequired = "PASSWORD_RESET_REQUIRED"
 )
 
 type FieldError struct {

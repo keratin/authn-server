@@ -124,6 +124,19 @@ func (s *accountStore) GetOauthAccounts(accountID int) ([]*models.OauthAccount, 
 	return s.oauthAccountsByID[accountID], nil
 }
 
+func (s *accountStore) DeleteOauthAccount(accountID int, provider string) (bool, error) {
+	oauthAccounts := s.oauthAccountsByID[accountID]
+
+	for i, oauthAccount := range oauthAccounts {
+		if oauthAccount.Provider == provider {
+			s.oauthAccountsByID[accountID] = append(oauthAccounts[:i], oauthAccounts[i+1:]...)
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
 func (s *accountStore) Archive(id int) (bool, error) {
 	account := s.accountsByID[id]
 	if account == nil {

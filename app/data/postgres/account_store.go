@@ -111,6 +111,15 @@ func (db *AccountStore) GetOauthAccounts(accountID int) ([]*models.OauthAccount,
 	return accounts, err
 }
 
+func (db *AccountStore) DeleteOauthAccount(accountId int, provider string) (bool, error) {
+	result, err := db.Exec("DELETE FROM oauth_accounts WHERE account_id = ? AND provider = ?", accountId, provider)
+	if err != nil {
+		return false, err
+	}
+
+	return ok(result, err)
+}
+
 func (db *AccountStore) Archive(id int) (bool, error) {
 	_, err := db.Exec("DELETE FROM oauth_accounts WHERE account_id = $1", id)
 	if err != nil {
