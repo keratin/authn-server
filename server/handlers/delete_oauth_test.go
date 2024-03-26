@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	oauthlib "github.com/keratin/authn-server/lib/oauth"
@@ -36,10 +35,13 @@ func TestDeleteOauthAccount(t *testing.T) {
 	t.Run("unanthorized", func(t *testing.T) {
 		res, err := client.Delete("/oauth/test")
 		require.NoError(t, err)
-		assert.Equal(t, http.StatusUnauthorized, res.StatusCode)
+
+		require.Equal(t, http.StatusUnauthorized, res.StatusCode)
+		require.Equal(t, []byte{}, test.ReadBody(res))
 	})
 
 	t.Run("delete social account", func(t *testing.T) {
+		expected := "{\"result\":{\"require_password_reset\":false}}"
 		account, err := app.AccountStore.Create("deleted@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 
@@ -55,6 +57,8 @@ func TestDeleteOauthAccount(t *testing.T) {
 
 		res, err := client.WithCookie(session).Delete("/oauth/test")
 		require.NoError(t, err)
-		assert.Equal(t, http.StatusNoContent, res.StatusCode)
+
+		require.Equal(t, http.StatusOK, res.StatusCode)
+		require.Equal(t, []byte(expected), test.ReadBody(res))
 	})
 }
