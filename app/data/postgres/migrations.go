@@ -13,6 +13,7 @@ func MigrateDB(db *sqlx.DB) error {
 		createAccountLastLoginAtField,
 		caseInsensitiveUsername,
 		createAccountTOTPFields,
+		addOauthAccountEmail,
 	}
 	for _, m := range migrations {
 		if err := m(db); err != nil {
@@ -52,6 +53,13 @@ func createOauthAccounts(db *sqlx.DB) error {
             UNIQUE (provider_id, provider),
             UNIQUE (account_id, provider)
         )
+    `)
+	return err
+}
+
+func addOauthAccountEmail(db *sqlx.DB) error {
+	_, err := db.Exec(`
+		ALTER TABLE oauth_accounts ADD COLUMN IF NOT EXISTS email VARCHAR(255) DEFAULT NULL;
     `)
 	return err
 }

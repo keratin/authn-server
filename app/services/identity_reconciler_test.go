@@ -22,7 +22,7 @@ func TestIdentityReconciler(t *testing.T) {
 	t.Run("linked account", func(t *testing.T) {
 		acct, err := store.Create("linked@test.com", []byte("password"))
 		require.NoError(t, err)
-		err = store.AddOauthAccount(acct.ID, "testProvider", "123", "TOKEN")
+		err = store.AddOauthAccount(acct.ID, "testProvider", "123", "email", "TOKEN")
 		require.NoError(t, err)
 
 		found, err := services.IdentityReconciler(store, cfg, "testProvider", &oauth.UserInfo{ID: "123", Email: "linked@test.com"}, &oauth2.Token{}, 0)
@@ -35,7 +35,7 @@ func TestIdentityReconciler(t *testing.T) {
 	t.Run("linked account that is locked", func(t *testing.T) {
 		acct, err := store.Create("linkedlocked@test.com", []byte("password"))
 		require.NoError(t, err)
-		err = store.AddOauthAccount(acct.ID, "testProvider", "234", "TOKEN")
+		err = store.AddOauthAccount(acct.ID, "testProvider", "234", "email", "TOKEN")
 		require.NoError(t, err)
 		_, err = store.Lock(acct.ID)
 		require.NoError(t, err)
@@ -59,7 +59,7 @@ func TestIdentityReconciler(t *testing.T) {
 	t.Run("linkable account that is linked", func(t *testing.T) {
 		acct, err := store.Create("linkablelinked@test.com", []byte("password"))
 		require.NoError(t, err)
-		err = store.AddOauthAccount(acct.ID, "testProvider", "0", "TOKEN")
+		err = store.AddOauthAccount(acct.ID, "testProvider", "0", "email", "TOKEN")
 		require.NoError(t, err)
 
 		found, err := services.IdentityReconciler(store, cfg, "testProvider", &oauth.UserInfo{ID: "456", Email: "linkablelinked@test.com"}, &oauth2.Token{}, acct.ID)

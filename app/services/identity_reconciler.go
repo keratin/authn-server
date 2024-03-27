@@ -43,7 +43,7 @@ func IdentityReconciler(accountStore data.AccountStore, cfg *app.Config, provide
 
 	// 2. attempt linking to existing account
 	if linkableAccountID != 0 {
-		err = accountStore.AddOauthAccount(linkableAccountID, providerName, providerUser.ID, providerToken.AccessToken)
+		err = accountStore.AddOauthAccount(linkableAccountID, providerName, providerUser.ID, providerUser.Email, providerToken.AccessToken)
 		if err != nil {
 			if data.IsUniquenessError(err) {
 				return nil, errors.New("session conflict")
@@ -68,7 +68,7 @@ func IdentityReconciler(accountStore data.AccountStore, cfg *app.Config, provide
 	if err != nil {
 		return nil, errors.Wrap(err, "AccountCreator")
 	}
-	err = accountStore.AddOauthAccount(newAccount.ID, providerName, providerUser.ID, providerToken.AccessToken)
+	err = accountStore.AddOauthAccount(newAccount.ID, providerName, providerUser.ID, providerUser.Email, providerToken.AccessToken)
 	if err != nil {
 		// this should not happen since oauth details used to lookup account above
 		// not sure how best to test but feels appropriate to return error if encountered

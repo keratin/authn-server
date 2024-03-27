@@ -94,7 +94,7 @@ func (s *accountStore) Create(u string, p []byte) (*models.Account, error) {
 	return dupAccount(acc), nil
 }
 
-func (s *accountStore) AddOauthAccount(accountID int, provider string, providerID string, tok string) error {
+func (s *accountStore) AddOauthAccount(accountID int, provider, providerID, email, tok string) error {
 	p := provider + "|" + providerID
 	if s.idByOauthID[p] != 0 {
 		return Error{ErrNotUnique}
@@ -107,6 +107,7 @@ func (s *accountStore) AddOauthAccount(accountID int, provider string, providerI
 
 	now := time.Now()
 	oauthAccount := &models.OauthAccount{
+		Email:       email,
 		AccountID:   accountID,
 		Provider:    provider,
 		ProviderID:  providerID,

@@ -19,6 +19,7 @@ func AccountOauthGetter(accountStore data.AccountStore, accountID int) ([]map[st
 			map[string]interface{}{
 				"provider":    oAccount.Provider,
 				"provider_id": oAccount.ProviderID,
+				"email":       oAccount.Email,
 			},
 		)
 	}

@@ -16,7 +16,7 @@ func TestAccountOauthEnder(t *testing.T) {
 		account, err := accountStore.Create("requirepasswordreset@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 
-		err = accountStore.AddOauthAccount(account.ID, "test", "TESTID", "TOKEN")
+		err = accountStore.AddOauthAccount(account.ID, "test", "TESTID", "email", "TOKEN")
 		require.NoError(t, err)
 
 		result, err := services.AccountOauthEnder(accountStore, account.ID, []string{"test"})
@@ -51,7 +51,7 @@ func TestAccountOauthEnder(t *testing.T) {
 
 		time.Sleep(5 * time.Second)
 
-		err = accountStore.AddOauthAccount(account.ID, "test", "TESTID", "TOKEN")
+		err = accountStore.AddOauthAccount(account.ID, "test", "TESTID", "email", "TOKEN")
 		require.NoError(t, err)
 
 		result, err := services.AccountOauthEnder(accountStore, account.ID, []string{"test"})
@@ -69,10 +69,10 @@ func TestAccountOauthEnder(t *testing.T) {
 		account, err := accountStore.Create("deleted@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 
-		err = accountStore.AddOauthAccount(account.ID, "test", "TESTID", "TOKEN")
+		err = accountStore.AddOauthAccount(account.ID, "test", "TESTID", "email", "TOKEN")
 		require.NoError(t, err)
 
-		err = accountStore.AddOauthAccount(account.ID, "trial", "TESTID", "TOKEN")
+		err = accountStore.AddOauthAccount(account.ID, "trial", "TESTID", "email", "TOKEN")
 		require.NoError(t, err)
 
 		result, err := services.AccountOauthEnder(accountStore, account.ID, []string{"test", "trial"})

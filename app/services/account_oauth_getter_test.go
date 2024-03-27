@@ -26,10 +26,10 @@ func TestAccountOauthGetter(t *testing.T) {
 		account, err := accountStore.Create("user@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 
-		err = accountStore.AddOauthAccount(account.ID, "test", "ID1", "TOKEN1")
+		err = accountStore.AddOauthAccount(account.ID, "test", "ID1", "email1", "TOKEN1")
 		require.NoError(t, err)
 
-		err = accountStore.AddOauthAccount(account.ID, "trial", "ID2", "TOKEN2")
+		err = accountStore.AddOauthAccount(account.ID, "trial", "ID2", "email2", "TOKEN2")
 		require.NoError(t, err)
 
 		accountOauth, err := services.AccountOauthGetter(accountStore, 1)
@@ -45,10 +45,12 @@ func TestAccountOauthGetter(t *testing.T) {
 				{
 					"provider":    "test",
 					"provider_id": "ID1",
+					"email":       "email1",
 				},
 				{
 					"provider":    "trial",
 					"provider_id": "ID2",
+					"email":       "email2",
 				},
 			},
 			accountOauth,
