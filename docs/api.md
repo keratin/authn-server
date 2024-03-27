@@ -295,6 +295,30 @@ Visibility: Private
       ]
     }
 
+### Archive Account
+
+Visibility: Private
+
+`DELETE /accounts/:id/oauth`
+
+| Params |   Type  |      Notes      |
+| ------ | ------- | --------------- |
+| `id`   | integer | User account Id |
+
+#### Success:
+
+    200 Ok
+
+    {
+      "result": {
+        "require_password_reset": true|false
+      }
+    }
+
+#### Failure:
+
+    404 Not Found
+
 ### Import Account
 
 Visibility: Private
@@ -657,6 +681,56 @@ If the OAuth process failed, the redirect will have `status=failed` appended to 
 
     303 See Other
     Location: (redirect URI with status=failed)
+
+#### Get OAuth accounts info
+
+Visibility: Public
+
+`Get /oauth/info`
+
+Returns relevant oauth information for the current session.
+
+#### Success:
+
+    200 Ok
+
+    {
+      "result": [
+        "provider": "google"|"apple",
+        "provider_id": "91293",
+        "email": "authn@keratin.com"
+      ]
+    }
+
+#### Failure:
+
+    401 Unauthorized
+
+#### Delete OAuth account
+
+Visibility: Public
+
+`DELETE /oauth/:providerName`
+
+| Params | Type | Notes |
+| ------ | ---- | ----- |
+| `providerName` | string | * google |
+
+Delete an OAuth account from the current session. If the session was initiated via the OAuth flow, the account will be flagged to reset the password during the next sign-in attempt.
+
+#### Success:
+
+    200 Ok
+
+    {
+      "result": {
+        "require_password_reset": true|false
+      }
+    }
+
+#### Failure:
+
+    401 Unauthorized
 
 ### Multi-Factor Authentication (MFA)
 
