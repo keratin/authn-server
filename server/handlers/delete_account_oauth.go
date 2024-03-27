@@ -30,6 +30,12 @@ func DeleteAccountOauth(app *app.App) http.HandlerFunc {
 		result, err := services.AccountOauthEnder(app.AccountStore, accountID, payload.OauthProviders)
 		if err != nil {
 			app.Logger.WithError(err).Error("AccountOauthEnder")
+
+			if _, ok := err.(services.FieldErrors); ok {
+				WriteNotFound(w, "account")
+				return
+			}
+
 			WriteErrors(w, err)
 			return
 		}

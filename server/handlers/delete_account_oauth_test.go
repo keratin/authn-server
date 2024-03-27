@@ -29,13 +29,19 @@ func TestDeleteAccountOauth(t *testing.T) {
 		err = app.AccountStore.AddOauthAccount(account.ID, "test", "DELETEDID", "email", "TOKEN")
 		require.NoError(t, err)
 
-		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
-
 		payload := map[string]interface{}{"oauth_providers": []string{"test"}}
-		res, err := client.WithCookie(session).DeleteJSON("/accounts/1/oauth", payload)
+		res, err := client.DeleteJSON("/accounts/1/oauth", payload)
 		require.NoError(t, err)
 
 		require.Equal(t, http.StatusOK, res.StatusCode)
 		require.Equal(t, []byte(expected), test.ReadBody(res))
+	})
+
+	t.Run("return not found when user does not exists", func(t *testing.T) {
+		payload := map[string]interface{}{"oauth_providers": []string{"test"}}
+		res, err := client.DeleteJSON("/accounts/9999/oauth", payload)
+		require.NoError(t, err)
+
+		require.Equal(t, http.StatusNotFound, res.StatusCode)
 	})
 }
