@@ -4,15 +4,13 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/lib/pq"
-
 	my "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/keratin/authn-server/app/data/mock"
 	"github.com/keratin/authn-server/app/data/mysql"
 	"github.com/keratin/authn-server/app/data/postgres"
 	"github.com/keratin/authn-server/app/data/sqlite3"
-	sq3 "github.com/mattn/go-sqlite3"
+	"github.com/lib/pq"
 )
 
 func NewDB(url *url.URL) (*sqlx.DB, error) {
@@ -61,8 +59,8 @@ func MigrateDB(url *url.URL) error {
 
 func IsUniquenessError(err error) bool {
 	switch i := err.(type) {
-	case sq3.Error:
-		return i.ExtendedCode == sq3.ErrConstraintUnique
+	case sqlite3.Error:
+		return i.ExtendedCode == sqlite3.ErrConstraintUnique
 	case *my.MySQLError:
 		return i.Number == 1062
 	case *pq.Error:
