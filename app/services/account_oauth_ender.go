@@ -18,6 +18,10 @@ func AccountOauthEnder(store data.AccountStore, accountId int, providers []strin
 		return nil, err
 	}
 
+	if account == nil {
+		return nil, FieldErrors{{"account", ErrNotFound}}
+	}
+
 	oauthAccounts, err := store.GetOauthAccounts(accountId)
 	if err != nil {
 		return nil, err
