@@ -36,10 +36,10 @@ func TestGetAccount(t *testing.T) {
 		account, err := app.AccountStore.Create("unlocked@test.com", []byte("bar"))
 		require.NoError(t, err)
 
-		err = app.AccountStore.AddOauthAccount(account.ID, "test", "ID1", "TOKEN1")
+		err = app.AccountStore.AddOauthAccount(account.ID, "test", "ID1", "email", "TOKEN1")
 		require.NoError(t, err)
 
-		err = app.AccountStore.AddOauthAccount(account.ID, "trial", "ID2", "TOKEN2")
+		err = app.AccountStore.AddOauthAccount(account.ID, "trial", "ID2", "email", "TOKEN2")
 		require.NoError(t, err)
 
 		oauthAccounts, err := app.AccountStore.GetOauthAccounts(account.ID)
@@ -81,10 +81,12 @@ func assertGetAccountResponse(t *testing.T, res *http.Response, acc *models.Acco
 			{
 				"provider":    "test",
 				"provider_id": oAccs[0].ProviderID,
+				"email":       oAccs[0].Email,
 			},
 			{
 				"provider":    "trial",
 				"provider_id": oAccs[1].ProviderID,
+				"email":       oAccs[1].Email,
 			},
 		},
 		LastLoginAt:       "",

@@ -44,7 +44,7 @@ func TestDeleteOauthAccount(t *testing.T) {
 		account, err := app.AccountStore.Create("deleted@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 
-		err = app.AccountStore.AddOauthAccount(account.ID, "test", "DELETEDID", "TOKEN")
+		err = app.AccountStore.AddOauthAccount(account.ID, "test", "DELETEDID", "email", "TOKEN")
 		require.NoError(t, err)
 
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)

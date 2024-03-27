@@ -76,13 +76,14 @@ func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 	return account, nil
 }
 
-func (db *AccountStore) AddOauthAccount(accountID int, provider string, providerID string, accessToken string) error {
+func (db *AccountStore) AddOauthAccount(accountID int, provider, providerID, email, accessToken string) error {
 	now := time.Now()
 
 	_, err := sqlx.NamedExec(db, `
-        INSERT INTO oauth_accounts (account_id, provider, provider_id, access_token, created_at, updated_at)
-        VALUES (:account_id, :provider, :provider_id, :access_token, :created_at, :updated_at)
+        INSERT INTO oauth_accounts (account_id, provider, provider_id, email, access_token, created_at, updated_at)
+        VALUES (:account_id, :provider, :provider_id, :email, :access_token, :created_at, :updated_at)
     `, map[string]interface{}{
+		"email":        email,
 		"account_id":   accountID,
 		"provider":     provider,
 		"provider_id":  providerID,
