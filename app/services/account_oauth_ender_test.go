@@ -19,7 +19,7 @@ func TestAccountOauthEnder(t *testing.T) {
 		err = accountStore.AddOauthAccount(account.ID, "test", "TESTID", "TOKEN")
 		require.NoError(t, err)
 
-		result, err := services.AccountOauthEnder(accountStore, account.ID, "test")
+		result, err := services.AccountOauthEnder(accountStore, account.ID, []string{"test"})
 		require.NoError(t, err)
 
 		updatedAccount, err := accountStore.Find(account.ID)
@@ -27,6 +27,21 @@ func TestAccountOauthEnder(t *testing.T) {
 
 		require.Equal(t, updatedAccount.RequireNewPassword, true)
 		require.Equal(t, result.RequirePasswordReset, true)
+	})
+
+	t.Run("delete non existing oauth accounts", func(t *testing.T) {
+		accountStore := mock.NewAccountStore()
+		account, err := accountStore.Create("deleted@keratin.tech", []byte("password"))
+		require.NoError(t, err)
+
+		result, err := services.AccountOauthEnder(accountStore, account.ID, []string{"test"})
+		require.NoError(t, err)
+
+		oAccount, err := accountStore.GetOauthAccounts(account.ID)
+		require.NoError(t, err)
+
+		require.Equal(t, result.RequirePasswordReset, false)
+		require.Equal(t, len(oAccount), 0)
 	})
 
 	t.Run("delete account", func(t *testing.T) {
@@ -39,9 +54,34 @@ func TestAccountOauthEnder(t *testing.T) {
 		err = accountStore.AddOauthAccount(account.ID, "test", "TESTID", "TOKEN")
 		require.NoError(t, err)
 
-		result, err := services.AccountOauthEnder(accountStore, account.ID, "test")
+		result, err := services.AccountOauthEnder(accountStore, account.ID, []string{"test"})
+		require.NoError(t, err)
+
+		oAccount, err := accountStore.GetOauthAccounts(account.ID)
 		require.NoError(t, err)
 
 		require.Equal(t, result.RequirePasswordReset, false)
+		require.Equal(t, len(oAccount), 0)
+	})
+
+	t.Run("delete multiple accounts", func(t *testing.T) {
+		accountStore := mock.NewAccountStore()
+		account, err := accountStore.Create("deleted@keratin.tech", []byte("password"))
+		require.NoError(t, err)
+
+		err = accountStore.AddOauthAccount(account.ID, "test", "TESTID", "TOKEN")
+		require.NoError(t, err)
+
+		err = accountStore.AddOauthAccount(account.ID, "trial", "TESTID", "TOKEN")
+		require.NoError(t, err)
+
+		result, err := services.AccountOauthEnder(accountStore, account.ID, []string{"test", "trial"})
+		require.NoError(t, err)
+
+		oAccount, err := accountStore.GetOauthAccounts(account.ID)
+		require.NoError(t, err)
+
+		require.Equal(t, result.RequirePasswordReset, true)
+		require.Equal(t, len(oAccount), 0)
 	})
 }

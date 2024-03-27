@@ -8,7 +8,7 @@ import (
 	"github.com/keratin/authn-server/server/sessions"
 )
 
-func DeleteOauth(app *app.App, providerName string) http.HandlerFunc {
+func GetOauthInfo(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		accountID := sessions.GetAccountID(r)
 		if accountID == 0 {
@@ -16,15 +16,12 @@ func DeleteOauth(app *app.App, providerName string) http.HandlerFunc {
 			return
 		}
 
-		result, err := services.AccountOauthEnder(app.AccountStore, accountID, []string{providerName})
+		oAccounts, err := services.AccountOauthGetter(app.AccountStore, accountID)
 		if err != nil {
-			app.Logger.WithError(err).Error("AccountOauthEnder")
 			WriteErrors(w, err)
 			return
 		}
 
-		WriteData(w, http.StatusOK, map[string]interface{}{
-			"require_password_reset": result.RequirePasswordReset,
-		})
+		WriteData(w, http.StatusOK, oAccounts)
 	}
 }
