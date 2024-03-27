@@ -28,7 +28,7 @@ const (
 	put     = "PUT"
 	options = "OPTIONS"
 
-	contentTypeJSON = "application/json"
+	contentTypeJSON           = "application/json"
 	contentTypeFormURLEncoded = "application/x-www-form-urlencoded"
 )
 
@@ -100,6 +100,16 @@ func (c *Client) Get(path string) (*http.Response, error) {
 // client.
 func (c *Client) Delete(path string) (*http.Response, error) {
 	return c.do(delete, contentTypeFormURLEncoded, path, nil)
+}
+
+// DeleteJSON issues a DELETE to the specified path like net/http's Delete, but with any modifications
+// configured for the current client and accepting a JSON content.
+func (c *Client) DeleteJSON(path string, content map[string]interface{}) (*http.Response, error) {
+	marshalled, err := json.Marshal(content)
+	if err != nil {
+		return nil, err
+	}
+	return c.do(delete, contentTypeJSON, path, bytes.NewReader(marshalled))
 }
 
 // PostForm issues a POST to the specified path like net/http's PostForm, but with any modifications

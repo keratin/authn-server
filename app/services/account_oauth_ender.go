@@ -10,7 +10,7 @@ type AccountOauthEnderResult struct {
 	RequirePasswordReset bool
 }
 
-func AccountOauthEnder(store data.AccountStore, accountId int, provider string) (*AccountOauthEnderResult, error) {
+func AccountOauthEnder(store data.AccountStore, accountId int, providers []string) (*AccountOauthEnderResult, error) {
 	result := &AccountOauthEnderResult{}
 
 	account, err := store.Find(accountId)
@@ -30,9 +30,11 @@ func AccountOauthEnder(store data.AccountStore, accountId int, provider string) 
 		}
 	}
 
-	_, err = store.DeleteOauthAccount(accountId, provider)
-	if err != nil {
-		return nil, err
+	for _, provider := range providers {
+		_, err = store.DeleteOauthAccount(accountId, provider)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return result, nil

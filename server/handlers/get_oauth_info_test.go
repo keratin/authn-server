@@ -2,22 +2,15 @@ package handlers_test
 
 import (
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
-	oauthlib "github.com/keratin/authn-server/lib/oauth"
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/server/test"
+	"github.com/stretchr/testify/require"
 )
 
-func TestDeleteOauthAccount(t *testing.T) {
-	providerServer := httptest.NewServer(test.ProviderApp())
-	defer providerServer.Close()
-
+func TestGetOauthInfo(t *testing.T) {
 	app := test.App()
-	app.OauthProviders["test"] = *oauthlib.NewTestProvider(providerServer)
 
 	server := test.Server(app)
 	defer server.Close()
@@ -27,29 +20,25 @@ func TestDeleteOauthAccount(t *testing.T) {
 		Value: "",
 	})
 
-	http.DefaultClient.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-		return http.ErrUseLastResponse
-	}
-
 	t.Run("unanthorized", func(t *testing.T) {
-		res, err := client.Delete("/oauth/test")
+		res, err := client.Get("/oauth/info")
 		require.NoError(t, err)
 
 		require.Equal(t, http.StatusUnauthorized, res.StatusCode)
 		require.Equal(t, []byte{}, test.ReadBody(res))
 	})
 
-	t.Run("delete social account", func(t *testing.T) {
-		expected := "{\"result\":{\"require_password_reset\":true}}"
-		account, err := app.AccountStore.Create("deleted@keratin.tech", []byte("password"))
+	t.Run("get oauth info", func(t *testing.T) {
+		expected := "{\"result\":[{\"provider\":\"test\",\"provider_id\":\"ID\"}]}"
+		account, err := app.AccountStore.Create("get-oauth-info@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 
-		err = app.AccountStore.AddOauthAccount(account.ID, "test", "DELETEDID", "TOKEN")
+		err = app.AccountStore.AddOauthAccount(account.ID, "test", "ID", "TOKEN")
 		require.NoError(t, err)
 
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 
-		res, err := client.WithCookie(session).Delete("/oauth/test")
+		res, err := client.WithCookie(session).Get("/oauth/info")
 		require.NoError(t, err)
 
 		require.Equal(t, http.StatusOK, res.StatusCode)
