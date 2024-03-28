@@ -13,7 +13,7 @@ func TestNewCredentials(t *testing.T) {
 	t.Run("invalid credentials", func(t *testing.T) {
 		credentials, err := NewCredentials("id")
 		assert.NotNil(t, err)
-		assert.Equal(t, "credentials must be in the format `id:string:signing_key(optional):additional=data...(optional)`", err.Error())
+		assert.Equal(t, "credentials must be in the format `id:secret:additional=data...(optional)`", err.Error())
 		assert.Nil(t, credentials)
 	})
 

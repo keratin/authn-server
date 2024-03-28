@@ -13,14 +13,14 @@ type Credentials struct {
 }
 
 // NewCredentials parses a credential string in the format
-// `id:secret:signing_key(optional):additional=data...(optional)`
+// `id:secret:additional=data...(optional)`
 // and returns a Credentials suitable for OAuth Provider configuration.
 // If no signing key is provided the default key is used.
 // Any content after the third colon is assumed a key-value pair in the form
 // `key=value` and is added to the Additional map.
 func NewCredentials(credentials string) (*Credentials, error) {
 	if strings.Count(credentials, ":") < 1 {
-		return nil, errors.New("credentials must be in the format `id:secret:signing_key(optional):additional=data...(optional)`")
+		return nil, errors.New("credentials must be in the format `id:secret:additional=data...(optional)`")
 	}
 	strs := strings.SplitN(credentials, ":", 3)
 
