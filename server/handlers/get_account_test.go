@@ -79,14 +79,14 @@ func assertGetAccountResponse(t *testing.T, res *http.Response, acc *models.Acco
 		Username: acc.Username,
 		OauthAccounts: []map[string]interface{}{
 			{
-				"provider":    "test",
-				"provider_id": oAccs[0].ProviderID,
-				"email":       oAccs[0].Email,
+				"provider":            "test",
+				"provider_account_id": oAccs[0].ProviderID,
+				"email":               oAccs[0].Email,
 			},
 			{
-				"provider":    "trial",
-				"provider_id": oAccs[1].ProviderID,
-				"email":       oAccs[1].Email,
+				"provider":            "trial",
+				"provider_account_id": oAccs[1].ProviderID,
+				"email":               oAccs[1].Email,
 			},
 		},
 		LastLoginAt:       "",

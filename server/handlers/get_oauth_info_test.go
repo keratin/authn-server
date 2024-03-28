@@ -29,7 +29,7 @@ func TestGetOauthInfo(t *testing.T) {
 	})
 
 	t.Run("get oauth info", func(t *testing.T) {
-		expected := "{\"result\":[{\"email\":\"email\",\"provider\":\"test\",\"provider_id\":\"ID\"}]}"
+		expected := "{\"result\":[{\"email\":\"email\",\"provider\":\"test\",\"provider_account_id\":\"ID\"}]}"
 		account, err := app.AccountStore.Create("get-oauth-info@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 

@@ -36,21 +36,21 @@ func TestAccountOauthGetter(t *testing.T) {
 		require.NoError(t, err)
 
 		sort.Slice(accountOauth, func(i, j int) bool {
-			return accountOauth[i]["provider_id"].(string) < accountOauth[j]["provider_id"].(string)
+			return accountOauth[i]["provider_account_id"].(string) < accountOauth[j]["provider_account_id"].(string)
 		})
 
 		require.Equal(
 			t,
 			[]map[string]interface{}{
 				{
-					"provider":    "test",
-					"provider_id": "ID1",
-					"email":       "email1",
+					"provider":            "test",
+					"provider_account_id": "ID1",
+					"email":               "email1",
 				},
 				{
-					"provider":    "trial",
-					"provider_id": "ID2",
-					"email":       "email2",
+					"provider":            "trial",
+					"provider_account_id": "ID2",
+					"email":               "email2",
 				},
 			},
 			accountOauth,
