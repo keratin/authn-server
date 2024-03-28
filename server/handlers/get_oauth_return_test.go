@@ -73,7 +73,7 @@ func TestGetOauthReturn(t *testing.T) {
 	t.Run("not connect new identity with current session that is already linked", func(t *testing.T) {
 		account, err := app.AccountStore.Create("linked@keratin.tech", []byte("password"))
 		require.NoError(t, err)
-		err = app.AccountStore.AddOauthAccount(account.ID, "test", "PREVIOUSID", "TOKEN")
+		err = app.AccountStore.AddOauthAccount(account.ID, "test", "PREVIOUSID", "email", "TOKEN")
 		require.NoError(t, err)
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 
@@ -86,7 +86,7 @@ func TestGetOauthReturn(t *testing.T) {
 		linkedAccount, err := app.AccountStore.Create("linked.account@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 
-		err = app.AccountStore.AddOauthAccount(linkedAccount.ID, "test", "LINKEDID", "TOKEN")
+		err = app.AccountStore.AddOauthAccount(linkedAccount.ID, "test", "LINKEDID", "email", "TOKEN")
 		require.NoError(t, err)
 
 		account, err := app.AccountStore.Create("registered.account@keratin.tech", []byte("password"))
@@ -102,7 +102,7 @@ func TestGetOauthReturn(t *testing.T) {
 	t.Run("log in to existing identity", func(t *testing.T) {
 		account, err := app.AccountStore.Create("registered@keratin.tech", []byte("password"))
 		require.NoError(t, err)
-		err = app.AccountStore.AddOauthAccount(account.ID, "test", "REGISTEREDID", "TOKEN")
+		err = app.AccountStore.AddOauthAccount(account.ID, "test", "REGISTEREDID", "email", "TOKEN")
 		require.NoError(t, err)
 
 		// codes don't normally specify the id, but our test provider is set up to reflect the code

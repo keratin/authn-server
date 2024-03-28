@@ -10,8 +10,10 @@
     * [Username Availability](#username-availability)
     * [Lock Account](#lock-account)
     * [Unlock Account](#unlock-account)
+    * [Delete OAuth account by user id](#delete-oauth-account-by-user-id)
     * [Archive Account](#archive-account)
     * [Import Account](#import-account)
+
   * Sessions
     * [Login](#login)
     * [Refresh Session](#refresh-session)
@@ -26,6 +28,8 @@
   * OAuth
     * [Begin OAuth](#begin-oauth)
     * [OAuth Return URL](#oauth-return)
+    * [Get OAuth accounts info](#get-oauth-accounts-info)
+    * [Delete OAuth account](#delete-oauth-account)
   * Multi-Factor Authentication (MFA) **BETA**
     * [New](#totp-new)
     * [Confirm](#totp-post)
@@ -142,6 +146,13 @@ Visibility: Private
       "result": {
         "id": <id>,
         "username": "...",
+        "oauth_accounts": [
+          {
+            "provider": "google"|"apple",
+            "provider_account_id": "91293",
+            "email": "authn@keratin.com"
+          }
+        ],
         "last_login_at": "2006-01-02T15:04:05Z07:00",
         "password_changed_at": "2006-01-02T15:04:05Z07:00",
         "locked": false,
@@ -292,6 +303,34 @@ Visibility: Private
     {
       "errors": [
         {"field": "account", "message": "NOT_FOUND"}
+      ]
+    }
+
+### Delete OAuth account by user id
+
+Visibility: Private
+
+`DELETE /accounts/:id/oauth`
+
+|        Params       |   Type  |      Notes      |
+| ------------------- | ------- | --------------- |
+| `id`                | integer | User account Id |
+| `oauth_providers`   | integer | User account Id |
+
+#### Success:
+
+    200 Ok
+
+    {}
+
+#### Failure:
+    404 Not Found
+
+    422 Unprocessable Entity
+
+    {
+      "errors": [
+        {"field": "password", "message": "NEW_PASSWORD_REQUIRED"}
       ]
     }
 
@@ -657,6 +696,62 @@ If the OAuth process failed, the redirect will have `status=failed` appended to 
 
     303 See Other
     Location: (redirect URI with status=failed)
+
+#### Get OAuth accounts info
+
+Visibility: Public
+
+`GET /oauth/info`
+
+Returns relevant oauth information for the current session.
+
+#### Success:
+
+    200 Ok
+
+    {
+      "result": [
+        {
+          "provider": "google"|"apple",
+          "provider_account_id": "91293",
+          "email": "authn@keratin.com"
+        }
+      ]
+    }
+
+#### Failure:
+
+    401 Unauthorized
+
+#### Delete OAuth account
+
+Visibility: Public
+
+`DELETE /oauth/:providerName`
+
+| Params | Type | Notes |
+| ------ | ---- | ----- |
+| `providerName` | string | * google |
+
+Delete an OAuth account from the current session. If the session was initiated via the OAuth flow, the account will be flagged to reset the password during the next sign-in attempt.
+
+#### Success:
+
+    200 Ok
+
+    {}
+
+#### Failure:
+
+    401 Unauthorized
+
+    422 Unprocessable Entity
+
+    {
+      "errors": [
+        {"field": "password", "message": "NEW_PASSWORD_REQUIRED"}
+      ]
+    }
 
 ### Multi-Factor Authentication (MFA)
 

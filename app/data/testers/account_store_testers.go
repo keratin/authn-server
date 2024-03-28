@@ -141,7 +141,7 @@ func testArchive(t *testing.T, store data.AccountStore) {
 func testArchiveWithOauth(t *testing.T, store data.AccountStore) {
 	account, err := store.Create("authn@keratin.tech", []byte("password"))
 	require.NoError(t, err)
-	err = store.AddOauthAccount(account.ID, "PROVIDER", "PROVIDERID", "token")
+	err = store.AddOauthAccount(account.ID, "PROVIDER", "PROVIDERID", "email", "token")
 	require.NoError(t, err)
 
 	ok, err := store.Archive(account.ID)
@@ -261,7 +261,7 @@ func testAddOauthAccount(t *testing.T, store data.AccountStore) {
 
 	account, err := store.Create("authn@keratin.tech", []byte("password"))
 	assert.NoError(t, err)
-	err = store.AddOauthAccount(account.ID, "OAUTHPROVIDER", "PROVIDERID", "TOKEN")
+	err = store.AddOauthAccount(account.ID, "OAUTHPROVIDER", "PROVIDERID", "email", "TOKEN")
 	assert.NoError(t, err)
 
 	found, err = store.GetOauthAccounts(account.ID)
@@ -274,7 +274,7 @@ func testAddOauthAccount(t *testing.T, store data.AccountStore) {
 	assert.NotEmpty(t, found[0].CreatedAt)
 	assert.NotEmpty(t, found[0].UpdatedAt)
 
-	err = store.AddOauthAccount(account.ID, "OAUTHPROVIDER", "PROVIDERID2", "TOKEN")
+	err = store.AddOauthAccount(account.ID, "OAUTHPROVIDER", "PROVIDERID2", "email", "TOKEN")
 	if err == nil || !data.IsUniquenessError(err) {
 		t.Errorf("expected uniqueness error, got %T %v", err, err)
 	}
@@ -290,7 +290,7 @@ func testFindByOauthAccount(t *testing.T, store data.AccountStore) {
 
 	account, err := store.Create("authn@keratin.tech", []byte("password"))
 	require.NoError(t, err)
-	err = store.AddOauthAccount(account.ID, "OAUTHPROVIDER", "PROVIDERID", "TOKEN")
+	err = store.AddOauthAccount(account.ID, "OAUTHPROVIDER", "PROVIDERID", "email", "TOKEN")
 	require.NoError(t, err)
 
 	found, err = store.FindByOauthAccount("unknown", "PROVIDERID")
