@@ -12,6 +12,20 @@ import (
 
 func DeleteAccountOauth(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		isNotFoundErr := func(err error) (string, bool) {
+			fieldErr, ok := err.(services.FieldErrors)
+
+			if ok {
+				for _, err := range fieldErr {
+					if err.Message == services.ErrNotFound {
+						return err.Field, true
+					}
+				}
+			}
+
+			return "", false
+		}
+
 		accountID, err := strconv.Atoi(mux.Vars(r)["id"])
 		if err != nil {
 			WriteNotFound(w, "account")
@@ -27,12 +41,12 @@ func DeleteAccountOauth(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		result, err := services.AccountOauthEnder(app.AccountStore, accountID, payload.OauthProviders)
+		err = services.AccountOauthEnder(app.AccountStore, accountID, payload.OauthProviders)
 		if err != nil {
 			app.Logger.WithError(err).Error("AccountOauthEnder")
 
-			if _, ok := err.(services.FieldErrors); ok {
-				WriteNotFound(w, "account")
+			if resource, ok := isNotFoundErr(err); ok {
+				WriteNotFound(w, resource)
 				return
 			}
 
@@ -40,8 +54,6 @@ func DeleteAccountOauth(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		WriteData(w, http.StatusOK, map[string]interface{}{
-			"require_password_reset": result.RequirePasswordReset,
-		})
+		w.WriteHeader(http.StatusOK)
 	}
 }

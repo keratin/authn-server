@@ -316,15 +316,18 @@ Visibility: Private
 
     200 Ok
 
-    {
-      "result": {
-        "require_password_reset": true|false
-      }
-    }
+    {}
 
 #### Failure:
-
     404 Not Found
+
+    422 Unprocessable Entity
+
+    {
+      "errors": [
+        {"field": "password", "message": "NEW_PASSWORD_REQUIRED"}
+      ]
+    }
 
 ### Import Account
 
@@ -731,15 +734,19 @@ Delete an OAuth account from the current session. If the session was initiated v
 
     200 Ok
 
-    {
-      "result": {
-        "require_password_reset": true|false
-      }
-    }
+    {}
 
 #### Failure:
 
     401 Unauthorized
+
+    422 Unprocessable Entity
+
+    {
+      "errors": [
+        {"field": "password", "message": "NEW_PASSWORD_REQUIRED"}
+      ]
+    }
 
 ### Multi-Factor Authentication (MFA)
 
