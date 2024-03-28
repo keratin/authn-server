@@ -113,7 +113,7 @@ func (db *AccountStore) GetOauthAccounts(accountID int) ([]*models.OauthAccount,
 }
 
 func (db *AccountStore) DeleteOauthAccount(accountId int, provider string) (bool, error) {
-	result, err := db.Exec("DELETE FROM oauth_accounts WHERE account_id = ? AND provider = ?", accountId, provider)
+	result, err := db.Exec("DELETE FROM oauth_accounts WHERE account_id = $1 AND provider = $2", accountId, provider)
 	if err != nil {
 		return false, err
 	}
