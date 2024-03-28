@@ -5,11 +5,10 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/keratin/authn-server/lib"
-	"github.com/keratin/authn-server/lib/route"
-
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/tokens/oauth"
+	"github.com/keratin/authn-server/lib"
+	"github.com/keratin/authn-server/lib/route"
 )
 
 func GetOauth(app *app.App, providerName string) http.HandlerFunc {
@@ -52,6 +51,15 @@ func GetOauth(app *app.App, providerName string) http.HandlerFunc {
 			return
 		}
 		returnURL := app.Config.AuthNURL.String() + "/oauth/" + providerName + "/return"
-		http.Redirect(w, r, provider.Config(returnURL).AuthCodeURL(state), http.StatusSeeOther)
+
+		config, err := provider.Config(returnURL)
+		if err != nil {
+			fail(err)
+			return
+		}
+
+		authCodeURL := config.AuthCodeURL(state, provider.AuthCodeOptions()...)
+
+		http.Redirect(w, r, authCodeURL, http.StatusSeeOther)
 	}
 }

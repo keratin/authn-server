@@ -4,6 +4,10 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+### Added
+
+* Sign in with Apple oauth support
+
 ## 1.18.2
 
 ### Fixed

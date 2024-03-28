@@ -99,7 +99,10 @@ func NewApp(cfg *Config, logger logrus.FieldLogger) (*App, error) {
 		)
 	}
 
-	oauthProviders := initializeOauthProviders(cfg)
+	oauthProviders, err := initializeOAuthProviders(cfg)
+	if err != nil {
+		return nil, errors.Wrap(err, "initializeOAuthProviders")
+	}
 
 	return &App{
 		// Provide access to root DB - useful when extending AccountStore functionality
@@ -118,7 +121,7 @@ func NewApp(cfg *Config, logger logrus.FieldLogger) (*App, error) {
 	}, nil
 }
 
-func initializeOauthProviders(cfg *Config) map[string]oauth.Provider {
+func initializeOAuthProviders(cfg *Config) (map[string]oauth.Provider, error) {
 	oauthProviders := make(map[string]oauth.Provider)
 	if cfg.GoogleOauthCredentials != nil {
 		oauthProviders["google"] = *oauth.NewGoogleProvider(cfg.GoogleOauthCredentials)
@@ -135,5 +138,12 @@ func initializeOauthProviders(cfg *Config) map[string]oauth.Provider {
 	if cfg.MicrosoftOauthCredentials != nil {
 		oauthProviders["microsoft"] = *oauth.NewMicrosoftProvider(cfg.MicrosoftOauthCredentials)
 	}
-	return oauthProviders
+	if cfg.AppleOAuthCredentials != nil {
+		appleProvider, err := oauth.NewAppleProvider(cfg.AppleOAuthCredentials)
+		if err != nil {
+			return nil, err
+		}
+		oauthProviders["apple"] = *appleProvider
+	}
+	return oauthProviders, nil
 }

@@ -261,53 +261,68 @@ or
 
 * `https://www.example.com/authn/oauth/google/return`
 
+### `APPLE_OAUTH_CREDENTIALS`
+
+|           |                                                                        |
+|-----------|------------------------------------------------------------------------|
+| Required? | No                                                                     |
+| Value     | AppID:SecretSigningKey:keyID={kid}:teamID={tid}:expirySeconds={expiry} |
+| Default   | nil                                                                    |
+
+Additional credentialing data can be passed to the apple provider as key-value pairs in the form key=value after the second colon.  For example:
+
+`APPLE_OAUTH_CREDENTIALS=appID:appSecret:key1=val1:key2=val2`
+
+Note that the client secret for apple is **NOT** a static value as for other providers.  The secret sent is a JWT constructed using the additional data keyID, teamID and expirySeconds included with credentials.  
+The configured client secret is a private key used to sign the JWT.  This should be configured with a hex encoded representation of the full PEM block of a private key obtained at https://developer.apple.com.
+
 ### `FACEBOOK_OAUTH_CREDENTIALS`
 
-|           |    |
-| --------- | --- |
-| Required? | No |
-| Value | AppID:AppSecret |
-| Default | nil |
+|           |                 |
+|-----------|-----------------|
+| Required? | No              |
+| Value     | AppID:AppSecret |
+| Default   | nil             |
 
 Create a Facebook app at https://developers.facebook.com and enable the Facebook Login product. In the Quickstart, enter [AuthN's OAuth Return](api.md#oauth-return) as the Site URL. Then switch over to Settings and find the App ID and Secret. Join those together with a `:` and provide them to AuthN as a single variable.
 
 ### `GITHUB_OAUTH_CREDENTIALS`
 
-|           |    |
-| --------- | --- |
-| Required? | No |
-| Value | ClientID:ClientSecret |
-| Default | nil |
+|           |                       |
+|-----------|-----------------------|
+| Required? | No                    |
+| Value     | ClientID:ClientSecret |
+| Default   | nil                   |
 
 Sign up for GitHub OAuth 2.0 credentials with the instructions here: https://developer.github.com/apps/building-oauth-apps. Your client's ID and secret must be joined together with a `:` and provided to AuthN as a single variable.
 
 ### `GOOGLE_OAUTH_CREDENTIALS`
 
-|           |    |
-| --------- | --- |
-| Required? | No |
-| Value | ClientID:ClientSecret |
-| Default | nil |
+|           |                       |
+|-----------|-----------------------|
+| Required? | No                    |
+| Value     | ClientID:ClientSecret |
+| Default   | nil                   |
 
 Sign up for Google OAuth 2.0 credentials with the instructions here: https://developers.google.com/identity/protocols/OpenIDConnect. Your client's ID and secret must be joined together with a `:` and provided to AuthN as a single variable.
 
 ### `DISCORD_OAUTH_CREDENTIALS`
 
-|           |    |
-| --------- | --- |
-| Required? | No |
-| Value | ClientID:ClientSecret |
-| Default | nil |
+|           |                       |
+|-----------|-----------------------|
+| Required? | No                    |
+| Value     | ClientID:ClientSecret |
+| Default   | nil                   |
 
 Sign up for Discord OAuth 2.0 credentials with the instructions here: https://discordapp.com/developers/docs/topics/oauth2. Your client's ID and secret must be joined together with a `:` and provided to AuthN as a single variable.
 
 ### `MICROSOFT_OAUTH_CREDENTIALS`
 
-|           |    |
-| --------- | --- |
-| Required? | No |
-| Value | ClientID:ClientSecret |
-| Default | nil |
+|           |                       |
+|-----------|-----------------------|
+| Required? | No                    |
+| Value     | ClientID:ClientSecret |
+| Default   | nil                   |
 
 Sign up for Microsoft OAuth 2.0 credentials with the instructions here: https://docs.microsoft.com/fr-fr/graph/auth/. Your client's ID and secret must be joined together with a `:` and provided to AuthN as a single variable.
 

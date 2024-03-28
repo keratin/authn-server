@@ -9,7 +9,7 @@ import (
 // NewTestProvider returns a special Provider for tests
 func NewTestProvider(s *httptest.Server) *Provider {
 	return &Provider{
-		&oauth2.Config{
+		config: &oauth2.Config{
 			ClientID:     "TEST",
 			ClientSecret: "SECRET",
 			Endpoint: oauth2.Endpoint{
@@ -18,7 +18,7 @@ func NewTestProvider(s *httptest.Server) *Provider {
 			},
 		},
 		// The test implementation returns a fake user with an email address copied from the supplied access token.
-		func(t *oauth2.Token) (*UserInfo, error) {
+		UserInfo: func(t *oauth2.Token) (*UserInfo, error) {
 			return &UserInfo{
 				ID:    t.AccessToken,
 				Email: t.AccessToken,
