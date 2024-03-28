@@ -15,6 +15,17 @@ import (
 	"golang.org/x/oauth2"
 )
 
+type mockKeyStore struct {
+	keys map[string]*rsa.PublicKey
+}
+
+func (ks *mockKeyStore) get(keyID string) (*rsa.PublicKey, error) {
+	if key, ok := ks.keys[keyID]; ok {
+		return key, nil
+	}
+	return nil, &keyNotFoundError{keyID: keyID}
+}
+
 func TestGetAppleIDTokenClaims(t *testing.T) {
 	testAppleSigningKey := func() (jose.SigningKey, string, *rsa.PrivateKey) {
 		rsaKey, err := rsa.GenerateKey(rand.Reader, 2048)

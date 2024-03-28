@@ -35,17 +35,6 @@ type rsaKeyStore interface {
 	get(keyID string) (*rsa.PublicKey, error)
 }
 
-type mockKeyStore struct {
-	keys map[string]*rsa.PublicKey
-}
-
-func (ks *mockKeyStore) get(keyID string) (*rsa.PublicKey, error) {
-	if key, ok := ks.keys[keyID]; ok {
-		return key, nil
-	}
-	return nil, &keyNotFoundError{keyID: keyID}
-}
-
 func newSigningKeyStore(client *http.Client) *signingKeyStore {
 	return &signingKeyStore{
 		client: client,
