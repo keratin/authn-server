@@ -10,8 +10,10 @@
     * [Username Availability](#username-availability)
     * [Lock Account](#lock-account)
     * [Unlock Account](#unlock-account)
+    * [Delete OAuth account by user id](#delete-oauth-account-by-user-id)
     * [Archive Account](#archive-account)
     * [Import Account](#import-account)
+
   * Sessions
     * [Login](#login)
     * [Refresh Session](#refresh-session)
@@ -26,6 +28,8 @@
   * OAuth
     * [Begin OAuth](#begin-oauth)
     * [OAuth Return URL](#oauth-return)
+    * [Get OAuth accounts info](#get-oauth-accounts-info)
+    * [Delete OAuth account](#delete-oauth-account)
   * Multi-Factor Authentication (MFA) **BETA**
     * [New](#totp-new)
     * [Confirm](#totp-post)
@@ -302,7 +306,7 @@ Visibility: Private
       ]
     }
 
-### Archive Account
+### Delete OAuth account by user id
 
 Visibility: Private
 
