@@ -149,7 +149,7 @@ Visibility: Private
         "oauth_accounts": [
           {
             "provider": "google"|"apple",
-            "provider_id": "91293",
+            "provider_account_id": "91293",
             "email": "authn@keratin.com"
           }
         ],
@@ -312,9 +312,10 @@ Visibility: Private
 
 `DELETE /accounts/:id/oauth`
 
-| Params |   Type  |      Notes      |
-| ------ | ------- | --------------- |
-| `id`   | integer | User account Id |
+|        Params       |   Type  |      Notes      |
+| ------------------- | ------- | --------------- |
+| `id`                | integer | User account Id |
+| `oauth_providers`   | integer | User account Id |
 
 #### Success:
 
@@ -700,7 +701,7 @@ If the OAuth process failed, the redirect will have `status=failed` appended to 
 
 Visibility: Public
 
-`Get /oauth/info`
+`GET /oauth/info`
 
 Returns relevant oauth information for the current session.
 
@@ -712,7 +713,7 @@ Returns relevant oauth information for the current session.
       "result": [
         {
           "provider": "google"|"apple",
-          "provider_id": "91293",
+          "provider_account_id": "91293",
           "email": "authn@keratin.com"
         }
       ]

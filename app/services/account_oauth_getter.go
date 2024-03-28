@@ -17,9 +17,9 @@ func AccountOauthGetter(accountStore data.AccountStore, accountID int) ([]map[st
 		oAccountsMapped = append(
 			oAccountsMapped,
 			map[string]interface{}{
-				"provider":    oAccount.Provider,
-				"provider_id": oAccount.ProviderID,
-				"email":       oAccount.Email,
+				"provider":            oAccount.Provider,
+				"provider_account_id": oAccount.ProviderID,
+				"email":               oAccount.Email,
 			},
 		)
 	}
