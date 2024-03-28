@@ -271,7 +271,7 @@ or
 
 Additional credentialing data can be passed to the apple provider as key-value pairs in the form key=value after the second colon.  For example:
 
-`APPLE_OAUTH_CREDENTIALS=appID:appSecret:extra=val1:data=val2`
+`APPLE_OAUTH_CREDENTIALS=appID:appSecret:key1=val1:key2=val2`
 
 Note that the client secret for apple is **NOT** a static value as for other providers.  The secret sent is a JWT constructed using the additional data keyID, teamID and expirySeconds included with credentials.  
 The configured client secret is a private key used to sign the JWT.  This should be configured with a hex encoded representation of the full PEM block of a private key obtained at https://developer.apple.com.

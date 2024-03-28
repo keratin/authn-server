@@ -41,19 +41,16 @@ func (tr *TokenReader) getAppleIDTokenClaims(t *oauth2.Token) (map[string]interf
 	}
 
 	idToken, ok := idTokenVal.(string)
-
 	if !ok {
 		return nil, fmt.Errorf("id_token is not a string")
 	}
 
 	parsedIDToken, err := jwt.ParseSigned(idToken)
-
 	if err != nil {
 		return nil, err
 	}
 
 	var hdr *jose.Header
-
 	for i := range parsedIDToken.Headers {
 		th := parsedIDToken.Headers[i]
 		if th.Algorithm == "RS256" {
@@ -61,20 +58,17 @@ func (tr *TokenReader) getAppleIDTokenClaims(t *oauth2.Token) (map[string]interf
 			break
 		}
 	}
-
 	if hdr == nil {
 		return nil, fmt.Errorf("no RS256 key header found")
 	}
 
 	appleRSA, err := tr.keyStore.get(hdr.KeyID)
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to get apple RSA key: %w", err)
 	}
 
 	claims := make(map[string]interface{})
 	err = parsedIDToken.Claims(appleRSA, &claims)
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to verify claims: %w", err)
 	}
