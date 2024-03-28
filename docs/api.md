@@ -142,6 +142,13 @@ Visibility: Private
       "result": {
         "id": <id>,
         "username": "...",
+        "oauth_accounts": [
+          {
+            "provider": "google"|"apple",
+            "provider_id": "91293",
+            "email": "authn@keratin.com"
+          }
+        ],
         "last_login_at": "2006-01-02T15:04:05Z07:00",
         "password_changed_at": "2006-01-02T15:04:05Z07:00",
         "locked": false,
@@ -696,9 +703,11 @@ Returns relevant oauth information for the current session.
 
     {
       "result": [
-        "provider": "google"|"apple",
-        "provider_id": "91293",
-        "email": "authn@keratin.com"
+        {
+          "provider": "google"|"apple",
+          "provider_id": "91293",
+          "email": "authn@keratin.com"
+        }
       ]
     }
 
