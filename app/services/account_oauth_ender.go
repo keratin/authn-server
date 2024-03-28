@@ -2,44 +2,46 @@ package services
 
 import (
 	"math"
+	"strings"
 
 	"github.com/keratin/authn-server/app/data"
 )
 
-type AccountOauthEnderResult struct {
-	RequirePasswordReset bool
-}
-
-func AccountOauthEnder(store data.AccountStore, accountId int, providers []string) (*AccountOauthEnderResult, error) {
-	result := &AccountOauthEnderResult{}
-
+func AccountOauthEnder(store data.AccountStore, accountId int, providers []string) error {
 	account, err := store.Find(accountId)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if account == nil {
-		return nil, FieldErrors{{"account", ErrNotFound}}
+		return FieldErrors{{"account", ErrNotFound}}
 	}
 
 	oauthAccounts, err := store.GetOauthAccounts(accountId)
 	if err != nil {
-		return nil, err
+		return err
+	}
+
+	mappedProviders := map[string]uint8{}
+	for _, provider := range providers {
+		mappedProviders[strings.ToLower(provider)] = 1
 	}
 
 	for _, oAccount := range oauthAccounts {
-		if math.Abs(oAccount.CreatedAt.Sub(account.PasswordChangedAt).Seconds()) < 5 {
-			result.RequirePasswordReset = true
-			store.RequireNewPassword(accountId)
+		_, isProviderMatched := mappedProviders[strings.ToLower(oAccount.Provider)]
+		hasRandomOauthPassword := math.Abs(oAccount.CreatedAt.Sub(account.PasswordChangedAt).Seconds()) < 5
+
+		if hasRandomOauthPassword && isProviderMatched {
+			return FieldErrors{{"password", ErrNewPasswordRequired}}
 		}
 	}
 
 	for _, provider := range providers {
 		_, err = store.DeleteOauthAccount(accountId, provider)
 		if err != nil {
-			return nil, err
+			return err
 		}
 	}
 
-	return result, nil
+	return nil
 }

@@ -155,7 +155,7 @@ func (c *Client) do(verb string, contentType string, path string, body io.Reader
 		return nil, err
 	}
 
-	if verb == post || verb == patch || verb == put {
+	if verb == post || verb == patch || verb == put || verb == delete {
 		req.Header.Add("Content-Type", contentType)
 	}
 

@@ -1,8 +1,10 @@
 package handlers_test
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/keratin/authn-server/lib/route"
 	"github.com/keratin/authn-server/server/test"
@@ -22,9 +24,10 @@ func TestDeleteAccountOauth(t *testing.T) {
 	}
 
 	t.Run("delete social account", func(t *testing.T) {
-		expected := "{\"result\":{\"require_password_reset\":true}}"
 		account, err := app.AccountStore.Create("deleted-social-account@keratin.tech", []byte("password"))
 		require.NoError(t, err)
+
+		time.Sleep(5 * time.Second)
 
 		err = app.AccountStore.AddOauthAccount(account.ID, "test", "DELETEDID", "email", "TOKEN")
 		require.NoError(t, err)
@@ -34,7 +37,7 @@ func TestDeleteAccountOauth(t *testing.T) {
 		require.NoError(t, err)
 
 		require.Equal(t, http.StatusOK, res.StatusCode)
-		require.Equal(t, []byte(expected), test.ReadBody(res))
+		require.Equal(t, []byte{}, test.ReadBody(res))
 	})
 
 	t.Run("return not found when user does not exists", func(t *testing.T) {
@@ -43,5 +46,21 @@ func TestDeleteAccountOauth(t *testing.T) {
 		require.NoError(t, err)
 
 		require.Equal(t, http.StatusNotFound, res.StatusCode)
+	})
+
+	t.Run("return unprocessable entity when user requires a new password", func(t *testing.T) {
+		expected := "{\"errors\":[{\"field\":\"password\",\"message\":\"NEW_PASSWORD_REQUIRED\"}]}"
+		account, err := app.AccountStore.Create("deleted-unprocessable-entity@keratin.tech", []byte("password"))
+		require.NoError(t, err)
+
+		err = app.AccountStore.AddOauthAccount(account.ID, "test", "DELETEDID3", "email", "TOKEN")
+		require.NoError(t, err)
+
+		payload := map[string]interface{}{"oauth_providers": []string{"test"}}
+		res, err := client.DeleteJSON(fmt.Sprintf("/accounts/%d/oauth", account.ID), payload)
+		require.NoError(t, err)
+
+		require.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
+		require.Equal(t, []byte(expected), test.ReadBody(res))
 	})
 }
