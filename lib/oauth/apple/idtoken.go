@@ -3,7 +3,6 @@ package apple
 import (
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/go-jose/go-jose/v3"
@@ -16,38 +15,44 @@ type TokenReader struct {
 	clientID string
 }
 
-func NewTokenReader(clientID string) *TokenReader {
-	return &TokenReader{
+func NewTokenReader(clientID string, opts ...func(*TokenReader)) *TokenReader {
+	tr := &TokenReader{
 		clientID: clientID,
-		keyStore: newSigningKeyStore(&http.Client{
+	}
+
+	for _, opt := range opts {
+		opt(tr)
+	}
+
+	if tr.keyStore == nil {
+		tr.keyStore = newSigningKeyStore(&http.Client{
 			Timeout: 10 * time.Second,
-		}),
+		})
+	}
+
+	return tr
+}
+
+func WithKeyStore(ks rsaKeyStore) func(*TokenReader) {
+	return func(tr *TokenReader) {
+		tr.keyStore = ks
 	}
 }
 
 func (tr *TokenReader) GetUserDetailsFromToken(t *oauth2.Token) (string, string, error) {
-	claims, err := tr.getAppleIDTokenClaims(t)
-	if err != nil {
-		return "", "", fmt.Errorf("failed to get apple ID token claims: %w", err)
-	}
-
-	return extractUserFromClaims(claims, tr.clientID)
-}
-
-func (tr *TokenReader) getAppleIDTokenClaims(t *oauth2.Token) (map[string]interface{}, error) {
 	idTokenVal := t.Extra("id_token")
 	if idTokenVal == nil {
-		return nil, fmt.Errorf("missing id_token")
+		return "", "", fmt.Errorf("missing id_token")
 	}
 
 	idToken, ok := idTokenVal.(string)
 	if !ok {
-		return nil, fmt.Errorf("id_token is not a string")
+		return "", "", fmt.Errorf("id_token is not a string")
 	}
 
 	parsedIDToken, err := jwt.ParseSigned(idToken)
 	if err != nil {
-		return nil, err
+		return "", "", err
 	}
 
 	var hdr *jose.Header
@@ -59,87 +64,25 @@ func (tr *TokenReader) getAppleIDTokenClaims(t *oauth2.Token) (map[string]interf
 		}
 	}
 	if hdr == nil {
-		return nil, fmt.Errorf("no RS256 key header found")
+		return "", "", fmt.Errorf("no RS256 key header found")
 	}
 
-	appleRSA, err := tr.keyStore.get(hdr.KeyID)
+	appleRSA, err := tr.keyStore.Get(hdr.KeyID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get apple RSA key: %w", err)
+		return "", "", fmt.Errorf("failed to Get apple RSA key: %w", err)
 	}
 
-	claims := make(map[string]interface{})
+	claims := Claims{}
 	err = parsedIDToken.Claims(appleRSA, &claims)
 	if err != nil {
-		return nil, fmt.Errorf("failed to verify claims: %w", err)
+		return "", "", fmt.Errorf("failed to verify claims: %w", err)
 	}
 
-	return claims, nil
-}
+	// TODO: figure out a way to cleanly pass the nonce in authorize request and make available for validation here
+	err = claims.Validate(tr.clientID)
 
-func extractUserFromClaims(claims map[string]interface{}, clientID string) (string, string, error) {
-	// We could validate iat here if we had a good minimum value to use.
-	// A nonce claim is also available but would need to be sent on code exchange.
-	if iss, ok := claims["iss"]; !ok || !strings.Contains(iss.(string), BaseURL) {
-		return "", "", fmt.Errorf("invalid or missing issuer")
+	if err != nil {
+		return "", "", fmt.Errorf("failed to validate claims: %w", err)
 	}
-
-	if aud, ok := claims["aud"]; !ok || aud.(string) != clientID {
-		return "", "", fmt.Errorf("invalid or missing audience")
-	}
-
-	if exp, ok := claims["exp"]; !ok {
-		return "", "", fmt.Errorf("missing exp")
-	} else {
-		expErr := validateExp(exp)
-		if expErr != nil {
-			return "", "", expErr
-		}
-	}
-
-	id, ok := claims["sub"]
-
-	if !ok {
-		return "", "", fmt.Errorf("missing claim 'sub'")
-	}
-
-	idString, ok := id.(string)
-	if !ok {
-		return "", "", fmt.Errorf("claim 'sub' is not a string")
-	}
-
-	email, ok := claims["email"]
-
-	if !ok {
-		return "", "", fmt.Errorf("missing claim 'email'")
-	}
-
-	emailString, ok := email.(string)
-	if !ok {
-		return "", "", fmt.Errorf("claim 'email' is not a string")
-	}
-
-	return idString, emailString, nil
-}
-
-func validateExp(exp interface{}) error {
-	switch v := exp.(type) {
-	case float64:
-		return validateExpInt64(int64(v))
-	case int:
-		return validateExpInt64(int64(v))
-	case int32:
-		return validateExpInt64(int64(v))
-	case int64:
-		return validateExpInt64(v)
-	default:
-		return fmt.Errorf("invalid exp")
-	}
-}
-
-func validateExpInt64(exp int64) error {
-	if exp < time.Now().Unix() {
-		return fmt.Errorf("token expired")
-	}
-
-	return nil
+	return claims.Subject, claims.Email, nil
 }

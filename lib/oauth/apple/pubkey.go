@@ -23,16 +23,16 @@ type appleKey struct {
 	Use string `json:"use"`
 }
 
-type keyNotFoundError struct {
-	keyID string
+type KeyNotFoundError struct {
+	KeyID string
 }
 
-func (e *keyNotFoundError) Error() string {
-	return fmt.Sprintf("key %s not found", e.keyID)
+func (e *KeyNotFoundError) Error() string {
+	return fmt.Sprintf("key %s not found", e.KeyID)
 }
 
 type rsaKeyStore interface {
-	get(keyID string) (*rsa.PublicKey, error)
+	Get(keyID string) (*rsa.PublicKey, error)
 }
 
 func newSigningKeyStore(client *http.Client) *signingKeyStore {
@@ -48,7 +48,7 @@ type signingKeyStore struct {
 	keys   map[string]*rsa.PublicKey
 }
 
-func (a *signingKeyStore) get(keyID string) (*rsa.PublicKey, error) {
+func (a *signingKeyStore) Get(keyID string) (*rsa.PublicKey, error) {
 	itm, got := a.keys[keyID]
 	if got {
 		return itm, nil
@@ -65,7 +65,7 @@ func (a *signingKeyStore) get(keyID string) (*rsa.PublicKey, error) {
 		return itm, nil
 	}
 
-	return nil, &keyNotFoundError{keyID: keyID}
+	return nil, &KeyNotFoundError{KeyID: keyID}
 }
 
 func (a *signingKeyStore) refresh() error {
