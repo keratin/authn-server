@@ -312,10 +312,10 @@ Visibility: Private
 
 `DELETE /accounts/:id/oauth`
 
-|        Params       |   Type  |      Notes      |
-| ------------------- | ------- | --------------- |
-| `id`                | integer | User account Id |
-| `oauth_providers`   | integer | User account Id |
+|        Params       |      Type      |      Notes      |
+| ------------------- | -------------- | --------------- |
+| `id`                |     integer    | User account Id |
+| `oauth_providers`   |  array[string] | Provider names  |
 
 #### Success:
 
@@ -655,7 +655,7 @@ Visibility: Public
 
 | Params | Type | Notes |
 | ------ | ---- | ----- |
-| `providerName` | string | * google |
+| `providerName` | string | google |
 | `redirect_uri` | URL | Return URL after OAuth. Must be in your application's domain. |
 
 Redirect a user to this URL when you want to authenticate them with OAuth, and include a `redirect_uri` where you want them to return when they're done. From here, a user will proceed to the OAuth provider and back to AuthN's [OAuth Return](#oauth-return) endpoint (as configured with the provider).
@@ -729,11 +729,11 @@ Visibility: Public
 
 `DELETE /oauth/:providerName`
 
-| Params | Type | Notes |
-| ------ | ---- | ----- |
-| `providerName` | string | * google |
+|     Params     |  Type  |  Notes |
+| -------------- | ------ | ------ |
+| `providerName` | string | google |
 
-Delete an OAuth account from the current session. If the session was initiated via the OAuth flow, the account will be flagged to reset the password during the next sign-in attempt.
+Delete an OAuth account from the current session. If the session was initiated via the OAuth flow, the endpoint will returns an error requesting user to reset password.
 
 #### Success:
 
