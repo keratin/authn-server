@@ -38,6 +38,11 @@ func IdentityReconciler(accountStore data.AccountStore, cfg *app.Config, provide
 			return nil, errors.New("account locked")
 		}
 
+		err = updateUserInfo(accountStore, linkedAccount.ID, providerName, providerUser)
+		if err != nil {
+			return nil, errors.Wrap(err, "updateUserInfo")
+		}
+
 		return linkedAccount, nil
 	}
 
@@ -75,4 +80,30 @@ func IdentityReconciler(accountStore data.AccountStore, cfg *app.Config, provide
 		return nil, errors.Wrap(err, "AddOauthAccount")
 	}
 	return newAccount, nil
+}
+
+func updateUserInfo(accountStore data.AccountStore, accountID int, providerName string, providerUser *oauth.UserInfo) error {
+	oAccounts, err := accountStore.GetOauthAccounts(accountID)
+	if err != nil {
+		return errors.Wrap(err, "GetOauthAccounts")
+	}
+
+	if len(oAccounts) == 0 {
+		return nil
+	}
+
+	for _, oAccount := range oAccounts {
+		if providerName != oAccount.Provider && providerUser.ID != oAccount.ProviderID {
+			continue
+		}
+
+		if oAccount.Email == "" {
+			_, err = accountStore.UpdateOauthAccount(accountID, oAccount.Provider, providerUser.Email)
+			if err != nil {
+				return errors.Wrap(err, "UpdateOauthAccountEmail")
+			}
+		}
+	}
+
+	return nil
 }

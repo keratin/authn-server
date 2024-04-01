@@ -83,4 +83,25 @@ func TestIdentityReconciler(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, found)
 	})
+
+	t.Run("update missing email after oauth migration table", func(t *testing.T) {
+		provider := "testProvider"
+		providerAccountId := "666"
+		email := "update-missing-oauth-email@test.com"
+
+		account, err := store.Create(email, []byte("password"))
+		require.NoError(t, err)
+
+		err = store.AddOauthAccount(account.ID, provider, providerAccountId, "", "TOKEN")
+		require.NoError(t, err)
+
+		found, err := services.IdentityReconciler(store, cfg, provider, &oauth.UserInfo{ID: providerAccountId, Email: email}, &oauth2.Token{}, 0)
+		assert.NoError(t, err)
+		assert.NotNil(t, found)
+
+		oAccounts, err := store.GetOauthAccounts(account.ID)
+		assert.NoError(t, err)
+		assert.Equal(t, 1, len(oAccounts))
+		assert.Equal(t, email, oAccounts[0].Email)
+	})
 }
