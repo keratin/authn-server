@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -13,9 +14,9 @@ import (
 func DeleteAccountOauth(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		isNotFoundErr := func(err error) (string, bool) {
-			fieldErr, ok := err.(services.FieldErrors)
+			var fieldErr services.FieldErrors
 
-			if ok {
+			if errors.As(err, &fieldErr) {
 				for _, err := range fieldErr {
 					if err.Message == services.ErrNotFound {
 						return err.Field, true
