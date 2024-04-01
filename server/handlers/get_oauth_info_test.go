@@ -20,7 +20,7 @@ func TestGetOauthInfo(t *testing.T) {
 		Value: "",
 	})
 
-	t.Run("unanthorized", func(t *testing.T) {
+	t.Run("unauthorized", func(t *testing.T) {
 		res, err := client.Get("/oauth/info")
 		require.NoError(t, err)
 
@@ -28,7 +28,7 @@ func TestGetOauthInfo(t *testing.T) {
 		require.Equal(t, []byte{}, test.ReadBody(res))
 	})
 
-	t.Run("get oauth info", func(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
 		expected := "{\"result\":[{\"email\":\"email\",\"provider\":\"test\",\"provider_account_id\":\"ID\"}]}"
 		account, err := app.AccountStore.Create("get-oauth-info@keratin.tech", []byte("password"))
 		require.NoError(t, err)

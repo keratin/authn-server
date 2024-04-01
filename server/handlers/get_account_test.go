@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"sort"
 	"testing"
+	"time"
 
 	"github.com/keratin/authn-server/app/models"
 	"github.com/keratin/authn-server/lib/route"
@@ -90,7 +91,7 @@ func assertGetAccountResponse(t *testing.T, res *http.Response, acc *models.Acco
 			},
 		},
 		LastLoginAt:       "",
-		PasswordChangedAt: acc.PasswordChangedAt.Format("2006-01-02T15:04:05Z07:00"),
+		PasswordChangedAt: acc.PasswordChangedAt.Format(time.RFC3339),
 		Locked:            false,
 		Deleted:           false,
 	})

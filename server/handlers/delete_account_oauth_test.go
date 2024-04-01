@@ -23,7 +23,7 @@ func TestDeleteAccountOauth(t *testing.T) {
 		return http.ErrUseLastResponse
 	}
 
-	t.Run("delete social account", func(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
 		account, err := app.AccountStore.Create("deleted-social-account@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 
@@ -40,7 +40,7 @@ func TestDeleteAccountOauth(t *testing.T) {
 		require.Equal(t, []byte{}, test.ReadBody(res))
 	})
 
-	t.Run("return not found when user does not exists", func(t *testing.T) {
+	t.Run("user does not exist", func(t *testing.T) {
 		payload := map[string]interface{}{"oauth_providers": []string{"test"}}
 		res, err := client.DeleteJSON("/accounts/9999/oauth", payload)
 		require.NoError(t, err)
@@ -48,7 +48,7 @@ func TestDeleteAccountOauth(t *testing.T) {
 		require.Equal(t, http.StatusNotFound, res.StatusCode)
 	})
 
-	t.Run("return unprocessable entity when user requires a new password", func(t *testing.T) {
+	t.Run("requires new password", func(t *testing.T) {
 		expected := "{\"errors\":[{\"field\":\"password\",\"message\":\"NEW_PASSWORD_REQUIRED\"}]}"
 		account, err := app.AccountStore.Create("deleted-unprocessable-entity@keratin.tech", []byte("password"))
 		require.NoError(t, err)

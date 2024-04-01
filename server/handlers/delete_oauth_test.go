@@ -32,7 +32,7 @@ func TestDeleteOauthAccount(t *testing.T) {
 		return http.ErrUseLastResponse
 	}
 
-	t.Run("unanthorized", func(t *testing.T) {
+	t.Run("unauthorized", func(t *testing.T) {
 		res, err := client.Delete("/oauth/test")
 		require.NoError(t, err)
 
@@ -40,7 +40,7 @@ func TestDeleteOauthAccount(t *testing.T) {
 		require.Equal(t, []byte{}, test.ReadBody(res))
 	})
 
-	t.Run("delete social account", func(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
 		account, err := app.AccountStore.Create("deleted@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 
@@ -58,7 +58,7 @@ func TestDeleteOauthAccount(t *testing.T) {
 		require.Equal(t, []byte{}, test.ReadBody(res))
 	})
 
-	t.Run("return unprocessable entity when user requires a new password", func(t *testing.T) {
+	t.Run("requires new password", func(t *testing.T) {
 		expected := "{\"errors\":[{\"field\":\"password\",\"message\":\"NEW_PASSWORD_REQUIRED\"}]}"
 		account, err := app.AccountStore.Create("deleted-unprocessable-entity@keratin.tech", []byte("password"))
 		require.NoError(t, err)
