@@ -30,8 +30,6 @@ func TestAppleProvider(t *testing.T) {
 	assert.Equal(t, http.MethodPost, p.ReturnMethod())
 	assert.Equal(t, 1, len(p.AuthCodeOptions()))
 
-	// some of this is duplicated from direct testing of secret generation
-	// TODO: do we need it?
 	got, err := p.Secret()
 	assert.NoError(t, err)
 	token, err := jwt.ParseSigned(got)

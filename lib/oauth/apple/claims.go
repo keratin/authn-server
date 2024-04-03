@@ -32,7 +32,6 @@ func (c Claims) Validate(clientID string) error {
 		return fmt.Errorf("missing claim 'iat'")
 	}
 
-	// is default 1m leeway OK here?
 	return c.Claims.Validate(jwt.Expected{
 		Issuer:   BaseURL,
 		Audience: jwt.Audience{clientID},
