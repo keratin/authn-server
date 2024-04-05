@@ -1,7 +1,7 @@
 # Keratin AuthN
 
-[![Keratin Pangolin](https://keratin.tech/pangolin-logo-dark.gif)](https://keratin.tech)
-A modern authentication backend service. ([https://keratin.tech](https://keratin.tech))
+[![Keratin Pangolin](docs/assets/pangolin-logo-dark.gif)](https://keratin.github.io)
+A modern authentication backend service. ([https://keratin.github.io](https://keratin.github.io))
 
 [![Gitter](https://badges.gitter.im/keratin/authn-server.svg)](https://gitter.im/keratin/authn-server?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)[![Build Status](https://travis-ci.org/keratin/authn-server.svg?branch=master)](https://travis-ci.org/keratin/authn-server)[![Coverage Status](https://coveralls.io/repos/github/keratin/authn-server/badge.svg)](https://coveralls.io/github/keratin/authn-server)[![Go Report](https://goreportcard.com/badge/github.com/keratin/authn-server)](https://goreportcard.com/report/github.com/keratin/authn-server)
 
