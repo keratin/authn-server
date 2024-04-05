@@ -701,7 +701,7 @@ If the OAuth process failed, the redirect will have `status=failed` appended to 
 
 Visibility: Public
 
-`GET /oauth/info`
+`GET /oauth/accounts`
 
 Returns relevant oauth information for the current session.
 

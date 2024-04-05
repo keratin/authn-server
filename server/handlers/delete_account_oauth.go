@@ -8,7 +8,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/keratin/authn-server/app"
 	"github.com/keratin/authn-server/app/services"
-	"github.com/keratin/authn-server/lib/parse"
 )
 
 func DeleteAccountOauth(app *app.App) http.HandlerFunc {
@@ -27,22 +26,14 @@ func DeleteAccountOauth(app *app.App) http.HandlerFunc {
 			return "", false
 		}
 
+		provider := mux.Vars(r)["name"]
 		accountID, err := strconv.Atoi(mux.Vars(r)["id"])
 		if err != nil {
 			WriteNotFound(w, "account")
 			return
 		}
 
-		var payload struct {
-			OauthProviders []string `json:"oauth_providers"`
-		}
-
-		if err := parse.Payload(r, &payload); err != nil {
-			WriteErrors(w, err)
-			return
-		}
-
-		err = services.AccountOauthEnder(app.AccountStore, accountID, payload.OauthProviders)
+		err = services.AccountOauthEnder(app.AccountStore, accountID, []string{provider})
 		if err != nil {
 			app.Logger.WithError(err).Error("AccountOauthEnder")
 

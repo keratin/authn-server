@@ -57,9 +57,9 @@ func PublicRoutes(app *app.App) []*route.HandledRoute {
 			SecuredWith(originSecurity).
 			Handle(handlers.DeleteTOTP(app)),
 
-		route.Get("/oauth/info").
+		route.Get("/oauth/accounts").
 			SecuredWith(originSecurity).
-			Handle(handlers.GetOauthInfo(app)),
+			Handle(handlers.GetOauthAccounts(app)),
 	)
 
 	if app.Config.EnableSignup {

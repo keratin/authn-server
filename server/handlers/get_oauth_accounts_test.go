@@ -21,7 +21,7 @@ func TestGetOauthInfo(t *testing.T) {
 	})
 
 	t.Run("unauthorized", func(t *testing.T) {
-		res, err := client.Get("/oauth/info")
+		res, err := client.Get("/oauth/accounts")
 		require.NoError(t, err)
 
 		require.Equal(t, http.StatusUnauthorized, res.StatusCode)
@@ -38,7 +38,7 @@ func TestGetOauthInfo(t *testing.T) {
 
 		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
 
-		res, err := client.WithCookie(session).Get("/oauth/info")
+		res, err := client.WithCookie(session).Get("/oauth/accounts")
 		require.NoError(t, err)
 
 		require.Equal(t, http.StatusOK, res.StatusCode)

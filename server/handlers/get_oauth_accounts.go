@@ -8,7 +8,7 @@ import (
 	"github.com/keratin/authn-server/server/sessions"
 )
 
-func GetOauthInfo(app *app.App) http.HandlerFunc {
+func GetOauthAccounts(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		accountID := sessions.GetAccountID(r)
 		if accountID == 0 {
@@ -16,12 +16,13 @@ func GetOauthInfo(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		oAccounts, err := services.AccountOauthGetter(app.AccountStore, accountID)
+		account, err := services.AccountGetter(app.AccountStore, accountID)
 		if err != nil {
 			WriteErrors(w, err)
 			return
 		}
 
-		WriteData(w, http.StatusOK, oAccounts)
+		accountData := services.AccountToJson(account)
+		WriteData(w, http.StatusOK, accountData["oauth_accounts"])
 	}
 }

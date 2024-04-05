@@ -32,8 +32,8 @@ func TestDeleteAccountOauth(t *testing.T) {
 		err = app.AccountStore.AddOauthAccount(account.ID, "test", "DELETEDID", "email", "TOKEN")
 		require.NoError(t, err)
 
-		payload := map[string]interface{}{"oauth_providers": []string{"test"}}
-		res, err := client.DeleteJSON("/accounts/1/oauth", payload)
+		url := fmt.Sprintf("/accounts/%d/oauth/%s", account.ID, "test")
+		res, err := client.Delete(url)
 		require.NoError(t, err)
 
 		require.Equal(t, http.StatusOK, res.StatusCode)
@@ -41,8 +41,7 @@ func TestDeleteAccountOauth(t *testing.T) {
 	})
 
 	t.Run("user does not exist", func(t *testing.T) {
-		payload := map[string]interface{}{"oauth_providers": []string{"test"}}
-		res, err := client.DeleteJSON("/accounts/9999/oauth", payload)
+		res, err := client.Delete("/accounts/9999/oauth/test")
 		require.NoError(t, err)
 
 		require.Equal(t, http.StatusNotFound, res.StatusCode)
@@ -56,8 +55,8 @@ func TestDeleteAccountOauth(t *testing.T) {
 		err = app.AccountStore.AddOauthAccount(account.ID, "test", "DELETEDID3", "email", "TOKEN")
 		require.NoError(t, err)
 
-		payload := map[string]interface{}{"oauth_providers": []string{"test"}}
-		res, err := client.DeleteJSON(fmt.Sprintf("/accounts/%d/oauth", account.ID), payload)
+		url := fmt.Sprintf("/accounts/%d/oauth/%s", account.ID, "test")
+		res, err := client.Delete(url)
 		require.NoError(t, err)
 
 		require.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)

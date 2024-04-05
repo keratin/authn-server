@@ -72,7 +72,7 @@ func PrivateRoutes(app *app.App) []*route.HandledRoute {
 			SecuredWith(authentication).
 			Handle(handlers.DeleteAccount(app)),
 
-		route.Delete("/accounts/{id:[0-9]+}/oauth").
+		route.Delete("/accounts/{id:[0-9]+}/oauth/{name}").
 			SecuredWith(authentication).
 			Handle(handlers.DeleteAccountOauth(app)),
 	)
