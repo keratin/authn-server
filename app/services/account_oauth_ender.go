@@ -4,7 +4,7 @@ import (
 	"github.com/keratin/authn-server/app/data"
 )
 
-func AccountOauthEnder(store data.AccountStore, accountId int, providers []string) error {
+func IdentityRemover(store data.AccountStore, accountId int, providers []string) error {
 	account, err := store.Find(accountId)
 	if err != nil {
 		return err

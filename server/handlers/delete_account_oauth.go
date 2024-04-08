@@ -33,9 +33,9 @@ func DeleteAccountOauth(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		err = services.AccountOauthEnder(app.AccountStore, accountID, []string{provider})
+		err = services.IdentityRemover(app.AccountStore, accountID, []string{provider})
 		if err != nil {
-			app.Logger.WithError(err).Error("AccountOauthEnder")
+			app.Logger.WithError(err).Error("IdentityRemover")
 
 			if resource, ok := isNotFoundErr(err); ok {
 				WriteNotFound(w, resource)

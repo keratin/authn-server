@@ -16,9 +16,9 @@ func DeleteOauth(app *app.App, providerName string) http.HandlerFunc {
 			return
 		}
 
-		err := services.AccountOauthEnder(app.AccountStore, accountID, []string{providerName})
+		err := services.IdentityRemover(app.AccountStore, accountID, []string{providerName})
 		if err != nil {
-			app.Logger.WithError(err).Error("AccountOauthEnder")
+			app.Logger.WithError(err).Error("IdentityRemover")
 			WriteErrors(w, err)
 			return
 		}

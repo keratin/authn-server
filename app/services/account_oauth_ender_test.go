@@ -8,13 +8,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestAccountOauthEnder(t *testing.T) {
+func TestIdentityRemover(t *testing.T) {
 	t.Run("delete non existing oauth accounts", func(t *testing.T) {
 		accountStore := mock.NewAccountStore()
 		account, err := accountStore.Create("deleted@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 
-		err = services.AccountOauthEnder(accountStore, account.ID, []string{"test"})
+		err = services.IdentityRemover(accountStore, account.ID, []string{"test"})
 		require.NoError(t, err)
 
 		oAccount, err := accountStore.GetOauthAccounts(account.ID)
@@ -31,7 +31,7 @@ func TestAccountOauthEnder(t *testing.T) {
 		err = accountStore.AddOauthAccount(account.ID, "test", "TESTID", "email", "TOKEN")
 		require.NoError(t, err)
 
-		err = services.AccountOauthEnder(accountStore, account.ID, []string{"test"})
+		err = services.IdentityRemover(accountStore, account.ID, []string{"test"})
 		require.NoError(t, err)
 
 		oAccount, err := accountStore.GetOauthAccounts(account.ID)
@@ -51,7 +51,7 @@ func TestAccountOauthEnder(t *testing.T) {
 		err = accountStore.AddOauthAccount(account.ID, "trial", "TESTID", "email", "TOKEN")
 		require.NoError(t, err)
 
-		err = services.AccountOauthEnder(accountStore, account.ID, []string{"test", "trial"})
+		err = services.IdentityRemover(accountStore, account.ID, []string{"test", "trial"})
 		require.NoError(t, err)
 
 		oAccount, err := accountStore.GetOauthAccounts(account.ID)
