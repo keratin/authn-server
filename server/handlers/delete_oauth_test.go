@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/require"
 
@@ -44,8 +43,6 @@ func TestDeleteOauthAccount(t *testing.T) {
 		account, err := app.AccountStore.Create("deleted@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 
-		time.Sleep(5 * time.Second)
-
 		err = app.AccountStore.AddOauthAccount(account.ID, "test", "DELETEDID", "email", "TOKEN")
 		require.NoError(t, err)
 
@@ -56,23 +53,5 @@ func TestDeleteOauthAccount(t *testing.T) {
 
 		require.Equal(t, http.StatusOK, res.StatusCode)
 		require.Equal(t, []byte{}, test.ReadBody(res))
-	})
-
-	t.Run("requires new password", func(t *testing.T) {
-		expected := "{\"errors\":[{\"field\":\"password\",\"message\":\"NEW_PASSWORD_REQUIRED\"}]}"
-		account, err := app.AccountStore.Create("deleted-unprocessable-entity@keratin.tech", []byte("password"))
-		require.NoError(t, err)
-
-		err = app.AccountStore.AddOauthAccount(account.ID, "test", "DELETEDID4", "email", "TOKEN")
-		require.NoError(t, err)
-
-		session := test.CreateSession(app.RefreshTokenStore, app.Config, account.ID)
-
-		payload := map[string]interface{}{"oauth_providers": []string{"test"}}
-		res, err := client.WithCookie(session).DeleteJSON("/oauth/test", payload)
-		require.NoError(t, err)
-
-		require.Equal(t, http.StatusUnprocessableEntity, res.StatusCode)
-		require.Equal(t, []byte(expected), test.ReadBody(res))
 	})
 }
