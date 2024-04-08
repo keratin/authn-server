@@ -27,6 +27,6 @@ func GetAccount(app *app.App) http.HandlerFunc {
 			panic(err)
 		}
 
-		WriteData(w, http.StatusOK, services.AccountToJson(account))
+		WriteData(w, http.StatusOK, account)
 	}
 }

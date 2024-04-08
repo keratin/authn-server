@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"encoding/json"
 	"time"
 )
 
@@ -30,4 +31,26 @@ func (a Account) TOTPEnabled() bool {
 		return true
 	}
 	return false
+}
+
+func (a Account) MarshalJSON() ([]byte, error) {
+	formattedLastLogin := ""
+	if a.LastLoginAt != nil {
+		formattedLastLogin = a.LastLoginAt.Format(time.RFC3339)
+	}
+
+	formattedPasswordChangedAt := ""
+	if !a.PasswordChangedAt.IsZero() {
+		formattedPasswordChangedAt = a.PasswordChangedAt.Format(time.RFC3339)
+	}
+
+	return json.Marshal(map[string]interface{}{
+		"id":                  a.ID,
+		"username":            a.Username,
+		"oauth_accounts":      a.OauthAccounts,
+		"last_login_at":       formattedLastLogin,
+		"password_changed_at": formattedPasswordChangedAt,
+		"locked":              a.Locked,
+		"deleted":             a.DeletedAt != nil,
+	})
 }

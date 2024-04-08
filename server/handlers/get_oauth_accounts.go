@@ -22,7 +22,6 @@ func GetOauthAccounts(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		accountData := services.AccountToJson(account)
-		WriteData(w, http.StatusOK, accountData["oauth_accounts"])
+		WriteData(w, http.StatusOK, account.OauthAccounts)
 	}
 }
