@@ -55,6 +55,8 @@ func TestGetAccount(t *testing.T) {
 }
 
 func assertGetAccountResponse(t *testing.T, res *http.Response, acc *models.Account, oAccs []*models.OauthAccount) {
+	oAccounts := []map[string]interface{}{}
+
 	// check that the response contains the expected json
 	type response struct {
 		ID                int                      `json:"id"`
@@ -74,22 +76,19 @@ func assertGetAccountResponse(t *testing.T, res *http.Response, acc *models.Acco
 		return oAccs[i].Provider < oAccs[j].Provider
 	})
 
+	for _, oAcc := range oAccs {
+		oAccounts = append(oAccounts, map[string]interface{}{
+			"provider":            oAcc.Provider,
+			"provider_account_id": oAcc.ProviderID,
+			"email":               oAcc.Email,
+		})
+	}
+
 	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
 	assert.Equal(t, responseData, response{
-		ID:       acc.ID,
-		Username: acc.Username,
-		OauthAccounts: []map[string]interface{}{
-			{
-				"provider":            "test",
-				"provider_account_id": oAccs[0].ProviderID,
-				"email":               oAccs[0].Email,
-			},
-			{
-				"provider":            "trial",
-				"provider_account_id": oAccs[1].ProviderID,
-				"email":               oAccs[1].Email,
-			},
-		},
+		ID:                acc.ID,
+		Username:          acc.Username,
+		OauthAccounts:     oAccounts,
 		LastLoginAt:       "",
 		PasswordChangedAt: acc.PasswordChangedAt.Format(time.RFC3339),
 		Locked:            false,
