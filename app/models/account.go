@@ -44,13 +44,21 @@ func (a Account) MarshalJSON() ([]byte, error) {
 		formattedPasswordChangedAt = a.PasswordChangedAt.Format(time.RFC3339)
 	}
 
-	return json.Marshal(map[string]interface{}{
-		"id":                  a.ID,
-		"username":            a.Username,
-		"oauth_accounts":      a.OauthAccounts,
-		"last_login_at":       formattedLastLogin,
-		"password_changed_at": formattedPasswordChangedAt,
-		"locked":              a.Locked,
-		"deleted":             a.DeletedAt != nil,
+	return json.Marshal(struct {
+		ID                int             `json:"id"`
+		Username          string          `json:"username"`
+		OauthAccounts     []*OauthAccount `json:"oauth_accounts"`
+		LastLoginAt       string          `json:"last_login_at"`
+		PasswordChangedAt string          `json:"password_changed_at"`
+		Locked            bool            `json:"locked"`
+		Deleted           bool            `json:"deleted"`
+	}{
+		ID:                a.ID,
+		Username:          a.Username,
+		OauthAccounts:     a.OauthAccounts,
+		LastLoginAt:       formattedLastLogin,
+		PasswordChangedAt: formattedPasswordChangedAt,
+		Locked:            a.Locked,
+		Deleted:           a.DeletedAt != nil,
 	})
 }

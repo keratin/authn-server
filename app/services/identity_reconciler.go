@@ -97,10 +97,10 @@ func updateUserInfo(accountStore data.AccountStore, accountID int, providerName 
 			continue
 		}
 
-		if oAccount.Email == "" {
+		if oAccount.Email != providerUser.Email {
 			_, err = accountStore.UpdateOauthAccount(accountID, oAccount.Provider, providerUser.Email)
 			if err != nil {
-				return errors.Wrap(err, "UpdateOauthAccountEmail")
+				return errors.Wrap(err, "UpdateOauthAccount")
 			}
 		}
 	}

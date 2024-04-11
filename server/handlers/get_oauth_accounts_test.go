@@ -1,6 +1,7 @@
 package handlers_test
 
 import (
+	"encoding/json"
 	"net/http"
 	"testing"
 
@@ -29,7 +30,14 @@ func TestGetOauthInfo(t *testing.T) {
 	})
 
 	t.Run("success", func(t *testing.T) {
-		expected := "{\"result\":[{\"email\":\"email\",\"provider\":\"test\",\"provider_account_id\":\"ID\"}]}"
+		var expected struct {
+			Result []struct {
+				Email             string `json:"email"`
+				Provider          string `json:"provider"`
+				ProviderAccountID string `json:"provider_account_id"`
+			}
+		}
+
 		account, err := app.AccountStore.Create("get-oauth-info@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 
@@ -42,6 +50,13 @@ func TestGetOauthInfo(t *testing.T) {
 		require.NoError(t, err)
 
 		require.Equal(t, http.StatusOK, res.StatusCode)
-		require.Equal(t, []byte(expected), test.ReadBody(res))
+
+		err = json.Unmarshal(test.ReadBody(res), &expected)
+		require.NoError(t, err)
+
+		require.Equal(t, len(expected.Result), 1)
+		require.Equal(t, expected.Result[0].Email, "email")
+		require.Equal(t, expected.Result[0].Provider, "test")
+		require.Equal(t, expected.Result[0].ProviderAccountID, "ID")
 	})
 }

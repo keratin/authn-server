@@ -17,9 +17,13 @@ type OauthAccount struct {
 }
 
 func (o OauthAccount) MarshalJSON() ([]byte, error) {
-	return json.Marshal(map[string]interface{}{
-		"provider":            o.Provider,
-		"provider_account_id": o.ProviderID,
-		"email":               o.Email,
+	return json.Marshal(struct {
+		Provider   string `json:"provider"`
+		ProviderID string `json:"provider_account_id"`
+		Email      string `json:"email"`
+	}{
+		Provider:   o.Provider,
+		ProviderID: o.ProviderID,
+		Email:      o.Email,
 	})
 }

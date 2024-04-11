@@ -10,6 +10,15 @@ import (
 )
 
 func TestAccountGetter(t *testing.T) {
+
+	t.Run("get non existing account", func(t *testing.T) {
+		accountStore := mock.NewAccountStore()
+		account, err := services.AccountGetter(accountStore, 9999)
+
+		require.NotNil(t, err)
+		require.Nil(t, account)
+	})
+
 	t.Run("returns empty map when no oauth accounts", func(t *testing.T) {
 		accountStore := mock.NewAccountStore()
 		acc, err := accountStore.Create("user@keratin.tech", []byte("password"))
