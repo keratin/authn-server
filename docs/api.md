@@ -310,12 +310,12 @@ Visibility: Private
 
 Visibility: Private
 
-`DELETE /accounts/:id/oauth`
+`DELETE /accounts/:id/oauth/:name`
 
-|        Params       |      Type      |      Notes      |
-| ------------------- | -------------- | --------------- |
-| `id`                |     integer    | User account Id |
-| `oauth_providers`   |  array[string] | Provider names  |
+|  Params  |    Type   |      Notes      |
+| -------- | --------- | --------------- |
+| `id`     |  integer  | User account Id |
+| `name`   |  string   | Provider names  |
 
 #### Success:
 
