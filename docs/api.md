@@ -10,8 +10,10 @@
     * [Username Availability](#username-availability)
     * [Lock Account](#lock-account)
     * [Unlock Account](#unlock-account)
+    * [Delete OAuth account by user id](#delete-oauth-account-by-user-id)
     * [Archive Account](#archive-account)
     * [Import Account](#import-account)
+
   * Sessions
     * [Login](#login)
     * [Refresh Session](#refresh-session)
@@ -26,6 +28,8 @@
   * OAuth
     * [Begin OAuth](#begin-oauth)
     * [OAuth Return URL](#oauth-return)
+    * [Get OAuth accounts info](#get-oauth-accounts-info)
+    * [Delete OAuth account](#delete-oauth-account)
   * Multi-Factor Authentication (MFA) **BETA**
     * [New](#totp-new)
     * [Confirm](#totp-post)
@@ -142,6 +146,13 @@ Visibility: Private
       "result": {
         "id": <id>,
         "username": "...",
+        "oauth_accounts": [
+          {
+            "provider": "google"|"apple",
+            "provider_account_id": "91293",
+            "email": "authn@keratin.com"
+          }
+        ],
         "last_login_at": "2006-01-02T15:04:05Z07:00",
         "password_changed_at": "2006-01-02T15:04:05Z07:00",
         "locked": false,
@@ -294,6 +305,26 @@ Visibility: Private
         {"field": "account", "message": "NOT_FOUND"}
       ]
     }
+
+### Delete OAuth account by user id
+
+Visibility: Private
+
+`DELETE /accounts/:id/oauth/:name`
+
+|  Params  |    Type   |      Notes      |
+| -------- | --------- | --------------- |
+| `id`     |  integer  | User account Id |
+| `name`   |  string   | Provider names  |
+
+#### Success:
+
+    200 Ok
+
+    {}
+
+#### Failure:
+    404 Not Found
 
 ### Import Account
 
@@ -616,7 +647,7 @@ Visibility: Public
 
 | Params | Type | Notes |
 | ------ | ---- | ----- |
-| `providerName` | string | * google |
+| `providerName` | string | google |
 | `redirect_uri` | URL | Return URL after OAuth. Must be in your application's domain. |
 
 Redirect a user to this URL when you want to authenticate them with OAuth, and include a `redirect_uri` where you want them to return when they're done. From here, a user will proceed to the OAuth provider and back to AuthN's [OAuth Return](#oauth-return) endpoint (as configured with the provider).
@@ -657,6 +688,54 @@ If the OAuth process failed, the redirect will have `status=failed` appended to 
 
     303 See Other
     Location: (redirect URI with status=failed)
+
+#### Get OAuth accounts info
+
+Visibility: Public
+
+`GET /oauth/accounts`
+
+Returns relevant oauth information for the current session.
+
+#### Success:
+
+    200 Ok
+
+    {
+      "result": [
+        {
+          "provider": "google"|"apple",
+          "provider_account_id": "91293",
+          "email": "authn@keratin.com"
+        }
+      ]
+    }
+
+#### Failure:
+
+    401 Unauthorized
+
+#### Delete OAuth account
+
+Visibility: Public
+
+`DELETE /oauth/:providerName`
+
+|     Params     |  Type  |  Notes |
+| -------------- | ------ | ------ |
+| `providerName` | string | google |
+
+Delete an OAuth account from the current session. If the session was initiated via the OAuth flow, the endpoint will returns an error requesting user to reset password.
+
+#### Success:
+
+    200 Ok
+
+    {}
+
+#### Failure:
+
+    401 Unauthorized
 
 ### Multi-Factor Authentication (MFA)
 

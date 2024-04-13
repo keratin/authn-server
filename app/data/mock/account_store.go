@@ -94,7 +94,7 @@ func (s *accountStore) Create(u string, p []byte) (*models.Account, error) {
 	return dupAccount(acc), nil
 }
 
-func (s *accountStore) AddOauthAccount(accountID int, provider string, providerID string, tok string) error {
+func (s *accountStore) AddOauthAccount(accountID int, provider, providerID, email, tok string) error {
 	p := provider + "|" + providerID
 	if s.idByOauthID[p] != 0 {
 		return Error{ErrNotUnique}
@@ -107,6 +107,7 @@ func (s *accountStore) AddOauthAccount(accountID int, provider string, providerI
 
 	now := time.Now()
 	oauthAccount := &models.OauthAccount{
+		Email:       email,
 		AccountID:   accountID,
 		Provider:    provider,
 		ProviderID:  providerID,
@@ -122,6 +123,32 @@ func (s *accountStore) AddOauthAccount(accountID int, provider string, providerI
 
 func (s *accountStore) GetOauthAccounts(accountID int) ([]*models.OauthAccount, error) {
 	return s.oauthAccountsByID[accountID], nil
+}
+
+func (s *accountStore) UpdateOauthAccount(accountID int, provider, email string) (bool, error) {
+	oauthAccounts := s.oauthAccountsByID[accountID]
+
+	for i, oauthAccount := range oauthAccounts {
+		if oauthAccount.Provider == provider {
+			s.oauthAccountsByID[accountID][i].Email = email
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+func (s *accountStore) DeleteOauthAccount(accountID int, provider string) (bool, error) {
+	oauthAccounts := s.oauthAccountsByID[accountID]
+
+	for i, oauthAccount := range oauthAccounts {
+		if oauthAccount.Provider == provider {
+			s.oauthAccountsByID[accountID] = append(oauthAccounts[:i], oauthAccounts[i+1:]...)
+			return true, nil
+		}
+	}
+
+	return false, nil
 }
 
 func (s *accountStore) Archive(id int) (bool, error) {

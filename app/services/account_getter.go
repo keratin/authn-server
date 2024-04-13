@@ -15,5 +15,11 @@ func AccountGetter(store data.AccountStore, accountID int) (*models.Account, err
 		return nil, FieldErrors{{"account", ErrNotFound}}
 	}
 
+	oauthAccounts, err := store.GetOauthAccounts(accountID)
+	if err != nil {
+		return nil, errors.Wrap(err, "GetOauthAccounts")
+	}
+
+	account.OauthAccounts = oauthAccounts
 	return account, nil
 }

@@ -3,7 +3,9 @@ package handlers_test
 import (
 	"fmt"
 	"net/http"
+	"sort"
 	"testing"
+	"time"
 
 	"github.com/keratin/authn-server/app/models"
 	"github.com/keratin/authn-server/lib/route"
@@ -35,32 +37,61 @@ func TestGetAccount(t *testing.T) {
 		account, err := app.AccountStore.Create("unlocked@test.com", []byte("bar"))
 		require.NoError(t, err)
 
+		err = app.AccountStore.AddOauthAccount(account.ID, "test", "ID1", "email", "TOKEN1")
+		require.NoError(t, err)
+
+		err = app.AccountStore.AddOauthAccount(account.ID, "trial", "ID2", "email", "TOKEN2")
+		require.NoError(t, err)
+
+		oauthAccounts, err := app.AccountStore.GetOauthAccounts(account.ID)
+		require.NoError(t, err)
+
 		res, err := client.Get(fmt.Sprintf("/accounts/%v", account.ID))
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, res.StatusCode)
-		assertGetAccountResponse(t, res, account)
+
+		assertGetAccountResponse(t, res, account, oauthAccounts)
 	})
 }
 
-func assertGetAccountResponse(t *testing.T, res *http.Response, acc *models.Account) {
+func assertGetAccountResponse(t *testing.T, res *http.Response, acc *models.Account, oAccs []*models.OauthAccount) {
+	oAccounts := []map[string]interface{}{}
+
 	// check that the response contains the expected json
-	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
-	responseData := struct {
-		ID                int    `json:"id"`
-		Username          string `json:"username"`
-		LastLoginAt       string `json:"last_login_at"`
-		PasswordChangedAt string `json:"password_changed_at"`
-		Locked            bool   `json:"locked"`
-		Deleted           bool   `json:"deleted_at"`
-	}{}
+	type response struct {
+		ID                int                      `json:"id"`
+		Username          string                   `json:"username"`
+		OauthAccounts     []map[string]interface{} `json:"oauth_accounts"`
+		LastLoginAt       string                   `json:"last_login_at"`
+		PasswordChangedAt string                   `json:"password_changed_at"`
+		Locked            bool                     `json:"locked"`
+		Deleted           bool                     `json:"deleted_at"`
+	}
+
+	var responseData response
 	err := test.ExtractResult(res, &responseData)
 	assert.NoError(t, err)
 
-	assert.Equal(t, acc.Username, responseData.Username)
-	assert.Equal(t, acc.ID, responseData.ID)
-	// NOTE: acc.LastLoginAt is empty so the API returns an empty response
-	assert.Equal(t, "", responseData.LastLoginAt)
-	assert.Equal(t, acc.PasswordChangedAt.Format("2006-01-02T15:04:05Z07:00"), responseData.PasswordChangedAt)
-	assert.Equal(t, false, responseData.Locked)
-	assert.Equal(t, false, responseData.Deleted)
+	sort.Slice(oAccs, func(i, j int) bool {
+		return oAccs[i].Provider < oAccs[j].Provider
+	})
+
+	for _, oAcc := range oAccs {
+		oAccounts = append(oAccounts, map[string]interface{}{
+			"provider":            oAcc.Provider,
+			"provider_account_id": oAcc.ProviderID,
+			"email":               oAcc.Email,
+		})
+	}
+
+	assert.Equal(t, []string{"application/json"}, res.Header["Content-Type"])
+	assert.Equal(t, responseData, response{
+		ID:                acc.ID,
+		Username:          acc.Username,
+		OauthAccounts:     oAccounts,
+		LastLoginAt:       "",
+		PasswordChangedAt: acc.PasswordChangedAt.Format(time.RFC3339),
+		Locked:            false,
+		Deleted:           false,
+	})
 }

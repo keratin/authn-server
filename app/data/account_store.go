@@ -16,7 +16,9 @@ type AccountStore interface {
 	Find(id int) (*models.Account, error)
 	FindByUsername(u string) (*models.Account, error)
 	FindByOauthAccount(p string, pid string) (*models.Account, error)
-	AddOauthAccount(id int, p string, pid string, tok string) error
+	AddOauthAccount(id int, p string, pid string, email string, tok string) error
+	UpdateOauthAccount(id int, p string, email string) (bool, error)
+	DeleteOauthAccount(id int, p string) (bool, error)
 	GetOauthAccounts(id int) ([]*models.OauthAccount, error)
 	Archive(id int) (bool, error)
 	Lock(id int) (bool, error)

@@ -71,6 +71,10 @@ func PrivateRoutes(app *app.App) []*route.HandledRoute {
 		route.Delete("/accounts/{id:[0-9]+}").
 			SecuredWith(authentication).
 			Handle(handlers.DeleteAccount(app)),
+
+		route.Delete("/accounts/{id:[0-9]+}/oauth/{name}").
+			SecuredWith(authentication).
+			Handle(handlers.DeleteAccountOauth(app)),
 	)
 
 	if app.Actives != nil {

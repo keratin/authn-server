@@ -76,13 +76,14 @@ func (db *AccountStore) Create(u string, p []byte) (*models.Account, error) {
 	return account, nil
 }
 
-func (db *AccountStore) AddOauthAccount(accountID int, provider string, providerID string, accessToken string) error {
+func (db *AccountStore) AddOauthAccount(accountID int, provider, providerID, email, accessToken string) error {
 	now := time.Now()
 
 	_, err := sqlx.NamedExec(db, `
-        INSERT INTO oauth_accounts (account_id, provider, provider_id, access_token, created_at, updated_at)
-        VALUES (:account_id, :provider, :provider_id, :access_token, :created_at, :updated_at)
+        INSERT INTO oauth_accounts (account_id, provider, provider_id, email, access_token, created_at, updated_at)
+        VALUES (:account_id, :provider, :provider_id, :email, :access_token, :created_at, :updated_at)
     `, map[string]interface{}{
+		"email":        email,
 		"account_id":   accountID,
 		"provider":     provider,
 		"provider_id":  providerID,
@@ -97,6 +98,24 @@ func (db *AccountStore) GetOauthAccounts(accountID int) ([]*models.OauthAccount,
 	accounts := []*models.OauthAccount{}
 	err := sqlx.Select(db, &accounts, `SELECT * FROM oauth_accounts WHERE account_id = ?`, accountID)
 	return accounts, err
+}
+
+func (db *AccountStore) UpdateOauthAccount(accountId int, provider, email string) (bool, error) {
+	result, err := db.Exec("UDPATE oauth_accounts SET email = ? WHERE account_id = ? AND provider = ?", email, accountId, provider)
+	if err != nil {
+		return false, err
+	}
+
+	return ok(result, err)
+}
+
+func (db *AccountStore) DeleteOauthAccount(accountId int, provider string) (bool, error) {
+	result, err := db.Exec("DELETE FROM oauth_accounts WHERE account_id = ? AND provider = ?", accountId, provider)
+	if err != nil {
+		return false, err
+	}
+
+	return ok(result, err)
 }
 
 func (db *AccountStore) Archive(id int) (bool, error) {
