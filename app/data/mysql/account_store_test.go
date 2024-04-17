@@ -1,7 +1,6 @@
 package mysql_test
 
 import (
-	"database/sql"
 	"testing"
 
 	"github.com/keratin/authn-server/app/data"
@@ -21,10 +20,6 @@ func TestAccountStore(t *testing.T) {
 	}
 
 	t.Run("handle oauth email with null value", func(t *testing.T) {
-		db := store.(interface {
-			Exec(query string, args ...interface{}) (sql.Result, error)
-		})
-
 		account, err := store.Create("migrated-user", []byte("old"))
 		require.NoError(t, err)
 
