@@ -4,6 +4,12 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## HEAD
 
+## 1.20.1
+
+### Added
+
+* Fixing code that wansn't expeting oauth email as null value.
+
 ## 1.20.0
 
 ### Added

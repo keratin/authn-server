@@ -53,10 +53,10 @@ func TestAccountGetter(t *testing.T) {
 		require.Equal(t, 2, len(oAccounts))
 		require.Equal(t, "test", oAccounts[0].Provider)
 		require.Equal(t, "ID1", oAccounts[0].ProviderID)
-		require.Equal(t, "email1", oAccounts[0].Email)
+		require.Equal(t, "email1", oAccounts[0].GetEmail())
 
 		require.Equal(t, "trial", oAccounts[1].Provider)
 		require.Equal(t, "ID2", oAccounts[1].ProviderID)
-		require.Equal(t, "email2", oAccounts[1].Email)
+		require.Equal(t, "email2", oAccounts[1].GetEmail())
 	})
 }

@@ -107,7 +107,7 @@ func (s *accountStore) AddOauthAccount(accountID int, provider, providerID, emai
 
 	now := time.Now()
 	oauthAccount := &models.OauthAccount{
-		Email:       email,
+		Email:       &email,
 		AccountID:   accountID,
 		Provider:    provider,
 		ProviderID:  providerID,
@@ -130,7 +130,7 @@ func (s *accountStore) UpdateOauthAccount(accountID int, provider, email string)
 
 	for i, oauthAccount := range oauthAccounts {
 		if oauthAccount.Provider == provider {
-			s.oauthAccountsByID[accountID][i].Email = email
+			s.oauthAccountsByID[accountID][i].Email = &email
 			return true, nil
 		}
 	}

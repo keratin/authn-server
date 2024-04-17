@@ -10,10 +10,18 @@ type OauthAccount struct {
 	AccountID   int `db:"account_id"`
 	Provider    string
 	ProviderID  string    `db:"provider_id"`
-	Email       string    `db:"email"`
+	Email       *string   `db:"email"`
 	AccessToken string    `db:"access_token"`
 	CreatedAt   time.Time `db:"created_at"`
 	UpdatedAt   time.Time `db:"updated_at"`
+}
+
+func (a OauthAccount) GetEmail() string {
+	if a.Email != nil {
+		return *a.Email
+	}
+
+	return ""
 }
 
 func (o OauthAccount) MarshalJSON() ([]byte, error) {
@@ -24,6 +32,6 @@ func (o OauthAccount) MarshalJSON() ([]byte, error) {
 	}{
 		Provider:   o.Provider,
 		ProviderID: o.ProviderID,
-		Email:      o.Email,
+		Email:      o.GetEmail(),
 	})
 }
