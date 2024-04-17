@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/app/data/postgres"
 	"github.com/keratin/authn-server/app/data/testers"
 	"github.com/pkg/errors"
@@ -39,7 +38,7 @@ func newTestDB() (*sqlx.DB, error) {
 func TestAccountStore(t *testing.T) {
 	db, err := newTestDB()
 	require.NoError(t, err)
-	var store data.AccountStore = &postgres.AccountStore{db}
+	store := &postgres.AccountStore{db}
 	for _, tester := range testers.AccountStoreTesters {
 		db.MustExec("TRUNCATE accounts")
 		db.MustExec("TRUNCATE oauth_accounts")

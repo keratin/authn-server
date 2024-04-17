@@ -3,7 +3,6 @@ package mysql_test
 import (
 	"testing"
 
-	"github.com/keratin/authn-server/app/data"
 	"github.com/keratin/authn-server/app/data/mysql"
 	"github.com/keratin/authn-server/app/data/testers"
 	"github.com/stretchr/testify/require"
@@ -12,7 +11,7 @@ import (
 func TestAccountStore(t *testing.T) {
 	db, err := mysql.TestDB()
 	require.NoError(t, err)
-	var store data.AccountStore = &mysql.AccountStore{db}
+	store := &mysql.AccountStore{db}
 	for _, tester := range testers.AccountStoreTesters {
 		db.MustExec("TRUNCATE accounts")
 		db.MustExec("TRUNCATE oauth_accounts")
