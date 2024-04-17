@@ -80,7 +80,7 @@ func assertGetAccountResponse(t *testing.T, res *http.Response, acc *models.Acco
 		oAccounts = append(oAccounts, map[string]interface{}{
 			"provider":            oAcc.Provider,
 			"provider_account_id": oAcc.ProviderID,
-			"email":               oAcc.Email,
+			"email":               oAcc.GetEmail(),
 		})
 	}
 

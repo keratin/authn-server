@@ -102,7 +102,7 @@ func TestIdentityReconciler(t *testing.T) {
 		oAccounts, err := store.GetOauthAccounts(account.ID)
 		assert.NoError(t, err)
 		assert.Equal(t, 1, len(oAccounts))
-		assert.Equal(t, email, oAccounts[0].Email)
+		assert.Equal(t, email, oAccounts[0].GetEmail())
 	})
 
 	t.Run("update oauth email when is outdated", func(t *testing.T) {
@@ -123,6 +123,6 @@ func TestIdentityReconciler(t *testing.T) {
 		oAccounts, err := store.GetOauthAccounts(account.ID)
 		assert.NoError(t, err)
 		assert.Equal(t, 1, len(oAccounts))
-		assert.Equal(t, email, oAccounts[0].Email)
+		assert.Equal(t, email, oAccounts[0].GetEmail())
 	})
 }
