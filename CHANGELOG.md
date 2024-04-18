@@ -6,9 +6,9 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## 1.20.1
 
-### Added
+### Fixed
 
-* Fixing code that wansn't expeting oauth email as null value.
+* Handle null values for oauth account email.
 
 ## 1.20.0
 
