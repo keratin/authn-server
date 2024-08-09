@@ -4,7 +4,7 @@
 * Databases: [`DATABASE_URL`](#database_url) • [`REDIS_URL`](#redis_url) • [`REDIS_IS_SENTINEL_MODE`](#redis_is_sentinel_mode) • [`REDIS_SENTINEL_MASTER`](#redis_sentinel_master) • [`REDIS_SENTINEL_NODES`](#redis_sentinel_nodes) • [`REDIS_SENTINEL_PASSWORD`](#redis_sentinel_password)
 * Sessions:
 [`ACCESS_TOKEN_TTL`](#access_token_ttl) • [`REFRESH_TOKEN_TTL`](#refresh_token_ttl)• [`REFRESH_TOKEN_EXPLICIT_EXPIRY`](#refresh_token_explicit_expiry) • [`SESSION_KEY_SALT`](#session_key_salt) • [`DB_ENCRYPTION_KEY_SALT`](#db_encryption_key_salt) • [`RSA_PRIVATE_KEY`](#rsa_private_key) • [`SAME_SITE`](#same_site)
-* OAuth Clients: [`FACEBOOK_OAUTH_CREDENTIALS`](#facebook_oauth_credentials) • [`GITHUB_OAUTH_CREDENTIALS`](#github_oauth_credentials) • [`GOOGLE_OAUTH_CREDENTIALS`](#google_oauth_credentials) • [`DISCORD_OAUTH_CREDENTIALS`](#discord_oauth_credentials) • [`MICROSOFT_OAUTH_CREDENTIALS`](#microsoft_oauth_credentials)
+* OAuth Clients: [`FACEBOOK_OAUTH_CREDENTIALS`](#facebook_oauth_credentials) • [`TWITTER_OAUTH_CREDENTIALS`](#twitter_oauth_credentials) •  [`GITHUB_OAUTH_CREDENTIALS`](#github_oauth_credentials) • [`GOOGLE_OAUTH_CREDENTIALS`](#google_oauth_credentials) • [`DISCORD_OAUTH_CREDENTIALS`](#discord_oauth_credentials) • [`MICROSOFT_OAUTH_CREDENTIALS`](#microsoft_oauth_credentials)
 * Username Policy: [`USERNAME_IS_EMAIL`](#username_is_email) • [`EMAIL_USERNAME_DOMAINS`](#email_username_domains)
 * Password Policy: [`PASSWORD_POLICY_SCORE`](#password_policy_score) • [`PASSWORD_CHANGE_LOGOUT`](#password_change_logout) • [`BCRYPT_COST`](#bcrypt_cost)
 * Password Resets: [`APP_PASSWORD_RESET_URL`](#app_password_reset_url) • [`PASSWORD_RESET_TOKEN_TTL`](#password_reset_token_ttl) • [`APP_PASSWORD_CHANGED_URL`](#app_password_changed_url)
@@ -285,6 +285,18 @@ The configured client secret is a private key used to sign the JWT.  This should
 | Default   | nil             |
 
 Create a Facebook app at https://developers.facebook.com and enable the Facebook Login product. In the Quickstart, enter [AuthN's OAuth Return](api.md#oauth-return) as the Site URL. Then switch over to Settings and find the App ID and Secret. Join those together with a `:` and provide them to AuthN as a single variable.
+
+### `TWITTER_OAUTH_CREDENTIALS`
+
+|           |                 |
+|-----------|-----------------|
+| Required? | No              |
+| Value     | AppID:AppSecret |
+| Default   | nil             |
+
+Log in and see your apps in the [X developer portal](https://developer.x.com/en/portal/projects-and-apps). Go to app settings and set up user authentication. Enter [AuthN's OAuth Return](api.md#oauth-return) as the redirect URL. Save `Client ID` and `Client Secret`. Join those together with a `:` and provide them to AuthN as a single variable.
+
+<https://developer.x.com/en/docs/authentication/guides/log-in-with-twitter>
 
 ### `GITHUB_OAUTH_CREDENTIALS`
 

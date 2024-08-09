@@ -74,6 +74,7 @@ type Config struct {
 	GoogleOauthCredentials      *oauth.Credentials
 	GitHubOauthCredentials      *oauth.Credentials
 	FacebookOauthCredentials    *oauth.Credentials
+	TwitterOauthCredentials     *oauth.Credentials
 	DiscordOauthCredentials     *oauth.Credentials
 	MicrosoftOauthCredentials   *oauth.Credentials
 	AppleOAuthCredentials       *oauth.Credentials
@@ -85,6 +86,7 @@ func (c *Config) OAuthEnabled() bool {
 	return c.GoogleOauthCredentials != nil ||
 		c.GitHubOauthCredentials != nil ||
 		c.FacebookOauthCredentials != nil ||
+		c.TwitterOauthCredentials != nil ||
 		c.DiscordOauthCredentials != nil ||
 		c.MicrosoftOauthCredentials != nil ||
 		c.AppleOAuthCredentials != nil
@@ -620,6 +622,19 @@ var configurers = []configurer{
 			credentials, err := oauth.NewCredentials(val)
 			if err == nil {
 				c.FacebookOauthCredentials = credentials
+			}
+			return err
+		}
+		return nil
+	},
+
+	// TWITTER_OAUTH_CREDENTIALS is a credential pair in the format `id:secret`. When specified,
+	// AuthN will enable routes for Twitter OAuth signin.
+	func(c *Config) error {
+		if val, ok := os.LookupEnv("TWITTER_OAUTH_CREDENTIALS"); ok {
+			credentials, err := oauth.NewCredentials(val)
+			if err == nil {
+				c.TwitterOauthCredentials = credentials
 			}
 			return err
 		}

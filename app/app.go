@@ -132,6 +132,9 @@ func initializeOAuthProviders(cfg *Config) (map[string]oauth.Provider, error) {
 	if cfg.FacebookOauthCredentials != nil {
 		oauthProviders["facebook"] = *oauth.NewFacebookProvider(cfg.FacebookOauthCredentials)
 	}
+	if cfg.TwitterOauthCredentials != nil {
+		oauthProviders["twitter"] = *oauth.NewTwitterProvider(cfg.TwitterOauthCredentials)
+	}
 	if cfg.DiscordOauthCredentials != nil {
 		oauthProviders["discord"] = *oauth.NewDiscordProvider(cfg.DiscordOauthCredentials)
 	}
