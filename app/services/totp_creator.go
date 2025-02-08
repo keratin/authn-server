@@ -12,7 +12,9 @@ var ErrExistingTOTPSecret = errors.New("a OTP secret has already been establishe
 
 // TOTPCreator handles the creation and storage of new OTP tokens
 func TOTPCreator(accountStore data.AccountStore, totpCache data.TOTPCache, accountID int, audience *route.Domain) (*otp.Key, error) {
-	account, err := AccountGetter(accountStore, accountID)
+	account, err := AccountGetter(accountStore, AccountGetterParams{
+		AccountID: &accountID,
+	})
 	if err != nil {
 		return nil, err
 	}

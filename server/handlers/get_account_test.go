@@ -52,6 +52,26 @@ func TestGetAccount(t *testing.T) {
 
 		assertGetAccountResponse(t, res, account, oauthAccounts)
 	})
+
+	t.Run("valid account username", func(t *testing.T) {
+		account, err := app.AccountStore.Create("unlocked2@test.com", []byte("bar"))
+		require.NoError(t, err)
+
+		err = app.AccountStore.AddOauthAccount(account.ID, "test2", "ID21", "email21", "TOKEN21")
+		require.NoError(t, err)
+
+		err = app.AccountStore.AddOauthAccount(account.ID, "trial2", "ID22", "email22", "TOKEN22")
+		require.NoError(t, err)
+
+		oauthAccounts, err := app.AccountStore.GetOauthAccounts(account.ID)
+		require.NoError(t, err)
+
+		res, err := client.Get(fmt.Sprintf("/accounts/%v", account.Username))
+		require.NoError(t, err)
+		assert.Equal(t, http.StatusOK, res.StatusCode)
+
+		assertGetAccountResponse(t, res, account, oauthAccounts)
+	})
 }
 
 func assertGetAccountResponse(t *testing.T, res *http.Response, acc *models.Account, oAccs []*models.OauthAccount) {

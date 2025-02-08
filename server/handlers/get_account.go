@@ -11,13 +11,25 @@ import (
 
 func GetAccount(app *app.App) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id, err := strconv.Atoi(mux.Vars(r)["id"])
-		if err != nil {
-			WriteNotFound(w, "account")
+		var paramID *int
+		var paramUsername *string
+
+		idOrUsername := mux.Vars(r)["id"]
+		if idOrUsername == "" {
 			return
 		}
 
-		account, err := services.AccountGetter(app.AccountStore, id)
+		id, err := strconv.Atoi(idOrUsername)
+		if err != nil {
+			paramUsername = &idOrUsername
+		} else {
+			paramID = &id
+		}
+
+		account, err := services.AccountGetter(app.AccountStore, services.AccountGetterParams{
+			AccountID: paramID,
+			Username:  paramUsername,
+		})
 		if err != nil {
 			if _, ok := err.(services.FieldErrors); ok {
 				WriteNotFound(w, "account")

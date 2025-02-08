@@ -16,7 +16,9 @@ func GetOauthAccounts(app *app.App) http.HandlerFunc {
 			return
 		}
 
-		account, err := services.AccountGetter(app.AccountStore, accountID)
+		account, err := services.AccountGetter(app.AccountStore, services.AccountGetterParams{
+			AccountID: &accountID,
+		})
 		if err != nil {
 			WriteErrors(w, err)
 			return

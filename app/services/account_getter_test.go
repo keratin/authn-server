@@ -11,9 +11,29 @@ import (
 
 func TestAccountGetter(t *testing.T) {
 
+	t.Run("get username", func(t *testing.T) {
+		accountStore := mock.NewAccountStore()
+		acc, err := accountStore.Create("user@keratin.tech", []byte("password"))
+		require.NoError(t, err)
+
+		accountID := acc.ID
+
+		account, err := services.AccountGetter(accountStore, services.AccountGetterParams{
+			Username: &acc.Username,
+		})
+		require.NoError(t, err)
+
+		require.Equal(t, accountID, account.ID)
+	})
+
 	t.Run("get non existing account", func(t *testing.T) {
 		accountStore := mock.NewAccountStore()
-		account, err := services.AccountGetter(accountStore, 9999)
+
+		accountID := 9999
+
+		account, err := services.AccountGetter(accountStore, services.AccountGetterParams{
+			AccountID: &accountID,
+		})
 
 		require.NotNil(t, err)
 		require.Nil(t, account)
@@ -24,7 +44,11 @@ func TestAccountGetter(t *testing.T) {
 		acc, err := accountStore.Create("user@keratin.tech", []byte("password"))
 		require.NoError(t, err)
 
-		account, err := services.AccountGetter(accountStore, acc.ID)
+		accountID := acc.ID
+
+		account, err := services.AccountGetter(accountStore, services.AccountGetterParams{
+			AccountID: &accountID,
+		})
 		require.NoError(t, err)
 
 		require.Equal(t, 0, len(account.OauthAccounts))
@@ -41,7 +65,11 @@ func TestAccountGetter(t *testing.T) {
 		err = accountStore.AddOauthAccount(acc.ID, "trial", "ID2", "email2", "TOKEN2")
 		require.NoError(t, err)
 
-		account, err := services.AccountGetter(accountStore, acc.ID)
+		accountID := acc.ID
+
+		account, err := services.AccountGetter(accountStore, services.AccountGetterParams{
+			AccountID: &accountID,
+		})
 		require.NoError(t, err)
 
 		oAccounts := account.OauthAccounts

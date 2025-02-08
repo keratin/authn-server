@@ -14,7 +14,9 @@ func TOTPSetter(accountStore data.AccountStore, totpCache data.TOTPCache, cfg *a
 		return FieldErrors{{"otp", ErrInvalidOrExpired}}
 	}
 
-	account, err := AccountGetter(accountStore, accountID)
+	account, err := AccountGetter(accountStore, AccountGetterParams{
+		AccountID: &accountID,
+	})
 	if err != nil {
 		return err
 	}

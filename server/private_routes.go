@@ -32,7 +32,7 @@ func PrivateRoutes(app *app.App) []*route.HandledRoute {
 			SecuredWith(authentication).
 			Handle(handlers.PostAccountsImport(app)),
 
-		route.Get("/accounts/{id:[0-9]+}").
+		route.Get("/accounts/{id}").
 			SecuredWith(authentication).
 			Handle(handlers.GetAccount(app)),
 
